@@ -1,0 +1,19 @@
+﻿@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px) {
+    .toolbar1 {
+        text-align:left;
+    }
+
+    .footer .text-left,
+    .footer .text-end {
+        text-align: center !important;
+    }
+
+    .main-content {
+        background-size: contain !important; 
+        background-position: top !important; /* Adjust the focus point */
+        height: auto;
+        min-height: 50vh !important;
+    }
+}
+
+

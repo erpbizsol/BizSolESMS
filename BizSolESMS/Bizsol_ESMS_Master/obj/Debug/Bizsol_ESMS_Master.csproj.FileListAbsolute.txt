@@ -1,0 +1,9 @@
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\bin\Debug\Bizsol_ESMS_Master.dll
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\bin\Debug\Bizsol_ESMS_Master.pdb
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\bin\Debug\Bizsol_ESMS_Models.dll
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\bin\Debug\Bizsol_ESMS_Models.pdb
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\obj\Debug\Bizsol_ESMS_Master.csproj.AssemblyReference.cache
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\obj\Debug\Bizsol_ESMS_Master.csproj.CoreCompileInputs.cache
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\obj\Debug\Bizsol_E.743290C1.Up2Date
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\obj\Debug\Bizsol_ESMS_Master.dll
+D:\Bizsol_ESMS\Bizsol_ESMS_Master\obj\Debug\Bizsol_ESMS_Master.pdb

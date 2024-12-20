@@ -1,0 +1,6 @@
+D:\Bizsol_ESMS\Bizsol_ESMS_Models\bin\Debug\Bizsol_ESMS_Models.dll
+D:\Bizsol_ESMS\Bizsol_ESMS_Models\bin\Debug\Bizsol_ESMS_Models.pdb
+D:\Bizsol_ESMS\Bizsol_ESMS_Models\obj\Debug\Bizsol_ESMS_Models.csproj.AssemblyReference.cache
+D:\Bizsol_ESMS\Bizsol_ESMS_Models\obj\Debug\Bizsol_ESMS_Models.csproj.CoreCompileInputs.cache
+D:\Bizsol_ESMS\Bizsol_ESMS_Models\obj\Debug\Bizsol_ESMS_Models.dll
+D:\Bizsol_ESMS\Bizsol_ESMS_Models\obj\Debug\Bizsol_ESMS_Models.pdb

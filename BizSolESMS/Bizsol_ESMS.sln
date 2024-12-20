@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bizsol_ESMS", "Bizsol_ESMS\Bizsol_ESMS.csproj", "{A2F1B18F-F390-4C94-82E1-FEB010B3C329}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2F1B18F-F390-4C94-82E1-FEB010B3C329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2F1B18F-F390-4C94-82E1-FEB010B3C329}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2F1B18F-F390-4C94-82E1-FEB010B3C329}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2F1B18F-F390-4C94-82E1-FEB010B3C329}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6EC0F019-7F55-485C-A342-72C7C8200554}
+	EndGlobalSection
+EndGlobal

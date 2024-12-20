@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="~/assets/js/filter.js"></script>
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="~/assets/script/locationmaster.js"></script>
+
+<div class="">
+    <div class="row">
+        <div class="col-sm-12 text-end" style="width: 80%; margin: 0 auto;">
+            <label></label>
+            <button type="button" class="btn btn-primary btn-height">DOWNLOAD</button>
+            <button type="button" class="btn btn-success btn-height" onclick="CreateLocation()">CREATE NEW</button>
+        </div>
+    </div>
+    <div class="card-body mt-2">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table" style="width: 80%; margin: 0 auto;">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginator -->
+        <div class="paginator" id="paginator-table" style="width: 80%; margin: 0 auto;">
+        </div>
+    </div>
+</div>

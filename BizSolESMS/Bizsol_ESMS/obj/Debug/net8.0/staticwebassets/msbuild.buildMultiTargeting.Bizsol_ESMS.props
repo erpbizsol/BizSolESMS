@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Bizsol_ESMS.props" />
+</Project>

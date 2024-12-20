@@ -1,0 +1,56 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="~/assets/js/filter.js"></script>
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="~/assets/script/master.js"></script>
+<script>
+    var param_UCode = '@ViewBag.UCode';
+    var param_UomMode = '@ViewBag.UomMode';
+</script>
+<style>
+
+    #fetchReportButton {
+        width: 60% !important;
+        height: 29px;
+        text-align: center !important;
+        padding: 0px;
+    }
+</style>
+<div class="">
+    <div class="card shadow-sm">
+        <div class="card-body  shadow-sm">
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="txtUOM" class="col-form-label-sm fw-bold">
+                        <input type="hidden" id="txtCode" value="0" />
+                        UOM <span style="color:red">*</span>
+                    </label>
+                    <input type="text" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name" maxlength="10">
+
+                </div>
+
+                <div class="col-md-3">
+                    <label for="txtDigitAfterDecimal" class="col-form-label-sm fw-bold">
+                        Digit After Decimal<span style="color:red">*</span>
+                    </label>
+                    <input type="Number" id="txtDigitAfterDecimal" name="txtDigitAfterDecimal" autocomplete="off" class="Number form-control form-control-sm box_border" placeholder="Digit After Decimal">
+                </div>
+                <div class="col-md-2" style="margin-top: 30px !important;">
+
+                    <button class="btn btn-primary btn-height" onclick="Save()">Save</button>
+                    <button class="btn btn-danger btn-height" onclick="BackUOMMaster()">Back</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
