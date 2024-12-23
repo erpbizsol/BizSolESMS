@@ -49,7 +49,7 @@ function Save() {
             toastr.error('Please enter a UOM Name.');
             $("#txtUOM").focus();
         }
-        else if (digitAfterDecimal === "") {
+        else if (digitAfterDecimal === "" &&  digitAfterDecimal === "0") {
             toastr.error('Please enter  digit After Decimal  in 0.!');
             $("#txtDigitAfterDecimal").focus();
         }
@@ -74,6 +74,7 @@ function Save() {
                     if (response.Status === 'Y') {
                         if (param_UomMode > 'Edit' && param_UCode > 0) {
                             toastr.success(response.Msg);
+                            alert(response.Msg);
                             ShowUomMasterlist();
 
                         }
@@ -84,7 +85,7 @@ function Save() {
 
                     }
                     else {
-                        toastr.error("Unexpected response format.");
+                        toastr.error(response.Msg);
                     }
                 },
                 error: function (xhr, status, error) {

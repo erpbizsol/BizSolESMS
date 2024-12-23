@@ -82,7 +82,7 @@ function Save() {
 
                     }
                     else {
-                        toastr.error("Unexpected response format.");
+                        toastr.error(response.Msg);
                     }
                 },
                 error: function (xhr, status, error) {

@@ -2,7 +2,7 @@
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 
 $(document).ready(function () {
-    $("#ERPHeading").text("Locatoin");
+    $("#ERPHeading").text("Location");
 
     $('#txtLocationName').on('keydown', function (e) {
         if (e.key === "Enter") {
@@ -67,7 +67,7 @@ function Save() {
 
                     }
                     else {
-                        toastr.error("Unexpected response format.");
+                        toastr.error(response.Msg);
                     }
                 },
                 error: function (xhr, status, error) {
