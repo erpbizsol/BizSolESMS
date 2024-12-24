@@ -159,6 +159,12 @@ namespace Bizsol_ESMS.Controllers
         }
         #endregion ItemMaster
 
+        #region ItemMaster
+        public IActionResult UserMaster()
+        {
+            return View();
+        }
+        #endregion ItemMaster
     }
 
 

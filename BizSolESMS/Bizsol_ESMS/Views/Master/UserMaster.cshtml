@@ -1,0 +1,193 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="~/assets/script/UserMaster.js"></script>
+
+<style>
+    .form-group {
+        margin-bottom: 8px;
+    }
+
+    #imgUserForShow
+    {
+        /* margin-left: 29px;
+        margin-top: 20px; */
+        border:1px solid black;
+        height:200px;
+        width:180px;
+        border-radius:2px;
+    }
+
+    #imgSelfie
+    {
+        height: 196px;
+        width: 176px;
+        padding:2px;
+    }
+
+    img{
+         border-radius: 0px;
+        }
+        .table{
+            width:150%;
+        }
+</style>
+<div id="tblUserMaster" style="display:block">
+    <div class="row">
+        <div class="col-sm-12 text-end">
+            <label></label>
+            @* <button type="button" class="btn btn-primary btn-height">DOWNLOAD</button> *@
+            <button type="button" class="btn btn-success btn-height" onclick="Create()">CREATE NEW</button>
+        </div>
+    </div>
+    <div class="card-body mt-2">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <div class="paginator" id="paginator-table">
+        </div>
+    </div>
+</div>
+<div id="FrmUserMaster" style="display:None">
+    <form>
+        <div class="card shadow-sm">
+            <div class="card-body shadow-sm">
+                <fieldset class="rounded-1">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtUserID" class="col-form-label-sm fw-bold">User ID <span class="text-danger">*</span> </label>
+                                    <input type="text" id="txtUserID" class="box_border form-control form-control-sm" placeholder="Enter UserId" autocomplete="off" maxlength="20">
+                                    <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" value="0">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtUserName" class="col-form-label-sm fw-bold">User Name <span class="text-danger">*</span></label>
+                                    <input type="text" id="txtUserName" class="box_border form-control form-control-sm" placeholder="Enter User Name" autocomplete="off" maxlength="20">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtMobileNo" class="col-form-label-sm fw-bold">Mobile No</label>
+                                    <input type="text" id="txtMobileNo" class="box_border form-control form-control-sm Phone" placeholder="Enter Mobile No." autocomplete="off" maxlength="10">
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtPassword" class="col-form-label-sm fw-bold">Password <span class="text-danger">*</span></label>
+                                    <input type="password" id="txtPassword" name="txtPassword" class="box_border form-control form-control-sm" placeholder="Enter Password" autocomplete="off" maxlength="15" />
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtConfirmPassword" class="col-form-label-sm fw-bold">Confirm Password <span class="text-danger">*</span></label>
+                                    <input type="password" id="txtConfirmPassword" name="txtConfirmPassword" class="box_border form-control form-control-sm" placeholder="Enter Confirm Password" autocomplete="off" maxlength="15" />
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtEmailId" class="col-form-label-sm fw-bold">Email Id</label>
+                                    <input type="text" id="txtEmailId" class="box_border form-control form-control-sm" placeholder="Enter Email Id" autocomplete="off" maxlength="20">
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="ddlGroupName" class="col-form-label-sm fw-bold">User Group Name <span class="text-danger">*</span></label>
+                                    <select id="ddlGroupName" name="ddlGroupName" class="box_border form-control form-control-sm" autocomplete="off">
+                                        <option value="" selected>Please Select User Group</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="ddlDefaultCompany" class="col-form-label-sm fw-bold">Default Company</label>
+                                    <select id="ddlDefaultCompany" name="ddlDefaultCompany" class="box_border form-control form-control-sm" autocomplete="off" disabled>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="ddlDesignation" class="col-form-label-sm fw-bold">Designation <span class="text-danger">*</span></label>
+                                    <select id="ddlDesignation" name="ddlDesignation" class="box_border form-control form-control-sm" autocomplete="off">
+                                        <option value="" selected>Please Select Designation</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtAddress" class="col-form-label-sm fw-bold">Address</label>
+                                    <textarea type="text" id="txtAddress" name="txtAddress" class="box_border form-control form-control-sm" rows="1"></textarea>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtSystemName" class="col-form-label-sm fw-bold">User Login Allow Form System</label>
+                                    <input type="text" id="txtSystemName" class="box_border form-control form-control-sm" placeholder="Enter System Name" autocomplete="off" maxlength="100">
+                                </div>
+                                <div class="col-md-2 without-label-field">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="chkActive" name="chkActive" class="box_border" checked />
+                                        <label for="chkActive">Active</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 without-label-field">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="chkIsBizSolUser" name="chkIsBizSolUser" class="box_border" checked />
+                                        <label for="chkIsBizSolUser">BizSol User</label>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <center>
+                                <div style="display:none">
+                                    <input type="file" id="txtUserImg" name="txtUserImg" class="box_border form-control form-control-sm" accept="image/*" capture="camera" />
+                                    <input type="hidden" id="hfUserImg" name="hfUserImg" value="" />
+                                    <input type="hidden" id="hfUserIm" name="hfUserImg" value="" />
+                                </div>
+                                <div id="imgUserForShow">
+                                    <img id="imgSelfie" class="" src="" />
+                                </div>
+                                <div class="col-md-10 mt-2">
+                                    <button type="button" style="width: 181px;" id="btnBrowse" class="btn btn-primary btn-height">BROWSE</button>
+                                </div>
+                            </center>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <input type="checkbox" id="chkOTPApplicable" name="chkOTPApplicable" class="box_border" checked />
+                                    <label for="chkOTPApplicable">OTP Applicable</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input type="checkbox" id="chkShowClientInProductionReport" name="chkShowClientInProductionReport" class="box_border" checked />
+                                    <label for="chkShowClientInProductionReport">Show Client In Production Report</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="form-group">
+                                    <input type="checkbox" id="chkChangePasswordForNextLogIn" name="chkChangePasswordForNextLogIn" class="box_border" checked />
+                                    <label for="chkChangePasswordForNextLogIn">User Change Password For Next LogIn</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input type="checkbox" id="chkShowRatesInQuotation" name="chkShowRatesInQuotation" class="box_border" checked />
+                                    <label for="chkShowRatesInQuotation">Show Rates In Quotation</label>
+                                </div>
+                            </div>
+                            <div style="text-align:end">
+                                <button type="button" id="btnSave" class="btn btn-primary btn-height waves-effect">Save</button>
+                                <button type="button" id="btnBack" class="btn btn-danger btn-height waves-effect">Back</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </fieldset>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="~/assets/js/filter.js"></script>
