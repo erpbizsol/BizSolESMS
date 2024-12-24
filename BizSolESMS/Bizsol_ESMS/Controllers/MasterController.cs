@@ -141,22 +141,18 @@ namespace Bizsol_ESMS.Controllers
         #endregion WarehouseMaster
 
         #region ItemMaster
+        public IActionResult ItemConfigList()
+        {
+
+            return View();
+        }
         public IActionResult ItemMasterList()
         {
 
             return View();
         }
 
-        public IActionResult CreateItemMaster()
-        {
-            string WCode = HttpContext.Request.Query["Code"].ToString();
-            string WMaode = HttpContext.Request.Query["Mode"].ToString();
-
-            ViewBag.WCode = WCode == "" ? 0 : Convert.ToInt32(WCode);
-            ViewBag.WMode = WMaode == "" ? "New" : WMaode;
-
-            return View();
-        }
+     
         #endregion ItemMaster
 
         #region ItemMaster
