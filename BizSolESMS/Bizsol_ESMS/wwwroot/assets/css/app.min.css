@@ -93,7 +93,9 @@ body {
 .bg-light-subtle {
     background-color: rgb(39 84 129) !important;
 }
-
+.without-label-field {
+    margin-top: 2.1rem;
+}
 .logo-txt {
     font-weight: 700;
     font-size: 18px;
@@ -807,7 +809,7 @@ body[data-layout=horizontal] .footer {
 
     #sidebar-menu li > a:hover {
         border-radius: 0px 0px 0px 0px;
-        border-left: 5px solid #1a355b;
+        /*border-left: 5px solid #1a355b;*/
         color: #fff !important;
         font-family: Arial;
         /*background-image: linear-gradient(#5880b7, #69bafa);*/
