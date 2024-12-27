@@ -57,11 +57,6 @@ $(document).ready(function () {
     });
     $('#txtBrand').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtMRP").focus();
-        }
-    });
-    $('#txtMRP').on('keydown', function (e) {
-        if (e.key === "Enter") {
             $("#txtReorderLevel").focus();
         }
     });
@@ -100,8 +95,56 @@ $(document).ready(function () {
     $('#exportExcel').click(function () {
         exportTableToExcel();
     });
- 
+    UpdateLabelforItemMaster();
+
 });
+function UpdateLabelforItemMaster() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowItemConfig`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (Array.isArray(response) && response.length > 0) {
+                response.forEach(function (item) {
+                    if (item.ItemNameHeader) {
+                        $("#txtItemNamelab").text(item.ItemNameHeader);
+                    } else {
+                        $("#txtItemNamelab").text("Item Name"); 
+                    }
+                    if (item.ItembarcodeHeader) {
+                        $("#txtItembarcodelab").text(item.ItembarcodeHeader);
+                    } else {
+                        $("#txtItembarcodelab").text("Item Bar Code");
+                    }
+                    if (item.GroupItemHeader) {
+                        $("#GroupItemHeaderlab").text(item.GroupItemHeader);
+                    } else {
+                        $("#GroupItemHeaderlab").text("Group Item");
+                    }
+                    if (item.SubGroupItemHeader) {
+                        $("#SubGroupItemHeaderlab").text(item.SubGroupItemHeader);
+                    } else {
+                        $("#SubGroupItemHeaderlab").text("Sub Group Item");
+                    }
+                    if (item.SubLocationItemHeader) {
+                        $("#SubLocationItemHeaderlab").text(item.SubLocationItemHeader);
+                    } else {
+                        $("#SubLocationItemHeaderlab").text("Location Item");
+                    }
+                    
+                });
+            } else {
+                $("#txtItemNamelab").text("Static Label for Item Name"); 
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $("#txtItemNamelab").text("Error fetching label data"); 
+        }
+    });
+}
 
 function ShowItemMasterlist() {
     $.ajax({
@@ -112,18 +155,17 @@ function ShowItemMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["Item Name", "Display Name", "Category Name", "Group Name", "Sub Group Name", "Brand Name","Location Name"];
-                const NumericFilterColumn = ["MRP", "Reorder Level", "Reorder Qty","Qty In Box"];
+                const StringFilterColumn = ["Item Name", "Display Name", "Category Name", "Group Name", "Sub Group Name", "Brand Name", "Location Name"];
+                const NumericFilterColumn = ["Reorder Level", "Reorder Qty", "Qty In Box"];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Code"];
                 const ColumnAlignment = {
-                    "MRP":'right',
-                    "Reorder Level":'right',
-                    "Reorder Qty":'right',
-                    "Qty In Box":'right',
+                    "Reorder Level": 'right',
+                    "Reorder Qty": 'right',
+                    "Qty In Box": 'right',
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
@@ -154,7 +196,7 @@ function Save() {
         $("#txtQtyinBox").focus();
     } else {
         const payload = {
-            Code:$("#hfCode").val(),
+            Code: $("#hfCode").val(),
             ItemName: $("#txtItemName").val(),
             DisplayName: $("#txtDisplayName").val(),
             ItemBarCode: $("#txtItembarcode").val(),
@@ -164,11 +206,12 @@ function Save() {
             GroupName: $("#txtGroupItem").val(),
             SubGroupName: $("#txtSubGroupItem").val(),
             BrandName: $("#txtBrand").val(),
-            MRP: parseFloat($("#txtMRP").val()),
             ReorderLevel: parseInt($("#txtReorderLevel").val()),
             ReorderQty: parseInt($("#txtReorderQty").val()),
             LocationName: $("#txtItemLocation").val(),
             BoxPacking: $("#txtBoxPacking").val(),
+            batchApplicable: $("#txtBatchApplicable").val(),
+            maintainExpiry: $("#txtMaintainExpiry").val(),
             QtyInBox: $("#txtQtyinBox").val()
         };
         $.ajax({
@@ -182,8 +225,8 @@ function Save() {
             },
             success: function (response) {
                 if (response.Status === 'Y') {
-                        toastr.success(response.Msg);
-                        ShowItemMasterlist();
+                    toastr.success(response.Msg);
+                    ShowItemMasterlist();
                 }
                 else {
                     toastr.error(response.Msg);
@@ -194,7 +237,7 @@ function Save() {
                 toastr.error("An error occurred while saving the data.");
             }
         });
-    
+
     }
 }
 function CreateItemMaster() {
@@ -236,40 +279,40 @@ function deleteItem(code) {
 function Edit(code) {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-        $.ajax({
-            url: `${appBaseURL}/api/Master/ShowItemByCode?Code=` + code,
-            type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (item) {
-                if (item) {
-                    $("#hfCode").val(item.Code),
-                    $("#txtItemName").val(item.ItemName),
-                    $("#txtDisplayName").val(item.DisplayName),
-                    $("#txtItembarcode").val(item.ItemBarCode),
-                    $("#txtUOM").val(item.UomName),
-                    $("#txtHSNCode").val(item.HSNCode),
-                    $("#txtCategory").val(item.CategoryName),
-                    $("#txtGroupItem").val(item.GroupName),
-                    $("#txtSubGroupItem").val(item.SubGroupName),
-                    $("#txtBrand").val(item.BrandName),
-                    $("#txtMRP").val(item.MRP),
-                    $("#txtReorderLevel").val(item.ReorderLevel),
-                    $("#txtReorderQty").val(item.ReorderQty),
-                    $("#txtItemLocation").val(item.locationName),
-                    $("#txtBoxPacking").val(item.BoxPacking),
-                    $("#txtQtyinBox").val(item.QtyInBox)
-                   
-                } else {
-                    toastr.error("Record not found...!");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowItemByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (item) {
+            if (item) {
+            $("#hfCode").val(item.Code),
+            $("#txtItemName").val(item.ItemName),
+            $("#txtDisplayName").val(item.DisplayName),
+            $("#txtItembarcode").val(item.ItemBarCode),
+            $("#txtUOM").val(item.UomName),
+            $("#txtHSNCode").val(item.HSNCode),
+            $("#txtCategory").val(item.CategoryName),
+            $("#txtGroupItem").val(item.GroupName),
+            $("#txtSubGroupItem").val(item.SubGroupName),
+            $("#txtBrand").val(item.BrandName),
+            $("#txtReorderLevel").val(item.ReorderLevel),
+            $("#txtReorderQty").val(item.ReorderQty),
+            $("#txtItemLocation").val(item.locationName),
+            $("#txtBoxPacking").val(item.BoxPacking),
+            $("#txtBatchApplicable").val(item.BatchApplicable),
+            $("#txtMaintainExpiry").val(item.MaintainExpiry),
+            $("#txtQtyinBox").val(item.QtyInBox)
+            } else {
+                toastr.error("Record not found...!");
             }
-        });
-  
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
 }
 
 function exportTableToExcel() {
@@ -293,7 +336,6 @@ function exportTableToExcel() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "UOMMaster.xlsx");
 }
-
 
 function GetGroupMasterList() {
     $.ajax({
@@ -424,7 +466,6 @@ function GetBrandDropDownList() {
         }
     });
 }
-
 function GetLocationDropDownList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetLocationDropDown`,
@@ -449,4 +490,9 @@ function GetLocationDropDownList() {
             $('#txtItemLocationList').empty();
         }
     });
+}
+
+function updateDisplayName() {
+    const itemName = document.getElementById('txtItemName').value;
+    document.getElementById('txtDisplayName').value = itemName;
 }

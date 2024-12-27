@@ -35,31 +35,31 @@ function BackMaster() {
     window.location.href = '/Master/ItemMasterList';
 }
 function Save() {
-    var ItemName = $("#txtItemName").val();
-    var Itembarcode = $("#txtItembarcode").val();
-    var GroupItem = $("#txtGroupItem").val();
-    var SubGroupItem = $("#txtSubGroupItem").val();
-    var ItemLocation = $("#txtItemLocation").val();
-    if (!ItemName) {
-        toastr.error('Please enter an Item Name!');
-        $("#txtItemName").focus();
-    } else if (txtItembarcode ="") {
-        toastr.error('Please enter Item bar code!');
-        $("#txtItembarcode").focus();
-    }
-    else if (GroupItem = "") {
-        toastr.error('Please enter Group Item!');
-        $("#txtGroupItem").focus();
-    }
-    else if (SubGroupItem = "") {
-        toastr.error('Please enter Sub Group Item!');
-        $("#txtSubGroupItem").focus();
-    }
-    else if (ItemLocation = "") {
-        toastr.error('Please enter  Location Item!');
-        $("#txtItemLocation").focus();
-    }
-    else {
+    //var ItemName = $("#txtItemName").val();
+    //var Itembarcode = $("#txtItembarcode").val();
+    //var GroupItem = $("#txtGroupItem").val();
+    //var SubGroupItem = $("#txtSubGroupItem").val();
+    //var ItemLocation = $("#txtItemLocation").val();
+    //if (!ItemName) {
+    //    toastr.error('Please enter an Item Name!');
+    //    $("#txtItemName").focus();
+    //} else if (txtItembarcode ="") {
+    //    toastr.error('Please enter Item bar code!');
+    //    $("#txtItembarcode").focus();
+    //}
+    //else if (GroupItem = "") {
+    //    toastr.error('Please enter Group Item!');
+    //    $("#txtGroupItem").focus();
+    //}
+    //else if (SubGroupItem = "") {
+    //    toastr.error('Please enter Sub Group Item!');
+    //    $("#txtSubGroupItem").focus();
+    //}
+    //else if (ItemLocation = "") {
+    //    toastr.error('Please enter  Location Item!');
+    //    $("#txtItemLocation").focus();
+    //}
+   /* else {*/
         const payload = {
             Code: $("#hfCode").val(),
             ItemNameHeader: $("#txtItemName").val(),
@@ -91,7 +91,7 @@ function Save() {
             }
         });
 
-    }
+    //}
 }
 function Edit() {
     $("#txtListpage").hide();
