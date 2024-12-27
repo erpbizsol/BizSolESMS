@@ -5,7 +5,6 @@ namespace Bizsol_ESMS.Controllers
 {
     public class MasterController : Controller
     {
-
         #region UOM
         public IActionResult UOMMasterList()
         {
@@ -152,16 +151,27 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
 
-     
+
         #endregion ItemMaster
 
-        #region ItemMaster
+        #region UserMaster
         public IActionResult UserMaster()
         {
             return View();
         }
-        #endregion ItemMaster
+        #endregion UserMaster
+
+        #region UserGroupMaster
+        public IActionResult UserGroupMaster()
+        {
+            return View();
+        }
+        #endregion UserGroupMaster
+        #region UserMenuRights
+        public IActionResult UserMenuRights()
+        {
+            return View();
+        }
+        #endregion UserMenuRights
     }
-
-
 }
