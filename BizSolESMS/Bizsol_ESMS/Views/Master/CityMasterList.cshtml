@@ -1,0 +1,67 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="~/assets/script/citymasterlist.js"></script>
+<div class="" id="txtListpage" style="display:block;">
+    <div class="row">
+        <div class="col-sm-12 text-end">
+            <label></label>
+            <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
+            <button type="button" class="btn btn-success btn-height" onclick="CreateCityMaster()">CREATE NEW</button>
+        </div>
+    </div>
+    <div class="card-body mt-2">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginator -->
+        <div class="paginator" id="paginator-table">
+        </div>
+    </div>
+</div>
+<div id="txtCreatepage" style="display:none;">
+    <div class="card shadow-sm" style="background-color:#e9e9ef">
+        <div>
+            <h4 class="mt-4" style="padding-left:20px">Add</h4>
+        </div>
+        <div class="card-body shadow-sm">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <label for="txtCityName" class="col-form-label-sm fw-bold">City Name </label><sub style="color:red">*</sub>
+                            <input type="hidden" id="hfCode" value="0">
+                            <input type="text" id="txtCityName" class=" box_border form-control form-control-sm" autocomplete="off" maxlength="50" placeholder="City Name">
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <label for="txtPinCode" class="col-form-label-sm fw-bold">Pin Code</label><sub style="color:red">*</sub>
+                            <input type="text" id="txtPinCode" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Pin Code">
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <label for="txtStateName" class="col-form-label-sm fw-bold">State Name</label>
+                            <datalist id="txtStateNameList"></datalist>
+                            <input list="txtStateNameList" id="txtStateName" name="txtStateName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="State Name">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row text-end">
+                <div class="col-md-12" style="margin-top: 30px !important;">
+                    <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
+                    <button class="btn btn-danger btn-height" onclick="BackMaster()">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/filter.js"></script>
+

@@ -9,6 +9,7 @@ $(document).ready(function () {
             $("#txtbtnSave").focus();
         }
     });
+    GetCityDropDownList();
     ShowItemMasterlist();
     $('#exportExcel').click(function () {
         exportTableToExcel();
@@ -20,7 +21,15 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.length > 0) {
                     response.forEach(function (item) {
-                        $("#txtWarehouseName").val(item.WarehouseName);
+                        $("#txtWarehouseName").val(item.warehouseName);
+                        $("#txtWarehouseType").val(item.WarehouseType);
+                        $("#txtAddress").val(item.Address);
+                        $("#txtPin").val(item.Pin);
+                        $("#txtCity").val(item.CityName);
+                        $("#txtGSTIN").val(item.GSTIN);
+                        $("#txtDefaultWarehouse").val(item.DefaultWarehouse);
+                        $("#txtStoreWarehouse").val(item.StoreWarehouse);
+                        $("#txtInTransitwarehouse").val(item.InTransitwarehouse);
                     });
                 } else {
                     toastr.error("Record not found...!");
@@ -34,59 +43,184 @@ $(document).ready(function () {
     }
 });
 function Save() {
-        const WarehouseName = $("#txtWarehouseName").val();
-        if (WarehouseName === "") {
-            toastr.error('Please enter a Warehouse Name .!');
-            $("#txtWarehouseName").focus();
-        }
-        else {
-            const payload = {
-                code: parseInt(WCode) || 0,
-                WarehouseName: WarehouseName,
-            };
-            const isUpdate = payload.code > 0;
-            const url = isUpdate
-            $.ajax({
-                url: `${appBaseURL}/api/Master/InsertWarehouseMaster`,
-                type: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(payload),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('Auth-Key', authKeyData);
-                },
-                success: function (response) {
-                    if (response.Status === 'Y') {
-                        if (WMode > 'Edit' && WCode > 0) {
-                            toastr.success(response.Msg);
-                            ShowItemMasterlist();
+    // Collect input values
+    var WarehouseName = $("#txtWarehouseName").val();
+    var WarehouseType = $("#txtWarehouseType").val();
+    var Address = $("#txtAddress").val();
+    var Pin = $("#txtPin").val();
+    var City = $("#txtCity").val();
+    var GSTIN = $("#txtGSTIN").val();
+    var DefaultWarehouse = $("#txtDefaultWarehouse").val();
+    var StoreWarehouse = $("#txtStoreWarehouse").val();
+    var InTransitwarehouse = $("#txtInTransitwarehouse").val();
 
-                        }
-                        else {
-                            toastr.success(response.Msg);
-                            ShowItemMasterlist();
-                        }
+    // Client-side validation
+    if (!WarehouseName) {
+        toastr.error('Please enter a Warehouse Name.');
+        $("#txtWarehouseName").focus();
+        return;
+    }
+    if (!WarehouseType) {
+        toastr.error('Please select a Warehouse Type.');
+        $("#txtWarehouseType").focus();
+        return;
+    }
+    if (!Address) {
+        toastr.error('Please enter the Address.');
+        $("#txtAddress").focus();
+        return;
+    }
+    if (!Pin) {
+        toastr.error('Please enter the Pin.');
+        $("#txtPin").focus();
+        return;
+    }
+    if (!City) {
+        toastr.error('Please enter the City.');
+        $("#txtCity").focus();
+        return;
+    }
+    if (!GSTIN) {
+        toastr.error('Please enter the GSTIN.');
+        $("#txtGSTIN").focus();
+        return;
+    }
+    if (!DefaultWarehouse) {
+        toastr.error('Please specify if it is the Default Warehouse.');
+        $("#txtDefaultWarehouse").focus();
+        return;
+    }
+    if (!StoreWarehouse) {
+        toastr.error('Please specify if it is a Store Warehouse.');
+        $("#txtStoreWarehouse").focus();
+        return;
+    }
+    if (!InTransitwarehouse) {
+        toastr.error('Please specify if it is an In-Transit Warehouse.');
+        $("#txtInTransitwarehouse").focus();
+        return;
+    }
 
+    // Prepare payload
+    const payload = {
+        code: parseInt(WCode) || 0,
+        WarehouseName: WarehouseName,
+        WarehouseType: WarehouseType,
+        Address: Address,
+        Pin: Pin,
+        City: City,
+        GSTIN: GSTIN,
+        DefaultWarehouse: DefaultWarehouse,
+        StoreWarehouse: StoreWarehouse,
+        InTransitwarehouse: InTransitwarehouse,
+    };
+
+    // Make AJAX request
+    $.ajax({
+        url: `${appBaseURL}/api/Master/InsertWarehouseMaster`,
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.Status === 'Y') {
+                toastr.success(response.Msg);
+                ShowItemMasterlist();
+            } else {
+                toastr.error(response.Msg);
+            }
+        },
+        error: function (xhr) {
+            if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.errors) {
+                // Handle validation errors from the server
+                const errors = xhr.responseJSON.errors;
+                for (const field in errors) {
+                    if (errors.hasOwnProperty(field)) {
+                        toastr.error(`${field}: ${errors[field].join(', ')}`);
                     }
-                    else {
-                        toastr.error(response.Msg);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", xhr.responseText);
-                    toastr.error("An error occurred while saving the data.");
                 }
-            });
+            } else {
+                // Generic error handler
+                toastr.error("An error occurred while saving the data.");
+                console.error("Error:", xhr.responseText);
+            }
         }
-    
+    });
 }
+
+//function Save() {
+//        var WarehouseName = $("#txtWarehouseName").val();
+//        var WarehouseType = $("#txtWarehouseType").val();
+//        var Address = $("#txtAddress").val();
+//        var Pin = $("#txtPin").val();
+//        var City = $("#txtCity").val();
+//        var GSTIN = $("#txtGSTIN").val();
+//        var DefaultWarehouse = $("#txtDefaultWarehouse").val();
+//        var StoreWarehouse = $("#txtStoreWarehouse").val();
+//        var InTransitwarehouse = $("#txtInTransitwarehouse").val();
+//        if (WarehouseName === "") {
+//            toastr.error('Please enter a Warehouse Name .!');
+//            $("#txtWarehouseName").focus();
+//        }
+//        else {
+//            const payload = {
+//                code: parseInt(WCode) || 0,
+//                WarehouseName: WarehouseName,
+//                WarehouseType: WarehouseType,
+//                Address: Address,
+//                Pin: Pin,
+//                City: City,
+//                GSTIN: GSTIN,
+//                DefaultWarehouse: DefaultWarehouse,
+//                StoreWarehouse: StoreWarehouse,
+//                InTransitwarehouse: InTransitwarehouse,
+//            };
+//            const isUpdate = payload.code > 0;
+//            const url = isUpdate
+//            $.ajax({
+//                url: `${appBaseURL}/api/Master/InsertWarehouseMaster`,
+//                type: 'POST',
+//                contentType: 'application/json',
+//                dataType: 'json',
+//                data: JSON.stringify(payload),
+//                beforeSend: function (xhr) {
+//                    xhr.setRequestHeader('Auth-Key', authKeyData);
+//                },
+//                success: function (response) {
+//                    if (response.Status === 'Y') {
+//                        if (WMode > 'Edit' && WCode > 0) {
+//                            toastr.success(response.Msg);
+//                            ShowItemMasterlist();
+
+//                        }
+//                        else {
+//                            toastr.success(response.Msg);
+//                            ShowItemMasterlist();
+//                        }
+
+//                    }
+//                    else {
+//                        toastr.error(response.Msg);
+//                    }
+//                },
+//                error: function (xhr, status, error) {
+//                    console.error("Error:", xhr.responseText);
+//                    toastr.error("An error occurred while saving the data.");
+//                }
+//            });
+//        }
+
+//}
 
 function ShowItemMasterlist() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowWarehouseMaster`,
         type: 'GET',
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key',authKeyData);
+            xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
@@ -175,4 +309,30 @@ function exportTableToExcel() {
     worksheet['!ref'] = XLSX.utils.encode_range(range);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "UOMMaster.xlsx");
+}
+
+function GetCityDropDownList() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetCityDropDown`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#txtCityList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
+                });
+                $('#txtCityList').html(options);
+            } else {
+                $('#txtCityList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtCityList').empty();
+        }
+    });
 }

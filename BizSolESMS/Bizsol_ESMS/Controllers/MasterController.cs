@@ -161,6 +161,21 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion ItemMaster
+
+        #region StateMaster
+        public IActionResult StateMasterList()
+        {
+            return View();
+        }
+        #endregion StateMaster
+
+        #region CityMaster
+        public IActionResult CityMasterList()
+        {
+            return View();
+        }
+        #endregion CityMaster
+
     }
 
 
