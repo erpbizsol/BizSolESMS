@@ -412,13 +412,16 @@ function SaveUserMaster(){
     } else if (ConfirmPassword !== Password) {
         toastr.error('Your password and confirmation password do not match.');
         $("#txtPassword").focus();
-    } else if (GroupName === "") {
+    }else if (!isEmail(EmailId)) {
+        toastr.error('Please enter valid Email !.');
+        $("#txtEmailId").focus();
+    }else if (GroupName === "") {
         toastr.error('Please select User Group !.');
         $("#ddlGroupName").focus();
     } else if (Designation === "") {
         toastr.error('Please select designation.');
         $("#ddlDesignation").focus();
-    } 
+    }
     else {
         const payload = {
            Code:Code, 
@@ -506,4 +509,8 @@ function ClearData()
     $('#chkShowClientInProductionReport').prop("checked", true);
     $('#chkChangePasswordForNextLogIn').prop("checked", true);
     $('#chkShowRatesInQuotation').prop("checked", true);
+}
+function isEmail(email) {
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regex.test(email);
 }

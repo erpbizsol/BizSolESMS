@@ -1,0 +1,65 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="~/assets/script/UserGroupMaster.js"></script>
+
+<style>
+    .form-group {
+        margin-bottom: 8px;
+    }
+</style>
+<div id="tblUserMaster" style="display:block">
+    <div class="row">
+        <div class="col-sm-12 text-end">
+            <label></label>
+            @* <button type="button" class="btn btn-primary btn-height">DOWNLOAD</button> *@
+            <button type="button" class="btn btn-success btn-height" onclick="Create()">CREATE NEW</button>
+        </div>
+    </div>
+    <div class="card-body mt-2">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <div class="paginator" id="paginator-table">
+        </div>
+    </div>
+</div>
+<div id="FrmUserMaster" style="display:None">
+    <form>
+        <div class="card shadow-sm">
+            <div class="card-body shadow-sm">
+                <fieldset class="rounded-1">
+                    <div class="row">
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtGroupName" class="col-form-label-sm fw-bold">Group Name<span class="text-danger">*</span> </label>
+                            <input type="text" id="txtGroupName" class="box_border form-control form-control-sm" placeholder="Enter Group Name" autocomplete="off" maxlength="30">
+                                <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" value="0">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="ddlGroupType" class="col-form-label-sm fw-bold">Type<span class="text-danger">*</span></label>
+                                <select id="ddlGroupType" name="ddlGroupType" class="box_border form-control form-control-sm" autocomplete="off">
+                                <option value="A" selected>Administrator</option>
+                                <option value="U">User</option>
+                                </select>
+                            </div>
+                        <div class="row">
+                            <div style="text-align:end">
+                                <button type="button" id="btnSave" class="btn btn-primary btn-height waves-effect">Save</button>
+                                <button type="button" id="btnBack" class="btn btn-danger btn-height waves-effect">Back</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </fieldset>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="~/assets/js/filter.js"></script>
