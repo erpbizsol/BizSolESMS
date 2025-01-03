@@ -44,7 +44,7 @@ $(document).ready(function () {
 function Save() {
     const GroupName = $("#txtGroupName").val();
     if (GroupName === "") {
-        toastr.error('Please enter a Main Group Name.');
+        toastr.error('Please enter a Group Name.');
         $("#txtGroupName").focus();
     } else {
         const payload = {

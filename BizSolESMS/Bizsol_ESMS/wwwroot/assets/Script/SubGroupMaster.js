@@ -49,8 +49,11 @@ function Save() {
         const SubGroupName = $("#txtSubGroupName").val();
         const GroupName = $("#txtGroupName").val();
         if (SubGroupName === "") {
-            toastr.error('Please enter a UOM Name.');
+            toastr.error('Please enter a Sub Group Name.');
             $("#txtSubGroupName").focus();
+        } else if (GroupName==="") {
+            toastr.error('Please Select Group Name.');
+            $("#txtGroupName").focus();
         }
         else {
             const payload = {

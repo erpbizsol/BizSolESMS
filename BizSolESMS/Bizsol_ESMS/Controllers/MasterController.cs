@@ -167,11 +167,33 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion UserGroupMaster
+
         #region UserMenuRights
         public IActionResult UserMenuRights()
         {
             return View();
         }
         #endregion UserMenuRights
+       
+        #region StateMaster
+        public IActionResult StateMasterList()
+        {
+            return View();
+        }
+        #endregion StateMaster
+
+        #region CityMaster
+        public IActionResult CityMasterList()
+        {
+            return View();
+        }
+        #endregion CityMaster
+
+        #region  AccountMaster 
+        public IActionResult AccountMaster()
+        {
+            return View();
+        }
+        #endregion  AccountMaster 
     }
 }

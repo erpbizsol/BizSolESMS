@@ -1,0 +1,154 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="~/assets/script/accountmaster.js"></script>
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        background: #fff; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .tab-header {
+        display: flex;
+        background: #e3e7ed;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+    }
+
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            color: #fffffff5;
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
+        }
+
+            .tab-header div:hover {
+                background: #0056b3;
+            }
+
+        .tab-header .active {
+            background: #0056b3;
+        }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+</style>
+<div class="" id="txtListpage" style="display:block;">
+    <div class="row">
+        <div class="col-sm-12 text-end">
+            <label></label>
+            <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
+            <button type="button" class="btn btn-success btn-height" onclick="CreateItemMaster()">CREATE NEW</button>
+        </div>
+    </div>
+    <div class="card-body mt-2">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginator -->
+        <div class="paginator" id="paginator-table">
+        </div>
+    </div>
+</div>
+<div id="txtCreatepage" style="display:none;">
+    <div class="card shadow-sm" style="background-color:#e9e9ef">
+        <div class="tabs">
+            <div class="tab-header">
+                <div id="tab1" class="tab active" style="color:white">Account Master</div>
+                <div id="tab2" class="tab" disabled>Tab 2</div>
+                <div id="tab3" class="tab" disabled>Tab 3</div>
+            </div>
+       
+            <div id ="tab1Content" class="tab-content active">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtAccountName" class="col-form-label-sm fw-bold">Account Name </label><sub style="color:red">*</sub>
+                                <input type="hidden" id="hfCode" value="0">
+                                <input type="text" id="txtAccountName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Account Name">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label>
+                                <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtPANNo" class="col-form-label-sm fw-bold">PAN No</label>
+                                <input type="text" id="txtPANNo" class="box_border form-control form-control-sm Phone" autocomplete="off" maxlength="20" placeholder="PAN No">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtIsClient" class="col-form-label-sm fw-bold">Client</label>
+                                <select id="txtIsClient" class="box_border form-control form-control-sm">
+                                    <option value="N">N</option>
+                                    <option value="Y">Y</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtIsVendor" class="col-form-label-sm fw-bold">Vendor </label>
+                                <select id="txtIsVendor" class="box_border form-control form-control-sm">
+                                    <option value="N">N</option>
+                                    <option value="Y">Y</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtIsMSME" class="col-form-label-sm fw-bold">MSME </label>
+                                <select id="txtIsMSME" class="box_border form-control form-control-sm">
+                                    <option value="N">N</option>
+                                    <option value="Y">Y</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-end">
+                    <div class="col-md-12" style="margin-top: 30px !important;">
+                        <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
+                        <button class="btn btn-danger btn-height" onclick="BackMaster()">Back</button>
+                    </div>
+                </div>
+
+            </div>
+            <div id="tab2Content" class="tab-content" style="display: none;">
+                <h2>Tab 2 Content</h2>
+                <p>This is the content for Tab 2.</p>
+            </div>
+            <div id="tab3Content" class="tab-content" style="display: none;">
+                <h2>Tab 3 Content</h2>
+                <p>This is the content for Tab 3.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/filter.js"></script>
+

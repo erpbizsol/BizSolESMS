@@ -8,6 +8,11 @@ $(document).ready(function () {
     });
     $('#txtUOM').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#txtDigitAfterDecimal").focus();
+        }
+    });
+    $('#txtDigitAfterDecimal').on('keydown', function (e) {
+        if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
     });
@@ -43,21 +48,21 @@ $(document).ready(function () {
 });
 
 function Save() {
-        const uomName = $("#txtUOM").val();
-        const digitAfterDecimal = $("#txtDigitAfterDecimal").val();
+      var uomName = $("#txtUOM").val().trim();
+      var digitAfterDecimal = $("#txtDigitAfterDecimal").val().trim();
         if (uomName === "") {
             toastr.error('Please enter a UOM Name.');
             $("#txtUOM").focus();
-        }
-        else if (digitAfterDecimal === "" &&  digitAfterDecimal === "0") {
-            toastr.error('Please enter  digit After Decimal  in 0.!');
+        } else if (digitAfterDecimal === "" || isNaN(digitAfterDecimal) || parseInt(digitAfterDecimal) < 0) {
+            toastr.error('Please enter a valid digit after decimal is 0.');
             $("#txtDigitAfterDecimal").focus();
         }
         else {
+            var digitAfterDecimalValue = digitAfterDecimal === "" ? 0 : parseInt(digitAfterDecimal);
             const payload = {
                 code: parseInt(param_UCode) || 0,
                 uomName: uomName,
-                digitAfterDecimal: digitAfterDecimal,
+                digitAfterDecimal: digitAfterDecimalValue,
             };
             const isUpdate = payload.code > 0;
             const url = isUpdate
