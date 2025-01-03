@@ -4,7 +4,58 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 
 $(document).ready(function () {
     $("#ERPHeading").text("Warehouse");
+    $(".Number").on("keypress", function (e) {
+        // Allow only digits (0-9)
+        if (e.which < 48 || e.which > 57) {
+            e.preventDefault(); // Prevent the character from being entered
+        }
+    });
+
+    $(".Number").on("input", function () {
+        // Ensure no non-numeric characters exist in the field
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
     $('#txtWarehouseName').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtWarehouseType").focus();
+        }
+    });
+    $('#txtWarehouseType').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtAddress").focus();
+        }
+    });
+    $('#txtAddress').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtPin").focus();
+        }
+    });
+    $('#txtPin').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtCity").focus();
+        }
+    });
+    $('#txtCity').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtGSTIN").focus();
+        }
+    });
+    $('#txtGSTIN').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtDefaultWarehouse").focus();
+        }
+    });
+    $('#txtDefaultWarehouse').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtStoreWarehouse").focus();
+        }
+    });
+    $('#txtStoreWarehouse').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtInTransitwarehouse").focus();
+        }
+    });
+    $('#txtInTransitwarehouse').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
@@ -150,70 +201,6 @@ function Save() {
         }
     });
 }
-
-//function Save() {
-//        var WarehouseName = $("#txtWarehouseName").val();
-//        var WarehouseType = $("#txtWarehouseType").val();
-//        var Address = $("#txtAddress").val();
-//        var Pin = $("#txtPin").val();
-//        var City = $("#txtCity").val();
-//        var GSTIN = $("#txtGSTIN").val();
-//        var DefaultWarehouse = $("#txtDefaultWarehouse").val();
-//        var StoreWarehouse = $("#txtStoreWarehouse").val();
-//        var InTransitwarehouse = $("#txtInTransitwarehouse").val();
-//        if (WarehouseName === "") {
-//            toastr.error('Please enter a Warehouse Name .!');
-//            $("#txtWarehouseName").focus();
-//        }
-//        else {
-//            const payload = {
-//                code: parseInt(WCode) || 0,
-//                WarehouseName: WarehouseName,
-//                WarehouseType: WarehouseType,
-//                Address: Address,
-//                Pin: Pin,
-//                City: City,
-//                GSTIN: GSTIN,
-//                DefaultWarehouse: DefaultWarehouse,
-//                StoreWarehouse: StoreWarehouse,
-//                InTransitwarehouse: InTransitwarehouse,
-//            };
-//            const isUpdate = payload.code > 0;
-//            const url = isUpdate
-//            $.ajax({
-//                url: `${appBaseURL}/api/Master/InsertWarehouseMaster`,
-//                type: 'POST',
-//                contentType: 'application/json',
-//                dataType: 'json',
-//                data: JSON.stringify(payload),
-//                beforeSend: function (xhr) {
-//                    xhr.setRequestHeader('Auth-Key', authKeyData);
-//                },
-//                success: function (response) {
-//                    if (response.Status === 'Y') {
-//                        if (WMode > 'Edit' && WCode > 0) {
-//                            toastr.success(response.Msg);
-//                            ShowItemMasterlist();
-
-//                        }
-//                        else {
-//                            toastr.success(response.Msg);
-//                            ShowItemMasterlist();
-//                        }
-
-//                    }
-//                    else {
-//                        toastr.error(response.Msg);
-//                    }
-//                },
-//                error: function (xhr, status, error) {
-//                    console.error("Error:", xhr.responseText);
-//                    toastr.error("An error occurred while saving the data.");
-//                }
-//            });
-//        }
-
-//}
 
 function ShowItemMasterlist() {
     $.ajax({

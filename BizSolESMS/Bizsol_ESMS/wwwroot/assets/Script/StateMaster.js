@@ -75,7 +75,11 @@ function Save() {
     } else if (!StateName) {
         toastr.error('Please enter a State Name!');
         $("#txtStateName").focus();
-    } else {
+    } else if (!CountryName) {
+        toastr.error('Please select a Country Name!');
+        $("#txtCountryName").focus();
+    }
+    else {
         const payload = {
             Code: $("#hfCode").val(),
             StateCode: $("#txtStateCode").val(),

@@ -1,7 +1,7 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
-    $("#ERPHeading").text("State");
+    $("#ERPHeading").text("City");
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
     });
@@ -69,7 +69,15 @@ function Save() {
     if (!CityName) {
         toastr.error('Please enter an City Name!');
         $("#txtCityName").focus();
-    }else {
+    } else if (!PinCode) {
+        toastr.error('Please enter an Pin Code!');
+        $("#txtPinCode").focus();
+    }
+    else if (!StateName) {
+        toastr.error('Please enter an State Name!');
+        $("#txtStateName").focus();
+    }
+    else {
         const payload = {
             Code: $("#hfCode").val(),
             CityName: $("#txtCityName").val(),

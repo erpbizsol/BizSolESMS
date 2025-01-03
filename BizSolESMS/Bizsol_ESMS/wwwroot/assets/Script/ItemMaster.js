@@ -187,14 +187,52 @@ function Save() {
     var ItemName = $("#txtItemName").val();
     var BoxPacking = $("#txtBoxPacking").val();
     var QtyInBox = $("#txtQtyinBox").val();
-
+    var DisplayName = $("#txtDisplayName").val();
+    var UOM = $("#txtUOM").val();
+    var HSNCode = $("#txtHSNCode").val();
+    var Category = $("#txtCategory").val();
+    var Brand = $("#txtBrand").val();
+    var ReorderLevel = $("#txtReorderLevel").val();
+    var ReorderQty = $("#txtReorderQty").val();
     if (!ItemName) {
         toastr.error('Please enter an Item Name!');
         $("#txtItemName").focus();
-    } else if (BoxPacking === "Y" && (!QtyInBox || QtyInBox === "0")) {
+    }
+    else if (DisplayName === "") {
+        toastr.error('Please enter a Display Name!');
+        $("#txtDisplayName").focus();
+    }
+    else if (UOM === "") {
+        toastr.error('Please select a UOM Name!');
+        $("#txtUOM").focus();
+    }
+    else if (HSNCode === "") {
+        toastr.error('Please enter a HSN Code!');
+        $("#txtHSNCode").focus();
+    }
+    else if (Category === "") {
+        toastr.error('Please select a Category!');
+        $("#txtCategory").focus();
+    }
+    else if (Brand === "") {
+        toastr.error('Please select a Brand!');
+        $("#txtBrand").focus();
+    }
+    else if (ReorderLevel === "" || isNaN(ReorderLevel) || parseInt(ReorderLevel) < 0) {
+        toastr.error('Please enter a valid digit after decimal is 0.');
+        $("#txtReorderLevel").focus();
+    }
+    else if (ReorderQty === "" || isNaN(ReorderQty) || parseInt(ReorderQty) < 0) {
+        toastr.error('Please enter a valid digit after decimal is 0.');
+        $("#txtReorderQty").focus();
+    }
+    else if (BoxPacking === "Y" && (!QtyInBox || QtyInBox === "0")) {
         toastr.error('Please enter a valid Qty in Box!');
         $("#txtQtyinBox").focus();
-    } else {
+    }
+    else {
+        var ReorderLevels = ReorderLevel === "" ? 0 : parseInt(ReorderLevel);
+        var ReorderQtys = ReorderQty === "" ? 0 : parseInt(ReorderQty);
         const payload = {
             Code: $("#hfCode").val(),
             ItemName: $("#txtItemName").val(),
@@ -206,8 +244,10 @@ function Save() {
             GroupName: $("#txtGroupItem").val(),
             SubGroupName: $("#txtSubGroupItem").val(),
             BrandName: $("#txtBrand").val(),
-            ReorderLevel: parseInt($("#txtReorderLevel").val()),
-            ReorderQty: parseInt($("#txtReorderQty").val()),
+            ReorderLevel: ReorderLevels,
+            ReorderQty: ReorderQtys,
+           // ReorderLevel: parseInt($("#txtReorderLevel").val()),
+           // ReorderQty: parseInt($("#txtReorderQty").val()),
             LocationName: $("#txtItemLocation").val(),
             BoxPacking: $("#txtBoxPacking").val(),
             batchApplicable: $("#txtBatchApplicable").val(),
