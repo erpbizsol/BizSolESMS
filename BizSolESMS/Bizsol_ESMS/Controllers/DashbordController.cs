@@ -21,6 +21,7 @@ namespace Bizsol_ESMS.Controllers
                       $"}}";
             
             ViewBag.AppBaseURL = _configuration["AppBaseURL"];
+            ViewBag.AppBaseURLMenu = _configuration["AppBaseURLMenu"];
             ViewBag.AuthKey = AuthKey;
             return View();
         }

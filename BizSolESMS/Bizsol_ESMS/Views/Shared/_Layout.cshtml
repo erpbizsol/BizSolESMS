@@ -162,7 +162,7 @@
         </header>
 
         <!-- ========== Left Sidebar Start ========== -->
-        <div class="vertical-menu">
+       @*  <div class="vertical-menu">
 
             <div data-simplebar class="h-100">
 
@@ -201,8 +201,17 @@
                 </div>
                 <!-- Sidebar -->
             </div>
+        </div> *@
+        <div class="vertical-menu">
+            <div data-simplebar class="h-100">
+                <div id="sidebar-menu">
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-
         <!-- Left Sidebar End -->
         <!-- ============================================================== -->
         <!-- Start right Content here -->
@@ -436,12 +445,14 @@
         var authKey = '@Html.Raw(ViewBag.AuthKey)';
        if (authKey !== '') {
               sessionStorage.setItem('authKey', JSON.stringify(authKey));
-              sessionStorage.setItem('AppBaseURL', '@Html.Raw(ViewBag.AppBaseURL)');
+            sessionStorage.setItem('AppBaseURL', '@Html.Raw(ViewBag.AppBaseURL)');
+            sessionStorage.setItem('AppBaseURLMenu', '@Html.Raw(ViewBag.AppBaseURLMenu)');
               //window.AppBaseURL='@Html.Raw(ViewBag.AppBaseURL)';
         }
         // });
 
     </script>
     <script src="~/assets/script/logout.js"></script>
+    <script src="~/assets/js/menu.js"></script>
 </body>
 </html>
