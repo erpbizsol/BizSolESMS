@@ -134,11 +134,14 @@ function UserGroupList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetUserGroupMasterList`,
         type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
         success: function (response) {
             if (response.length > 0) {
                 const select = $('#ddlGroupName');
                 response.forEach(item => {
-                    select.append(`<option value="${item.Code}">${item.GroupName}</option>`);
+                    select.append(`<option value="${item.Code}">${item["Group Name"]}</option>`);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -153,6 +156,9 @@ function DesignationList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetDesignationMasterList`,
         type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
         success: function (response) {
             if (response.length > 0) {
                 const select = $('#ddlDesignation');
@@ -172,6 +178,9 @@ function UserMasterList() {
     $.ajax({
         url: `${appBaseURL}/api/UserMaster/GetUserMasterList`,
         type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
         success: function (response) {
             if (response.length > 0) {
                 const StringFilterColumn = ["ShowRatesInQuotation", "User Type", "LoginAllowFromSystem", "User Group", "Status", "Mobile No", "Designation", "ShowClientInProductionReport","ChangePasswordForNextLogIn","OTPApplicable","Bizsol User"];
@@ -221,6 +230,9 @@ function Delete(code) {
         $.ajax({
             url: `${appBaseURL}/api/UserMaster/DeleteUserMaster?Code=${code}&UserMaster_Code=1&Reason=Test`,
             type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
@@ -246,6 +258,9 @@ function UserMasterByCode(Code) {
     $.ajax({
         url: `${appBaseURL}/api/UserMaster/GetUserMasterListByCode?Code=${Code}`,
         type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
         success: function (response) {
             if (response) {
                 $("#txtUserID").val(response.UserID);

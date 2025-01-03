@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     UserMenuRightsList();
 });
+    var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
     var baseUrl1 = sessionStorage.getItem('AppBaseURL');
     var baseUrl = sessionStorage.getItem('AppBaseURLMenu');
     //CRMDashboardService.GetUserDetails()
@@ -15,6 +16,9 @@
         $.ajax({
             url: `${baseUrl1}/api/UserMaster/GetUserModuleMasterList`,
             type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
             success: function (value) {
                 if (value.length > 0) {
                     var menuHtml = '';

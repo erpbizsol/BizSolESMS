@@ -10,6 +10,9 @@ function GetUserListByGroupCode(Code) {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetUserMasterListByGroupCode?Code=${Code}`,
         type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
         success: function (response) {
             if (response.length > 0) {
                 $("#txtUserName").show();
