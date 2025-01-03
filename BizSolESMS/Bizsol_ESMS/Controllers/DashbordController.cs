@@ -16,7 +16,7 @@ namespace Bizsol_ESMS.Controllers
 
             string newconnectionStrings = "Server=220.158.165.98;Port = 65448;database=bizsolesms_test;user=sa;password=biz1981";
             AuthKey = $"{{" +
-                      $"\"ESMSDBConStr\":\"{newconnectionStrings}\"," +
+                      $"\"DefultMysqlTemp\":\"{newconnectionStrings}\"," +
                       $"\"AuthToken\":\"xyz\"," +
                       $"}}";
             

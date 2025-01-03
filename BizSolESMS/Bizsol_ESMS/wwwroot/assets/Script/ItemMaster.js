@@ -1,6 +1,7 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
+
     $("#ERPHeading").text("Item");
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
