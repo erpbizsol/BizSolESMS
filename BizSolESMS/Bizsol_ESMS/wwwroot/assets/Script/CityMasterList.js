@@ -33,8 +33,8 @@ function ShowCityMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["Item Name", "Display Name", "Category Name", "Group Name", "Sub Group Name", "Brand Name", "Location Name"];
-                const NumericFilterColumn = ["Reorder Level", "Reorder Qty", "Qty In Box"];
+                const StringFilterColumn = ["City Name","State Name"];
+                const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
