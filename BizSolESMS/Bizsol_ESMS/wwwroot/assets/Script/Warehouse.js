@@ -1,6 +1,7 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 
 $(document).ready(function () {
     $("#ERPHeading").text("Warehouse");
@@ -239,12 +240,12 @@ function ShowItemMasterlist() {
 
 }
 function CreateWarehouseMaster() {
-    window.location.href = '/Master/CreateWarehouseMaster?Mode=New';
+    window.location.href = `${AppBaseURLMenu}/Master/CreateWarehouseMaster?Mode=New`;
 
 }
 
 function BackMaster() {
-    window.location.href = '/Master/WarehouseMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/WarehouseMasterList`;
 
 }
 
@@ -273,7 +274,7 @@ function deleteWarehouse(code) {
     }
 }
 function Edit(code) {
-    window.location.href = `/Master/CreateWarehouseMaster?Code=${code}&Mode=Edit`;
+    window.location.href = `${AppBaseURLMenu}/Master/CreateWarehouseMaster?Code=${code}&Mode=Edit`;
 }
 
 function exportTableToExcel() {

@@ -1,6 +1,7 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
     $("#ERPHeading").text("UOM");
     $(".Number").keyup(function (e) {
@@ -138,12 +139,11 @@ function ShowUomMasterlist() {
 
 }
 function CreateUOMMaster() {
-    window.location.href = '/Master/CreateUOMMaster?Mode=New';
-   
+    window.location.href = `${AppBaseURLMenu}/Master/CreateUOMMaster?Mode=New`;
 }
 
 function BackUOMMaster() {
-    window.location.href = '/Master/UOMMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/UOMMasterList`;
 
 }
 
@@ -172,7 +172,7 @@ function deleteUOM(code) {
     }
 }
 function Edit(code) {
-    window.location.href = `/Master/CreateUOMMaster?Code=${code}&Mode=Edit`;
+    window.location.href = `${AppBaseURLMenu}/Master/CreateUOMMaster?Code=${code}&Mode=Edit`;
 }
 
 function exportTableToExcel() {

@@ -1,6 +1,7 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
     $("#ERPHeading").text("Brand");
     $('#txtBrandName').on('keydown', function (e) {
@@ -122,12 +123,12 @@ function ShowBrandMasterlist() {
 
 }
 function CreateBrandMaster() {
-    window.location.href = '/Master/CreateBrandMaster?Mode=New';
+    window.location.href = `${AppBaseURLMenu}/Master/CreateBrandMaster?Mode=New`;
 
 }
 
 function BackMaster() {
-    window.location.href = '/Master/BrandMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/BrandMasterList`;
 
 }
 
@@ -156,7 +157,7 @@ function deleteBrand(code) {
     }
 }
 function Edit(code) {
-    window.location.href = `/Master/CreateBrandMaster?Code=${code}&Mode=Edit`;
+    window.location.href = `${AppBaseURLMenu}/Master/CreateBrandMaster?Code=${code}&Mode=Edit`;
 }
 
 function exportTableToExcel() {

@@ -24,6 +24,9 @@ function UserGroupMasterList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetUserGroupMasterList`,
         type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
         success: function (response) {
             if (response.length > 0) {
                 const StringFilterColumn = [];
