@@ -787,6 +787,7 @@ window.createPaginator = function createPaginator(tableId, bodyId) {
         <div class="page-size-select">
             <label for="pageSize-${tableId}">Lines Per Page:</label>
             <select onchange="pageSize('${tableId}','${bodyId}')" class="pageSize" id="pageSize-${tableId}">
+            <option value="5">5</option>   
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="30">30</option>
