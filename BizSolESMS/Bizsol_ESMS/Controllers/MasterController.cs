@@ -173,7 +173,7 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion UserMenuRights
-        #endregion ItemMaster
+        
 
         #region StateMaster
         public IActionResult StateMasterList()
