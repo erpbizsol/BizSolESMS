@@ -74,47 +74,51 @@ function ShowAccountMasterlist() {
     });
 
 }
-function Save() {
-    var AccountName = $("#txtAccountName").val();
-    if (!AccountName) {
-        toastr.error('Please enter an Account Name!');
-        $("#txtAccountName").focus();
-    } else {
-        const payload = {
-            Code: $("#hfCode").val(),
-            AccountName: $("#txtAccountName").val(),
-            DisplayName: $("#txtDisplayName").val(),
-            PANNo: $("#txtPANNo").val(),
-            IsClient: $("#txtIsClient").val(),
-            IsVendor: $("#txtIsVendor").val(),
-            IsMSME: $("#txtIsMSME").val()
-        };
-        $.ajax({
-            url: `${appBaseURL}/api/Master/InsertAccountMaster`,
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(payload),
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.Status === 'Y') {
-                    toastr.success(response.Msg);
-                    ShowAccountMasterlist();
-                }
-                else {
-                    toastr.error(response.Msg);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", xhr.responseText);
-                toastr.error("An error occurred while saving the data.");
-            }
-        });
+//function Save() {
+//    var AccountName = $("#txtAccountName").val();
+//    if (!AccountName) {
+//        toastr.error('Please enter an Account Name!');
+//        $("#txtAccountName").focus();
+//    } else {
+//        const payload = {
+//            Code: $("#hfCode").val(),
+//            AccountName: $("#txtAccountName").val(),
+//            DisplayName: $("#txtDisplayName").val(),
+//            PANNo: $("#txtPANNo").val(),
+//            IsClient: $("#txtIsClient").val(),
+//            IsVendor: $("#txtIsVendor").val(),
+//            IsMSME: $("#txtIsMSME").val()
+//        };
+//        $.ajax({
+//            url: `${appBaseURL}/api/Master/InsertAccountMaster`,
+//            type: 'POST',
+//            contentType: 'application/json',
+//            dataType: 'json',
+//            data: JSON.stringify(payload),
+//            beforeSend: function (xhr) {
+//                xhr.setRequestHeader('Auth-Key', authKeyData);
+//            },
+//            success: function (response) {
+//                if (response.Status === 'Y') {
+//                    setTimeout(() => {
+//                        toastr.success(response.Msg);
+//                        ShowAccountMasterlist();
+//                        enableAndSwitchToSecondTab(); // Enable and open the second tab
+//                    }, 1000);
+                    
+//                }
+//                else {
+//                    toastr.error(response.Msg);
+//                }
+//            },
+//            error: function (xhr, status, error) {
+//                console.error("Error:", xhr.responseText);
+//                toastr.error("An error occurred while saving the data.");
+//            }
+//        });
 
-    }
-}
+//    }
+//}
 function CreateItemMaster() {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -180,16 +184,6 @@ function Edit(code) {
     });
 
 }
-//function openTab(event, tabId) {
-//    const tabs = document.querySelectorAll('.tab-header div');
-//    const contents = document.querySelectorAll('.tab-content');
-
-//    tabs.forEach(tab => tab.classList.remove('active'));
-//    contents.forEach(content => content.classList.remove('active'));
-
-//    event.currentTarget.classList.add('active');
-//    document.getElementById(tabId).classList.add('active');
-//}
 
 function updateDisplayName() {
     const itemName = document.getElementById('txtAccountName').value;
@@ -197,34 +191,105 @@ function updateDisplayName() {
 }
 
 
-document.getElementById("saveTab1").addEventListener("click", function () {
-    const accountName = document.getElementById("accountName").value.trim();
-    const displayName = document.getElementById("displayName").value.trim();
-    const panNo = document.getElementById("panNo").value.trim();
-    if (!accountName || !displayName || !panNo) {
-        alert("Please fill in all required fields before saving.");
+document.addEventListener("DOMContentLoaded", () => {
+    // Function to enable and switch to the second tab
+    window.enableAndSwitchToSecondTab = function () {
+        const tab2 = document.getElementById("tab2");
+        const tab1 = document.getElementById("tab1");
+        const tab2Content = document.getElementById("tab2Content");
+        const tab1Content = document.getElementById("tab1Content");
+
+        if (!tab2 || !tab1 || !tab2Content || !tab1Content) {
+            console.error("One or more tabs or contents are missing in the DOM.");
+            return;
+        }
+
+        tab2.removeAttribute("disabled");
+        tab2.classList.add("active");
+        tab2Content.style.display = "block";
+        tab2Content.classList.add("active");
+
+        tab1.classList.remove("active");
+        tab1Content.style.display = "none";
+        tab1Content.classList.remove("active");
+    };
+
+    const tabs = document.querySelectorAll(".tab");
+    const contents = document.querySelectorAll(".tab-content");
+
+    if (tabs.length === 0 || contents.length === 0) {
+        console.error("No tabs or contents found in the DOM.");
         return;
     }
-    const tab2 = document.getElementById("tab2");
-    tab2.disabled = false;
 
-    tab2.classList.add("active");
-    document.getElementById("tab1Content").style.display = "none";
-    document.getElementById("tab2Content").style.display = "block";
+    tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            if (tab.hasAttribute("disabled")) return;
 
-    document.getElementById("tab1").classList.remove("active");
-    tab2.classList.add("active");
-});
+            tabs.forEach((t) => t.classList.remove("active"));
+            contents.forEach((content) => {
+                content.classList.remove("active");
+                content.style.display = "none";
+            });
 
-document.querySelectorAll(".tab").forEach(tab => {
-    tab.addEventListener("click", function () {
-        if (tab.disabled) return;
-        document.querySelectorAll(".tab-content").forEach(content => {
-            content.style.display = "none";
+            tab.classList.add("active");
+            const contentId = tab.id + "Content";
+            const content = document.getElementById(contentId);
+            if (content) {
+                content.style.display = "block";
+                content.classList.add("active");
+            } else {
+                console.error(`Content for ${contentId} not found.`);
+            }
         });
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-        const contentId = tab.id + "Content";
-        document.getElementById(contentId).style.display = "block";
     });
 });
+
+function Save() {
+    const AccountName = $("#txtAccountName").val();
+    const DisplayName = $("#txtDisplayName").val();
+    if (!AccountName) {
+        toastr.error("Please enter an Account Name!");
+        $("#txtAccountName").focus();
+    } else if (!DisplayName) {
+        toastr.error("Please enter an Display Name!");
+        $("#txtDisplayName").focus();
+    }
+    else {
+        const payload = {
+            Code: $("#hfCode").val(),
+            AccountName: AccountName,
+            DisplayName: $("#txtDisplayName").val(),
+            PANNo: $("#txtPANNo").val(),
+            IsClient: $("#txtIsClient").val(),
+            IsVendor: $("#txtIsVendor").val(),
+            IsMSME: $("#txtIsMSME").val(),
+        };
+
+        $.ajax({
+            url: `${appBaseURL}/api/Master/InsertAccountMaster`,
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Auth-Key", authKeyData);
+            },
+            success: function (response) {
+                if (response.Status === "Y") {
+                    setTimeout(() => {
+                        toastr.success(response.Msg);
+                        window.enableAndSwitchToSecondTab(); // Call the function
+                        ShowAccountMasterlist();
+                    }, 1000);
+                } else {
+                    toastr.error(response.Msg);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText);
+                toastr.error("An error occurred while saving the data.");
+            },
+        });
+    }
+}

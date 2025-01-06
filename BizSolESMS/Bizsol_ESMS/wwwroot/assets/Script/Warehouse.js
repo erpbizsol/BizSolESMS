@@ -70,6 +70,9 @@ $(document).ready(function () {
         $.ajax({
             url: `${appBaseURL}/api/Master/ShowWarehouseMasterByCode?Code=` + WCode,
             type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
             success: function (response) {
                 if (response.length > 0) {
                     response.forEach(function (item) {
@@ -212,7 +215,7 @@ function ShowItemMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["UOM Name"];
+                const StringFilterColumn = ["Warehouse Name", "Warehouse Type", "Address","	City Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;

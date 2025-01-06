@@ -9,50 +9,44 @@
     .tabs {
         width: 100%;
         max-width: 2000px;
-        background: #fff; 
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        /* background: #fff;  */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         border-radius: 8px;
         overflow: hidden;
     }
-
     .tab-header {
         display: flex;
-        background: #e3e7ed;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+        /* background: #e3e7ed; */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
     }
-
-        .tab-header div {
-            flex: 0.1;
-            text-align: center;
-            padding: 12px 16px;
-            cursor: pointer;
-            color: #fffffff5;
-            transition: background 0.3s ease;
-            border-bottom-right-radius: 40px;
-        }
-
-            .tab-header div:hover {
-                background: #0056b3;
-            }
-
-        .tab-header .active {
-            background: #0056b3;
-        }
-
+    .tab-header div {
+        flex: 0.1;
+        text-align: center;
+        padding: 12px 16px;
+        cursor: pointer;
+        /* color: #fffffff5; */
+        transition: background 0.3s ease;
+        border-bottom-right-radius: 40px;
+            border-top-left-radius: 40px;
+    }
+    .tab-header div:hover {
+     background: #586e87;
+    }
+    .tab-header .active {
+            background: #1d4b7d;
+    }
     .tab-content {
         display: none;
         padding: 16px;
         border: 1px solid lightgray;
         border-radius: 5px;
     }
-
-        .tab-content.active {
-            display: block;
-        }
-
+    .tab-content.active {
+        display: block;
+    }
     .tab[disabled] {
         cursor: not-allowed;
-        opacity: 0.5;
+        opacity: 0.9;
     }
 </style>
 <div class="" id="txtListpage" style="display:block;">
@@ -82,8 +76,8 @@
         <div class="tabs">
             <div class="tab-header">
                 <div id="tab1" class="tab active" style="color:white">Account Master</div>
-                <div id="tab2" class="tab" disabled>Tab 2</div>
-                <div id="tab3" class="tab" disabled>Tab 3</div>
+                <div id="tab2" class="tab" style="color:white" disabled>Tab 2</div>
+                <div id="tab3" class="tab" style="color:white"  disabled>Tab 3</div>
             </div>
        
             <div id ="tab1Content" class="tab-content active">
@@ -96,7 +90,7 @@
                                 <input type="text" id="txtAccountName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Account Name">
                             </div>
                             <div class="col-md-4 col-sm-6">
-                                <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label>
+                                <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><sub style="color:red">*</sub>
                                 <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
                             </div>
                             <div class="col-md-4 col-sm-6">
@@ -149,6 +143,8 @@
             </div>
         </div>
     </div>
-</div>
+</div> 
+
+
 <script src="~/assets/js/filter.js"></script>
 

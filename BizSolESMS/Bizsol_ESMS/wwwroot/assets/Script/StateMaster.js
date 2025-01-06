@@ -36,7 +36,7 @@ function ShowStateMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["Item Name", "Display Name", "Category Name", "Group Name", "Sub Group Name", "Brand Name", "Location Name"];
+                const StringFilterColumn = ["State Name","Countery Name"];
                 const NumericFilterColumn = ["Reorder Level", "Reorder Qty", "Qty In Box"];
                 const DateFilterColumn = [];
                 const Button = false;
