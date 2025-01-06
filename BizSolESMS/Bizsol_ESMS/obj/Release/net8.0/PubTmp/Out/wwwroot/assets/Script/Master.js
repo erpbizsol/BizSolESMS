@@ -1,12 +1,18 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
     $("#ERPHeading").text("UOM");
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
     });
     $('#txtUOM').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtDigitAfterDecimal").focus();
+        }
+    });
+    $('#txtDigitAfterDecimal').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
@@ -43,21 +49,21 @@ $(document).ready(function () {
 });
 
 function Save() {
-        const uomName = $("#txtUOM").val();
-        const digitAfterDecimal = $("#txtDigitAfterDecimal").val();
+      var uomName = $("#txtUOM").val().trim();
+      var digitAfterDecimal = $("#txtDigitAfterDecimal").val().trim();
         if (uomName === "") {
             toastr.error('Please enter a UOM Name.');
             $("#txtUOM").focus();
-        }
-        else if (digitAfterDecimal === "" &&  digitAfterDecimal === "0") {
-            toastr.error('Please enter  digit After Decimal  in 0.!');
+        } else if (digitAfterDecimal === "" || isNaN(digitAfterDecimal) || parseInt(digitAfterDecimal) < 0) {
+            toastr.error('Please enter a valid digit after decimal is 0.');
             $("#txtDigitAfterDecimal").focus();
         }
         else {
+            var digitAfterDecimalValue = digitAfterDecimal === "" ? 0 : parseInt(digitAfterDecimal);
             const payload = {
                 code: parseInt(param_UCode) || 0,
                 uomName: uomName,
-                digitAfterDecimal: digitAfterDecimal,
+                digitAfterDecimal: digitAfterDecimalValue,
             };
             const isUpdate = payload.code > 0;
             const url = isUpdate
@@ -133,12 +139,11 @@ function ShowUomMasterlist() {
 
 }
 function CreateUOMMaster() {
-    window.location.href = '/Master/CreateUOMMaster?Mode=New';
-   
+    window.location.href = `${AppBaseURLMenu}/Master/CreateUOMMaster?Mode=New`;
 }
 
 function BackUOMMaster() {
-    window.location.href = '/Master/UOMMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/UOMMasterList`;
 
 }
 
@@ -167,7 +172,7 @@ function deleteUOM(code) {
     }
 }
 function Edit(code) {
-    window.location.href = `/Master/CreateUOMMaster?Code=${code}&Mode=Edit`;
+    window.location.href = `${AppBaseURLMenu}/Master/CreateUOMMaster?Code=${code}&Mode=Edit`;
 }
 
 function exportTableToExcel() {
