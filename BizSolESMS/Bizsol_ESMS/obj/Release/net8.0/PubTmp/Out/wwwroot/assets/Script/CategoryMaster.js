@@ -1,6 +1,7 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
     $('#ERPHeading').text('Category');
     $('#txtCategoryName').on('keydown', function (e) {
@@ -121,12 +122,12 @@ function ShowCategoryMasterlist() {
 
 }
 function CreateCategoryMaster() {
-    window.location.href = '/Master/CreateCategoryMaster?Mode=New';
+    window.location.href = `${AppBaseURLMenu}/Master/CreateCategoryMaster?Mode=New`;
 
 }
 
 function BackMaster() {
-    window.location.href = '/Master/CategoryMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/CategoryMasterList`;
 
 }
 
@@ -156,7 +157,7 @@ function deleteCatagery(code) {
 }
 
 function Edit(code) {
-    window.location.href = `/Master/CreateCategoryMaster?Code=${code}&Mode=Edit`;
+    window.location.href = `${AppBaseURLMenu}/Master/CreateCategoryMaster?Code=${code}&Mode=Edit`;
 }
 
 function exportTableToExcel() {

@@ -1,5 +1,6 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 
 $(document).ready(function () {
     $("#ERPHeading").text("Location");
@@ -114,12 +115,12 @@ function LocationList() {
 
 }
 function CreateLocation() {
-    window.location.href = '/Master/CreateLocationMaster?Mode=New';
+    window.location.href = `${AppBaseURLMenu}/Master/CreateLocationMaster?Mode=New`;
 
 }
 
 function BackLocation() {
-    window.location.href = '/Master/LocationMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/LocationMasterList`;
 
 }
 
@@ -148,7 +149,7 @@ function deleteLocation(code) {
     }
 }
 function Edit(code) {
-    window.location.href = `/Master/CreateLocationMaster?Code=${code}&Mode=Edit`;
+    window.location.href = `${AppBaseURLMenu}/Master/CreateLocationMaster?Code=${code}&Mode=Edit`;
 }
 
 

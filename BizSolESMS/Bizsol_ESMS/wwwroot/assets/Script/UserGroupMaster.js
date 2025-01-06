@@ -93,6 +93,9 @@ function UserGroupMasterByCode(Code) {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetUserGroupMasterByCode?Code=${Code}`,
         type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
         success: function (response) {
             if (response) {
                 $("#ddlGroupType").val(response.GroupType);

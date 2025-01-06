@@ -29,7 +29,7 @@ function GetUserListByGroupCode(Code) {
 }
 function GetUserGroupMasterList() {
     $.ajax({
-        url: `${appBaseURL}/api/Master/GetUserGroupMasterList`,
+        url: `${appBaseURL}/api/Master/GetGroupListUserType`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);

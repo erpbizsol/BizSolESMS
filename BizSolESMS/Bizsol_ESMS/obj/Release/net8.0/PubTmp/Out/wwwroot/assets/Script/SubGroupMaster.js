@@ -1,6 +1,7 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
     $("#ERPHeading").text("Sub Group");
     $('#txtSubGroupName').on('keydown', function (e) {
@@ -49,8 +50,11 @@ function Save() {
         const SubGroupName = $("#txtSubGroupName").val();
         const GroupName = $("#txtGroupName").val();
         if (SubGroupName === "") {
-            toastr.error('Please enter a UOM Name.');
+            toastr.error('Please enter a Sub Group Name.');
             $("#txtSubGroupName").focus();
+        } else if (GroupName==="") {
+            toastr.error('Please Select Group Name.');
+            $("#txtGroupName").focus();
         }
         else {
             const payload = {
@@ -129,12 +133,12 @@ function ShowSubGroupMasterlist() {
 
 }
 function CreateSubgroupMaster() {
-    window.location.href = '/Master/CreateSubGroupMaster?Mode=New';
+    window.location.href = `${AppBaseURLMenu}/Master/CreateSubGroupMaster?Mode=New`;
 
 }
 
 function BackMaster() {
-    window.location.href = '/Master/SubGroupMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/SubGroupMasterList`;
 
 }
 
@@ -163,7 +167,7 @@ function deleteSubGroupMaster(code) {
     }
 }
 function Edit(code) {
-    window.location.href = `/Master/CreateSubGroupMaster?Code=${code}&Mode=Edit`;
+    window.location.href = `${AppBaseURLMenu}/Master/CreateSubGroupMaster?Code=${code}&Mode=Edit`;
 }
 
 function exportTableToExcel() {
