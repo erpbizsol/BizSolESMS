@@ -57,12 +57,12 @@ namespace Bizsol_ESMS.Controllers
 
             app.UseAuthorization();
 
-            //app.MapControllerRoute(
-            //name: "default",
-            //pattern: "{controller=Login}/{action=Login}/{id?}");
-           app.MapControllerRoute(
-           name: "default",
-           pattern: "{controller=Dashbord}/{action=Dashbord}/{id?}");
+            app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Login}/{action=Login}/{id?}");
+           // app.MapControllerRoute(
+           //name: "default",
+           //pattern: "{controller=Dashbord}/{action=Dashbord}/{id?}");
            app.Run();
         }
     }

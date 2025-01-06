@@ -446,9 +446,9 @@
         // $(document).ready(function () {
         var authKey = '@Html.Raw(ViewBag.AuthKey)';
        if (authKey !== '') {
-              sessionStorage.setItem('authKey', JSON.stringify(authKey));
-            sessionStorage.setItem('AppBaseURL', '@Html.Raw(ViewBag.AppBaseURL)');
-            sessionStorage.setItem('AppBaseURLMenu', '@Html.Raw(ViewBag.AppBaseURLMenu)');
+              sessionStorage.setItem('authKey',authKey);
+              sessionStorage.setItem('AppBaseURL', '@Html.Raw(ViewBag.AppBaseURL)');
+              sessionStorage.setItem('AppBaseURLMenu', '@Html.Raw(ViewBag.AppBaseURLMenu)');
               //window.AppBaseURL='@Html.Raw(ViewBag.AppBaseURL)';
         }
         // });

@@ -1,7 +1,6 @@
-﻿
-
+﻿const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
-
     $('#btnValidateCompany').click(function () {
         let companyCode = $("#txtCompanyCode").val();
 
@@ -46,8 +45,7 @@ $(document).ready(function () {
                     
                     window.location.href = '/Dashbord/Dashbord';
                 } else {
-                    toastr.success(response.message);
-                  
+                    toastr.error(response.message);
                 }
             },
             error: function () {

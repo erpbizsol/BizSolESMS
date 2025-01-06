@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 using Bizsol_ESMS.Models;
 using MySql.Data.MySqlClient;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Bizsol_ESMS.Controllers
 {
@@ -85,17 +86,29 @@ namespace Bizsol_ESMS.Controllers
             {
 
                 connections.Open();
-                string query = "SELECT * FROM usermaster WHERE UserID=@UserID AND Password=@Password";
+                string query = "SELECT * FROM usermaster WHERE UserID=@UserID And Status='Y'";
                 using (var command = new MySqlCommand(query, connections))
                 {
                     command.Parameters.AddWithValue("@UserID", model.UserID);
-                    command.Parameters.AddWithValue("@Password", model.Password);
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.HasRows)
                         {
-                            return Ok(new { success = true, message = "Login successful!" });
                             
+                            while (reader.Read())
+                            {
+                                var UserMaster_Code = reader["Code"].ToString();
+                                var UserID = reader["UserID"].ToString();
+                                var Data=CommonFunction.DecryptPasswordAsync(reader["Password"].ToString());
+                                if (Data.Result == model.Password)
+                                {
+                                    HttpContext.Session.SetString("UserMaster_Code", UserMaster_Code);
+                                    HttpContext.Session.SetString("UserID", UserID);
+                                    ViewBag.AppBaseURL = _configuration["AppBaseURL"];
+                                    ViewBag.AppBaseURLMenu = _configuration["AppBaseURLMenu"];
+                                    return Ok(new { success = true, message = "Login successful!" });
+                                }
+                            }
                         }
                     }
                 }

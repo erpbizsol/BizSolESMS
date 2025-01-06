@@ -1,9 +1,13 @@
 ﻿$(document).ready(function () {
     UserMenuRightsList();
 });
-    var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+var authKeyData1 = JSON.parse(sessionStorage.getItem('authKey'));
+var authKeyData = JSON.parse(JSON.stringify(sessionStorage.getItem('authKey')));
+    //const jsonString = '{"DefultMysqlTemp":"Server=220.158.165.98;Port = 65448;database=bizsolesms_test;user=sa;password=biz1981;","AuthToken":"xyz","UserMaster_Code":"4","UserID":"Ankit"}';
+    const userMasterCode = authKeyData1.UserMaster_Code;
     var baseUrl1 = sessionStorage.getItem('AppBaseURL');
     var baseUrl = sessionStorage.getItem('AppBaseURLMenu');
+
     //CRMDashboardService.GetUserDetails()
     //    .then(function (res) {
     //        sessionStorage.setItem('UserDetails', JSON.stringify(res));
@@ -14,7 +18,7 @@
 
     function UserMenuRightsList() {
         $.ajax({
-            url: `${baseUrl1}/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=1`,
+            url: `${baseUrl1}/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${userMasterCode}`,
             type: 'GET',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
