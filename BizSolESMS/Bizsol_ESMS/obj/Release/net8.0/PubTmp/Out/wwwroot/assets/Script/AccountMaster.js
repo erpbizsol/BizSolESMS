@@ -190,6 +190,7 @@ function updateDisplayName() {
     document.getElementById('txtDisplayName').value = itemName;
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
     // Function to enable and switch to the second tab
     window.enableAndSwitchToSecondTab = function () {

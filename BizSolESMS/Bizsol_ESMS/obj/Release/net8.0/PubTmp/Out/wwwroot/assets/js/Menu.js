@@ -14,7 +14,7 @@
 
     function UserMenuRightsList() {
         $.ajax({
-            url: `${baseUrl1}/api/UserMaster/GetUserModuleMasterList`,
+            url: `${baseUrl1}/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=1`,
             type: 'GET',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
