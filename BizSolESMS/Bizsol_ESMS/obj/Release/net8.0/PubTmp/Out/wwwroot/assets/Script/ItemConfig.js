@@ -1,5 +1,6 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
     $("#ERPHeading").text("Item Config");
     $('#txtItemName').on('keydown', function (e) {
@@ -32,7 +33,7 @@ $(document).ready(function () {
 });
 function BackMaster() {
     $("#txtCreatepage").show();
-    window.location.href = '/Master/ItemMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/ItemMasterList`;
 }
 function Save() {
     //var ItemName = $("#txtItemName").val();

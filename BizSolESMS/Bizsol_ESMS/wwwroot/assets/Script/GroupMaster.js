@@ -1,6 +1,7 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 
 $(document).ready(function () {
 
@@ -44,7 +45,7 @@ $(document).ready(function () {
 function Save() {
     const GroupName = $("#txtGroupName").val();
     if (GroupName === "") {
-        toastr.error('Please enter a Main Group Name.');
+        toastr.error('Please enter a Group Name.');
         $("#txtGroupName").focus();
     } else {
         const payload = {
@@ -121,12 +122,12 @@ function ShowMasterlist() {
 
 }
 function CreateGroupMaster() {
-    window.location.href = '/Master/CreateGroupMaster?Mode=New';
+    window.location.href = `${AppBaseURLMenu}/Master/CreateGroupMaster?Mode=New`;
 
 }
 
 function BackMaster() {
-    window.location.href = '/Master/GroupMasterList';
+    window.location.href = `${AppBaseURLMenu}/Master/GroupMasterList`;
 
 }
 
@@ -155,7 +156,7 @@ function deleteGroup(code) {
     }
 }
 function Edit(code) {
-    window.location.href = `/Master/CreateGroupMaster?Code=${code}&Mode=Edit`;
+    window.location.href = `${AppBaseURLMenu}/Master/CreateGroupMaster?Code=${code}&Mode=Edit`;
 }
 
 function exportTableToExcel() {

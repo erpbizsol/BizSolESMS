@@ -167,6 +167,7 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion UserGroupMaster
+
         #region UserMenuRights
         public IActionResult UserMenuRights()
         {
@@ -189,5 +190,11 @@ namespace Bizsol_ESMS.Controllers
         }
         #endregion CityMaster
 
+        #region  AccountMaster 
+        public IActionResult AccountMaster()
+        {
+            return View();
+        }
+        #endregion  AccountMaster 
     }
 }
