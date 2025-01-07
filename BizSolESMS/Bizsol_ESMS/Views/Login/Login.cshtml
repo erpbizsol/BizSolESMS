@@ -17,46 +17,9 @@
 
         .login-containers button {
             width: 100%;
+            font-size: 12px;
         }
-        /* .login-containers h2 {
-        margin: 0 0 40px;
-        color: #e06413;
-        font-size: 24px;
-        } */
-
-        /* .login-containers input::placeholder {
-        color: #aaa;
-        } */
-
-        /* .login-containers a {
-        display: inline-block;
-        margin: 10px 5px;
-        color: #ef6c00;
-        text-decoration: none;
-        font-size: 14px;
-        }
-
-        .login-containers a:hover {
-        text-decoration: underline;
-        } */
-
-       /*  .login-containers button {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-       background: #275481;
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        } */
-
        
-   /*  .fa-2x {
-        font-size: 1.5em;
-    } */
-
     .Esms-logo {
         width: 100px;
         height: 100px;
@@ -65,18 +28,19 @@
         border-color: #275481; */
         position: relative;
         bottom: 4rem;
-        border: 1px solid #a8acb0;
+        border: 1px solid #e0e4e8;
+       /*  box-shadow: 0 0px 2px rgb(181 183 181); */
     }
 
-    .pp-esms {
+    .Esms-login-logo {
         height: 50px;
     }
 
     </style>
 
     <div class="login-containers card">
-        <div class="text-center pp-esms">
-            <img src="~/assets/images/esms-logo.png" class="Esms-logo" />
+        <div class="text-center Esms-login-logo">
+            <img src="~/assets/images/esms-logo1.png" class="Esms-logo" />
         </div>
 
         @* <h4 class="center ">
@@ -85,23 +49,25 @@
             e-SMS
             <span class="text-right"><i class="fa fa-lock fa-2x"></i></span>
         </h4> *@
-        
+       
         <form id="loginForm" method="post">
-            <div class="mb-3">
+            <div class="mb-2">
                 <label for="txtCompanyCode" class="form-label">Company Code</label>
                 <input id="txtCompanyCode" name="CompanyCode" class="form-control" placeholder="Enter Company Code" type="text" required autocomplete="off">
             </div>
-            <button class="btn btn-primary" id="btnValidateCompany">Proceed</button>
+           <div>
+            <button class="btn btn-primary mt-3" id="btnValidateCompany">Proceed</button>
+           </div>
             <div id="userCredentials" style="display: none;">
-            <div class="mb-3"id="txtU">
-                <label for="txtUserID" class="form-label">UserID</label>
-                <input id="txtUserID" name="UserID" class="form-control" placeholder="Enter User ID" type="text" required autocomplete="off">
-            </div>
-            <div class="mb-3" id="txtP">
-                <label for="txtPassword" class="form-label">Password</label>
-                <input id="txtPassword" name="Password" class="form-control" placeholder="Enter Password" autocomplete="off" type="password" required>
-            </div>
-            <button class="btn btn-primary" id="btnProceed" type="button">Login</button>
+                <div class="mb-2"id="txtU">
+                    <label for="txtUserID" class="form-label">UserID</label>
+                    <input id="txtUserID" name="UserID" class="form-control" placeholder="Enter User ID" type="text" required autocomplete="off">
+                </div>
+                <div class="mb-2" id="txtP">
+                    <label for="txtPassword" class="form-label">Password</label>
+                    <input id="txtPassword" name="Password" class="form-control" placeholder="Enter Password" autocomplete="off" type="password" required>
+                </div>
+                    <button class="btn btn-primary mt-3" id="btnProceed" type="button">Login</button>
             </div>
         </form>
     </div>
