@@ -62,8 +62,6 @@ function Save() {
                 subGroupName: SubGroupName,
                 groupName: GroupName,
             };
-            const isUpdate = payload.code > 0;
-            const url = isUpdate
             $.ajax({
                 url: `${appBaseURL}/api/Master/InsertSubGroupMaster`,
                 type: 'POST',
@@ -75,15 +73,9 @@ function Save() {
                 },
                 success: function (response) {
                     if (response.Status === 'Y') {
-                        if (SGMode > 'Edit' && SGCode > 0) {
-                            toastr.success(response.Msg);
-                            ShowSubGroupMasterlist();
-                        }
-                        else {
-                            toastr.success(response.Msg);
-                            ShowSubGroupMasterlist();
-                        }
-
+                        toastr.success(response.Msg);
+                        BackMaster();
+                        ShowSubGroupMasterlist();
                     }
                     else {
                         toastr.error(response.Msg);
@@ -133,13 +125,14 @@ function ShowSubGroupMasterlist() {
 
 }
 function CreateSubgroupMaster() {
+    ClearData();
     window.location.href = `${AppBaseURLMenu}/Master/CreateSubGroupMaster?Mode=New`;
 
 }
 
 function BackMaster() {
     window.location.href = `${AppBaseURLMenu}/Master/SubGroupMasterList`;
-
+    ClearData();
 }
 
 function deleteSubGroupMaster(code) {
@@ -216,4 +209,9 @@ function GetMainLocationList() {
             $('#txtGroupNameList').empty();
         }
     });
+}
+
+function ClearData() {
+    $("#txtSubGroupName").val("");
+    $("#txtGroupName").val("");
 }

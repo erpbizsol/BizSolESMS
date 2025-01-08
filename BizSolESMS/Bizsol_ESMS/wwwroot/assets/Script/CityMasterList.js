@@ -96,6 +96,7 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    BackMaster();
                     ShowCityMasterlist();
                 }
                 else {
@@ -111,6 +112,7 @@ function Save() {
     }
 }
 function CreateCityMaster() {
+    ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -118,7 +120,7 @@ function CreateCityMaster() {
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
-
+    ClearData();
 }
 function deleteItem(code) {
     if (confirm("Are you sure you want to delete this item?")) {
@@ -193,4 +195,12 @@ function GetGroupMasterList() {
             $('#txtCountryNameList').empty();
         }
     });
+}
+
+function ClearData() {
+    $("#hfCode").val("0");
+    $("#txtCityName").val("");
+    $("#txtPinCode").val("");
+    $("#txtStateName").val("");
+
 }

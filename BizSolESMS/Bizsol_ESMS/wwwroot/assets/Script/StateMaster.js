@@ -98,6 +98,7 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    BackMaster();
                     ShowStateMasterlist();
                 }
                 else {
@@ -113,6 +114,7 @@ function Save() {
     }
 }
 function CreateStateMaster() {
+    ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -120,7 +122,7 @@ function CreateStateMaster() {
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
-
+    ClearData();
 }
 function deleteItem(code) {
     if (confirm("Are you sure you want to delete this item?")) {
@@ -198,5 +200,12 @@ function GetGroupMasterList() {
     });
 }
 
+function ClearData() {
+    $("#hfCode").val("0");
+    $("#txtCountryName").val("");
+    $("#txtStateName").val("");
+    $("#txtStateCode").val("");
+
+}
 
 

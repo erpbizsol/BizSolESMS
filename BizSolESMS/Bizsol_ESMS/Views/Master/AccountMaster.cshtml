@@ -13,6 +13,7 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         border-radius: 8px;
         overflow: hidden;
+        padding: 0.7rem;
     }
     .tab-header {
         display: flex;
@@ -77,12 +78,9 @@
         <div class="tabs">
             <div class="tab-header">
                 <div id="tab1" class="tab active" style="color:white">Account Master</div>
-                <div id="tab2" class="tab" disabled>Tab 2</div>
-                <div id="tab3" class="tab" disabled>Tab 3</div>
             </div>
        
-            <div id ="tab1Content" class="tab-content active">
-                <div class="row">
+                <div class="row pt-4">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-4 col-sm-6">
@@ -100,48 +98,86 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-sm-6">
-                                <label for="txtIsClient" class="col-form-label-sm fw-bold">Client</label>
-                                <select id="txtIsClient" class="box_border form-control form-control-sm">
-                                    <option value="N">N</option>
-                                    <option value="Y">Y</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-4 col-sm-6">
-                                <label for="txtIsVendor" class="col-form-label-sm fw-bold">Vendor </label>
-                                <select id="txtIsVendor" class="box_border form-control form-control-sm">
-                                    <option value="N">N</option>
-                                    <option value="Y">Y</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 col-sm-6">
-                                <label for="txtIsMSME" class="col-form-label-sm fw-bold">MSME </label>
-                                <select id="txtIsMSME" class="box_border form-control form-control-sm">
-                                    <option value="N">N</option>
-                                    <option value="Y">Y</option>
-                                </select>
-                            </div>
-
+                        <div class="col-md-2 mt-4">
+                            <label for="txtIsClient"></label>
+                            <input type="checkbox" id="txtIsClient" name="txtIsClient" class="box_border" checked />
+                            <label for="txtIsClient">Client</label>
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <label for="txtIsVendor"></label>
+                            <input type="checkbox" id="txtIsVendor" name="txtIsVendor" class="box_border" checked />
+                            <label for="txtIsVendor">Vendor</label>
+                        </div>
                         </div>
                     </div>
                 </div>
-                <div class="row text-end">
+               
+                <div class="row" id="divOrderBooking mb-2">
+                    <div class="accordion accordion-flush" id="accordionFlushOrder">
+                    <div class="accordion-item tab active">
+                        <h2 class="accordion-header tab-header .active" id="flush-headingOne">
+                            <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
+                                Account Address
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
+                                <div class="accordion-body-sec">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-wrapper" style="overflow: auto;">
+                                                <table id="tblorderbooking" class="table">
+                                                    <thead role="rowgroup" class="text-sm-center">
+                                                        <tr role="row">
+                                                        <th class="lead-Date width_cust" role="columnheader">Address Code <sub style="color:red;font-size:18px;">*</sub></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Address Line1</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Address Line2</th>
+                                                        <th class="lead-text width_cust" role="columnheader">City</th>
+                                                        <th class="lead-text width_cust" role="columnheader">State</th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Nation</th>
+                                                        <th class="lead-Date width_cust" role="columnheader">PIN</th>
+                                                        <th class="lead-text width_cust" role="columnheader">GSTN</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Contact Person</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Phone</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Mobile</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Email</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Default</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Delete</th>
+                                                        </tr>
+                                                        <!-- end table row-->
+                                                    </thead>
+                                                    <tbody id="Orderdata" role="rowgroup"></tbody>
+                                                    <tfoot>
+                                                     
+                                                        <tr role="row" id="trAddBtn">
+                                                      
+                                                            <td style="text-align: left;">
+                                                                <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
+
+                                                            </td>
+                                                        </tr>
+
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <datalist id="txtStateNameList"></datalist>
+                <datalist id="txtCityList"></datalist>
+                <datalist id="txtCountryList"></datalist>
+          
+                <div class="row m-2">
                     <div class="col-md-12" style="margin-top: 30px !important;">
                         <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
                         <button class="btn btn-danger btn-height" onclick="BackMaster()">Back</button>
                     </div>
                 </div>
-
-            </div>
-            <div id="tab2Content" class="tab-content" style="display: none;">
-                <h2>Tab 2 Content</h2>
-                <p>This is the content for Tab 2.</p>
-            </div>
-            <div id="tab3Content" class="tab-content" style="display: none;">
-                <h2>Tab 3 Content</h2>
-                <p>This is the content for Tab 3.</p>
-            </div>
         </div>
     </div>
 </div> 

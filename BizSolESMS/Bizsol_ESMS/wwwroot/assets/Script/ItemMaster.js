@@ -267,6 +267,7 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    BackMaster();
                     ShowItemMasterlist();
                 }
                 else {
@@ -282,6 +283,7 @@ function Save() {
     }
 }
 function CreateItemMaster() {
+    ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -290,7 +292,7 @@ function CreateItemMaster() {
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
-
+    ClearData();
 }
 
 function deleteItem(code) {
@@ -536,4 +538,22 @@ function GetLocationDropDownList() {
 function updateDisplayName() {
     const itemName = document.getElementById('txtItemName').value;
     document.getElementById('txtDisplayName').value = itemName;
+}
+function ClearData() {
+    $("#hfCode").val("0");
+    $("#txtItemName").val("");
+    $("#txtDisplayName").val("");
+    $("#txtItembarcode").val("");
+    $("#txtUOM").val("");
+    $("#txtHSNCode").val("");
+    $("#txtCategory").val("");
+    $("#txtGroupItem").val("");
+    $("#txtSubGroupItem").val("");
+    $("#txtBrand").val("");
+    $("#txtReorderLevel").val("0");
+    $("#txtReorderQty").val("0");
+    $("#txtItemLocation").val("");
+    $("#txtBoxPacking").val("");
+    $("#txtQtyinBox").val("0");
+    
 }
