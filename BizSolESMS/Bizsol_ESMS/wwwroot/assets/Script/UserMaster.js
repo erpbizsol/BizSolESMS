@@ -129,7 +129,9 @@ $(document).ready(function () {
             $("#btnSave").focus();
         }
     });
-
+    if (Profile != undefined && Profile !== '') {
+        Edit(UserMaster_Code);
+    };
 });
 function UserGroupList() {
     $.ajax({
@@ -177,7 +179,7 @@ function DesignationList() {
 }
 function UserMasterList() {
     $.ajax({
-        url: `${appBaseURL}/api/UserMaster/GetUserMasterList`,
+        url: `${appBaseURL}/api/UserMaster/GetUserMasterList?UserMaster_Code=${UserMaster_Code}`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);

@@ -157,6 +157,8 @@ namespace Bizsol_ESMS.Controllers
         #region UserMaster
         public IActionResult UserMaster()
         {
+            string Profile = HttpContext.Request.Query["Profile"].ToString();
+            ViewBag.Profile = Profile == "" ? "" : Profile;
             return View();
         }
         #endregion UserMaster
@@ -174,7 +176,6 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion UserMenuRights
-        
 
         #region StateMaster
         public IActionResult StateMasterList()

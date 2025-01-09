@@ -99,11 +99,15 @@ namespace Bizsol_ESMS.Controllers
                             {
                                 var UserMaster_Code = reader["Code"].ToString();
                                 var UserID = reader["UserID"].ToString();
+                                var UserType = reader["UserType"].ToString();
+                                var UserName = reader["UserName"].ToString();
                                 var Data=CommonFunction.DecryptPasswordAsync(reader["Password"].ToString());
                                 if (Data.Result == model.Password)
                                 {
                                     HttpContext.Session.SetString("UserMaster_Code", UserMaster_Code);
                                     HttpContext.Session.SetString("UserID", UserID);
+                                    HttpContext.Session.SetString("UserName", UserName);
+                                    HttpContext.Session.SetString("UserType", UserType);
                                     ViewBag.AppBaseURL = _configuration["AppBaseURL"];
                                     ViewBag.AppBaseURLMenu = _configuration["AppBaseURLMenu"];
                                     return Ok(new { success = true, message = "Login successful!" });

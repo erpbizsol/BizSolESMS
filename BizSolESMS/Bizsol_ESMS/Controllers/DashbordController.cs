@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Google.Apis.Admin.Directory.directory_v1.Data;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace Bizsol_ESMS.Controllers
@@ -17,6 +18,8 @@ namespace Bizsol_ESMS.Controllers
             string newconnectionStrings = HttpContext.Session.GetString("ConnectionString");
             string UserMaster_Code = HttpContext.Session.GetString("UserMaster_Code");
             string UserID = HttpContext.Session.GetString("UserID");
+            string UserName = HttpContext.Session.GetString("UserName");
+            string UserType=HttpContext.Session.GetString("UserType");
 
             //string newconnectionStrings = "Server=220.158.165.98;Port = 65448;database=bizsolesms_test;user=sa;password=biz1981";
             //AuthKey = $"{{" +
@@ -36,6 +39,7 @@ namespace Bizsol_ESMS.Controllers
             string jsonAuthKey = JsonSerializer.Serialize(authKey);
             ViewBag.AppBaseURL = _configuration["AppBaseURL"];
             ViewBag.AppBaseURLMenu = _configuration["AppBaseURLMenu"];
+            ViewBag.UserName = UserName;
             ViewBag.AuthKey = jsonAuthKey;
             return View();
         }

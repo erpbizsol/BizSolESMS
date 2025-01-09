@@ -15,47 +15,10 @@
             margin-top: 5rem;
         }
 
-        .login-containers button {
+    #btnValidateCompany, #btnProceed {
             width: 100%;
         }
-        /* .login-containers h2 {
-        margin: 0 0 40px;
-        color: #e06413;
-        font-size: 24px;
-        } */
-
-        /* .login-containers input::placeholder {
-        color: #aaa;
-        } */
-
-        /* .login-containers a {
-        display: inline-block;
-        margin: 10px 5px;
-        color: #ef6c00;
-        text-decoration: none;
-        font-size: 14px;
-        }
-
-        .login-containers a:hover {
-        text-decoration: underline;
-        } */
-
-       /*  .login-containers button {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-       background: #275481;
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        } */
-
-       
-   /*  .fa-2x {
-        font-size: 1.5em;
-    } */
+        
 
     .Esms-logo {
         width: 100px;
@@ -78,20 +41,12 @@
         <div class="text-center pp-esms">
             <img src="~/assets/images/esms-logo.png" class="Esms-logo" />
         </div>
-
-        @* <h4 class="center ">
-            <img style="height:40px;vertical-align:bottom" src="~/assets/images/bizsol-logo-small.gif" />
-             <font style="font-size: xx-large;line-height: 1.3;"> <span style="color:#ef6c00;">B</span><span style="color: #569252;">iz</span><span style="color:#ef6c00;">S</span><span style="color:#569252;">o</span><span style="color:#ef6c00;">l</span> </font>
-            e-SMS
-            <span class="text-right"><i class="fa fa-lock fa-2x"></i></span>
-        </h4> *@
-        
-        <form id="loginForm" method="post">
+        <form>
             <div class="mb-3">
                 <label for="txtCompanyCode" class="form-label">Company Code</label>
                 <input id="txtCompanyCode" name="CompanyCode" class="form-control" placeholder="Enter Company Code" type="text" required autocomplete="off">
             </div>
-            <button class="btn btn-primary" id="btnValidateCompany">Proceed</button>
+            <input type="button" class="btn btn-primary" id="btnValidateCompany" value="Proceed" />
             <div id="userCredentials" style="display: none;">
             <div class="mb-3"id="txtU">
                 <label for="txtUserID" class="form-label">UserID</label>
@@ -101,7 +56,7 @@
                 <label for="txtPassword" class="form-label">Password</label>
                 <input id="txtPassword" name="Password" class="form-control" placeholder="Enter Password" autocomplete="off" type="password" required>
             </div>
-            <button class="btn btn-primary" id="btnProceed" type="button">Login</button>
+            <input type="button" class="btn btn-primary" id="btnProceed" value="Proceed" />
             </div>
         </form>
     </div>

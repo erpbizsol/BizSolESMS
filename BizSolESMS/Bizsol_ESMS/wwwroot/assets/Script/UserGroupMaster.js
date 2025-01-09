@@ -68,6 +68,9 @@ function Delete(code) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteUserGroupMaster?Code=${code}&UserMaster_Code=1&Reason=Test`,
             type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
