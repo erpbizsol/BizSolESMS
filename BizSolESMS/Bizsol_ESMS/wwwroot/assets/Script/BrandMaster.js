@@ -52,8 +52,6 @@ function Save() {
                 brandName: BrandName
 
             };
-            const isUpdate = payload.code > 0;
-            const url = isUpdate
             $.ajax({
                 url: `${appBaseURL}/api/Master/InsertBrandMaster`,
                 type: 'POST',
@@ -65,14 +63,10 @@ function Save() {
                 },
                 success: function (response) {
                     if (response.Status === 'Y') {
-                        if (BMode > 'Edit' && BCode > 0) {
-                            toastr.success(response.Msg);
-                            ShowBrandMasterlist();
-                        }
-                        else {
-                            toastr.success(response.Msg);
-                            ShowBrandMasterlist();
-                        }
+                        toastr.success(response.Msg);
+                        BackMaster();
+                        ShowBrandMasterlist();
+                        
 
                     }
                     else {
@@ -123,13 +117,14 @@ function ShowBrandMasterlist() {
 
 }
 function CreateBrandMaster() {
+    ClearData();
     window.location.href = `${AppBaseURLMenu}/Master/CreateBrandMaster?Mode=New`;
 
 }
 
 function BackMaster() {
     window.location.href = `${AppBaseURLMenu}/Master/BrandMasterList`;
-
+    ClearData();
 }
 
 function deleteBrand(code) {
@@ -160,6 +155,9 @@ function Edit(code) {
     window.location.href = `${AppBaseURLMenu}/Master/CreateBrandMaster?Code=${code}&Mode=Edit`;
 }
 
+function ClearData() {
+    $("#txtBrandName").val("");
+}
 function exportTableToExcel() {
     var table = document.getElementById("table");
     var workbook = XLSX.utils.book_new();

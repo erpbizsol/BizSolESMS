@@ -52,8 +52,6 @@ function Save() {
             code: parseInt(GCode) || 0,
             GroupName: GroupName
         };
-        const isUpdate = payload.code > 0;
-        const url = isUpdate
         $.ajax({
             url: `${appBaseURL}/api/Master/InsertGroupMaster`,
             type: 'POST',
@@ -65,13 +63,9 @@ function Save() {
             },
             success: function (response) {
                 if (response.Status === 'Y') {
-                    if (GMode > 'Edit' && GCode > 0) {
-                        toastr.success(response.Msg);
-                    }
-                    else {
-                        toastr.success(response.Msg);
-                    }
-
+                    toastr.success(response.Msg);
+                    BackMaster();
+                    ShowMasterlist();
                 }
                 else {
                     toastr.error(response.Msg);
@@ -122,13 +116,14 @@ function ShowMasterlist() {
 
 }
 function CreateGroupMaster() {
+    ClearData();
     window.location.href = `${AppBaseURLMenu}/Master/CreateGroupMaster?Mode=New`;
 
 }
 
 function BackMaster() {
     window.location.href = `${AppBaseURLMenu}/Master/GroupMasterList`;
-
+    ClearData();
 }
 
 function deleteGroup(code) {
@@ -159,6 +154,10 @@ function Edit(code) {
     window.location.href = `${AppBaseURLMenu}/Master/CreateGroupMaster?Code=${code}&Mode=Edit`;
 }
 
+function ClearData() {
+    $("#txtGroupName").val("");
+
+}
 function exportTableToExcel() {
     var table = document.getElementById("table");
     var workbook = XLSX.utils.book_new();

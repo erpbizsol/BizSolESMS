@@ -46,8 +46,6 @@ function Save() {
                 code: parseInt(MLCode) || 0,
                 LocationName: LocationName
             };
-            const isUpdate = payload.code > 0;
-            const url = isUpdate
             $.ajax({
                 url: `${appBaseURL}/api/Master/InsertLocationMaster`,
                 type: 'POST',
@@ -59,13 +57,9 @@ function Save() {
                 },
                 success: function (response) {
                     if (response.Status === 'Y') {
-                        if (MMode > 'Edit' && MLCode > 0) {
-                            toastr.success(response.Msg);
-                        }
-                        else {
-                            toastr.success(response.Msg);
-                        }
-
+                        toastr.success(response.Msg);
+                        BackLocation();
+                        LocationList();
                     }
                     else {
                         toastr.error(response.Msg);
@@ -115,13 +109,14 @@ function LocationList() {
 
 }
 function CreateLocation() {
+    ClearData();
     window.location.href = `${AppBaseURLMenu}/Master/CreateLocationMaster?Mode=New`;
 
 }
 
 function BackLocation() {
     window.location.href = `${AppBaseURLMenu}/Master/LocationMasterList`;
-
+    ClearData();
 }
 
 function deleteLocation(code) {
@@ -150,6 +145,10 @@ function deleteLocation(code) {
 }
 function Edit(code) {
     window.location.href = `${AppBaseURLMenu}/Master/CreateLocationMaster?Code=${code}&Mode=Edit`;
+}
+
+function ClearData() {
+    $("#txtLocationName").val("");
 }
 
 

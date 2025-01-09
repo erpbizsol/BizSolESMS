@@ -62,36 +62,23 @@
                     </label>
                     <input type="text" id="txtGSTIN" name="txtGSTIN" autocomplete="off" class="form-control form-control-sm box_border" placeholder="GST IN" maxlength="15">
                 </div>
-                <div class="col-md-3">
-                    <label for="txtDefaultWarehouse" class="col-form-label-sm fw-bold">
-                        DefaultWarehouse
-                    </label>
-                    <select id="txtDefaultWarehouse" class="box_border form-control form-control-sm">
-                        <option value="N">N</option>
-                        <option value="Y">Y</option>
-                    </select>
+                <div class="col-md-2 mt-4">
+                    <label for="txtDefaultWarehouse"></label>
+                        <input type="checkbox" id="txtDefaultWarehouse" name="txtDefaultWarehouse" class="box_border" checked />
+                        <label for="txtDefaultWarehouse">Default Warehouse</label>
                 </div>
-                <div class="col-md-3">
-                    <label for="txtStoreWarehouse" class="col-form-label-sm fw-bold">
-                        StoreWarehouse
-                    </label>
-                    <select id="txtStoreWarehouse" class="box_border form-control form-control-sm">
-                        <option value="N">N</option>
-                        <option value="Y">Y</option>
-                    </select>
+                <div class="col-md-2 mt-4">
+                    <label for="txtDefaultWarehouse"></label>
+                    <input type="checkbox" id="txtStoreWarehouse" name="txtStoreWarehouse" class="box_border" checked />
+                    <label for="txtStoreWarehouse">Store Warehouse</label>
                 </div>
-               
+                <div class="col-md-2 mt-4">
+                    <label for="txtDefaultWarehouse"></label>
+                    <input type="checkbox" id="txtInTransitwarehouse" name="txtInTransitwarehouse" class="box_border" checked />
+                    <label for="txtInTransitwarehouse">In Transitwarehouse</label>
+                </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
-                    <label for="txtInTransitwarehouse" class="col-form-label-sm fw-bold">
-                        InTransitwarehouse
-                    </label>
-                    <select id="txtInTransitwarehouse" class="box_border form-control form-control-sm">
-                        <option value="N">N</option>
-                        <option value="Y">Y</option>
-                    </select>
-                </div>
                 <div class="col-md-2" style="margin-top: 30px !important;">
                     <button class="btn btn-primary btn-height" onclick="Save()">Save</button>
                     <button class="btn btn-danger btn-height" onclick="BackMaster()">Back</button>
