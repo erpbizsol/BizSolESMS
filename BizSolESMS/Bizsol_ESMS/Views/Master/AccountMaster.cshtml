@@ -93,8 +93,8 @@
                                 <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
                             </div>
                             <div class="col-md-4 col-sm-6">
-                                <label for="txtPANNo" class="col-form-label-sm fw-bold">PAN No</label>
-                                <input type="text" id="txtPANNo" class="box_border form-control form-control-sm Phone" autocomplete="off" maxlength="20" placeholder="PAN No">
+                            <label for="txtPANNo" class="col-form-label-sm fw-bold">PAN No<span class="text-danger">*</span></label>
+                            <input type="text" id="txtPANNo" class="box_border form-control form-control-sm" oninput="convertToUppercase(this)" autocomplete="off" maxlength="20" placeholder="PAN No">
                             </div>
                         </div>
                         <div class="row">
@@ -128,18 +128,18 @@
                                                 <table id="tblorderbooking" class="table">
                                                     <thead role="rowgroup" class="text-sm-center">
                                                         <tr role="row">
-                                                        <th class="lead-Date width_cust" role="columnheader">Address Code <sub style="color:red;font-size:18px;">*</sub></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Address Line1</th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Address Code <span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Address Line1<span class="text-danger">*</span></th>
                                                         <th class="lead-text width_cust" role="columnheader">Address Line2</th>
-                                                        <th class="lead-text width_cust" role="columnheader">City</th>
-                                                        <th class="lead-text width_cust" role="columnheader">State</th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Nation</th>
-                                                        <th class="lead-Date width_cust" role="columnheader">PIN</th>
-                                                        <th class="lead-text width_cust" role="columnheader">GSTN</th>
+                                                        <th class="lead-text width_cust" role="columnheader">City <span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">State <span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Nation <span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">PIN<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">GSTIN</th>
                                                         <th class="lead-text width_cust" role="columnheader">Contact Person</th>
                                                         <th class="lead-text width_cust" role="columnheader">Phone</th>
-                                                        <th class="lead-text width_cust" role="columnheader">Mobile</th>
-                                                        <th class="lead-text width_cust" role="columnheader">Email</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Mobile<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Email<span class="text-danger">*</span></th>
                                                         <th class="lead-text width_cust" role="columnheader">Default</th>
                                                         <th class="lead-text width_cust" role="columnheader">Delete</th>
                                                         </tr>

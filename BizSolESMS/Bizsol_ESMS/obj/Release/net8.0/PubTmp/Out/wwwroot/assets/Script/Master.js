@@ -65,8 +65,6 @@ function Save() {
                 uomName: uomName,
                 digitAfterDecimal: digitAfterDecimalValue,
             };
-            const isUpdate = payload.code > 0;
-            const url = isUpdate
             $.ajax({
                 url: `${appBaseURL}/api/Master/InsertUOMMaster`,
                 type: 'POST',
@@ -78,21 +76,13 @@ function Save() {
                 },
                 success: function (response) {
                     if (response.Status === 'Y') {
-                        if (param_UomMode > 'Edit' && param_UCode > 0) {
                             toastr.success(response.Msg);
-                            alert(response.Msg);
+                            BackUOMMaster();
                             ShowUomMasterlist();
-
                         }
                         else {
                             toastr.success(response.Msg);
-                            ShowUomMasterlist();
                         }
-
-                    }
-                    else {
-                        toastr.error(response.Msg);
-                    }
                 },
                 error: function (xhr, status, error) {
                     console.error("Error:", xhr.responseText);
@@ -139,11 +129,14 @@ function ShowUomMasterlist() {
 
 }
 function CreateUOMMaster() {
+    ClearData();
     window.location.href = `${AppBaseURLMenu}/Master/CreateUOMMaster?Mode=New`;
 }
 
 function BackUOMMaster() {
+   
     window.location.href = `${AppBaseURLMenu}/Master/UOMMasterList`;
+    ClearData();
 
 }
 
@@ -171,10 +164,15 @@ function deleteUOM(code) {
         });
     }
 }
+
 function Edit(code) {
     window.location.href = `${AppBaseURLMenu}/Master/CreateUOMMaster?Code=${code}&Mode=Edit`;
 }
 
+function ClearData() {
+    $("#txtUOM").val("");
+    $("#txtDigitAfterDecimal").val("");
+}
 function exportTableToExcel() {
     var table = document.getElementById("table");
     var workbook = XLSX.utils.book_new();

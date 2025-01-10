@@ -5,6 +5,15 @@ $(document).ready(function () {
     UserMenuRightsList();
     GetUserGroupMasterList();
     populateTable();
+    const thElements = document.querySelectorAll("th");
+
+    thElements.forEach(th => {
+        const text = th.textContent;
+        if (text.length > 5) {
+            th.classList.add("tooltip"); // Add tooltip class
+            th.setAttribute("data-tooltip", text); // Set the full text as the tooltip
+        }
+    });
 });
 function GetUserListByGroupCode(Code) {
     $.ajax({
@@ -71,9 +80,39 @@ function populateTable(response, Result) {
     const tableBody = $("#table-body");
     result = Result;
     let headerRow = "<tr>";
-    headerRow += `<th>Module Description</th>`;
+    let Col= `MODULE DESCRIPTION`;
+    headerRow += `<th style="text-transform: uppercase;" class="">
+            <div class="filter-table-heading-div">
+                <span class="filter-table-heading">${Col}</span>
+                <span class="">
+                    <i class="fa-solid fa-angle-down fafilter" onclick="toggleFilter('${Col.replace(/\s+/g, '')}')" style="cursor: pointer;"></i>
+                </span>
+            </div>
+            <div class="filter-dropdown" id="filterDropdown-${Col.replace(/\s+/g, '')}">
+                <input type="text" id="filterInput-${Col.replace(/\s+/g, '')}" placeholder="Search..." class="filter-input form-control form-control-sm" data-column="${Col.replace(/\s+/g, '')}" />
+                <hr>
+                    <input type="button" class="btn btn-success btn-height" onclick="applyStringFilters1('${Col}','table-body')" data-column="${Col.replace(/\s+/g, '')}" value="apply"/>
+                    <input type="button" class="btn-success btn-height" onclick="ClearFilter('table-body')" value="Clear"/>
+            </div>
+        </div>
+        </th>`;
     response.forEach(rowData => {
-        headerRow += `<th onclick="GetUserListByGroupCode(${rowData["Code"]})">${rowData["Group Name"]}</th>`;
+        headerRow += `<th style="text-transform: uppercase;" onclick="GetUserListByGroupCode(${rowData["Code"]})">
+            <div class="filter-table-heading-div">
+                <span class="filter-table-heading" style="text-algin:center ! important;">${rowData["Group Name"]}</span>
+                <span class="">
+                    <i class="fa-solid fa-angle-down fafilter" onclick="toggleFilter('${rowData["Group Name"].replace(/\s+/g, '')}')" style="cursor: pointer;"></i>
+                </span>
+                
+            </div>
+            <div class="filter-dropdown" id="filterDropdown-${rowData["Group Name"].replace(/\s+/g, '')}">
+                <div class="checkbox-container" id="checkbox-container-${rowData["Group Name"].replace(/\s+/g, '')}"></div>
+                <hr>
+                    <input type="button" class="btn btn-success btn-height" onclick="applyStringFilters('${rowData["Group Name"]}','table-body')" data-column="${rowData["Group Name"].replace(/\s+/g, '')}" value="apply"/>
+                    <input type="button" class="btn-success btn-height" onclick="ClearFilter('table-body')" value="Clear"/>
+            </div>
+        </div>
+        </th >`; 
     });
     headerRow += "</tr>";
     tableHeader.html(headerRow);
@@ -85,8 +124,8 @@ function populateTable(response, Result) {
             tableRows += getChildRows(Result, rowData.Code, response, 20);
         }
     });
-
     tableBody.html(tableRows);
+    Tooltip();
     $(".toggle-icon").on("click", function () {
         const code = $(this).data("code"); // Current row's code
         const childRows = $(`.child-row-${code}`);
@@ -132,7 +171,7 @@ function createRow(rowData, response, paddingLeft, Result) {
         <tr class="${paddingLeft === 0 ? "parent-row" : `child-row child-row-${rowData.MasterModuleCode}`}" 
             data-code="${rowData.Code}" 
             style="${paddingLeft > 0 ? "display: none;" : ""}">
-            <td style="padding-left: ${paddingLeft}px !important;">
+            <td style="padding-left: ${paddingLeft}px !important;text-transform: uppercase;"  data-column="ModuleDescription">
                 ${rowData.MasterModuleCode === 0 || rowData.OptionDescriptions  ? `
                 <label style="cursor: pointer;">
                     <i class="fa fa-plus toggle-icon" data-code="${rowData.Code}"></i>
@@ -141,7 +180,7 @@ function createRow(rowData, response, paddingLeft, Result) {
             </td>`;
 
     response.forEach(response => {
-        row += `<td><input type="checkbox" id="chk_${rowData.Code}_${response['Code']}" class="chk_${rowData.MasterModuleCode}_${response['Code']}" onclick="checkbox(this)"/></td>`;
+        row += `<td style="text-align: center !important;"><input type="checkbox" id="chk_${rowData.Code}_${response['Code']}" class="chk_${rowData.MasterModuleCode}_${response['Code']} chk_${response['Group Name'].replace(/\s+/g, '')} " onclick="checkbox(this)"/></td>`;
     });
 
     row += `</tr>`;
@@ -153,11 +192,11 @@ function createRow(rowData, response, paddingLeft, Result) {
             row += `
             <tr class="child-of-child-row child-of-child-row-${rowData.Code}" 
                 style="display: none;" 
-                data-child-code="${rowData.Code}">
-                <td style="padding-left: ${paddingLeft + 30}px !important;">${option}</td>`;
+                data-child-code="${rowData.Code}" >
+                <td style="padding-left: ${paddingLeft + 30}px !important;text-transform: uppercase;" data-column="ModuleDescription">${option}</td>`;
 
             response.forEach(response => {
-                row += `<td><input type="checkbox" id="chk_${rowData.Code}_${response['Code']}_${option}" class="chk_${rowData.MasterModuleCode}_${response['Code']} chk_${rowData.Code}_${response['Code']}" onclick="checkbox1(this)"/></td>`;
+                row += `<td style="text-align: center !important;"><input type="checkbox" id="chk_${rowData.Code}_${response['Code']}_${option}" class="chk_${rowData.MasterModuleCode}_${response['Code']} chk_${rowData.Code}_${response['Code']} chk_${response['Group Name'].replace(/\s+/g, '')}" onclick="checkbox1(this)"/></td>`;
             });
 
             row += `</tr>`;
@@ -338,6 +377,7 @@ function GetUserOptionsDetails() {
                             $(`#chk_${itam['UserModuleMaster_Code']}_${itam['GroupMaster_Code']}_${option}`).prop("checked", true);
                         });
                     }
+                    ChangecolorTd();
                 });
             } else {
                 
@@ -348,8 +388,135 @@ function GetUserOptionsDetails() {
         }
     });
 }
+function OpenFilter(columnName) {
+    $(".filter-division").hide();
+    $("#filterDropdown-" + columnName).show();
+}
+function CloseFilter() {
+    $(".filter-division").hide();
+}
+function populateFilterOptions(columnName, bodyId) {
+    var uniqueValues = new Set();
+    $(`#${bodyId} tr`).each(function () {
+        var cellValue = $(this).find('td').eq($('th:contains(' + columnName + ')').index()).text().trim();
+        uniqueValues.add(cellValue);
+    });
 
+    var checkboxContainer = $('#checkbox-container-' + columnName.replace(/\s+/g, ''));
+    checkboxContainer.empty();
+    checkboxContainer.append('<label><input type="checkbox" class="filter-checkbox" value="All"> All</label>');
+    checkboxContainer.append('<label><input type="checkbox" class="filter-checkbox" value="Y">Y</label>');
+    checkboxContainer.append('<label><input type="checkbox" class="filter-checkbox" value="N">N</label>');
 
+    checkboxContainer.find('input[value="All"]').change(function () {
+        var isChecked = $(this).is(':checked');
+        checkboxContainer.find('input[type="checkbox"]').not(this).prop('checked', isChecked);
+    });
 
+    checkboxContainer.find('input[type="checkbox"]').not('input[value="All"]').change(function () {
+        var allChecked = checkboxContainer.find('input[type="checkbox"]').not('input[value="All"]').length ===
+            checkboxContainer.find('input[type="checkbox"]:checked').not('input[value="All"]').length;
 
+        checkboxContainer.find('input[value="All"]').prop('checked', allChecked);
+    });
+}
+function toggleFilter(columnName) {
+    closeAllFilters();
+    populateFilterOptions(columnName,'table-body');
+    $('#filter-' + columnName.replace(/\s+/g, '')).toggle();
+    $('#filterDropdown-' + columnName.replace(/\s+/g, '')).toggle();
+};
+function closeAllFilters() {
+    $('.filter-dropdown').hide();
+    $('.filter-input').val('');
+    $('.filter-dropdown-double').hide();
+    $('.checkbox-container-double').hide();
+}
+function applyStringFilters(column, bodyId) {
+    const checkboxFilter = $('#checkbox-container-' + column.replace(/\s+/g, '') + ' input:checked').val(); 
+    const gridRows = document.querySelectorAll(`#${bodyId} tr`); 
+    gridRows.forEach(row => {
+        const checkbox = row.querySelector("td input.chk_" + column.replace(/\s+/g, '')); 
+        if (checkboxFilter) {
+            if (checkboxFilter === 'N' && checkbox.checked) {
+                row.style.display = "none";
+            } else if (checkboxFilter === 'Y' && !checkbox.checked) {
+                row.style.display = "none";
+            } else {
+                row.style.display = "";
+                $(".toggle-icon").removeClass("fa-plus").addClass("fa-minus");
+            }
+        } else {
+            row.style.display = "";
+            $(".toggle-icon").removeClass("fa-plus").addClass("fa-minus");
+        }
+    });
+    closeAllFilters();
+}
+$(document).click(function (event) {
+    if (!$(event.target).closest('.filter-dropdown, .fafilter').length) {
+        closeAllFilters();
+    }
+});
+$('.filter-dropdown').click(function (event) {
+    event.stopPropagation();
+});
+function ClearFilter1(bodyId) {
+    $('.filter-dropdown').hide();
+    $('.filter-input').val('');
+    $('.filter-input-double').val('');
+    $('.filter-dropdown-double').hide();
+}
+function applyStringFilters1(column, bodyId) {
+    const inputValue = document.getElementById(`filterInput-${column.replace(/\s+/g, '')}`).value.toLowerCase();
+    const gridRows = document.querySelectorAll(`#${bodyId} tr`);
 
+    gridRows.forEach(row => {
+        const cell = row.querySelector(`td[data-column="${column.replace(/\s+/g, '')}"]`);
+        if (cell) {
+            const cellText = cell.textContent.toLowerCase();
+            if (cellText.includes(inputValue)) {
+                row.style.display = "";
+                $(".toggle-icon").removeClass("fa-plus").addClass("fa-minus");
+            } else {
+                row.style.display = "none"; 
+            }
+        }
+    });
+    closeAllFilters();
+}
+function ClearFilter(bodyId) {
+    //const gridRows = document.querySelectorAll(`#${bodyId} tr`);
+    //gridRows.forEach(row => {
+    //    row.style.display = "";
+    //});
+    //document.querySelectorAll('.filter-input').forEach(input => {
+    //    input.value = "";
+    //});
+    ClearFilter1(bodyId);
+    GetUserGroupMasterList();
+}
+function ChangecolorTd() {
+    const inputs = document.querySelectorAll('input[type="checkbox"]');
+    inputs.forEach((input) => {
+        const parentTd = input.closest('td');
+        if (input.checked && parentTd) {
+            parentTd.style.backgroundColor = '#c1ffc1';
+        } else if (parentTd) {
+            parentTd.style.backgroundColor = ''; 
+        }
+    });
+}
+function Tooltip() {
+    // Use getElementsByClassName and convert it to an array
+    const thElements = Array.from(document.getElementsByClassName("filter-table-heading"));
+
+    thElements.forEach(th => {
+        const text = th.textContent.trim(); // Get text and trim spaces
+        if (text.length > 5) {
+            th.classList.add("tooltip1"); // Add tooltip class
+            th.setAttribute("data-tooltip", text); // Set the full text as the tooltip
+            th.textContent = text.substring(0, 5) + "..."; // Truncate text to 5 characters
+        }
+    });
+}

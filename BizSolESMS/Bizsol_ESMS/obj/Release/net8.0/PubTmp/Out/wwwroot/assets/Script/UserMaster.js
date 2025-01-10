@@ -1,4 +1,5 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let imageBase64Data = [];
 $(document).ready(function () {
@@ -128,7 +129,9 @@ $(document).ready(function () {
             $("#btnSave").focus();
         }
     });
-
+    if (Profile != undefined && Profile !== '') {
+        Edit(UserMaster_Code);
+    };
 });
 function UserGroupList() {
     $.ajax({
@@ -176,7 +179,7 @@ function DesignationList() {
 }
 function UserMasterList() {
     $.ajax({
-        url: `${appBaseURL}/api/UserMaster/GetUserMasterList`,
+        url: `${appBaseURL}/api/UserMaster/GetUserMasterList?UserMaster_Code=${UserMaster_Code}`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -228,7 +231,7 @@ function Back() {
 function Delete(code) {
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/UserMaster/DeleteUserMaster?Code=${code}&UserMaster_Code=1&Reason=Test`,
+            url: `${appBaseURL}/api/UserMaster/DeleteUserMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}&Reason=Test`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -267,8 +270,8 @@ function UserMasterByCode(Code) {
                 $("#txtUserName").val(response.UserName);
                 $("#hfCode").val(response.Code);
                 $("#txtMobileNo").val(response.UserMobileNo);
-                $("#txtPassword").val('********');
-                $("#txtConfirmPassword").val('********');
+                $("#txtPassword").val('');
+                $("#txtConfirmPassword").val('');
                 $("#txtEmailId").val(response.EmailID);
                 $("#ddlGroupName").val(response.GroupMaster_Code);
                 $("#ddlDefaultCompany").val(response.FixedParameter_Code);

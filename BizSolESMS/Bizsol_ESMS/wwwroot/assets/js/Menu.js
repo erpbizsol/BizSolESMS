@@ -2,7 +2,7 @@
     UserMenuRightsList();
 });
 var authKeyData1 = JSON.parse(sessionStorage.getItem('authKey'));
-var authKeyData = JSON.parse(JSON.stringify(sessionStorage.getItem('authKey')));
+var authKeyData = sessionStorage.getItem('authKey');
     //const jsonString = '{"DefultMysqlTemp":"Server=220.158.165.98;Port = 65448;database=bizsolesms_test;user=sa;password=biz1981;","AuthToken":"xyz","UserMaster_Code":"4","UserID":"Ankit"}';
     const userMasterCode = authKeyData1.UserMaster_Code;
     var baseUrl1 = sessionStorage.getItem('AppBaseURL');
@@ -25,6 +25,7 @@ var authKeyData = JSON.parse(JSON.stringify(sessionStorage.getItem('authKey')));
             },
             success: function (value) {
                 if (value.length > 0) {
+                    sessionStorage.setItem('UserModuleMaster', JSON.stringify(value));
                     var menuHtml = '';
                     $.each(value, function (index, item) {
                         if (item.MasterModuleCode === 0) {

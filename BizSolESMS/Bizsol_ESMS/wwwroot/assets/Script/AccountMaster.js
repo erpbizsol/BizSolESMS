@@ -1,7 +1,8 @@
-﻿
-var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 $(document).ready(function () {
     $("#ERPHeading").text("Account Master");
     $('#txtAccountName').on('keydown', function (e) {
@@ -38,76 +39,19 @@ $(document).ready(function () {
     GetGroupMasterList();
     GetCountryMasterList();
     GetCityDropDownList();
-});
-document.addEventListener("DOMContentLoaded", function () {
-    const table = document.getElementById("tblorderbooking").querySelector("tbody");
-    let rowCount = 0;
-    function isRowComplete(row) {
-        const inputs = row.querySelectorAll("input[type='text']");
-        return Array.from(inputs).every(input => input.value.trim() !== "");
-    }
-
-    
-    //document.addEventListener("input", function (event) {
-    //    const input = event.target;
-    //    const maxLength = input.getAttribute("maxlength");
-    //    if (maxLength && input.value.length > maxLength) {
-    //        input.value = input.value.slice(0, maxLength);
-    //    }
-    //});
-    //document.querySelectorAll("input").forEach(input => {
-    //    console.log(input.id, input.getAttribute("maxlength"));
-    //});
-
-    function addNewRow() {
-        const newRow = document.createElement("tr");
-        newRow.innerHTML = `
-            <td><input type="text" class="txtAddressCode form-control" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" class="txtAddressLine1 form-control" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtAddressLine2 form-control" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" list="txtCityList" class="txtCity form-control" id="txtCity_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" list="txtStateNameList" class="txtState form-control" id="txtState_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" list="txtCountryList" class="txtNation form-control" id="txtNation_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtPIN form-control" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
-            <td><input type="text" class="txtGSTIN form-control" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtContactPerson form-control" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtPhone form-control" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtMobile form-control" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtEmail form-control" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
-            <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
-            <td><button type="button" class="btn btn-danger btn-sm deleteRow">Delete</button></td>
-      `;
-        table.appendChild(newRow);
-    }
-
-    document.getElementById("btnAddNewRow").addEventListener("click", function () {
-        const rows = table.querySelectorAll("tr");
-        const lastRow = rows[rows.length - 1];
-
-        if (!isRowComplete(lastRow)) {
-            alert("Please fill in all fields in the current row before adding a new row.");
-        } else {
-            addNewRow();
+    $(document).on("change", ".chkIsDefault", function () {
+        if (this.checked) {
+            $(".chkIsDefault").not(this).prop("checked", false);
         }
     });
-    // Add the event listener for delete row using event delegation
-    table.addEventListener("click", function (event) {
-        // Check if the clicked element is a delete button
-        if (event.target && event.target.classList.contains("deleteRow")) {
-            const row = event.target.closest("tr");
-
-            // Ensure that at least one row remains in the table
-            if (table.querySelectorAll("tr").length > 1) {
-                row.remove(); // Remove the clicked row
-            } else {
-                alert("At least one row is required."); // Prevent row removal if it's the only one
-            }
-        }
+    $("#btnAddNewRow").click(function(){
+        addNewRow();
     });
-
-    addNewRow();
+    $(".btnAddNewRow").click(function (e) {
+        DeleteRow(e);
+    });
+    GetModuleMasterCode();
 });
-
 function ShowAccountMasterlist() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMaster`,
@@ -145,25 +89,32 @@ function ShowAccountMasterlist() {
     });
 
 }
-
-function CreateItemMaster() {
+async function CreateItemMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
     addNewRow();
 }
-
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
 }
-function Edit(code) {
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
-    // Make the AJAX request to fetch data
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMasterByCode?Code=` + code,
         type: 'GET',
@@ -179,8 +130,12 @@ function Edit(code) {
                     $("#txtDisplayName").val(accountMaster.DisplayName || "");
                     $("#txtPANNo").val(accountMaster.PANNo || "");
                     $("#txtIsMSME").val(accountMaster.IsMSME || "");
-                    $("#txtIsClient").val(accountMaster.IsClient || "");
-                    $("#txtIsVendor").val(accountMaster.IsVendor || "");
+                    if (accountMaster.IsClient == 'N') {
+                        $("#txtIsClient").prop("checked",false);
+                    }
+                    if (accountMaster.IsVendor == 'N') {
+                        $("#txtIsVendor").prop("checked", false);
+                    }
                 } else {
                     toastr.warning("Account master data is missing.");
                 }
@@ -188,10 +143,9 @@ function Edit(code) {
                 if (response.AccountAddress && response.AccountAddress.length > 0) {
                     response.AccountAddress.forEach(function (address, index) {
                       
-                        addNewRow(index, address);
+                        addNewRowEdit(index, address);
                     });
                 } else {
-                 
                     toastr.info("No addresses available for this account.");
                 }
             } else {
@@ -204,8 +158,12 @@ function Edit(code) {
         }
     });
 }
-
-function deleteItem(code) {
+async function deleteItem(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteAccountMaster?Code=${code}`,
@@ -229,12 +187,10 @@ function deleteItem(code) {
         });
     }
 }
-
 function updateDisplayName() {
     const itemName = document.getElementById('txtAccountName').value;
     document.getElementById('txtDisplayName').value = itemName;
 }
-
 function GetGroupMasterList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetStateDropDown`,
@@ -260,7 +216,6 @@ function GetGroupMasterList() {
         }
     });
 }
-
 function GetCityDropDownList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetCityDropDown`,
@@ -286,7 +241,6 @@ function GetCityDropDownList() {
         }
     });
 }
-
 function GetCountryMasterList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetCountryDropDown`,
@@ -317,11 +271,11 @@ function ClearData() {
     $("#txtAccountName").val("");
     $("#txtDisplayName").val("");
     $("#txtPANNo").val("");
-    $("#txtIsClient").val("");
-    $("#txtIsVendor").val("");
+    $("#txtIsClient").prop("checked",true);
+    $("#txtIsVendor").prop("checked", true);
     $("#txtIsMSME").val("");
+    $("#Orderdata").empty();
 }
-
 function Save() {
     // Collect Account Master Data
     const AccountName = $("#txtAccountName").val();
@@ -335,15 +289,85 @@ function Save() {
         toastr.error("Please enter a Display Name!");
         $("#txtDisplayName").focus();
         return;
+    } else if (!isValidPAN($("#txtPANNo").val())) {
+        toastr.error("Please enter valid PAN No!");
+        $("#txtPANNo").focus();
+        return;
     }
-
+    else if (getCheckedCount('chkIsDefault') == 0) {
+        toastr.error("At least one default field is correctly checked!");
+        return;
+    }
+    let validationFailed = false;
+    $("#tblorderbooking tbody tr").each(function () {
+        const row = $(this);
+        if (row.find(".txtAddressCode").val() == '') {
+            toastr.error("Please enter Address Code !");
+            row.find(".txtAddressCode").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtAddressLine1").val() == '') {
+            toastr.error("Please enter Address Line1 !");
+            row.find(".txtAddressLine1").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtCity").val() == '') {
+            toastr.error("Please select City !");
+            row.find(".txtCity").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtState").val() == '') {
+            toastr.error("Please select State !");
+            row.find(".txtState").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtNation").val() == '') {
+            toastr.error("Please select Nation !");
+            row.find(".txtNation").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtNation").val() == '') {
+            toastr.error("Please select Nation !");
+            row.find(".txtNation").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtPIN").val() == '') {
+            toastr.error("Please enter Pin!");
+            row.find(".txtPIN").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtMobile").val()=='') {
+            toastr.error("Please enter Mobile No!");
+            row.find(".txtMobile").focus();
+            validationFailed = true;
+            return;
+        } else if (!IsMobileNumber(row.find(".txtMobile").val())) {
+            toastr.error("Please enter valid Mobile No!");
+            row.find(".txtMobile").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtEmail").val()=='') {
+            toastr.error("Please enter Email !");
+            row.find(".txtEmail").focus();
+            validationFailed = true;
+            return;
+        } else if (!isEmail(row.find(".txtEmail").val())) {
+            toastr.error("Please enter valid Email !");
+            row.find(".txtEmail").focus();
+            validationFailed = true;
+            return;
+        }
+    });
+    if (validationFailed) {
+        return; 
+    }
     const accountPayload = [{
         Code: $("#hfCode").val(),
         AccountName: AccountName,
         DisplayName: DisplayName,
         PANNo: $("#txtPANNo").val(),
-        IsClient: $("#chkIsClient").is(":checked") ? "Y" : "N", 
-        IsVendor: $("#chkIsVendor").is(":checked") ? "Y" : "N", 
+        IsClient: $("#txtIsClient").is(":checked") ? "Y" : "N", 
+        IsVendor: $("#txtIsVendor").is(":checked") ? "Y" : "N", 
     }];
     // Collect Address Details Data
     const addressData = [];
@@ -366,14 +390,12 @@ function Save() {
         };
         addressData.push(addressRow);
     });
-    console
-    // Combine all data into a single payload
+  
     const payload = {
         AccountMaster: accountPayload,
         accountAddress: addressData,
     };
 
-    // Save the data using AJAX
     $.ajax({
         url: `${appBaseURL}/api/Master/InsertAccountMaster`,
         type: "POST",
@@ -388,6 +410,7 @@ function Save() {
                 setTimeout(() => {
                     toastr.success(response.Msg);
                     ShowAccountMasterlist();
+                    BackMaster();
                 }, 1000);
             } else {
                 toastr.error(response.Msg);
@@ -399,45 +422,151 @@ function Save() {
         },
     });
 }
-
-function addNewRow(index, address) {
+function addNewRowEdit(index, address) {
     const rowCount = index + 1;  // Generate a unique row count for each address
     const table = document.getElementById("Orderdata");
-
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-        <td><input type="text" class="txtAddressCode form-control" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-        <td><input type="text" class="txtAddressLine1 form-control" id="txtAddressLine1_${rowCount}" autocomplete="off"  maxlength="225"/></td>
+        <td><input type="text" class="txtAddressCode form-control mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+        <td><input type="text" class="txtAddressLine1 form-control mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off"  maxlength="225"/></td>
         <td><input type="text" class="txtAddressLine2 form-control" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="225" /></td>
-        <td><input type="text" list="txtCityList" class="txtCity form-control" id="txtCity_${rowCount}" autocomplete="off" /></td>
-        <td><input type="text" list="txtStateNameList" class="txtState form-control" id="txtState_${rowCount}" autocomplete="off"  /></td>
-        <td><input type="text" list="txtCountryList" class="txtNation form-control" id="txtNation_${rowCount}" autocomplete="off" /></td>
-        <td><input type="text" class="txtPIN form-control" id="txtPIN_${rowCount}" autocomplete="off"  maxlength="6"/></td>
+        <td><input type="text" list="txtCityList" class="txtCity form-control mandatory" id="txtCity_${rowCount}" autocomplete="off" /></td>
+        <td><input type="text" list="txtStateNameList" class="txtState form-control mandatory" id="txtState_${rowCount}" autocomplete="off"  /></td>
+        <td><input type="text" list="txtCountryList" class="txtNation form-control mandatory" id="txtNation_${rowCount}" autocomplete="off" /></td>
+        <td><input type="text" class="txtPIN form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off"  maxlength="6"/></td>
         <td><input type="text" class="txtGSTIN form-control" id="txtGSTIN_${rowCount}" autocomplete="off"  maxlength="20"/></td>
         <td><input type="text" class="txtContactPerson form-control" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="50" /></td>
-        <td><input type="text" class="txtPhone form-control" id="txtPhone_${rowCount}" autocomplete="off"  maxlength="15"/></td>
-        <td><input type="text" class="txtMobile form-control" id="txtMobile_${rowCount}" autocomplete="off" maxlength="15" /></td>
-        <td><input type="text" class="txtEmail form-control" id="txtEmail_${rowCount}" autocomplete="off"maxlength="100" /></td>
+        <td><input type="text" class="txtPhone form-control" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"  maxlength="15"/></td>
+        <td><input type="text" class="txtMobile form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}" autocomplete="off" maxlength="15" /></td>
+        <td><input type="text" class="txtEmail form-control mandatory" id="txtEmail_${rowCount}" autocomplete="off"maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}" autocomplete="off" /></td>
-        <td><button type="button" class="btn btn-danger btn-sm deleteRow">Delete</button></td>
+        <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
     `;
 
-    // Append the row to the table
     table.appendChild(newRow);
 
-    // Populate the row with data from the API response
-    $("#txtAddressCode_" + rowCount).val(address.AddressCode || "");
-    $("#txtAddressLine1_" + rowCount).val(address.AddressLine1 || "");
-    $("#txtAddressLine2_" + rowCount).val(address.AddressLine2 || "");
-    $("#txtCity_" + rowCount).val(address.CityName || "");
-    $("#txtState_" + rowCount).val(address.StateName || "");
-    $("#txtNation_" + rowCount).val(address.CountryName || "");
-    $("#txtPIN_" + rowCount).val(address.PIN || "");
-    $("#txtGSTIN_" + rowCount).val(address.GSTIN || "");
-    $("#txtContactPerson_" + rowCount).val(address.ContactPerson || "");
-    $("#txtPhone_" + rowCount).val(address.PhoneNo || "");
-    $("#txtMobile_" + rowCount).val(address.MobileNo || "");
-    $("#txtEmail_" + rowCount).val(address.EmailID || "");
-    $("#chkIsDefault_" + rowCount).prop('checked', address.IsDefault === 'Y');
+    if (address !== undefined) {
+        $("#txtAddressCode_" + rowCount).val(address.AddressCode || "");
+        $("#txtAddressLine1_" + rowCount).val(address.AddressLine1 || "");
+        $("#txtAddressLine2_" + rowCount).val(address.AddressLine2 || "");
+        $("#txtCity_" + rowCount).val(address.CityName || "");
+        $("#txtState_" + rowCount).val(address.StateName || "");
+        $("#txtNation_" + rowCount).val(address.CountryName || "");
+        $("#txtPIN_" + rowCount).val(address.PIN || "");
+        $("#txtGSTIN_" + rowCount).val(address.GSTIN || "");
+        $("#txtContactPerson_" + rowCount).val(address.ContactPerson || "");
+        $("#txtPhone_" + rowCount).val(address.PhoneNo || "");
+        $("#txtMobile_" + rowCount).val(address.MobileNo || "");
+        $("#txtEmail_" + rowCount).val(address.EmailID || "");
+        $("#chkIsDefault_" + rowCount).prop('checked', address.IsDefault === 'Y');
+    }
 }
+function getCheckedCount(className) {
+    return $(`.${className}:checked`).length;
+}
+function OnChangeNumericTextBox(element) {
+
+    element.value = element.value.replace(/[^0-9]/g, "");
+    if (Number.isInteger(parseInt(element.value)) == true) {
+        element.setCustomValidity("");
+
+    } else {
+        element.setCustomValidity("Only allowed Numbers");
+    }
+    element.reportValidity();
+}
+function isValidPAN(pan) {
+    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+    if (panRegex.test(pan)) {
+        return true;
+    } else {
+        return false; 
+    }
+}
+function IsMobileNumber(txtMobId) {
+    var mob = /^[6-9]{1}[0-9]{9}$/;
+    if (mob.test(txtMobId) == false) {
+        return false;
+    }
+    return true;
+}
+function isEmail(email) {
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regex.test(email);
+}
+function convertToUppercase(element) {
+    element.value = element.value.toUpperCase();
+}
+function isRowComplete(row) {
+    const inputs = row.querySelectorAll("input.mandatory");
+    //const inputs = row.querySelectorAll("input[type='text']");
+    return Array.from(inputs).every(input => input.value.trim() !== "");
+}
+function addNewRow() {
+    let rowCount = 0;
+    const table = document.getElementById("tblorderbooking").querySelector("tbody");
+    const rows = table.querySelectorAll("tr");
+    const lastRow = rows[rows.length - 1];
+    if (rows.length > 0) {
+        if (!isRowComplete(lastRow)) {
+            alert("Please fill in all mandatory fields in the current row before adding a new row.");
+        } else {
+            rowCount = rows.length;
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+            <td><input type="text" class="txtAddressCode form-control mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" class="txtAddressLine1 form-control mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" class="txtAddressLine2 form-control" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtCityList" class="txtCity form-control mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
+            <td><input type="text" list="txtStateNameList" class="txtState form-control mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
+            <td><input type="text" list="txtCountryList" class="txtNation form-control mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtPIN form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
+            <td><input type="text" class="txtGSTIN form-control" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtContactPerson form-control" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" class="txtPhone form-control" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtMobile form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtEmail form-control mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+
+      `;
+            table.appendChild(newRow);
+        }
+    } else {
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td><input type="text" class="txtAddressCode form-control mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" class="txtAddressLine1 form-control mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" class="txtAddressLine2 form-control" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtCityList" class="txtCity form-control mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
+            <td><input type="text" list="txtStateNameList" class="txtState form-control mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
+            <td><input type="text" list="txtCountryList" class="txtNation form-control mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtPIN form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
+            <td><input type="text" class="txtGSTIN form-control" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtContactPerson form-control" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" class="txtPhone form-control" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtMobile form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtEmail form-control mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+      `;
+        table.appendChild(newRow);
+    }
+}
+$(document).on("click", ".deleteRow", function () {
+    const table = document.getElementById("tblorderbooking").querySelector("tbody");
+    if (table.querySelectorAll("tr").length > 1) {
+        $(this).closest("tr").remove();
+    } else {
+        alert("At least one row is required.");
+    }
+});
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Account Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
+}
+
 

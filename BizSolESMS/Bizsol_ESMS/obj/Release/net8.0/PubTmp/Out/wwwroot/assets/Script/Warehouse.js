@@ -82,9 +82,18 @@ $(document).ready(function () {
                         $("#txtPin").val(item.Pin);
                         $("#txtCity").val(item.CityName);
                         $("#txtGSTIN").val(item.GSTIN);
-                        $("#txtDefaultWarehouse").val(item.DefaultWarehouse);
-                        $("#txtStoreWarehouse").val(item.StoreWarehouse);
-                        $("#txtInTransitwarehouse").val(item.InTransitwarehouse);
+                        if (item.DefaultWarehouse == 'N') {
+                            $('#txtDefaultWarehouse').prop("checked", false);
+                        }
+                        if (item.StoreWarehouse == 'N') {
+                            $('#txtStoreWarehouse').prop("checked", false);
+                        }
+                        if (item.InTransitwarehouse == 'N') {
+                            $('#txtInTransitwarehouse').prop("checked", false);
+                        }
+                        //$("#txtDefaultWarehouse").val(item.DefaultWarehouse);
+                        //$("#txtStoreWarehouse").val(item.StoreWarehouse);
+                        //$("#txtInTransitwarehouse").val(item.InTransitwarehouse);
                     });
                 } else {
                     toastr.error("Record not found...!");
@@ -105,10 +114,13 @@ function Save() {
     var Pin = $("#txtPin").val();
     var City = $("#txtCity").val();
     var GSTIN = $("#txtGSTIN").val();
-    var DefaultWarehouse = $("#txtDefaultWarehouse").val();
-    var StoreWarehouse = $("#txtStoreWarehouse").val();
-    var InTransitwarehouse = $("#txtInTransitwarehouse").val();
-
+    //var DefaultWarehouse = $("#txtDefaultWarehouse").val();
+    //var StoreWarehouse = $("#txtStoreWarehouse").val();
+    //var InTransitwarehouse = $("#txtInTransitwarehouse").val();
+    const DefaultWarehouse = $('#txtDefaultWarehouse').is(":checked");
+            
+    const StoreWarehouse = $('#txtStoreWarehouse').is(":checked");
+    const InTransitwarehouse = $('#txtInTransitwarehouse').is(":checked");
     // Client-side validation
     if (!WarehouseName) {
         toastr.error('Please enter a Warehouse Name.');
@@ -140,21 +152,21 @@ function Save() {
         $("#txtGSTIN").focus();
         return;
     }
-    if (!DefaultWarehouse) {
-        toastr.error('Please specify if it is the Default Warehouse.');
-        $("#txtDefaultWarehouse").focus();
-        return;
-    }
-    if (!StoreWarehouse) {
-        toastr.error('Please specify if it is a Store Warehouse.');
-        $("#txtStoreWarehouse").focus();
-        return;
-    }
-    if (!InTransitwarehouse) {
-        toastr.error('Please specify if it is an In-Transit Warehouse.');
-        $("#txtInTransitwarehouse").focus();
-        return;
-    }
+    //if (!DefaultWarehouse) {
+    //    toastr.error('Please specify if it is the Default Warehouse.');
+    //    $("#txtDefaultWarehouse").focus();
+    //    return;
+    //}
+    //if (!StoreWarehouse) {
+    //    toastr.error('Please specify if it is a Store Warehouse.');
+    //    $("#txtStoreWarehouse").focus();
+    //    return;
+    //}
+    //if (!InTransitwarehouse) {
+    //    toastr.error('Please specify if it is an In-Transit Warehouse.');
+    //    $("#txtInTransitwarehouse").focus();
+    //    return;
+    //}
 
     // Prepare payload
     const payload = {
@@ -165,9 +177,9 @@ function Save() {
         Pin: Pin,
         City: City,
         GSTIN: GSTIN,
-        DefaultWarehouse: DefaultWarehouse,
-        StoreWarehouse: StoreWarehouse,
-        InTransitwarehouse: InTransitwarehouse,
+        DefaultWarehouse: DefaultWarehouse == true ? 'Y' : 'N',
+        StoreWarehouse: StoreWarehouse == true ? 'Y' : 'N',
+        InTransitwarehouse: InTransitwarehouse == true ? 'Y' : 'N',
     };
 
     // Make AJAX request
@@ -183,6 +195,7 @@ function Save() {
         success: function (response) {
             if (response.Status === 'Y') {
                 toastr.success(response.Msg);
+                BackMaster();
                 ShowItemMasterlist();
             } else {
                 toastr.error(response.Msg);
@@ -243,13 +256,14 @@ function ShowItemMasterlist() {
 
 }
 function CreateWarehouseMaster() {
+    ClearData();
     window.location.href = `${AppBaseURLMenu}/Master/CreateWarehouseMaster?Mode=New`;
 
 }
 
 function BackMaster() {
     window.location.href = `${AppBaseURLMenu}/Master/WarehouseMasterList`;
-
+    ClearData();
 }
 
 function deleteWarehouse(code) {
@@ -326,4 +340,16 @@ function GetCityDropDownList() {
             $('#txtCityList').empty();
         }
     });
+}
+
+function ClearData() {
+    $("#txtWarehouseName").val("");
+    $("#txtWarehouseType").val("");
+    $("#txtAddress").val("");
+    $("#txtPin").val("");
+    $("#txtCity").val("");
+    $("#txtGSTIN").val("");
+    $("#txtDefaultWarehouse").val("");
+    $("#txtStoreWarehouse").val("");
+    $("#txtInTransitwarehouse").val("");
 }

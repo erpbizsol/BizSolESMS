@@ -13,14 +13,11 @@
             max-width: 370px;
             margin: 0 auto;
             margin-top: 5rem;
+            font-size:12px;
         }
 
-    #btnValidateCompany, #btnProceed {
+        #btnValidateCompany, #btnProceed {
             width: 100%;
-        }
-        
-
-            font-size: 12px;
         }
        
     .Esms-logo {
@@ -53,17 +50,12 @@
             <span class="text-right"><i class="fa fa-lock fa-2x"></i></span>
         </h4> *@
        
-        <form id="loginForm" method="post">
-            <div class="mb-2">
         <form>
             <div class="mb-3">
                 <label for="txtCompanyCode" class="form-label">Company Code</label>
                 <input id="txtCompanyCode" name="CompanyCode" class="form-control" placeholder="Enter Company Code" type="text" required autocomplete="off">
             </div>
             <input type="button" class="btn btn-primary" id="btnValidateCompany" value="Proceed" />
-           <div>
-            <button class="btn btn-primary mt-3" id="btnValidateCompany">Proceed</button>
-           </div>
             <div id="userCredentials" style="display: none;">
                 <div class="mb-2"id="txtU">
                     <label for="txtUserID" class="form-label">UserID</label>
@@ -73,15 +65,6 @@
                     <label for="txtPassword" class="form-label">Password</label>
                     <input id="txtPassword" name="Password" class="form-control" placeholder="Enter Password" autocomplete="off" type="password" required>
                 </div>
-                    <button class="btn btn-primary mt-3" id="btnProceed" type="button">Login</button>
-            <div class="mb-3"id="txtU">
-                <label for="txtUserID" class="form-label">UserID</label>
-                <input id="txtUserID" name="UserID" class="form-control" placeholder="Enter User ID" type="text" required autocomplete="off">
-            </div>
-            <div class="mb-3" id="txtP">
-                <label for="txtPassword" class="form-label">Password</label>
-                <input id="txtPassword" name="Password" class="form-control" placeholder="Enter Password" autocomplete="off" type="password" required>
-            </div>
             <input type="button" class="btn btn-primary" id="btnProceed" value="Proceed" />
             </div>
         </form>

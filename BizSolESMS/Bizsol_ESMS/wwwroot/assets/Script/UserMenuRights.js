@@ -97,7 +97,7 @@ function populateTable(response, Result) {
         </div>
         </th>`;
     response.forEach(rowData => {
-        headerRow += `<th style="text-transform: uppercase;">
+        headerRow += `<th style="text-transform: uppercase;" onclick="GetUserListByGroupCode(${rowData["Code"]})">
             <div class="filter-table-heading-div">
                 <span class="filter-table-heading" style="text-algin:center ! important;">${rowData["Group Name"]}</span>
                 <span class="">
@@ -507,7 +507,6 @@ function ChangecolorTd() {
         }
     });
 }
-
 function Tooltip() {
     // Use getElementsByClassName and convert it to an array
     const thElements = Array.from(document.getElementsByClassName("filter-table-heading"));

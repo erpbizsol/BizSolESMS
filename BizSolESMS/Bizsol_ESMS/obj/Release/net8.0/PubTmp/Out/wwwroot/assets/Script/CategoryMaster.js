@@ -49,8 +49,6 @@ function Save() {
                 code: parseInt(CCode) || 0,
                 categoryName: CategoryName
             };
-            const isUpdate = payload.code > 0;
-            const url = isUpdate
             $.ajax({
                 url: `${appBaseURL}/api/Master/InsertCategoryMaster`,
                 type: 'POST',
@@ -62,15 +60,9 @@ function Save() {
                 },
                 success: function (response) {
                     if (response.Status === 'Y') {
-                        if (CMode > 'Edit' && CCode > 0) {
-                            toastr.success(response.Msg);
-                            ShowCategoryMasterlist();
-                        }
-                        else {
-                            toastr.success(response.Msg);
-                            ShowCategoryMasterlist();
-                        }
-
+                        toastr.success(response.Msg);
+                        BackMaster();
+                        ShowCategoryMasterlist();
                     }
                     else {
                         toastr.error(response.Msg);
@@ -122,12 +114,14 @@ function ShowCategoryMasterlist() {
 
 }
 function CreateCategoryMaster() {
+    ClearData();
     window.location.href = `${AppBaseURLMenu}/Master/CreateCategoryMaster?Mode=New`;
 
 }
 
 function BackMaster() {
     window.location.href = `${AppBaseURLMenu}/Master/CategoryMasterList`;
+    ClearData();
 
 }
 
@@ -142,7 +136,7 @@ function deleteCatagery(code) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    location.reload();
+                    ShowCategoryMasterlist();
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -160,6 +154,9 @@ function Edit(code) {
     window.location.href = `${AppBaseURLMenu}/Master/CreateCategoryMaster?Code=${code}&Mode=Edit`;
 }
 
+function ClearData() {
+    $("#txtCategoryName").val("");
+}
 function exportTableToExcel() {
     var table = document.getElementById("table");
     var workbook = XLSX.utils.book_new();

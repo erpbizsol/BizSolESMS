@@ -1,5 +1,4 @@
-﻿//let AppBaseURLMenu = "https://web.bizsol.in/esms";
-let AppBaseURLMenu = "https://localhost:7072";
+﻿let AppBaseURLMenu=window.location.href.toLowerCase().includes('local') == true ? 'https://localhost:7072' : 'https://web.bizsol.in/esms'
 $(document).ready(function () {
     $('#txtCompanyCode').on('keydown', function (e) {
         if (e.key === "Enter") {
@@ -32,7 +31,7 @@ function CheckCompany() {
         return;
     }
     $.ajax({
-        url: '/Login/ValidateCompanyCode',
+        url: `${AppBaseURLMenu}/Login/ValidateCompanyCode`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ CompanyCode: companyCode }),
@@ -60,7 +59,7 @@ function Login() {
         Password: $('#txtPassword').val()
     };
     $.ajax({
-        url: '/Login/Authenticate',
+        url: `${AppBaseURLMenu}/Login/Authenticate`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(formData),

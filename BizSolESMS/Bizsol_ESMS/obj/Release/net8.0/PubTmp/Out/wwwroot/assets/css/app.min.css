@@ -5949,7 +5949,7 @@ table, th, td, tr {
     width: 100px;
 }
 
-button, .icon-height {
+ .icon-height {
     border-radius: 6px;
     height: 25px;
     font-size: 7pt;
@@ -6055,11 +6055,11 @@ legend {
         color: #fff; */
 }
 
-
 :is(.form-control, .form-control-sm) {
     /*border: var(--bs-border-width) solid #b5bfc3 !important;*/
     border: var(--bs-border-width) solid #275481 !important;
     color: #000;
+    font-size: 12px;
 }
 
 :is(.form-control:disabled, input.form-control[readonly]) {
@@ -6070,7 +6070,8 @@ legend {
 label {
     margin-bottom: .4rem !important;
     font-size: 12px !important;
-    font-weight: bold;
+    /*font-weight: bold;*/
+    font-family: sans-serif, arial;
 }
 
 .col-Date-1 {

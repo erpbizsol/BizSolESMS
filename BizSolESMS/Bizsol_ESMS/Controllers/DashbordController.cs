@@ -33,7 +33,8 @@ namespace Bizsol_ESMS.Controllers
                 DefultMysqlTemp = newconnectionStrings,
                 AuthToken = "xyz",
                 UserMaster_Code,
-                UserID
+                UserID,
+                UserType
             };
 
             string jsonAuthKey = JsonSerializer.Serialize(authKey);
@@ -43,8 +44,5 @@ namespace Bizsol_ESMS.Controllers
             ViewBag.AuthKey = jsonAuthKey;
             return View();
         }
-
-
-
     }
 }
