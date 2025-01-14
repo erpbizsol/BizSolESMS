@@ -94,7 +94,7 @@
         <div class="col-sm-12 text-end">
             <label></label>
             <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
-            <button type="button" class="btn btn-success btn-height" onclick="CreateItemMaster()">CREATE NEW</button>
+            <button type="button" class="btn btn-success btn-height" onclick="Create()">CREATE NEW</button>
         </div>
     </div>
     <div class="card-body mt-2">
@@ -158,7 +158,7 @@
                     <div class="accordion-item tab active">
                         <h2 class="accordion-header tab-header .active" id="flush-headingOne">
                             <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
-                                Account Address
+                                MRN Details
                             </button>
                         </h2>
                         <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
@@ -212,6 +212,7 @@
         <datalist id="txtItemBarCode"></datalist>
         <datalist id="txtItemName"></datalist>
         <datalist id="txtItemCode"></datalist>
+        <datalist id="txtWarehouse"></datalist>
 
             <div class="row m-2">
                 <div class="col-md-12" style="margin-top: 30px !important;">

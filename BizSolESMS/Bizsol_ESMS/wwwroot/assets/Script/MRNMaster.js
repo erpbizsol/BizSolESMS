@@ -8,46 +8,38 @@ let ItemDetail = [];
 $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("MRN Master");
-    $('#txtAccountName').on('keydown', function (e) {
+    $('#txtMRNDate').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtDisplayName").focus();
+            $("#txtVendorName").focus();
         }
     });
-    $('#txtDisplayName').on('keydown', function (e) {
+    $('#txtVendorName').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtPANNo").focus();
+            $("#txtChallanNo").focus();
         }
     });
-    $('#txtPANNo').on('keydown', function (e) {
+    $('#txtChallanNo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtIsClient").focus();
+            $("#txtChallanDate").focus();
         }
     });
-    $('#txtIsClient').on('keydown', function (e) {
+    $('#txtChallanDate').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtIsVendor").focus();
+            $("#txtVehicleNo").focus();
         }
     });
-    $('#txtIsVendor').on('keydown', function (e) {
+    $('#txtVehicleNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtIsMSME").focus();
         }
     });
-    $('#txtIsMSME').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtsave").focus();
-        }
-    });
     GetAccountMasterList();
     GetItemDetails();
-    //GetGroupMasterList();
-    //GetCountryMasterList();
-    //GetCityDropDownList();
+    GetWareHouseList();
     $("#btnAddNewRow").click(function () {
         addNewRow();
     });
     GetModuleMasterCode();
-    //Tooltip();
     $("#txtVendorName").on("focusout", function () {
         let value = $(this).val();
         let isValid = false;
@@ -67,8 +59,24 @@ $(document).ready(function () {
     $("#txtVendorName").on("focus", function () {
          $("#txtVendorName").val("");
     });
+    $("#txtVendorName").on("focusout", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtVendorNameList option").each(function () {
+            if ($(this).val() === value) {
+                const item = AccountList.find(entry => entry.AccountName == value);
+                $("#txtAddress").val(item.Address)
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtAddress").val("")
+        }
+    });
 });
-function ShowAccountMasterlist() {
+function ShowMRNMasterlist() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMaster`,
         type: 'GET',
@@ -105,7 +113,7 @@ function ShowAccountMasterlist() {
     });
 
 }
-async function CreateItemMaster() {
+async function Create() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -203,13 +211,9 @@ async function deleteItem(code) {
         });
     }
 }
-function updateDisplayName() {
-    const itemName = document.getElementById('txtAccountName').value;
-    document.getElementById('txtDisplayName').value = itemName;
-}
 function GetAccountMasterList() {
     $.ajax({
-        url: `${appBaseURL}/api/Master/GetAccountDropDown`,
+        url: `${appBaseURL}/api/Master/GetAccountIsVendorDropDown`,
         type: 'GET',    
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -271,66 +275,39 @@ function GetItemDetails() {
 }
 function GetWareHouseList() {
     $.ajax({
-        url: `${appBaseURL}/api/Master/GetCityDropDown`,
+        url: `${appBaseURL}/api/Master/GetWareHouseDropDown`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
-                $('#txtCityList').empty();
-                let options = '';
-                response.forEach(item => {
-                    options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
-                });
-                $('#txtCityList').html(options);
-            } else {
-                $('#txtCityList').empty();
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-            $('#txtCityList').empty();
-        }
-    });
-}
-function GetCountryMasterList() {
-    $.ajax({
-        url: `${appBaseURL}/api/Master/GetCountryDropDown`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response.length > 0) {
-                $('#txtCountryList').empty();
+                $('#txtWarehouse').empty();
                 let options = '';
                 response.forEach(item => {
                     options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
                 });
-                $('#txtCountryList').html(options);
+                $('#txtWarehouse').html(options);
             } else {
-                $('#txtCountryList').empty();
+                $('#txtWarehouse').empty();
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-            $('#txtCountryList').empty();
+            $('#txtWarehouse').empty();
         }
     });
 }
 function ClearData() {
     $("#hfCode").val("0");
-    $("#txtAccountName").val("");
-    $("#txtDisplayName").val("");
-    $("#txtPANNo").val("");
-    $("#txtIsClient").prop("checked", true);
-    $("#txtIsVendor").prop("checked", true);
-    $("#txtIsMSME").val("");
+    $("#txtMRNNo").val("");
+    $("#txtVendorName").val("");
+    $("#txtAddress").val("");
+    $("#txtVehicleNo").val("");
+    $("#txtChallanNo").val("");
     $("#Orderdata").empty();
 }
 function Save() {
-    // Collect Account Master Data
     const AccountName = $("#txtAccountName").val();
     const DisplayName = $("#txtDisplayName").val();
 
@@ -419,10 +396,7 @@ function Save() {
         AccountName: AccountName,
         DisplayName: DisplayName,
         PANNo: $("#txtPANNo").val(),
-        IsClient: $("#txtIsClient").is(":checked") ? "Y" : "N",
-        IsVendor: $("#txtIsVendor").is(":checked") ? "Y" : "N",
     }];
-    // Collect Address Details Data
     const addressData = [];
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
@@ -476,23 +450,23 @@ function Save() {
     });
 }
 function addNewRowEdit(index, address) {
-    const rowCount = index + 1;  // Generate a unique row count for each address
+    const rowCount = index + 1;
     const table = document.getElementById("Orderdata");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-            <td><input type="text" list="txtItemAddress" class="txtItemBarCode box_border form-control form-control-sm mandatory" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm " onkeypress="return OnChangeNumericTextBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtBillQty box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
-            <td><input type="text" class="txtRemarks box_border form-control form-control-sm mandatory" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
+            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
+            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" onfocusout="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
     `;
 
@@ -513,9 +487,6 @@ function addNewRowEdit(index, address) {
         $("#txtEmail_" + rowCount).val(address.EmailID || "");
         $("#chkIsDefault_" + rowCount).prop('checked', address.IsDefault === 'Y');
     }
-}
-function getCheckedCount(className) {
-    return $(`.${className}:checked`).length;
 }
 function OnChangeNumericTextBox(element) {
 
@@ -541,6 +512,17 @@ function OnKeyDownPressFloatTextBox(event, element) {
         return false;
     }
 }
+function SetvalueReceivedQty(event, element) {
+    const currentRow = element.closest('tr');
+    const ReceivedQty = currentRow.querySelector('.txtReceivedQty');
+    if (currentRow) {
+            const value = element.value;
+            ReceivedQty.value = value;
+    }
+    else {
+           
+        }
+}
 function BizSolhandleEnterKey(event) {
     if (event.key === "Enter") {
         //const inputs = document.getElementsByTagName('input')
@@ -557,7 +539,6 @@ function BizSolhandleEnterKey(event) {
 }
 function isRowComplete(row) {
     const inputs = row.querySelectorAll("input.mandatory");
-    //const inputs = row.querySelectorAll("input[type='text']");
     return Array.from(inputs).every(input => input.value.trim() !== "");
 }
 function addNewRow() {
@@ -572,39 +553,38 @@ function addNewRow() {
             rowCount = rows.length;
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
-            <td><input type="text" list="txtItemAddress" class="txtItemBarCode box_border form-control form-control-sm mandatory" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm " onkeypress="return OnChangeNumericTextBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
+            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
+            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" onfocusout="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
-
       `;
             table.appendChild(newRow);
         }
     } else {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
-            <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm " onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" onfocusout="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
       `;
@@ -621,7 +601,7 @@ $(document).on("click", ".deleteRow", function () {
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Account Master");
+    const result = Data.find(item => item.ModuleDesp === "MRN Master");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
@@ -727,14 +707,108 @@ function DatePicker() {
         autoclose: true,
     });
 }
-//function Tooltip() {
-//    const thElements = Array.from(document.getElementsByTagName("th"));
-//    thElements.forEach(th => {
-//        const text = th.textContent.trim(); 
-//        if (text.length > 5) {
-//            th.classList.add("tooltip1"); 
-//            th.setAttribute("data-tooltip", text); 
-//            th.textContent = text.substring(0, 10) + "..."; 
-//        }
-//    });
-//}
+function FillallItemfield(inputElement,value) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const inputValue = inputElement.value;
+        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
+        const itemCode = currentRow.querySelector('.txtItemCode');
+        const itemName = currentRow.querySelector('.txtItemName');
+        const itemAddress = currentRow.querySelector('.txtItemAddress');
+        const itemUOM = currentRow.querySelector('.txtUOM');
+        if (value == 'BarCode') {
+            $("#txtItemBarCode option").each(function () {
+                if ($(this).val() === inputValue) {
+                    const item = ItemDetail.find(entry => entry.ItemBarCode == inputValue);
+                    itemBarCode.value = item.ItemBarCode;
+                    itemCode.value = item.ItemCode;
+                    itemName.value = item.ItemName;
+                    itemAddress.value = item.locationName;
+                    itemUOM.value = item.UomName;
+                    isValid = true;
+                    return false;
+                } else {
+                    itemBarCode.value = "";
+                    itemCode.value = "";
+                    itemName.value = "";
+                    itemAddress.value = "";
+                    itemUOM.value = "";
+                }
+            });
+        }
+        if (value == 'ItemCode') {
+            $("#txtItemCode option").each(function () {
+                if ($(this).val() === inputValue) {
+                    const item = ItemDetail.find(entry => entry.ItemCode == inputValue);
+                    $("#txtAddress").val(item.Address)
+                    itemBarCode.value = item.ItemBarCode;
+                    itemCode.value = item.ItemCode;
+                    itemName.value = item.ItemName;
+                    itemAddress.value = item.locationName;
+                    itemUOM.value = item.UomName;
+                    isValid = true;
+                    return false;
+                } else {
+                    itemBarCode.value = "";
+                    itemCode.value = "";
+                    itemName.value = "";
+                    itemAddress.value = "";
+                    itemUOM.value = "";
+                }
+            });
+        }
+        if (value == 'ItemName') {
+            $("#txtItemName option").each(function () {
+                if ($(this).val() === inputValue) {
+                    const item = ItemDetail.find(entry => entry.ItemName == inputValue);
+                    $("#txtAddress").val(item.Address)
+                    itemBarCode.value = item.ItemBarCode;
+                    itemCode.value = item.ItemCode;
+                    itemName.value = item.ItemName;
+                    itemAddress.value = item.locationName;
+                    itemUOM.value = item.UomName;
+                    isValid = true;
+                    return false;
+                } else {
+                    itemBarCode.value = "";
+                    itemCode.value = "";
+                    itemName.value = "";
+                    itemAddress.value = "";
+                    itemUOM.value = "";
+                }
+            });
+        }
+    }
+}
+function CheckWarehouse(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const value = inputElement.value;
+        let isValid = false;
+        const Warehouse = currentRow.querySelector('.txtWarehouse');
+        $("#txtWarehouse option").each(function () {
+            if ($(this).val() === value) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            Warehouse.value = "";
+        }
+    }
+
+}
+function CalculateAmount(inputElement) {
+    const currentRow = inputElement.closest('tr'); 
+    if (currentRow) {
+        const BillQty = currentRow.querySelector('.txtBillQty');
+        const Rate = currentRow.querySelector('.txtRate');
+        const Amount = currentRow.querySelector('.txtAmount');
+        const billQtyValue = parseFloat(BillQty?.value) || 0; 
+        const rateValue = parseFloat(Rate?.value) || 0;
+        const calculatedAmount = billQtyValue * rateValue;
+        if (Amount) {
+            Amount.value = calculatedAmount.toFixed(2);
+        }
+     }
+}

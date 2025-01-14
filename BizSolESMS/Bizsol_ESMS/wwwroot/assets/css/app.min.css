@@ -6252,3 +6252,6 @@ a.icon-height {
 .AutoSuggestion-list-highlighted {
     background-color: #9aa0a5;
 }
+.text-right {
+    text-align: right;
+}
