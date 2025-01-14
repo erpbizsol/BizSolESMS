@@ -25,6 +25,7 @@ var authKeyData = sessionStorage.getItem('authKey');
             },
             success: function (value) {
                 if (value.length > 0) {
+                    sessionStorage.setItem('UserModuleMaster', JSON.stringify(value));
                     var menuHtml = '';
                     $.each(value, function (index, item) {
                         if (item.MasterModuleCode === 0) {
