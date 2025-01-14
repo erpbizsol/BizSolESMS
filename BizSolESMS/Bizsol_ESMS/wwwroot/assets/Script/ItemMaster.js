@@ -16,6 +16,11 @@ $(document).ready(function () {
             if (this.value.charAt(0) == ".") this.value = this.value.replace(this.value, '0' + this.value)
         }
     });
+    $('#txtItemCode').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtItemName").focus();
+        }
+    });
     $('#txtItemName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtDisplayName").focus();
@@ -185,6 +190,7 @@ function ShowItemMasterlist() {
 
 }
 function Save() {
+    var ItemCode = $("#txtItemCode").val();
     var ItemName = $("#txtItemName").val();
     var BoxPacking = $("#txtBoxPacking").val();
     var QtyInBox = $("#txtQtyinBox").val();
@@ -195,7 +201,11 @@ function Save() {
     var Brand = $("#txtBrand").val();
     var ReorderLevel = $("#txtReorderLevel").val();
     var ReorderQty = $("#txtReorderQty").val();
-    if (!ItemName) {
+    if (!ItemCode) {
+        toastr.error('Please enter an Item Code!');
+        $("#txtItemCode").focus();
+    }
+    else if (!ItemName) {
         toastr.error('Please enter an Item Name!');
         $("#txtItemName").focus();
     }
@@ -236,6 +246,7 @@ function Save() {
         var ReorderQtys = ReorderQty === "" ? 0 : parseInt(ReorderQty);
         const payload = {
             Code: $("#hfCode").val(),
+            ItemCode: $("#txtItemCode").val(),
             ItemName: $("#txtItemName").val(),
             DisplayName: $("#txtDisplayName").val(),
             ItemBarCode: $("#txtItembarcode").val(),
@@ -251,8 +262,10 @@ function Save() {
            // ReorderQty: parseInt($("#txtReorderQty").val()),
             LocationName: $("#txtItemLocation").val(),
             BoxPacking: $("#txtBoxPacking").val(),
-            batchApplicable: $("#txtBatchApplicable").val(),
-            maintainExpiry: $("#txtMaintainExpiry").val(),
+            //batchApplicable: $("#txtBatchApplicable").val(),
+            //maintainExpiry: $("#txtMaintainExpiry").val(),
+            batchApplicable: $("#txtBatchApplicable").is(":checked") ? "Y" : "N",
+            maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N", 
             QtyInBox: $("#txtQtyinBox").val()
         };
         $.ajax({
@@ -330,23 +343,30 @@ function Edit(code) {
         },
         success: function (item) {
             if (item) {
-            $("#hfCode").val(item.Code),
-            $("#txtItemName").val(item.ItemName),
-            $("#txtDisplayName").val(item.DisplayName),
-            $("#txtItembarcode").val(item.ItemBarCode),
-            $("#txtUOM").val(item.UomName),
-            $("#txtHSNCode").val(item.HSNCode),
-            $("#txtCategory").val(item.CategoryName),
-            $("#txtGroupItem").val(item.GroupName),
-            $("#txtSubGroupItem").val(item.SubGroupName),
-            $("#txtBrand").val(item.BrandName),
-            $("#txtReorderLevel").val(item.ReorderLevel),
-            $("#txtReorderQty").val(item.ReorderQty),
-            $("#txtItemLocation").val(item.locationName),
-            $("#txtBoxPacking").val(item.BoxPacking),
-            $("#txtBatchApplicable").val(item.BatchApplicable),
-            $("#txtMaintainExpiry").val(item.MaintainExpiry),
-            $("#txtQtyinBox").val(item.QtyInBox)
+                $("#hfCode").val(item.Code),
+                $("#txtItemCode").val(item.ItemCode);
+                $("#txtItemName").val(item.ItemName);
+                $("#txtDisplayName").val(item.DisplayName);
+                $("#txtItembarcode").val(item.ItemBarCode);
+                $("#txtUOM").val(item.UomName);
+                $("#txtHSNCode").val(item.HSNCode);
+                $("#txtCategory").val(item.CategoryName);
+                $("#txtGroupItem").val(item.GroupName);
+                $("#txtSubGroupItem").val(item.SubGroupName);
+                $("#txtBrand").val(item.BrandName);
+                $("#txtReorderLevel").val(item.ReorderLevel);
+                $("#txtReorderQty").val(item.ReorderQty);
+                $("#txtItemLocation").val(item.locationName);
+                $("#txtBoxPacking").val(item.BoxPacking);
+                //$("#txtBatchApplicable").val(item.BatchApplicable),
+                //$("#txtMaintainExpiry").val(item.MaintainExpiry),
+                if (item.BatchApplicable == 'N') {
+                    $("#txtBatchApplicable").prop("checked", false);
+                }
+                if (item.MaintainExpiry == 'N') {
+                    $("#txtMaintainExpiry").prop("checked", false);
+                }
+                $("#txtQtyinBox").val(item.QtyInBox)
             } else {
                 toastr.error("Record not found...!");
             }
@@ -541,6 +561,7 @@ function updateDisplayName() {
 }
 function ClearData() {
     $("#hfCode").val("0");
+    $("#txtItemCode").val("");
     $("#txtItemName").val("");
     $("#txtDisplayName").val("");
     $("#txtItembarcode").val("");
