@@ -421,6 +421,9 @@ function SaveUserMaster(){
     } else if (UserName === "") {
         toastr.error('Please enter User Name.');
         $("#txtUserName").focus();
+    } else if (!IsMobileNumber(MobileNo)) {
+        toastr.error('Please enter valid Mobile No.');
+        $("#txtMobileNo").focus();
     } else if (Password === "") {
         toastr.error('Please enter Password.');
         $("#txtPassword").focus();
@@ -531,4 +534,11 @@ function ClearData()
 function isEmail(email) {
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     return regex.test(email);
+}
+function IsMobileNumber(txtMobId) {
+    var mob = /^[6-9]{1}[0-9]{9}$/;
+    if (mob.test(txtMobId) == false) {
+        return false;
+    }
+    return true;
 }

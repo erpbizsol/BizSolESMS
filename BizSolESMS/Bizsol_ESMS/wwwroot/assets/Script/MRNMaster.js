@@ -3,8 +3,11 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+let AccountList = [];
+let ItemDetail = [];
 $(document).ready(function () {
-    $("#ERPHeading").text("Account Master");
+    DatePicker();
+    $("#ERPHeading").text("MRN Master");
     $('#txtAccountName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtDisplayName").focus();
@@ -35,22 +38,35 @@ $(document).ready(function () {
             $("#txtsave").focus();
         }
     });
-    ShowAccountMasterlist();
-    GetGroupMasterList();
-    GetCountryMasterList();
-    GetCityDropDownList();
-    $(document).on("change", ".chkIsDefault", function () {
-        if (this.checked) {
-            $(".chkIsDefault").not(this).prop("checked", false);
-        }
-    });
-    $("#btnAddNewRow").click(function(){
+    GetAccountMasterList();
+    GetItemDetails();
+    //GetGroupMasterList();
+    //GetCountryMasterList();
+    //GetCityDropDownList();
+    $("#btnAddNewRow").click(function () {
         addNewRow();
     });
-    $(".btnAddNewRow").click(function (e) {
-        DeleteRow(e);
-    });
     GetModuleMasterCode();
+    //Tooltip();
+    $("#txtVendorName").on("focusout", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtVendorNameList option").each(function () {
+            if ($(this).val() === value) {
+                const item = AccountList.find(entry => entry.AccountName == value);
+                $("#txtAddress").val(item.Address)
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtAddress").val("")
+        }
+    });
+    $("#txtVendorName").on("focus", function () {
+         $("#txtVendorName").val("");
+    });
 });
 function ShowAccountMasterlist() {
     $.ajax({
@@ -61,7 +77,7 @@ function ShowAccountMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["Account Name","Display Name"];
+                const StringFilterColumn = ["Account Name", "Display Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
@@ -119,7 +135,7 @@ async function Edit(code) {
         url: `${appBaseURL}/api/Master/ShowAccountMasterByCode?Code=` + code,
         type: 'GET',
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData); 
+            xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response) {
@@ -131,7 +147,7 @@ async function Edit(code) {
                     $("#txtPANNo").val(accountMaster.PANNo || "");
                     $("#txtIsMSME").val(accountMaster.IsMSME || "");
                     if (accountMaster.IsClient == 'N') {
-                        $("#txtIsClient").prop("checked",false);
+                        $("#txtIsClient").prop("checked", false);
                     }
                     if (accountMaster.IsVendor == 'N') {
                         $("#txtIsVendor").prop("checked", false);
@@ -142,7 +158,7 @@ async function Edit(code) {
                 $("#Orderdata").empty();
                 if (response.AccountAddress && response.AccountAddress.length > 0) {
                     response.AccountAddress.forEach(function (address, index) {
-                      
+
                         addNewRowEdit(index, address);
                     });
                 } else {
@@ -191,23 +207,24 @@ function updateDisplayName() {
     const itemName = document.getElementById('txtAccountName').value;
     document.getElementById('txtDisplayName').value = itemName;
 }
-function GetGroupMasterList() {
+function GetAccountMasterList() {
     $.ajax({
-        url: `${appBaseURL}/api/Master/GetStateDropDown`,
-        type: 'GET',
+        url: `${appBaseURL}/api/Master/GetAccountDropDown`,
+        type: 'GET',    
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
-                $('#txtStateNameList').empty();
+                AccountList = response;
+                $('#txtVendorNameList').empty();
                 let options = '';
                 response.forEach(item => {
-                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
+                    options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
                 });
-                $('#txtStateNameList').html(options);
+                $('#txtVendorNameList').html(options);
             } else {
-                $('#txtStateNameList').empty();
+                $('#txtVendorNameList').empty();
             }
         },
         error: function (xhr, status, error) {
@@ -216,7 +233,43 @@ function GetGroupMasterList() {
         }
     });
 }
-function GetCityDropDownList() {
+function GetItemDetails() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetItemDetails`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                ItemDetail = response;
+                $('#txtItemBarCode').empty();
+                $('#txtItemCode').empty();
+                $('#txtItemName').empty();
+                let options1 = '';
+                let options2 = '';
+                let options3 = '';
+                response.forEach(item => {
+                    options1 += '<option value="' + item.ItemBarCode + '" text="' + item.Code + '"></option>';
+                    options2 += '<option value="' + item.ItemCode + '" text="' + item.Code + '"></option>';
+                    options3 += '<option value="' + item.ItemName + '" text="' + item.Code + '"></option>';
+                });
+                $('#txtItemBarCode').html(options1);
+                $('#txtItemCode').html(options2);
+                $('#txtItemName').html(options3);
+            } else {
+                $('#txtItemBarCode').empty();
+                $('#txtItemCode').empty();
+                $('#txtItemName').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtCountryNameList').empty();
+        }
+    });
+}
+function GetWareHouseList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetCityDropDown`,
         type: 'GET',
@@ -228,7 +281,7 @@ function GetCityDropDownList() {
                 $('#txtCityList').empty();
                 let options = '';
                 response.forEach(item => {
-                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
+                    options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
                 });
                 $('#txtCityList').html(options);
             } else {
@@ -271,7 +324,7 @@ function ClearData() {
     $("#txtAccountName").val("");
     $("#txtDisplayName").val("");
     $("#txtPANNo").val("");
-    $("#txtIsClient").prop("checked",true);
+    $("#txtIsClient").prop("checked", true);
     $("#txtIsVendor").prop("checked", true);
     $("#txtIsMSME").val("");
     $("#Orderdata").empty();
@@ -336,7 +389,7 @@ function Save() {
             row.find(".txtPIN").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtMobile").val()=='') {
+        } else if (row.find(".txtMobile").val() == '') {
             toastr.error("Please enter Mobile No!");
             row.find(".txtMobile").focus();
             validationFailed = true;
@@ -346,7 +399,7 @@ function Save() {
             row.find(".txtMobile").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtEmail").val()=='') {
+        } else if (row.find(".txtEmail").val() == '') {
             toastr.error("Please enter Email !");
             row.find(".txtEmail").focus();
             validationFailed = true;
@@ -359,15 +412,15 @@ function Save() {
         }
     });
     if (validationFailed) {
-        return; 
+        return;
     }
     const accountPayload = [{
         Code: $("#hfCode").val(),
         AccountName: AccountName,
         DisplayName: DisplayName,
         PANNo: $("#txtPANNo").val(),
-        IsClient: $("#txtIsClient").is(":checked") ? "Y" : "N", 
-        IsVendor: $("#txtIsVendor").is(":checked") ? "Y" : "N", 
+        IsClient: $("#txtIsClient").is(":checked") ? "Y" : "N",
+        IsVendor: $("#txtIsVendor").is(":checked") ? "Y" : "N",
     }];
     // Collect Address Details Data
     const addressData = [];
@@ -390,7 +443,7 @@ function Save() {
         };
         addressData.push(addressRow);
     });
-  
+
     const payload = {
         AccountMaster: accountPayload,
         accountAddress: addressData,
@@ -427,20 +480,20 @@ function addNewRowEdit(index, address) {
     const table = document.getElementById("Orderdata");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-        <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-        <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off"  maxlength="225"/></td>
-        <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="225" /></td>
-        <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off" /></td>
-        <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}" autocomplete="off"  /></td>
-        <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}" autocomplete="off" /></td>
-        <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off"  maxlength="6"/></td>
-        <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}" autocomplete="off"  maxlength="20"/></td>
-        <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="50" /></td>
-        <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"  maxlength="15"/></td>
-        <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}" autocomplete="off" maxlength="15" /></td>
-        <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off"maxlength="100" /></td>
-        <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}" autocomplete="off" /></td>
-        <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+            <td><input type="text" list="txtItemAddress" class="txtItemBarCode box_border form-control form-control-sm mandatory" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off"  /></td>
+            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" /></td>
+            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm " onkeypress="return OnChangeNumericTextBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtBillQty box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" class="txtRemarks box_border form-control form-control-sm mandatory" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
     `;
 
     table.appendChild(newRow);
@@ -475,27 +528,32 @@ function OnChangeNumericTextBox(element) {
     }
     element.reportValidity();
 }
-function isValidPAN(pan) {
-    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-    if (panRegex.test(pan)) {
+function OnKeyDownPressFloatTextBox(event, element) {
+    if (event.charCode == 13 || event.charCode == 46 || event.charCode == 8 || (event.charCode >= 48 && event.charCode <= 57)) {
+        element.setCustomValidity("");
+        element.reportValidity();
+        BizSolhandleEnterKey(event);
         return true;
-    } else {
-        return false; 
     }
-}
-function IsMobileNumber(txtMobId) {
-    var mob = /^[6-9]{1}[0-9]{9}$/;
-    if (mob.test(txtMobId) == false) {
+    else {
+        element.setCustomValidity("Only allowed Float Numbers");
+        element.reportValidity();
         return false;
     }
-    return true;
 }
-function isEmail(email) {
-    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    return regex.test(email);
-}
-function convertToUppercase(element) {
-    element.value = element.value.toUpperCase();
+function BizSolhandleEnterKey(event) {
+    if (event.key === "Enter") {
+        //const inputs = document.getElementsByTagName('input')
+        const inputs = $('.BizSolFormControl')
+        const index = [...inputs].indexOf(event.target);
+        if ((index + 1) == inputs.length) {
+            inputs[0].focus();
+        } else {
+            inputs[index + 1].focus();
+        }
+
+        event.preventDefault();
+    }
 }
 function isRowComplete(row) {
     const inputs = row.querySelectorAll("input.mandatory");
@@ -514,19 +572,19 @@ function addNewRow() {
             rowCount = rows.length;
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
-            <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
-            <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
-            <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" list="txtItemAddress" class="txtItemBarCode box_border form-control form-control-sm mandatory" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off"  /></td>
+            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" /></td>
+            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm " onkeypress="return OnChangeNumericTextBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
 
       `;
@@ -535,19 +593,19 @@ function addNewRow() {
     } else {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
-            <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
-            <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
-            <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
+            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
+            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm " onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
       `;
         table.appendChild(newRow);
@@ -568,5 +626,115 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
+function convertDateFormat(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${day} -${monthAbbreviation} -${year}`;
+}
+function setupDateInputFormatting() {
+    $('#txtMRNDate').on('input', function () {
+        let value = $(this).val().replace(/[^\d]/g, '');
 
+        if (value.length >= 2 && value.length < 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        } else if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+        }
+        $(this).val(value);
 
+        if (value.length === 10) {
+            validateDate(value);
+        } else {
+            $(this).val(value);
+        }
+    });
+    $('#txtChallanDate').on('input', function () {
+        let value = $(this).val().replace(/[^\d]/g, '');
+
+        if (value.length >= 2 && value.length < 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        } else if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+        }
+        $(this).val(value);
+
+        if (value.length === 10) {
+            validateChallanDate(value);
+        } else {
+            $(this).val(value);
+        }
+    });
+}
+function validateChallanDate(value) {
+    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    let isValidFormat = regex.test(value);
+
+    if (isValidFormat) {
+        let parts = value.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parseInt(parts[2], 10);
+
+        let date = new Date(year, month - 1, day);
+
+        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
+
+            $(this).val(value);
+        } else {
+            $('#txtChallanDate').val('');
+
+        }
+    } else {
+        $('#txtChallanDate').val('');
+
+    }
+}
+function validateDate(value) {
+    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    let isValidFormat = regex.test(value);
+
+    if (isValidFormat) {
+        let parts = value.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parseInt(parts[2], 10);
+
+        let date = new Date(year, month - 1, day);
+
+        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
+
+            $(this).val(value);
+        } else {
+            $('#txtMRNDate').val('');
+
+        }
+    } else {
+        $('#txtMRNDate').val('');
+
+    }
+}
+function DatePicker() {
+
+    var today = new Date();
+    var day = ('0' + today.getDate()).slice(-2);
+    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+    var year = today.getFullYear();
+
+    $('#txtMRNDate, #txtChallanDate').val(`${day}/${month}/${year}`);
+    $('#txtMRNDate, #txtChallanDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+    });
+}
+//function Tooltip() {
+//    const thElements = Array.from(document.getElementsByTagName("th"));
+//    thElements.forEach(th => {
+//        const text = th.textContent.trim(); 
+//        if (text.length > 5) {
+//            th.classList.add("tooltip1"); 
+//            th.setAttribute("data-tooltip", text); 
+//            th.textContent = text.substring(0, 10) + "..."; 
+//        }
+//    });
+//}
