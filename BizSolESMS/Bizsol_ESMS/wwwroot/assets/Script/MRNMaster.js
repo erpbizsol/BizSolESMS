@@ -6,7 +6,7 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
-    DatePicker();
+    GetCurrentDate();
     $("#ERPHeading").text("MRN Master");
     $('#txtMRNDate').on('keydown', function (e) {
         if (e.key === "Enter") {
@@ -33,6 +33,7 @@ $(document).ready(function () {
             $("#txtIsMSME").focus();
         }
     });
+    ShowMRNMasterlist();
     GetAccountMasterList();
     GetItemDetails();
     GetWareHouseList();
@@ -40,26 +41,10 @@ $(document).ready(function () {
         addNewRow();
     });
     GetModuleMasterCode();
-    $("#txtVendorName").on("focusout", function () {
-        let value = $(this).val();
-        let isValid = false;
-        $("#txtVendorNameList option").each(function () {
-            if ($(this).val() === value) {
-                const item = AccountList.find(entry => entry.AccountName == value);
-                $("#txtAddress").val(item.Address)
-                isValid = true;
-                return false;
-            }
-        });
-        if (!isValid) {
-            $(this).val("");
-            $("#txtAddress").val("")
-        }
-    });
     $("#txtVendorName").on("focus", function () {
          $("#txtVendorName").val("");
     });
-    $("#txtVendorName").on("focusout", function () {
+    $("#txtVendorName").on("change", function () {
         let value = $(this).val();
         let isValid = false;
         $("#txtVendorNameList option").each(function () {
@@ -78,28 +63,25 @@ $(document).ready(function () {
 });
 function ShowMRNMasterlist() {
     $.ajax({
-        url: `${appBaseURL}/api/Master/ShowAccountMaster`,
+        url: `${appBaseURL}/api/MRNMaster/GetMRNMasterList`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["Account Name", "Display Name"];
+                const StringFilterColumn = ["Vender Name"];
                 const NumericFilterColumn = [];
-                const DateFilterColumn = [];
+                const DateFilterColumn = ["MRN Date","Challan Date"];
                 const Button = false;
                 const showButtons = [];
-                const StringdoubleFilterColumn = [];
+                const StringdoubleFilterColumn = ["Challan No"];
                 const hiddenColumns = ["Code"];
                 const ColumnAlignment = {
-                    "Reorder Level": 'right',
-                    "Reorder Qty": 'right',
-                    "Qty In Box": 'right',
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -140,34 +122,30 @@ async function Edit(code) {
     $("#txtCreatepage").show();
 
     $.ajax({
-        url: `${appBaseURL}/api/Master/ShowAccountMasterByCode?Code=` + code,
+        url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response) {
-                if (response.AccountMaster && response.AccountMaster.length > 0) {
-                    const accountMaster = response.AccountMaster[0];
-                    $("#hfCode").val(accountMaster.Code || "");
-                    $("#txtAccountName").val(accountMaster.AccountName || "");
-                    $("#txtDisplayName").val(accountMaster.DisplayName || "");
-                    $("#txtPANNo").val(accountMaster.PANNo || "");
-                    $("#txtIsMSME").val(accountMaster.IsMSME || "");
-                    if (accountMaster.IsClient == 'N') {
-                        $("#txtIsClient").prop("checked", false);
-                    }
-                    if (accountMaster.IsVendor == 'N') {
-                        $("#txtIsVendor").prop("checked", false);
-                    }
+                if (response.MRNMaster && response.MRNMaster.length > 0) {
+                    const MRNMaster = response.MRNMaster[0];
+                    $("#hfCode").val(MRNMaster.Code || "");
+                    $("#txtMRNNo").val(MRNMaster.MRNNo || "");
+                    $("#txtMRNDate").val(MRNMaster.MRNDate || "");
+                    $("#txtChallanNo").val(MRNMaster.Bill_ChallanNo || "");
+                    $("#txtVehicleNo").val(MRNMaster.VehicleNo || "");
+                    $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
+                    $("#txtVendorName").val(MRNMaster.AccountName || "");
+                    $("#txtAddress").val(MRNMaster.Address || "");
                 } else {
                     toastr.warning("Account master data is missing.");
                 }
                 $("#Orderdata").empty();
-                if (response.AccountAddress && response.AccountAddress.length > 0) {
-                    response.AccountAddress.forEach(function (address, index) {
-
-                        addNewRowEdit(index, address);
+                if (response.MRNDetails && response.MRNDetails.length > 0) {
+                    response.MRNDetails.forEach(function (Data, index) {
+                        addNewRowEdit(index, Data);
                     });
                 } else {
                     toastr.info("No addresses available for this account.");
@@ -182,7 +160,7 @@ async function Edit(code) {
         }
     });
 }
-async function deleteItem(code) {
+async function DeleteItem(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -190,7 +168,7 @@ async function deleteItem(code) {
     }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteAccountMaster?Code=${code}`,
+            url: `${appBaseURL}/api/MRNMaster/DeleteMRNMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -198,7 +176,7 @@ async function deleteItem(code) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowAccountMasterlist();
+                    ShowMRNMasterlist();
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -298,6 +276,23 @@ function GetWareHouseList() {
         }
     });
 }
+function GetCurrentDate() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetCurrentDate`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                DatePicker(response[0].Date);
+            } 
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
 function ClearData() {
     $("#hfCode").val("0");
     $("#txtMRNNo").val("");
@@ -306,125 +301,120 @@ function ClearData() {
     $("#txtVehicleNo").val("");
     $("#txtChallanNo").val("");
     $("#Orderdata").empty();
+    GetCurrentDate();
 }
 function Save() {
-    const AccountName = $("#txtAccountName").val();
-    const DisplayName = $("#txtDisplayName").val();
+    const Code = $("#hfCode").val();
+    const MRNNo = $("#txtMRNNo").val();
+    const VendorName = $("#txtVendorName").val();
+    const VehicleNo = $("#txtVehicleNo").val();
+    const MRNDate = convertDateFormat($("#txtMRNDate").val());
+    const ChallanNo = $("#txtChallanNo").val();
+    const ChallanDate = convertDateFormat($("#txtChallanDate").val());
 
-    if (!AccountName) {
-        toastr.error("Please enter an Account Name!");
-        $("#txtAccountName").focus();
+    if (MRNDate == '') {
+        toastr.error("Please select MRN Date !");
+        $("#txtMRNDate").focus();
         return;
-    } else if (!DisplayName) {
-        toastr.error("Please enter a Display Name!");
-        $("#txtDisplayName").focus();
+    } else if (VendorName == '') {
+        toastr.error("Please enter vendor name !");
+        $("#txtVendorName").focus();
         return;
-    } else if (!isValidPAN($("#txtPANNo").val())) {
-        toastr.error("Please enter valid PAN No!");
-        $("#txtPANNo").focus();
+    } else if (ChallanNo == '') {
+        toastr.error("Please enter challan no !");
+        $("#txtChallanNo").focus();
         return;
-    }
-    else if (getCheckedCount('chkIsDefault') == 0) {
-        toastr.error("At least one default field is correctly checked!");
+    } else if (ChallanDate == '') {
+        toastr.error("Please select challan date !");
+        $("#txtChallanDate").focus();
         return;
     }
     let validationFailed = false;
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
-        if (row.find(".txtAddressCode").val() == '') {
-            toastr.error("Please enter Address Code !");
-            row.find(".txtAddressCode").focus();
+        if (row.find(".txtItemBarCode").val() == '') {
+            toastr.error("Please enter item bar code !");
+            row.find(".txtItemBarCode").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtAddressLine1").val() == '') {
-            toastr.error("Please enter Address Line1 !");
-            row.find(".txtAddressLine1").focus();
+        } else if (row.find(".txtItemCode").val() == '') {
+            toastr.error("Please enter item code !");
+            row.find(".txtItemCode").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtCity").val() == '') {
-            toastr.error("Please select City !");
-            row.find(".txtCity").focus();
+        } else if (row.find(".txtItemName").val() == '') {
+            toastr.error("Please enter item name !");
+            row.find(".txtItemName").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtState").val() == '') {
-            toastr.error("Please select State !");
-            row.find(".txtState").focus();
+        } else if (row.find(".txtItemAddress").val() == '') {
+            toastr.error("Please enter item address !");
+            row.find(".txtItemAddress").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtNation").val() == '') {
-            toastr.error("Please select Nation !");
-            row.find(".txtNation").focus();
+        } else if (row.find(".txtUOM").val() == '') {
+            toastr.error("Please enter UOM !");
+            row.find(".txtUOM").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtNation").val() == '') {
-            toastr.error("Please select Nation !");
-            row.find(".txtNation").focus();
+        } else if (row.find(".txtBillQty").val() == '') {
+            toastr.error("Please enter Bill Qty !");
+            row.find(".txtBillQty").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtPIN").val() == '') {
-            toastr.error("Please enter Pin!");
-            row.find(".txtPIN").focus();
+        } else if (row.find(".txtReceivedQty").val() == '') {
+            toastr.error("Please enter Received Qty!");
+            row.find(".txtReceivedQty").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtMobile").val() == '') {
-            toastr.error("Please enter Mobile No!");
-            row.find(".txtMobile").focus();
+        } else if (row.find(".txtRate").val() == '') {
+            toastr.error("Please enter rate !");
+            row.find(".txtRate").focus();
             validationFailed = true;
             return;
-        } else if (!IsMobileNumber(row.find(".txtMobile").val())) {
-            toastr.error("Please enter valid Mobile No!");
-            row.find(".txtMobile").focus();
+        } else if (row.find(".txtAmount").val()=='') {
+            toastr.error("Please enter amount !");
+            row.find(".txtAmount").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtEmail").val() == '') {
-            toastr.error("Please enter Email !");
-            row.find(".txtEmail").focus();
-            validationFailed = true;
-            return;
-        } else if (!isEmail(row.find(".txtEmail").val())) {
-            toastr.error("Please enter valid Email !");
-            row.find(".txtEmail").focus();
-            validationFailed = true;
-            return;
-        }
+        } 
     });
     if (validationFailed) {
         return;
     }
-    const accountPayload = [{
-        Code: $("#hfCode").val(),
-        AccountName: AccountName,
-        DisplayName: DisplayName,
-        PANNo: $("#txtPANNo").val(),
+    const Payload = [{
+        code: Code,
+        mrnNo: MRNNo,
+        mrnDate: MRNDate,
+        vendorName: VendorName,
+        challanNo: ChallanNo,
+        challanDate: ChallanDate,
+        vehicleNo: VehicleNo
     }];
-    const addressData = [];
+    const Data = [];
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
-        const addressRow = {
-            AddressCode: row.find(".txtAddressCode").val(),
-            AddressLine1: row.find(".txtAddressLine1").val(),
-            AddressLine2: row.find(".txtAddressLine2").val(),
-            CityName: row.find(".txtCity").val(),
-            StateName: row.find(".txtState").val(),
-            Nation: row.find(".txtNation").val(),
-            PIN: row.find(".txtPIN").val(),
-            GSTIN: row.find(".txtGSTIN").val(),
-            ContactPerson: row.find(".txtContactPerson").val(),
-            PhoneNo: row.find(".txtPhone").val(),
-            MobileNo: row.find(".txtMobile").val(),
-            EmailID: row.find(".txtEmail").val(),
-            IsDefault: row.find(".chkIsDefault").is(":checked") ? "Y" : "N",
+        const RowData = {
+            itemName: row.find(".txtItemName").val(),
+            billQtyBox: row.find(".txtBillQtyBox").val() || 0,
+            receivedQtyBox: row.find(".txtReceivedQtyBox").val() || 0,
+            billQty: row.find(".txtBillQty").val(),
+            receivedQty: row.find(".txtReceivedQty").val(),
+            itemRate: row.find(".txtRate").val(),
+            amount: row.find(".txtAmount").val(),
+            warehouseName: row.find(".txtWarehouse").val(),
+            remarks: row.find(".txtRemarks").val()
         };
-        addressData.push(addressRow);
+        Data.push(RowData);
     });
 
     const payload = {
-        AccountMaster: accountPayload,
-        accountAddress: addressData,
+        MRNMaster: Payload,
+        MRNDetails: Data,
     };
 
     $.ajax({
-        url: `${appBaseURL}/api/Master/InsertAccountMaster`,
+        url: `${appBaseURL}/api/MRNMaster/SaveMRNMaster?UserMaster_Code=${UserMaster_Code}`,
         type: "POST",
         contentType: "application/json",
         dataType: "json",
@@ -434,11 +424,9 @@ function Save() {
         },
         success: function (response) {
             if (response.Status === "Y") {
-                setTimeout(() => {
-                    toastr.success(response.Msg);
-                    ShowAccountMasterlist();
-                    BackMaster();
-                }, 1000);
+                toastr.success(response.Msg);
+                ShowMRNMasterlist();
+                BackMaster();
             } else {
                 toastr.error(response.Msg);
             }
@@ -449,13 +437,13 @@ function Save() {
         },
     });
 }
-function addNewRowEdit(index, address) {
+function addNewRowEdit(index, Data) {
     const rowCount = index + 1;
     const table = document.getElementById("Orderdata");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
             <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
@@ -472,20 +460,20 @@ function addNewRowEdit(index, address) {
 
     table.appendChild(newRow);
 
-    if (address !== undefined) {
-        $("#txtAddressCode_" + rowCount).val(address.AddressCode || "");
-        $("#txtAddressLine1_" + rowCount).val(address.AddressLine1 || "");
-        $("#txtAddressLine2_" + rowCount).val(address.AddressLine2 || "");
-        $("#txtCity_" + rowCount).val(address.CityName || "");
-        $("#txtState_" + rowCount).val(address.StateName || "");
-        $("#txtNation_" + rowCount).val(address.CountryName || "");
-        $("#txtPIN_" + rowCount).val(address.PIN || "");
-        $("#txtGSTIN_" + rowCount).val(address.GSTIN || "");
-        $("#txtContactPerson_" + rowCount).val(address.ContactPerson || "");
-        $("#txtPhone_" + rowCount).val(address.PhoneNo || "");
-        $("#txtMobile_" + rowCount).val(address.MobileNo || "");
-        $("#txtEmail_" + rowCount).val(address.EmailID || "");
-        $("#chkIsDefault_" + rowCount).prop('checked', address.IsDefault === 'Y');
+    if (Data !== undefined) {
+        $("#txtItemBarCode_" + rowCount).val(Data.ItemBarCode || "");
+        $("#txtItemCode_" + rowCount).val(Data.ItemCode || "");
+        $("#txtItemName_" + rowCount).val(Data.ItemName || "");
+        $("#txtItemAddress_" + rowCount).val(Data.LocationName || "");
+        $("#txtUOM_" + rowCount).val(Data.UOMName || "");
+        $("#txtBillQtyBox_" + rowCount).val(Data.BillQtyBox || "");
+        $("#txtReceivedQtyBox_" + rowCount).val(Data.ReceivedQtyBox || "");
+        $("#txtBillQty_" + rowCount).val(Data.BillQty || "");
+        $("#txtReceivedQty_" + rowCount).val(Data.ReceivedQty || "");
+        $("#txtRate_" + rowCount).val(Data.ItemRate || "");
+        $("#txtAmount_" + rowCount).val(Data.Amount || "");
+        $("#txtWarehouse_" + rowCount).val(Data.WarehouseName || "");
+        $("#txtRemarks_" + rowCount).val(Data.Remarks || "");
     }
 }
 function OnChangeNumericTextBox(element) {
@@ -694,20 +682,15 @@ function validateDate(value) {
 
     }
 }
-function DatePicker() {
-
-    var today = new Date();
-    var day = ('0' + today.getDate()).slice(-2);
-    var month = ('0' + (today.getMonth() + 1)).slice(-2);
-    var year = today.getFullYear();
-
-    $('#txtMRNDate, #txtChallanDate').val(`${day}/${month}/${year}`);
+function DatePicker(date) {
+    $('#txtMRNDate, #txtChallanDate').val(date);
     $('#txtMRNDate, #txtChallanDate').datepicker({
         format: 'dd/mm/yyyy',
         autoclose: true,
     });
 }
-function FillallItemfield(inputElement,value) {
+function FillallItemfield(inputElement, value) {
+
     const currentRow = inputElement.closest('tr');
     if (currentRow) {
         const inputValue = inputElement.value;
@@ -716,6 +699,7 @@ function FillallItemfield(inputElement,value) {
         const itemName = currentRow.querySelector('.txtItemName');
         const itemAddress = currentRow.querySelector('.txtItemAddress');
         const itemUOM = currentRow.querySelector('.txtUOM');
+        const itemRate = currentRow.querySelector('.txtRate');
         if (value == 'BarCode') {
             $("#txtItemBarCode option").each(function () {
                 if ($(this).val() === inputValue) {
@@ -725,7 +709,6 @@ function FillallItemfield(inputElement,value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
-                    isValid = true;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -740,13 +723,11 @@ function FillallItemfield(inputElement,value) {
             $("#txtItemCode option").each(function () {
                 if ($(this).val() === inputValue) {
                     const item = ItemDetail.find(entry => entry.ItemCode == inputValue);
-                    $("#txtAddress").val(item.Address)
                     itemBarCode.value = item.ItemBarCode;
                     itemCode.value = item.ItemCode;
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
-                    isValid = true;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -761,13 +742,11 @@ function FillallItemfield(inputElement,value) {
             $("#txtItemName option").each(function () {
                 if ($(this).val() === inputValue) {
                     const item = ItemDetail.find(entry => entry.ItemName == inputValue);
-                    $("#txtAddress").val(item.Address)
                     itemBarCode.value = item.ItemBarCode;
                     itemCode.value = item.ItemCode;
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
-                    isValid = true;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -778,6 +757,11 @@ function FillallItemfield(inputElement,value) {
                 }
             });
         }
+        GetRate($("#txtVendorName").val(), itemName.value).then(response => {
+                itemRate.value = response[0].ItemRate;
+            }).catch(error => {
+                console.error('Error fetching rate:', error);
+            });
     }
 }
 function CheckWarehouse(inputElement) {
@@ -811,4 +795,30 @@ function CalculateAmount(inputElement) {
             Amount.value = calculatedAmount.toFixed(2);
         }
      }
+}
+function convertDateFormat(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${day}-${monthAbbreviation}-${year}`;
+}
+function GetRate(VendorName, ItemName) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: `${appBaseURL}/api/MRNMaster/GetRateByVendor?VendorName=${VendorName}&ItemName=${ItemName}`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response.length > 0) {
+                resolve(response); 
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                reject(error); 
+            }
+        });
+    });
 }
