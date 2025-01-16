@@ -33,7 +33,8 @@ $(document).ready(function () {
         });
         $('#txtBuyerPODate').on('keydown', function (e) {
                 if (e.key === "Enter") {
-                    $("#txtsave").focus();
+                    let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
+                    firstInput.focus();
                 }
         });
     GetAccountMasterList();
@@ -44,16 +45,16 @@ $(document).ready(function () {
         addNewRow();
     });
     GetModuleMasterCode();
-  
-    $("#txtClientName").on("focusout", function () {
+    $("#txtClientName").on("focus", function () {
+        $("#txtClientName").val("");
+    });
+    $("#txtClientName").on("change", function () {
 
         let value = $(this).val();
         let isValid = false;
         $("#txtClientNameList option").each(function () {
             if ($(this).val() === value) {
-
                 const item = AccountList.find(entry => entry.AccountName == value);
-                ClientRate(item.AccountName);
                 $("#txtAddress").val(item.Address)
                 isValid = true;
                 return false;
@@ -64,17 +65,15 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
-    $("#txtClientName").on("focus", function () {
-        $("#txtClientName").val("");
-    });
-    $("#txtClientName").on("focusout", function () {
-        let value = $(this).val();
-        if (value) {
-            ClientRate(value);
-        } else {
-            $(".txtRate").val("");
-        }
-    });
+  
+    //$("#txtClientName").on("focusout", function () {
+    //    let value = $(this).val();
+    //    if (value) {
+    //        ClientRate(value);
+    //    } else {
+    //        $(".txtRate").val("");
+    //    }
+    //});
 
    
 });
@@ -409,9 +408,9 @@ function addNewRowEdit(index, address) {
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
     `;
-
+    //<td><input type="button" class="btn btn-danger btn-sm deleteRow"/><i class="fa-regular fa-circle-xmark"></i></td>
     table.appendChild(newRow);
 
     if (address !== undefined) {
@@ -492,7 +491,7 @@ function addNewRow() {
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+              <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
             table.appendChild(newRow);
         }
@@ -509,7 +508,7 @@ function addNewRow() {
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+              <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
         table.appendChild(newRow);
     }
@@ -524,7 +523,7 @@ $(document).on("click", ".deleteRow", function () {
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Order Master");
+    const result = Data.find(item => item.ModuleDesp === "Order");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
@@ -640,6 +639,7 @@ function FillallItemfield(inputElement, value) {
         const itemName = currentRow.querySelector('.txtItemName');
         const itemAddress = currentRow.querySelector('.txtItemAddress');
         const itemUOM = currentRow.querySelector('.txtUOM');
+        const itemRate = currentRow.querySelector('.txtRate');
         if (value == 'BarCode') {
             $("#txtItemBarCode option").each(function () {
                 if ($(this).val() === inputValue) {
@@ -664,7 +664,6 @@ function FillallItemfield(inputElement, value) {
             $("#txtItemCode option").each(function () {
                 if ($(this).val() === inputValue) {
                     const item = ItemDetail.find(entry => entry.ItemCode == inputValue);
-                    $("#txtAddress").val(item.Address)
                     itemBarCode.value = item.ItemBarCode;
                     itemCode.value = item.ItemCode;
                     itemName.value = item.ItemName;
@@ -685,7 +684,6 @@ function FillallItemfield(inputElement, value) {
             $("#txtItemName option").each(function () {
                 if ($(this).val() === inputValue) {
                     const item = ItemDetail.find(entry => entry.ItemName == inputValue);
-                    $("#txtAddress").val(item.Address)
                     itemBarCode.value = item.ItemBarCode;
                     itemCode.value = item.ItemCode;
                     itemName.value = item.ItemName;
@@ -702,6 +700,11 @@ function FillallItemfield(inputElement, value) {
                 }
             });
         }
+        GetRate($("#txtClientName").val(), itemName.value).then(response => {
+            itemRate.value = response[0].Rate;
+        }).catch(error => {
+            console.error('Error fetching rate:', error);
+        });
     }
 }
 function CalculateAmount(inputElement) {
@@ -719,22 +722,43 @@ function CalculateAmount(inputElement) {
     }
 }
 
-function ClientRate(AccountName) {
-    $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/ClientWiseRate?AccountList=${AccountName}`,
-        method: 'GET',
-        success: function (response) {
-            if (response && response.length > 0 && response[0].Rate) {
-                $(".txtRate").val(response[0].Rate);
-            } else {
-                alert("Rate not found for the selected item.");
+function GetRate(VendorName, ItemName) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/ClientWiseRate?ClientName=${VendorName}&ItemName=${ItemName}`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response.length > 0) {
+                    resolve(response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                reject(error);
             }
-        },
-        error: function () {
-            console.error('Failed to fetch rate for item.');
-        }
+        });
     });
 }
 
-
-
+$(document).on('keydown', '#tblorderbooking input', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        let currentInput = $(this);
+        let lastRow = $('#tblorderbooking #Orderdata tr').last();
+        if (lastRow && currentInput.hasClass('txtRemarks')) {
+            currentInput.hasClass('txtRemarks')
+            let parentRow = currentInput.closest('tr');
+            if (parentRow.is(lastRow)) {
+                addNewRow();
+            }
+        }
+        let inputs = $('#tblorderbooking').find('input:not([disabled])');
+        let currentIndex = inputs.index(currentInput);
+        if (currentIndex + 1 < inputs.length) {
+            inputs.eq(currentIndex + 1).focus();
+        }
+    }
+});
