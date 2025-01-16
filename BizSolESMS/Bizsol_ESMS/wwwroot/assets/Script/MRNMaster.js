@@ -30,7 +30,8 @@ $(document).ready(function () {
     });
     $('#txtVehicleNo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtIsMSME").focus();
+            let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
+            firstInput.focus();
         }
     });
     ShowMRNMasterlist();
@@ -455,7 +456,7 @@ function addNewRowEdit(index, Data) {
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
     `;
 
     table.appendChild(newRow);
@@ -554,7 +555,7 @@ function addNewRow() {
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
             table.appendChild(newRow);
         }
@@ -574,7 +575,7 @@ function addNewRow() {
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
         table.appendChild(newRow);
     }
@@ -822,3 +823,23 @@ function GetRate(VendorName, ItemName) {
         });
     });
 }
+
+$(document).on('keydown', '#tblorderbooking input', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        let currentInput = $(this);
+        let lastRow = $('#tblorderbooking #Orderdata tr').last();
+        if (lastRow && currentInput.hasClass('txtRemarks')) {
+            currentInput.hasClass('txtRemarks')
+            let parentRow = currentInput.closest('tr'); 
+            if (parentRow.is(lastRow)) {
+                addNewRow(); 
+            }
+        }
+        let inputs = $('#tblorderbooking').find('input:not([disabled])');
+        let currentIndex = inputs.index(currentInput);
+        if (currentIndex + 1 < inputs.length) {
+            inputs.eq(currentIndex + 1).focus();
+        }
+    }
+});
