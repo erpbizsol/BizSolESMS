@@ -17,24 +17,21 @@ $(document).ready(function () {
     });
     $('#txtPANNo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtIsClient").focus();
+            let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
+            firstInput.focus();
         }
     });
-    $('#txtIsClient').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtIsVendor").focus();
-        }
-    });
-    $('#txtIsVendor').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtIsMSME").focus();
-        }
-    });
-    $('#txtIsMSME').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtsave").focus();
-        }
-    });
+    //$('#txtIsClient').on('keydown', function (e) {
+    //    if (e.key === "Enter") {
+    //        $("#txtIsVendor").focus();
+    //    }
+    //});
+    //$('#txtIsVendor').on('keydown', function (e) {
+    //    if (e.key === "Enter") {
+    //        $("#txtIsMSME").focus();
+    //    }
+    //});
+   
     ShowAccountMasterlist();
     GetGroupMasterList();
     GetCountryMasterList();
@@ -440,7 +437,7 @@ function addNewRowEdit(index, address) {
         <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}" autocomplete="off" maxlength="15" /></td>
         <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off"maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}" autocomplete="off" /></td>
-        <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+        <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
     `;
 
     table.appendChild(newRow);
@@ -527,7 +524,8 @@ function addNewRow() {
             <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+            
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
 
       `;
             table.appendChild(newRow);
@@ -548,11 +546,12 @@ function addNewRow() {
             <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+           <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
         table.appendChild(newRow);
     }
 }
+
 $(document).on("click", ".deleteRow", function () {
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
     if (table.querySelectorAll("tr").length > 1) {
@@ -569,4 +568,22 @@ function GetModuleMasterCode() {
     }
 }
 
-
+$(document).on('keydown', '#tblorderbooking input', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        let currentInput = $(this);
+        let lastRow = $('#tblorderbooking #Orderdata tr').last();
+        if (lastRow && currentInput.hasClass('chkIsDefault')) {
+            currentInput.hasClass('chkIsDefault')
+            let parentRow = currentInput.closest('tr');
+            if (parentRow.is(lastRow)) {
+                addNewRow();
+            }
+        }
+        let inputs = $('#tblorderbooking').find('input:not([disabled])');
+        let currentIndex = inputs.index(currentInput);
+        if (currentIndex + 1 < inputs.length) {
+            inputs.eq(currentIndex + 1).focus();
+        }
+    }
+});
