@@ -616,6 +616,9 @@ function DatePicker() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetCurrentDate`,
         method: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        }, 
         success: function (response) {
             let apiDate = response[0].Date;
             $('#txtOrderDate, #txtBuyerPODate').val(apiDate);
