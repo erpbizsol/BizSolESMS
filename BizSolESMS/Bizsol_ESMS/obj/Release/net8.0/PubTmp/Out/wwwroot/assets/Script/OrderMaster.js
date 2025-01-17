@@ -121,8 +121,6 @@ async function Create() {
         return;
     }
     ClearData();
-    $("#tab1").text("Order Enter-New");
-
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
@@ -139,7 +137,6 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("Order Enter-Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -274,6 +271,7 @@ function GetItemDetails() {
         }
     });
 }
+
 function ClearData() {
         $("#hfCode").val("0");
         $("#txtOrderNo").val("");
@@ -310,43 +308,33 @@ function Save() {
         return;
     }
     let validationFailed = false;
-    let CheckItemName = false;
-    let lastRow = $('#tblorderbooking #Orderdata tr').length;
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
-        if (lastRow > 1) {
-            CheckItemName = row.find(".txtItemName").val() !== '';
-        }
-        else if (lastRow === 1) {
-            CheckItemName = true;
-        }
-        if (CheckItemName) {
-            if (row.find(".txtItemBarCode").val() == '') {
-                toastr.error("Please select Item Bar Code !");
-                row.find(".txtItemBarCode").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtItemCode").val() == '') {
-                toastr.error("Please select Item Code !");
-                row.find(".txtItemCode").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtItemAddress").val() == '') {
-                toastr.error("Please select Item Address !");
-                row.find(".txtItemAddress").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtOrderQty").val() == '') {
-                toastr.error("Please enter Order Qty !");
-                row.find(".txtOrderQty").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtRate").val() == '') {
-                toastr.error("Please enter Rate !");
-                row.find(".txtRate").focus();
-                validationFailed = true;
-                return;
-            }
+        if (row.find(".txtItemBarCode").val() == '') {
+            toastr.error("Please select Item Bar Code !");
+            row.find(".txtItemBarCode").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtItemCode").val() == '') {
+            toastr.error("Please select Item Code !");
+            row.find(".txtItemCode").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtItemAddress").val() == '') {
+            toastr.error("Please select Item Address !");
+            row.find(".txtItemAddress").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtOrderQty").val() == '') {
+            toastr.error("Please enter Order Qty !");
+            row.find(".txtOrderQty").focus();
+            validationFailed = true;
+            return;
+        } else if (row.find(".txtRate").val() == '') {
+            toastr.error("Please enter Rate !");
+            row.find(".txtRate").focus();
+            validationFailed = true;
+            return;
         }
     });
     if (validationFailed) {
@@ -363,17 +351,15 @@ function Save() {
     const addressData = [];
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
-        if (row.find(".txtItemName").val() != '') {
-            const addressRow = {
-                ItemName: row.find(".txtItemName").val(),
-                QtyBox: row.find(".txtQtyBox").val() || 0,
-                OrderQty: row.find(".txtOrderQty").val(),
-                Rate: row.find(".txtRate").val(),
-                Amount: row.find(".txtAmount").val(),
-                Remarks: row.find(".txtRemarks").val(),
-            };
-            addressData.push(addressRow);
-        }
+        const addressRow = {
+            ItemName: row.find(".txtItemName").val(),
+            QtyBox: row.find(".txtQtyBox").val() || 0,
+            OrderQty: row.find(".txtOrderQty").val(),
+            Rate: row.find(".txtRate").val(),
+            Amount: row.find(".txtAmount").val(),
+            Remarks: row.find(".txtRemarks").val() ,
+        };
+        addressData.push(addressRow);
     });
 
     const payload = {
@@ -412,15 +398,15 @@ function addNewRowEdit(index, address) {
     const table = document.getElementById("Orderdata");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-            <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+             <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
             <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
     `;
@@ -479,10 +465,10 @@ function BizSolhandleEnterKey(event) {
         event.preventDefault();
     }
 }
-//function isRowComplete(row) {
-//    const inputs = row.querySelectorAll("input.mandatory");
-//    return Array.from(inputs).every(input => input.value.trim() !== "");
-//}
+function isRowComplete(row) {
+    const inputs = row.querySelectorAll("input.mandatory");
+    return Array.from(inputs).every(input => input.value.trim() !== "");
+}
 function addNewRow() {
     let rowCount = 0;
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
@@ -501,8 +487,8 @@ function addNewRow() {
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
               <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
@@ -518,8 +504,8 @@ function addNewRow() {
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
               <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
@@ -760,50 +746,16 @@ function GetRate(VendorName, ItemName) {
     });
 }
 
-//$(document).on('keydown', '#tblorderbooking input', function (e) {
-//    if (e.key === 'Enter') {
-//        e.preventDefault();
-//        let currentInput = $(this);
-//        let lastRow = $('#tblorderbooking #Orderdata tr').last();
-//        if (lastRow && currentInput.hasClass('txtRemarks')) {
-//            currentInput.hasClass('txtRemarks')
-//            let parentRow = currentInput.closest('tr');
-//            if (parentRow.is(lastRow)) {
-//                addNewRow();
-//            }
-//        }
-//        let inputs = $('#tblorderbooking').find('input:not([disabled])');
-//        let currentIndex = inputs.index(currentInput);
-//        if (currentIndex + 1 < inputs.length) {
-//            inputs.eq(currentIndex + 1).focus();
-//        }
-//    }
-//});
-function isRowComplete(row) {
-    const inputs = row.querySelectorAll("input.mandatory");
-    for (const input of inputs) {
-        if (input.value.trim() === "") {
-            input.focus();
-            return false;
-        }
-    }
-    return true;
-}
 $(document).on('keydown', '#tblorderbooking input', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         let currentInput = $(this);
-        let currentRow = currentInput.closest('tr')[0];
-
         let lastRow = $('#tblorderbooking #Orderdata tr').last();
         if (lastRow && currentInput.hasClass('txtRemarks')) {
             currentInput.hasClass('txtRemarks')
             let parentRow = currentInput.closest('tr');
             if (parentRow.is(lastRow)) {
                 addNewRow();
-                if (!isRowComplete(currentRow)) {
-                    return;
-                }
             }
         }
         let inputs = $('#tblorderbooking').find('input:not([disabled])');

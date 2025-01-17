@@ -17,24 +17,21 @@ $(document).ready(function () {
     });
     $('#txtPANNo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtIsClient").focus();
+            let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
+            firstInput.focus();
         }
     });
-    $('#txtIsClient').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtIsVendor").focus();
-        }
-    });
-    $('#txtIsVendor').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtIsMSME").focus();
-        }
-    });
-    $('#txtIsMSME').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtsave").focus();
-        }
-    });
+    //$('#txtIsClient').on('keydown', function (e) {
+    //    if (e.key === "Enter") {
+    //        $("#txtIsVendor").focus();
+    //    }
+    //});
+    //$('#txtIsVendor').on('keydown', function (e) {
+    //    if (e.key === "Enter") {
+    //        $("#txtIsMSME").focus();
+    //    }
+    //});
+   
     ShowAccountMasterlist();
     GetGroupMasterList();
     GetCountryMasterList();
@@ -427,20 +424,20 @@ function addNewRowEdit(index, address) {
     const table = document.getElementById("Orderdata");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-        <td><input type="text" class="txtAddressCode form-control mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-        <td><input type="text" class="txtAddressLine1 form-control mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off"  maxlength="225"/></td>
-        <td><input type="text" class="txtAddressLine2 form-control" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="225" /></td>
-        <td><input type="text" list="txtCityList" class="txtCity form-control mandatory" id="txtCity_${rowCount}" autocomplete="off" /></td>
-        <td><input type="text" list="txtStateNameList" class="txtState form-control mandatory" id="txtState_${rowCount}" autocomplete="off"  /></td>
-        <td><input type="text" list="txtCountryList" class="txtNation form-control mandatory" id="txtNation_${rowCount}" autocomplete="off" /></td>
-        <td><input type="text" class="txtPIN form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off"  maxlength="6"/></td>
-        <td><input type="text" class="txtGSTIN form-control" id="txtGSTIN_${rowCount}" autocomplete="off"  maxlength="20"/></td>
-        <td><input type="text" class="txtContactPerson form-control" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="50" /></td>
-        <td><input type="text" class="txtPhone form-control" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"  maxlength="15"/></td>
-        <td><input type="text" class="txtMobile form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}" autocomplete="off" maxlength="15" /></td>
-        <td><input type="text" class="txtEmail form-control mandatory" id="txtEmail_${rowCount}" autocomplete="off"maxlength="100" /></td>
+        <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+        <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off"  maxlength="225"/></td>
+        <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="225" /></td>
+        <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off" /></td>
+        <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}" autocomplete="off"  /></td>
+        <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}" autocomplete="off" /></td>
+        <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off"  maxlength="6"/></td>
+        <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}" autocomplete="off"  maxlength="20"/></td>
+        <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="50" /></td>
+        <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"  maxlength="15"/></td>
+        <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}" autocomplete="off" maxlength="15" /></td>
+        <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off"maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}" autocomplete="off" /></td>
-        <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+        <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
     `;
 
     table.appendChild(newRow);
@@ -514,20 +511,21 @@ function addNewRow() {
             rowCount = rows.length;
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
-            <td><input type="text" class="txtAddressCode form-control mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" class="txtAddressLine1 form-control mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtAddressLine2 form-control" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" list="txtCityList" class="txtCity form-control mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" list="txtStateNameList" class="txtState form-control mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" list="txtCountryList" class="txtNation form-control mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtPIN form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
-            <td><input type="text" class="txtGSTIN form-control" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtContactPerson form-control" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtPhone form-control" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtMobile form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtEmail form-control mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
+            <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
+            <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
+            <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+            
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
 
       `;
             table.appendChild(newRow);
@@ -535,24 +533,25 @@ function addNewRow() {
     } else {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
-            <td><input type="text" class="txtAddressCode form-control mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" class="txtAddressLine1 form-control mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtAddressLine2 form-control" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" list="txtCityList" class="txtCity form-control mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" list="txtStateNameList" class="txtState form-control mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" list="txtCountryList" class="txtNation form-control mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtPIN form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
-            <td><input type="text" class="txtGSTIN form-control" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtContactPerson form-control" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" class="txtPhone form-control" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtMobile form-control mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtEmail form-control mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
+            <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
+            <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
+            <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhone_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobile_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmail_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="button" class="btn btn-danger btn-sm deleteRow" value="Delete"/></td>
+           <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
         table.appendChild(newRow);
     }
 }
+
 $(document).on("click", ".deleteRow", function () {
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
     if (table.querySelectorAll("tr").length > 1) {
@@ -569,4 +568,22 @@ function GetModuleMasterCode() {
     }
 }
 
-
+$(document).on('keydown', '#tblorderbooking input', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        let currentInput = $(this);
+        let lastRow = $('#tblorderbooking #Orderdata tr').last();
+        if (lastRow && currentInput.hasClass('chkIsDefault')) {
+            currentInput.hasClass('chkIsDefault')
+            let parentRow = currentInput.closest('tr');
+            if (parentRow.is(lastRow)) {
+                addNewRow();
+            }
+        }
+        let inputs = $('#tblorderbooking').find('input:not([disabled])');
+        let currentIndex = inputs.index(currentInput);
+        if (currentIndex + 1 < inputs.length) {
+            inputs.eq(currentIndex + 1).focus();
+        }
+    }
+});

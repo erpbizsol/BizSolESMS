@@ -5891,6 +5891,7 @@ table, th, td, tr {
     padding: 5px 5px !important;
     border: 1px solid #ddd;
     height: 16px !important;
+    vertical-align: middle !important;
 }
 
 .table td {
@@ -6250,4 +6251,7 @@ a.icon-height {
 
 .AutoSuggestion-list-highlighted {
     background-color: #9aa0a5;
+}
+.text-right {
+    text-align: right;
 }
