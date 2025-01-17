@@ -1,54 +1,58 @@
-﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿
+var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+
 let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
-    GetCurrentDate();
-    $("#ERPHeading").text("MRN Master");
-    $('#txtMRNDate').on('keydown', function (e) {
+    DatePicker();
+    $("#ERPHeading").text("Order Master");
+    $('#txtOrderNo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtVendorName").focus();
+            $("#txtOrderDate").focus();
         }
     });
-    $('#txtVendorName').on('keydown', function (e) {
+    $('#txtOrderDate').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtChallanNo").focus();
+            $("#txtClientName").focus();
         }
     });
-    $('#txtChallanNo').on('keydown', function (e) {
+    $('#txtClientName').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtChallanDate").focus();
+            $("#txtBuyerPONo").focus();
         }
     });
-    $('#txtChallanDate').on('keydown', function (e) {
+
+    $('#txtBuyerPONo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtVehicleNo").focus();
+            $("#txtBuyerPODate").focus();
         }
     });
-    $('#txtVehicleNo').on('keydown', function (e) {
+    $('#txtBuyerPODate').on('keydown', function (e) {
         if (e.key === "Enter") {
             let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
             firstInput.focus();
         }
     });
-    ShowMRNMasterlist();
     GetAccountMasterList();
     GetItemDetails();
-    GetWareHouseList();
+    ShowOrderMasterlist();
+
     $("#btnAddNewRow").click(function () {
         addNewRow();
     });
     GetModuleMasterCode();
-    $("#txtVendorName").on("focus", function () {
-         $("#txtVendorName").val("");
+    $("#txtClientName").on("focus", function () {
+        $("#txtClientName").val("");
     });
-    $("#txtVendorName").on("change", function () {
+    $("#txtClientName").on("change", function () {
+
         let value = $(this).val();
         let isValid = false;
-        $("#txtVendorNameList option").each(function () {
+        $("#txtClientNameList option").each(function () {
             if ($(this).val() === value) {
                 const item = AccountList.find(entry => entry.AccountName == value);
                 $("#txtAddress").val(item.Address)
@@ -61,28 +65,42 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
+
+    //$("#txtClientName").on("focusout", function () {
+    //    let value = $(this).val();
+    //    if (value) {
+    //        ClientRate(value);
+    //    } else {
+    //        $(".txtRate").val("");
+    //    }
+    //});
+
+
 });
-function ShowMRNMasterlist() {
+function ShowOrderMasterlist() {
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/GetMRNMasterList`,
+        url: `${appBaseURL}/api/OrderMaster/ShowOrderMaster`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["Vender Name"];
+                const StringFilterColumn = ["Client Name"];
                 const NumericFilterColumn = [];
-                const DateFilterColumn = ["MRN Date","Challan Date"];
+                const DateFilterColumn = ["Order Date", "Buyer PO Date"];
                 const Button = false;
                 const showButtons = [];
-                const StringdoubleFilterColumn = ["Challan No"];
+                const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Code"];
                 const ColumnAlignment = {
+                    "Reorder Level": 'right',
+                    "Reorder Qty": 'right',
+                    "Qty In Box": 'right',
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -103,6 +121,8 @@ async function Create() {
         return;
     }
     ClearData();
+    $("#tab1").text("Order Enter-New");
+
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
@@ -119,40 +139,36 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
+    $("#tab1").text("Order Enter-Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
+        url: `${appBaseURL}/api/OrderMaster/ShowOrderMasterByCode?Code=` + code,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response) {
-                if (response.MRNMaster && response.MRNMaster.length > 0) {
-                    const MRNMaster = response.MRNMaster[0];
-                    $("#hfCode").val(MRNMaster.Code || "");
-                    $("#txtMRNNo").val(MRNMaster.MRNNo || "");
-                    $("#txtMRNDate").val(MRNMaster.MRNDate || "");
-                    $("#txtChallanNo").val(MRNMaster.Bill_ChallanNo || "");
-                    $("#txtVehicleNo").val(MRNMaster.VehicleNo || "");
-                    $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
-                    $("#txtVendorName").val(MRNMaster.AccountName || "");
-                    $("#txtAddress").val(MRNMaster.Address || "");
-                    const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
-                    if (!item) {
-                        var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
-                        AccountList.push(newData);
-                    }
-                    CreateVendorlist();
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || "");
+                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    $("#txtOrderDate").val(OrderMaster.OrderDate || "");
+                    $("#txtClientName").val(OrderMaster.AccountName || "");
+                    $("#txtAddress").val(OrderMaster.Address || "");
+                    $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
+                    $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
+
                 } else {
                     toastr.warning("Account master data is missing.");
                 }
                 $("#Orderdata").empty();
-                if (response.MRNDetails && response.MRNDetails.length > 0) {
-                    response.MRNDetails.forEach(function (Data, index) {
-                        addNewRowEdit(index, Data);
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    response.OrderDetial.forEach(function (address, index) {
+
+                        addNewRowEdit(index, address);
                     });
                 } else {
                     toastr.info("No addresses available for this account.");
@@ -167,7 +183,7 @@ async function Edit(code) {
         }
     });
 }
-async function DeleteItem(code) {
+async function deleteItem(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -175,7 +191,7 @@ async function DeleteItem(code) {
     }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/MRNMaster/DeleteMRNMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
+            url: `${appBaseURL}/api/OrderMaster/DeleteOrderMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -183,14 +199,14 @@ async function DeleteItem(code) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowMRNMasterlist();
+                    ShowOrderMasterlist();
                 } else {
                     toastr.error("Unexpected response format.");
                 }
 
             },
             error: function (xhr, status, error) {
-                toastr.error("Error deleting item:", Msg);
+                toastr.error("Error deleting item:");
 
             }
         });
@@ -198,22 +214,27 @@ async function DeleteItem(code) {
 }
 function GetAccountMasterList() {
     $.ajax({
-        url: `${appBaseURL}/api/Master/GetAccountIsVendorDropDown`,
-        type: 'GET',    
+        url: `${appBaseURL}/api/Master/GetAccountIsClientDropDown`,
+        type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
                 AccountList = response;
-                CreateVendorlist();
+                $('#txtClientNameList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
+                });
+                $('#txtClientNameList').html(options);
             } else {
-                $('#txtVendorNameList').empty();
+                $('#txtClientNameList').empty();
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-            $('#txtCountryNameList').empty();
+            $('#txtClientNameList').empty();
         }
     });
 }
@@ -253,83 +274,39 @@ function GetItemDetails() {
         }
     });
 }
-function GetWareHouseList() {
-    $.ajax({
-        url: `${appBaseURL}/api/Master/GetWareHouseDropDown`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response.length > 0) {
-                $('#txtWarehouse').empty();
-                let options = '';
-                response.forEach(item => {
-                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
-                });
-                $('#txtWarehouse').html(options);
-            } else {
-                $('#txtWarehouse').empty();
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-            $('#txtWarehouse').empty();
-        }
-    });
-}
-function GetCurrentDate() {
-    $.ajax({
-        url: `${appBaseURL}/api/Master/GetCurrentDate`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response.length > 0) {
-                DatePicker(response[0].Date);
-            } 
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-        }
-    });
-}
 function ClearData() {
     $("#hfCode").val("0");
-    $("#txtMRNNo").val("");
-    $("#txtVendorName").val("");
+    $("#txtOrderNo").val("");
+    $("#txtClientName").val("");
     $("#txtAddress").val("");
-    $("#txtVehicleNo").val("");
-    $("#txtChallanNo").val("");
+    $("#txtBuyerPONo").val("");
     $("#Orderdata").empty();
-    GetCurrentDate();
-    GetAccountMasterList();
+
 }
 function Save() {
-    const Code = $("#hfCode").val();
-    const MRNNo = $("#txtMRNNo").val();
-    const VendorName = $("#txtVendorName").val();
-    const VehicleNo = $("#txtVehicleNo").val();
-    const MRNDate = convertDateFormat($("#txtMRNDate").val());
-    const ChallanNo = $("#txtChallanNo").val();
-    const ChallanDate = convertDateFormat($("#txtChallanDate").val());
+    var OrderNo = $("#txtOrderNo").val();
+    var OrderDate = $("#txtOrderDate").val();
+    var ClientName = $("#txtClientName").val();
+    var BuyerPONo = $("#txtBuyerPONo").val();
+    var BuyerPODate = $("#txtBuyerPODate").val();
 
-    if (MRNDate == '') {
-        toastr.error("Please select MRN Date !");
-        $("#txtMRNDate").focus();
+    if (!OrderDate) {
+        toastr.error("Please Select an Order Date!");
+        $("#txtOrderDate").focus();
         return;
-    } else if (VendorName == '') {
-        toastr.error("Please enter vendor name !");
-        $("#txtVendorName").focus();
+    } else if (!ClientName) {
+        toastr.error("Please enter a Client Name!");
+        $("#txtClientName").focus();
         return;
-    } else if (ChallanNo == '') {
-        toastr.error("Please enter challan no !");
-        $("#txtChallanNo").focus();
+    }
+    else if (!BuyerPONo) {
+        toastr.error("Please enter a Buyer PO No!");
+        $("#txtBuyerPONo").focus();
         return;
-    } else if (ChallanDate == '') {
-        toastr.error("Please select challan date !");
-        $("#txtChallanDate").focus();
+    }
+    else if (!BuyerPODate) {
+        toastr.error("Please Select a Buyer PO Date!");
+        $("#txtBuyerPODate").focus();
         return;
     }
     let validationFailed = false;
@@ -337,62 +314,36 @@ function Save() {
     let lastRow = $('#tblorderbooking #Orderdata tr').length;
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
-            if (lastRow > 1) { 
-                CheckItemName = row.find(".txtItemName").val() !== '';
-            }
-            else if (lastRow === 1) {
-                CheckItemName = true;
-            }
+        if (lastRow > 1) {
+            CheckItemName = row.find(".txtItemName").val() !== '';
+        }
+        else if (lastRow === 1) {
+            CheckItemName = true;
+        }
         if (CheckItemName) {
             if (row.find(".txtItemBarCode").val() == '') {
-                toastr.error("Please enter item bar code !");
+                toastr.error("Please select Item Bar Code !");
                 row.find(".txtItemBarCode").focus();
                 validationFailed = true;
                 return;
             } else if (row.find(".txtItemCode").val() == '') {
-                toastr.error("Please enter item code !");
+                toastr.error("Please select Item Code !");
                 row.find(".txtItemCode").focus();
                 validationFailed = true;
                 return;
-            } else if (row.find(".txtItemName").val() == '') {
-                toastr.error("Please enter item name !");
-                row.find(".txtItemName").focus();
-                validationFailed = true;
-                return;
             } else if (row.find(".txtItemAddress").val() == '') {
-                toastr.error("Please enter item address !");
+                toastr.error("Please select Item Address !");
                 row.find(".txtItemAddress").focus();
                 validationFailed = true;
                 return;
-            } else if (row.find(".txtUOM").val() == '') {
-                toastr.error("Please enter UOM !");
-                row.find(".txtUOM").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtBillQty").val() == '') {
-                toastr.error("Please enter Bill Qty !");
-                row.find(".txtBillQty").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtReceivedQty").val() == '') {
-                toastr.error("Please enter Received Qty!");
-                row.find(".txtReceivedQty").focus();
+            } else if (row.find(".txtOrderQty").val() == '') {
+                toastr.error("Please enter Order Qty !");
+                row.find(".txtOrderQty").focus();
                 validationFailed = true;
                 return;
             } else if (row.find(".txtRate").val() == '') {
-                toastr.error("Please enter rate !");
+                toastr.error("Please enter Rate !");
                 row.find(".txtRate").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtAmount").val() == '') {
-                toastr.error("Please enter amount !");
-                row.find(".txtAmount").focus();
-                validationFailed = true;
-                return;
-            }
-            else if (row.find(".txtWarehouse").val() == '') {
-                toastr.error("Please enter Warehouse !");
-                row.find(".txtWarehouse").focus();
                 validationFailed = true;
                 return;
             }
@@ -401,41 +352,37 @@ function Save() {
     if (validationFailed) {
         return;
     }
-    const Payload = [{
-        code: Code,
-        mrnNo: MRNNo,
-        mrnDate: MRNDate,
-        vendorName: VendorName,
-        challanNo: ChallanNo,
-        challanDate: ChallanDate,
-        vehicleNo: VehicleNo
+    const accountPayload = [{
+        Code: $("#hfCode").val(),
+        OrderNo: $("#txtOrderNo").val(),
+        OrderDate: convertDateFormat($("#txtOrderDate").val()),
+        ClientName: $("#txtClientName").val(),
+        BuyerPONo: $("#txtBuyerPONo").val(),
+        BuyerPODate: convertDateFormat($("#txtBuyerPODate").val())
     }];
-    const Data = [];
+    const addressData = [];
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
         if (row.find(".txtItemName").val() != '') {
-            const RowData = {
-                itemName: row.find(".txtItemName").val(),
-                billQtyBox: row.find(".txtBillQtyBox").val() || 0,
-                receivedQtyBox: row.find(".txtReceivedQtyBox").val() || 0,
-                billQty: row.find(".txtBillQty").val(),
-                receivedQty: row.find(".txtReceivedQty").val(),
-                itemRate: row.find(".txtRate").val(),
-                amount: row.find(".txtAmount").val(),
-                warehouseName: row.find(".txtWarehouse").val(),
-                remarks: row.find(".txtRemarks").val()
+            const addressRow = {
+                ItemName: row.find(".txtItemName").val(),
+                QtyBox: row.find(".txtQtyBox").val() || 0,
+                OrderQty: row.find(".txtOrderQty").val(),
+                Rate: row.find(".txtRate").val(),
+                Amount: row.find(".txtAmount").val(),
+                Remarks: row.find(".txtRemarks").val(),
             };
-            Data.push(RowData);
+            addressData.push(addressRow);
         }
     });
 
     const payload = {
-        MRNMaster: Payload,
-        MRNDetails: Data,
+        OrderMaster: accountPayload,
+        OrderDetial: addressData,
     };
 
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/SaveMRNMaster?UserMaster_Code=${UserMaster_Code}`,
+        url: `${appBaseURL}/api/OrderMaster/InsertOrderMaster?UserMaster_Code=${UserMaster_Code}`,
         type: "POST",
         contentType: "application/json",
         dataType: "json",
@@ -445,9 +392,11 @@ function Save() {
         },
         success: function (response) {
             if (response.Status === "Y") {
-                toastr.success(response.Msg);
-                ShowMRNMasterlist();
-                BackMaster();
+                setTimeout(() => {
+                    toastr.success(response.Msg);
+                    ShowOrderMasterlist();
+                    BackMaster();
+                }, 1000);
             } else {
                 toastr.error(response.Msg);
             }
@@ -458,7 +407,7 @@ function Save() {
         },
     });
 }
-function addNewRowEdit(index, Data) {
+function addNewRowEdit(index, address) {
     const rowCount = index + 1;
     const table = document.getElementById("Orderdata");
     const newRow = document.createElement("tr");
@@ -468,39 +417,28 @@ function addNewRowEdit(index, Data) {
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" oninput="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
+            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
     `;
-
+    //<td><input type="button" class="btn btn-danger btn-sm deleteRow"/><i class="fa-regular fa-circle-xmark"></i></td>
     table.appendChild(newRow);
 
-    if (Data !== undefined) {
-        const item = ItemDetail.find(entry => entry.ItemName == Data.ItemName);
-        const isDisabled = item.QtyInBox === 0;
-        $("#txtItemBarCode_" + rowCount).val(Data.ItemBarCode || "");
-        $("#txtItemCode_" + rowCount).val(Data.ItemCode || "");
-        $("#txtItemName_" + rowCount).val(Data.ItemName || "");
-        $("#txtItemAddress_" + rowCount).val(Data.LocationName || "");
-        $("#txtUOM_" + rowCount).val(Data.UOMName || "");
-        $("#txtBillQtyBox_" + rowCount).val(Data.BillQtyBox || "");
-        $("#txtReceivedQtyBox_" + rowCount).val(Data.ReceivedQtyBox || "");
-        $("#txtBillQtyBox_" + rowCount).prop("disabled", isDisabled);
-        $("#txtReceivedQtyBox_" + rowCount).prop("disabled", isDisabled);
-        $("#txtBillQty_" + rowCount).val(Data.BillQty || "");
-        $("#txtReceivedQty_" + rowCount).val(Data.ReceivedQty || "");
-        $("#txtRate_" + rowCount).val(Data.ItemRate || "");
-        $("#txtAmount_" + rowCount).val(Data.Amount || "");
-        $("#txtWarehouse_" + rowCount).val(Data.WarehouseName || "");
-        $("#txtRemarks_" + rowCount).val(Data.Remarks || "");
+    if (address !== undefined) {
+        $("#txtUOM_" + rowCount).val(address.UOMName || "");
+        $("#txtItemAddress_" + rowCount).val(address.LocationName || "");
+        $("#txtItemBarCode_" + rowCount).val(address.ItemBarCode || "");
+        $("#txtItemCode_" + rowCount).val(address.ItemCode || "");
+        $("#txtItemName_" + rowCount).val(address.ItemName || "");
+        $("#txtQtyBox_" + rowCount).val(address.QtyBox || "");
+        $("#txtOrderQty_" + rowCount).val(address.OrderQty || "");
+        $("#txtRate_" + rowCount).val(address.Rate || "");
+        $("#txtAmount_" + rowCount).val(address.Amount || "");
+        $("#txtRemarks_" + rowCount).val(address.Remarks || "");
     }
-    
 }
 function OnChangeNumericTextBox(element) {
 
@@ -526,18 +464,7 @@ function OnKeyDownPressFloatTextBox(event, element) {
         return false;
     }
 }
-function SetvalueReceivedQty(event, element) {
-    const currentRow = element.closest('tr');
-    const ReceivedQty = currentRow.querySelector('.txtReceivedQty');
-    if (currentRow) {
-            const value = element.value;
-            ReceivedQty.value = value;
-            CalculateAmount(element);
-    }
-    else {
-           
-        }
-}
+
 function BizSolhandleEnterKey(event) {
     if (event.key === "Enter") {
         //const inputs = document.getElementsByTagName('input')
@@ -556,16 +483,6 @@ function BizSolhandleEnterKey(event) {
 //    const inputs = row.querySelectorAll("input.mandatory");
 //    return Array.from(inputs).every(input => input.value.trim() !== "");
 //}
-function isRowComplete(row) {
-    const inputs = row.querySelectorAll("input.mandatory");
-    for (const input of inputs) {
-        if (input.value.trim() === "") {
-            input.focus(); 
-            return false; 
-        }
-    }
-    return true; 
-}
 function addNewRow() {
     let rowCount = 0;
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
@@ -583,15 +500,12 @@ function addNewRow() {
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" onfocusout="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+              <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
             table.appendChild(newRow);
         }
@@ -603,15 +517,12 @@ function addNewRow() {
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" input="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+              <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
         table.appendChild(newRow);
     }
@@ -626,7 +537,7 @@ $(document).on("click", ".deleteRow", function () {
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "MRN Master");
+    const result = Data.find(item => item.ModuleDesp === "Order");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
@@ -638,32 +549,28 @@ function convertDateFormat(dateString) {
     return `${day} -${monthAbbreviation} -${year}`;
 }
 function setupDateInputFormatting() {
-    $('#txtMRNDate').on('input', function () {
+    $('#txtBuyerPODate').on('input', function () {
         let value = $(this).val().replace(/[^\d]/g, '');
-
         if (value.length >= 2 && value.length < 4) {
             value = value.slice(0, 2) + '/' + value.slice(2);
         } else if (value.length >= 4) {
             value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
         }
         $(this).val(value);
-
         if (value.length === 10) {
             validateDate(value);
         } else {
             $(this).val(value);
         }
     });
-    $('#txtChallanDate').on('input', function () {
+    $('#txtOrderDate').on('input', function () {
         let value = $(this).val().replace(/[^\d]/g, '');
-
         if (value.length >= 2 && value.length < 4) {
             value = value.slice(0, 2) + '/' + value.slice(2);
         } else if (value.length >= 4) {
             value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
         }
         $(this).val(value);
-
         if (value.length === 10) {
             validateChallanDate(value);
         } else {
@@ -687,11 +594,11 @@ function validateChallanDate(value) {
 
             $(this).val(value);
         } else {
-            $('#txtChallanDate').val('');
+            $('#txtBuyerPODate').val('');
 
         }
     } else {
-        $('#txtChallanDate').val('');
+        $('#txtBuyerPODate').val('');
 
     }
 }
@@ -711,23 +618,36 @@ function validateDate(value) {
 
             $(this).val(value);
         } else {
-            $('#txtMRNDate').val('');
+            $('#txtOrderDate').val('');
 
         }
     } else {
-        $('#txtMRNDate').val('');
+        $('#txtOrderDate').val('');
 
     }
 }
-function DatePicker(date) {
-    $('#txtMRNDate, #txtChallanDate').val(date);
-    $('#txtMRNDate, #txtChallanDate').datepicker({
-        format: 'dd/mm/yyyy',
-        autoclose: true,
+function DatePicker() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetCurrentDate`,
+        method: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            let apiDate = response[0].Date;
+            $('#txtOrderDate, #txtBuyerPODate').val(apiDate);
+
+            $('#txtOrderDate, #txtBuyerPODate').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+            });
+        },
+        error: function () {
+            console.error('Failed to fetch the date from the API.');
+        }
     });
 }
 function FillallItemfield(inputElement, value) {
-
     const currentRow = inputElement.closest('tr');
     if (currentRow) {
         const inputValue = inputElement.value;
@@ -737,8 +657,6 @@ function FillallItemfield(inputElement, value) {
         const itemAddress = currentRow.querySelector('.txtItemAddress');
         const itemUOM = currentRow.querySelector('.txtUOM');
         const itemRate = currentRow.querySelector('.txtRate');
-        const ReceivedQtyBox = currentRow.querySelector('.txtReceivedQtyBox');
-        const BillQtyBox = currentRow.querySelector('.txtBillQtyBox');
         if (value == 'BarCode') {
             $("#txtItemBarCode option").each(function () {
                 if ($(this).val() === inputValue) {
@@ -748,11 +666,7 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
-                    const isDisabled = item.QtyInBox === 0;
-                    ReceivedQtyBox.value = '' ;
-                    BillQtyBox.value = '';
-                    ReceivedQtyBox.disabled = isDisabled;
-                    BillQtyBox.disabled = isDisabled;
+                    isValid = true;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -772,11 +686,7 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
-                    const isDisabled = item.QtyInBox === 0;
-                    ReceivedQtyBox.value = '';
-                    BillQtyBox.value = '';
-                    ReceivedQtyBox.disabled = isDisabled;
-                    BillQtyBox.disabled = isDisabled;
+                    isValid = true;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -796,11 +706,7 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
-                    const isDisabled = item.QtyInBox === 0;
-                    ReceivedQtyBox.value = '';
-                    BillQtyBox.value = '';
-                    ReceivedQtyBox.disabled = isDisabled;
-                    BillQtyBox.disabled = isDisabled;
+                    isValid = true;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -811,83 +717,71 @@ function FillallItemfield(inputElement, value) {
                 }
             });
         }
-        GetRate($("#txtVendorName").val(), itemName.value).then(response => {
-                itemRate.value = response[0].ItemRate;
-            }).catch(error => {
-                console.error('Error fetching rate:', error);
-            });
-    }
-}
-function CheckWarehouse(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const value = inputElement.value;
-        let isValid = false;
-        const Warehouse = currentRow.querySelector('.txtWarehouse');
-        $("#txtWarehouse option").each(function () {
-            if ($(this).val() === value) {
-                isValid = true;
-                return false;
-            }
+        GetRate($("#txtClientName").val(), itemName.value).then(response => {
+            itemRate.value = response[0].Rate;
+        }).catch(error => {
+            console.error('Error fetching rate:', error);
         });
-        if (!isValid) {
-            Warehouse.value = "";
-        }
     }
-
 }
 function CalculateAmount(inputElement) {
-    const currentRow = inputElement.closest('tr'); 
+    const currentRow = inputElement.closest('tr');
     if (currentRow) {
-        const BillQty = currentRow.querySelector('.txtBillQty');
+        const BillQty = currentRow.querySelector('.txtOrderQty');
         const Rate = currentRow.querySelector('.txtRate');
         const Amount = currentRow.querySelector('.txtAmount');
-        const billQtyValue = parseFloat(BillQty?.value) || 0; 
+        const billQtyValue = parseFloat(BillQty?.value) || 0;
         const rateValue = parseFloat(Rate?.value) || 0;
         const calculatedAmount = billQtyValue * rateValue;
         if (Amount) {
             Amount.value = calculatedAmount.toFixed(2);
         }
-     }
+    }
 }
-function convertDateFormat(dateString) {
-    const [day, month, year] = dateString.split('/');
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthAbbreviation = monthNames[parseInt(month) - 1];
-    return `${day}-${monthAbbreviation}-${year}`;
-}
+
 function GetRate(VendorName, ItemName) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: `${appBaseURL}/api/MRNMaster/GetRateByVendor?VendorName=${VendorName}&ItemName=${ItemName}`,
+            url: `${appBaseURL}/api/OrderMaster/ClientWiseRate?ClientName=${VendorName}&ItemName=${ItemName}`,
             type: 'GET',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
             },
             success: function (response) {
                 if (response.length > 0) {
-                resolve(response); 
+                    resolve(response);
                 }
             },
             error: function (xhr, status, error) {
                 console.error("Error:", error);
-                reject(error); 
+                reject(error);
             }
         });
     });
+}
+
+function isRowComplete(row) {
+    const inputs = row.querySelectorAll("input.mandatory");
+    for (const input of inputs) {
+        if (input.value.trim() === "") {
+            input.focus();
+            return false;
+        }
+    }
+    return true;
 }
 $(document).on('keydown', '#tblorderbooking input', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         let currentInput = $(this);
-        let currentRow = currentInput.closest('tr')[0]; 
-        
+        let currentRow = currentInput.closest('tr')[0];
+
         let lastRow = $('#tblorderbooking #Orderdata tr').last();
         if (lastRow && currentInput.hasClass('txtRemarks')) {
             currentInput.hasClass('txtRemarks')
-            let parentRow = currentInput.closest('tr'); 
+            let parentRow = currentInput.closest('tr');
             if (parentRow.is(lastRow)) {
-                addNewRow(); 
+                addNewRow();
                 if (!isRowComplete(currentRow)) {
                     return;
                 }
@@ -900,39 +794,3 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
         }
     }
 });
-function CreateVendorlist(){
-    $('#txtVendorNameList').empty();
-    let options = '';
-    AccountList.forEach(item => {
-        options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
-    });
-    $('#txtVendorNameList').html(options);
-}
-function SetvalueBillQtyBox(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const inputValue = inputElement.value;
-        const BillQty = currentRow.querySelector('.txtBillQty');
-        const ReceivedQty = currentRow.querySelector('.txtReceivedQty');
-        const itemName = currentRow.querySelector('.txtItemName');
-        const ReceivedQtyBox = currentRow.querySelector('.txtReceivedQtyBox');
-        const BillQtyBox = currentRow.querySelector('.txtBillQtyBox');
-        const item = ItemDetail.find(entry => entry.ItemName == itemName.value);
-        BillQty.value = item.QtyInBox * BillQtyBox.value;
-        CalculateAmount(inputElement);
-    }
-}
-function SetvalueReceivedQtyBox(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const inputValue = inputElement.value;
-        const BillQty = currentRow.querySelector('.txtBillQty');
-        const ReceivedQty = currentRow.querySelector('.txtReceivedQty');
-        const itemName = currentRow.querySelector('.txtItemName');
-        const ReceivedQtyBox = currentRow.querySelector('.txtReceivedQtyBox');
-        const BillQtyBox = currentRow.querySelector('.txtBillQtyBox');
-        const item = ItemDetail.find(entry => entry.ItemName == itemName.value);
-        ReceivedQty.value = item.QtyInBox * ReceivedQtyBox.value;
-        CalculateAmount(inputElement);
-    }
-}

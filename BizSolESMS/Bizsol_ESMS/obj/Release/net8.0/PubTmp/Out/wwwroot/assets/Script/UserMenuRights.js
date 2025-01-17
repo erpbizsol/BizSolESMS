@@ -508,15 +508,13 @@ function ChangecolorTd() {
     });
 }
 function Tooltip() {
-    // Use getElementsByClassName and convert it to an array
     const thElements = Array.from(document.getElementsByClassName("filter-table-heading"));
-
     thElements.forEach(th => {
         const text = th.textContent.trim(); // Get text and trim spaces
         if (text.length > 5) {
             th.classList.add("tooltip1"); // Add tooltip class
             th.setAttribute("data-tooltip", text); // Set the full text as the tooltip
-            th.textContent = text.substring(0, 5) + "..."; // Truncate text to 5 characters
+            th.textContent = text.substring(0, 10) + "..."; // Truncate text to 5 characters
         }
     });
 }
