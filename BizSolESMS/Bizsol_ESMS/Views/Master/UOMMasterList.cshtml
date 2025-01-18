@@ -2,37 +2,123 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-<script src="~/assets/js/filter.js"></script>
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="~/assets/script/master.js"></script>
-<div class="">
+<script src="~/assets/script/uommaster.js"></script>
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        /* background: #fff;  */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+    .tab-header {
+        display: flex;
+        /* background: #e3e7ed; */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    }
+
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            /* color: #fffffff5; */
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
+            border-top-left-radius: 40px;
+        }
+
+            .tab-header div:hover {
+                background: #586e87;
+                color: white;
+            }
+
+        .tab-header .active {
+            background: #1d4b7d;
+        }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+</style>
+<div class="" id="txtListpage" style="display:block;width:50%; margin: 0 auto;">
     <div class="row">
-        <div class="col-sm-12 text-end" style="width: 80%; margin: 0 auto;">
+        <div class="col-sm-12 text-end">
             <label></label>
-            <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
-            <button type="button" class="btn btn-success btn-height" onclick="CreateUOMMaster()">CREATE NEW</button>
-
+            <button type="button" class="btn btn-primary btn-height" title="Edit" id="exportExcel">DOWNLOAD</button>
+            <button type="button" class="btn btn-success btn-height" title="Edit" onclick="Create()">CREATE NEW</button>
         </div>
-
     </div>
     <div class="card-body mt-2">
-        <div class="table-wrapper fixed-height-table center">
-            <table id="table" class="fixed-width-table table" style="width: 80%; margin: 0 auto;">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table">
                 <thead id="table-header">
                 </thead>
                 <tbody id="table-body">
                 </tbody>
-
             </table>
-
         </div>
         <!-- Paginator -->
-        <div class="paginator" id="paginator-table" style="width: 80%; margin: 0 auto;">
+        <div class="paginator" id="paginator-table">
+        </div>
+    </div>
+</div>
+<div id="txtCreatepage" style="display:none; width:80%; margin: 0 auto;">
+    <div class="card shadow-sm" style="background-color:#e9e9ef">
+        <div class="tabs">
+            <div class="tab-header">
+                <div id="tab1" class="tab active" style="color:white"></div>
+            </div>
+
+            <div class="row pt-4">
+                <div class="col-md-12">
+                    <div class="row">
+
+                        <div class="col-md-3  col-sm-6">
+                            <label for="txtUOM" class="col-form-label-sm fw-bold">
+                                <input type="hidden" id="hftxtCode" value="0" />
+                                UOM <span style="color:red">*</span>
+                            </label>
+                            <input type="text" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name" maxlength="10">
+
+                        </div>
+
+                        <div class="col-md-3  col-sm-6">
+                            <label for="txtDigitAfterDecimal" class="col-form-label-sm fw-bold">
+                                Digit After Decimal<span style="color:red">*</span>
+                            </label>
+                            <input type="Number" id="txtDigitAfterDecimal" name="txtDigitAfterDecimal" autocomplete="off" class="Number form-control form-control-sm box_border" placeholder="Digit After Decimal" value="0">
+                        </div>
+                        <div class="col-md-3  col-sm-6 tex-end" style="margin-top: 30px !important;">
+                            <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
+                            <button class="btn btn-danger btn-height" onclick="BackMaster()">Back</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+           
         </div>
     </div>
 </div>
 
-
+<script src="~/assets/js/filter.js"></script>
 
 
