@@ -121,8 +121,7 @@ async function Create() {
         return;
     }
     ClearData();
-    $("#tab1").text("Order Entry-New");
-
+    $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
@@ -139,7 +138,7 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("Order Entry-Edit");
+    $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -540,7 +539,7 @@ $(document).on("click", ".deleteRow", function () {
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Order");
+    const result = Data.find(item => item.ModuleDesp === "Order Entry");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
