@@ -9,7 +9,7 @@ let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
         DatePicker();
-        $("#ERPHeading").text("Order Master");
+        $("#ERPHeading").text("Order Entry");
         $('#txtOrderNo').on('keydown', function (e) {
             if (e.key === "Enter") {
                 $("#txtOrderDate").focus();
@@ -121,8 +121,7 @@ async function Create() {
         return;
     }
     ClearData();
-    $("#tab1").text("Order Enter-New");
-
+    $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
@@ -139,7 +138,7 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("Order Enter-Edit");
+    $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -537,7 +536,7 @@ $(document).on("click", ".deleteRow", function () {
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Order");
+    const result = Data.find(item => item.ModuleDesp === "Order Entry");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }

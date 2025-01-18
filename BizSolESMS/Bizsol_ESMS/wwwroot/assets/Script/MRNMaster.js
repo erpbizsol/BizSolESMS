@@ -7,7 +7,7 @@ let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
     GetCurrentDate();
-    $("#ERPHeading").text("MRN Master");
+    $("#ERPHeading").text("Material Receipt Note");
     $('#txtMRNDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtVendorName").focus();
@@ -103,6 +103,7 @@ async function Create() {
         return;
     }
     ClearData();
+    $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
@@ -119,6 +120,7 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
+    $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -626,7 +628,7 @@ $(document).on("click", ".deleteRow", function () {
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "MRN Master");
+    const result = Data.find(item => item.ModuleDesp === "Material Receipt Note");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
