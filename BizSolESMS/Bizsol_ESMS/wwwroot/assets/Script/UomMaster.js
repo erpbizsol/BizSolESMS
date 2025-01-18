@@ -22,8 +22,6 @@ $(document).ready(function () {
             }
         });
         ShowUomMasterlist();
-
-
 });
 function ShowUomMasterlist() {
     $.ajax({
@@ -68,7 +66,7 @@ async function Create() {
         return;
     }
     ClearData();
-    $("#tab1").text("UOM-New");
+    $("#tab1").text("New");
 
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -85,7 +83,7 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("UOM-Edit");
+    $("#tab1").text("Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
