@@ -9,7 +9,7 @@ let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
         DatePicker();
-        $("#ERPHeading").text("Order Master");
+        $("#ERPHeading").text("Order Entry");
         $('#txtOrderNo').on('keydown', function (e) {
             if (e.key === "Enter") {
                 $("#txtOrderDate").focus();
@@ -121,7 +121,7 @@ async function Create() {
         return;
     }
     ClearData();
-    $("#tab1").text("Order Enter-New");
+    $("#tab1").text("Order Entry-New");
 
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -139,7 +139,7 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("Order Enter-Edit");
+    $("#tab1").text("Order Entry-Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -160,7 +160,12 @@ async function Edit(code) {
                     $("#txtAddress").val(OrderMaster.Address || "");
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
-                    
+                    const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
+                    if (!item) {
+                        var newData = { Code: 0, AccountName: OrderMaster.AccountName, Address: OrderMaster.Address }
+                        AccountList.push(newData);
+                    }
+                    CreateVendorlist();
                 } else {
                     toastr.warning("Account master data is missing.");
                 }
@@ -222,12 +227,7 @@ function GetAccountMasterList() {
         success: function (response) {
             if (response.length > 0) {
                 AccountList = response;
-                $('#txtClientNameList').empty();
-                let options = '';
-                response.forEach(item => {
-                    options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
-                });
-                $('#txtClientNameList').html(options);
+                CreateVendorlist();
             } else {
                 $('#txtClientNameList').empty();
             }
@@ -428,12 +428,15 @@ function addNewRowEdit(index, address) {
     table.appendChild(newRow);
 
     if (address !== undefined) {
+        const item = ItemDetail.find(entry => entry.ItemName == address.ItemName);
+        const isDisabled = item.QtyInBox === 0;
         $("#txtUOM_" + rowCount).val(address.UOMName || "");
         $("#txtItemAddress_" + rowCount).val(address.LocationName || "");
         $("#txtItemBarCode_" + rowCount).val(address.ItemBarCode || "");
         $("#txtItemCode_" + rowCount).val(address.ItemCode || "");
         $("#txtItemName_" + rowCount).val(address.ItemName || "");
         $("#txtQtyBox_" + rowCount).val(address.QtyBox || "");
+        $("#txtQtyBox_" + rowCount).prop("disabled", isDisabled);
         $("#txtOrderQty_" + rowCount).val(address.OrderQty || "");
         $("#txtRate_" + rowCount).val(address.Rate || "");
         $("#txtAmount_" + rowCount).val(address.Amount || "");
@@ -500,8 +503,8 @@ function addNewRow() {
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueBillQtyBox(this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueReceivedQtyBox(this);"  oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
@@ -517,8 +520,8 @@ function addNewRow() {
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueBillQtyBox(this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" "oninput="SetvalueReceivedQtyBox(this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
@@ -813,3 +816,27 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
         }
     }
 });
+
+function CreateVendorlist() {
+    $('#txtClientNameList').empty();
+    let options = '';
+    AccountList.forEach(item => {
+        options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
+    });
+    $('#txtClientNameList').html(options);
+}
+function SetvalueBillQtyBox(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const inputValue = inputElement.value;
+        const ItemName = currentRow.querySelector(".txtItemName");
+        const QtyBox = currentRow.querySelector(".txtQtyBox");
+        const OrderQty = currentRow.querySelector(".txtOrderQty");
+        const Rate = currentRow.querySelector(".txtRate");
+        const Amount = currentRow.querySelector(".txtAmount");
+        const item = ItemDetail.find(entry => entry.ItemName == ItemName.value);
+        QtyBox.value = item.QtyInBox * OrderQty.value;
+        CalculateAmount(inputElement);
+    }
+}
+

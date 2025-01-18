@@ -11,17 +11,6 @@ namespace Bizsol_ESMS.Controllers
             
             return View();
         }
-       
-        public IActionResult CreateUOMMaster()
-        {
-            string EncryptCode = HttpContext.Request.Query["Code"].ToString();
-            string UOMMode = HttpContext.Request.Query["Mode"].ToString();
-
-            ViewBag.UCode = EncryptCode == "" ? 0 : Convert.ToInt32(EncryptCode);
-            ViewBag.UomMode = UOMMode == "" ? "New" : UOMMode;
-
-            return View();
-        }
 
         #endregion UOM
 
