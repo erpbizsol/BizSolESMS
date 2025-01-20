@@ -102,14 +102,14 @@
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="txtBoxPacking" class="col-form-label-sm fw-bold">Box Packing </label>
-                            <select id="txtBoxPacking" class="box_border form-control form-control-sm">
-                                <option value="N">N</option>
+                            <select id="txtBoxPacking" class="box_border form-control form-control-sm" onchange="updateQtyBox(this.value)">
+                                <option value="N" selected>N</option>
                                 <option value="Y">Y</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="txtQtyinBox" class="col-form-label-sm fw-bold">Qtyin Box </label>
-                            <input type="text" id="txtQtyinBox" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Qtyin Box" value="0">
+                            <input type="text" id="txtQtyinBox" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Qtyin Box" value="0" disabled>
                         </div>
                         <div class="col-md-2 mt-4">
                             <label for="txtBatchApplicable"></label>

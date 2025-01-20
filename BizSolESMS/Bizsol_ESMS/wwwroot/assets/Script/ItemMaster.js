@@ -91,6 +91,7 @@ $(document).ready(function () {
             $("#txtsave").focus();
         }
     });
+
     ShowItemMasterlist();
     GetGroupMasterList();
     GetUOMDropDownList();
@@ -117,7 +118,7 @@ function UpdateLabelforItemMaster() {
                     if (item.ItemNameHeader) {
                         $("#txtItemNamelab").text(item.ItemNameHeader);
                     } else {
-                        $("#txtItemNamelab").text("Item Name"); 
+                        $("#txtItemNamelab").text("Item Name");
                     }
                     if (item.ItembarcodeHeader) {
                         $("#txtItembarcodelab").text(item.ItembarcodeHeader);
@@ -139,15 +140,15 @@ function UpdateLabelforItemMaster() {
                     } else {
                         $("#SubLocationItemHeaderlab").text("Location Item");
                     }
-                    
+
                 });
             } else {
-                $("#txtItemNamelab").text("Static Label for Item Name"); 
+                $("#txtItemNamelab").text("Static Label for Item Name");
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-            $("#txtItemNamelab").text("Error fetching label data"); 
+            $("#txtItemNamelab").text("Error fetching label data");
         }
     });
 }
@@ -258,14 +259,14 @@ function Save() {
             BrandName: $("#txtBrand").val(),
             ReorderLevel: ReorderLevels,
             ReorderQty: ReorderQtys,
-           // ReorderLevel: parseInt($("#txtReorderLevel").val()),
-           // ReorderQty: parseInt($("#txtReorderQty").val()),
+            // ReorderLevel: parseInt($("#txtReorderLevel").val()),
+            // ReorderQty: parseInt($("#txtReorderQty").val()),
             LocationName: $("#txtItemLocation").val(),
             BoxPacking: $("#txtBoxPacking").val(),
             //batchApplicable: $("#txtBatchApplicable").val(),
             //maintainExpiry: $("#txtMaintainExpiry").val(),
             batchApplicable: $("#txtBatchApplicable").is(":checked") ? "Y" : "N",
-            maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N", 
+            maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N",
             QtyInBox: $("#txtQtyinBox").val()
         };
         $.ajax({
@@ -344,7 +345,7 @@ function Edit(code) {
         success: function (item) {
             if (item) {
                 $("#hfCode").val(item.Code),
-                $("#txtItemCode").val(item.ItemCode);
+                    $("#txtItemCode").val(item.ItemCode);
                 $("#txtItemName").val(item.ItemName);
                 $("#txtDisplayName").val(item.DisplayName);
                 $("#txtItembarcode").val(item.ItemBarCode);
@@ -358,6 +359,10 @@ function Edit(code) {
                 $("#txtReorderQty").val(item.ReorderQty);
                 $("#txtItemLocation").val(item.locationName);
                 $("#txtBoxPacking").val(item.BoxPacking);
+                if (item.BoxPacking == 'Y') {
+                    $("#txtQtyinBox").prop("disabled", false);
+                }
+                $("#txtQtyinBox").val(item.QtyInBox)
                 //$("#txtBatchApplicable").val(item.BatchApplicable),
                 //$("#txtMaintainExpiry").val(item.MaintainExpiry),
                 if (item.BatchApplicable == 'N') {
@@ -366,7 +371,7 @@ function Edit(code) {
                 if (item.MaintainExpiry == 'N') {
                     $("#txtMaintainExpiry").prop("checked", false);
                 }
-                $("#txtQtyinBox").val(item.QtyInBox)
+
             } else {
                 toastr.error("Record not found...!");
             }
@@ -574,7 +579,14 @@ function ClearData() {
     $("#txtReorderLevel").val("0");
     $("#txtReorderQty").val("0");
     $("#txtItemLocation").val("");
-    $("#txtBoxPacking").val("");
+    $("#txtBoxPacking").val("N");
     $("#txtQtyinBox").val("0");
-    
+
 }
+
+function updateQtyBox(boxPackingValue) {
+    // Enable or disable #txtQtyinBox based on the selected value
+    document.getElementById("txtQtyinBox").disabled = boxPackingValue === "N";
+    document.getElementById("txtQtyinBox").value = "0";
+}
+
