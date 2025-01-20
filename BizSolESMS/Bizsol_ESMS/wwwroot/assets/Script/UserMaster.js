@@ -2,6 +2,9 @@
 let UserMaster_Code = authKeyData.UserMaster_Code;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let imageBase64Data = [];
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
+
 $(document).ready(function () {
     $("#ERPHeading").text("User Master");
     UserGroupList();
@@ -218,7 +221,13 @@ function UserMasterList() {
     });
 
 }
-function Create() {
+async function Create() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("New");
     ClearData();
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
@@ -228,7 +237,12 @@ function Back() {
     $("#tblUserMaster").show();
     ClearData();
 }
-function Delete(code) {
+async function Delete(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/UserMaster/DeleteUserMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}&Reason=Test`,
@@ -252,7 +266,13 @@ function Delete(code) {
         });
     }
 }
-function Edit(Code) {
+async function Edit(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("Edit");
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
     UserMasterByCode(Code);
@@ -541,4 +561,12 @@ function IsMobileNumber(txtMobId) {
         return false;
     }
     return true;
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "User Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }

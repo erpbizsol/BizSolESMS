@@ -5,133 +5,193 @@
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="~/assets/script/itemmaster.js"></script>
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        /* background: #fff;  */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
 
+    .tab-header {
+        display: flex;
+        /* background: #e3e7ed; */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    }
+
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            /* color: #fffffff5; */
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
+            border-top-left-radius: 40px;
+        }
+
+            .tab-header div:hover {
+                background: #586e87;
+                color: white;
+            }
+
+        .tab-header .active {
+            background: #1d4b7d;
+        }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+</style>
 <div class="" id="txtListpage" style="display:block;">
     <div class="row">
         <div class="col-sm-12 text-end">
             <label></label>
-            <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
-            <button type="button" class="btn btn-success btn-height" onclick="CreateItemMaster()">CREATE NEW</button>
+            <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" id="exportExcel">DOWNLOAD</button>
+            <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateItemMaster()">CREATE NEW</button>
         </div>
     </div>
     <div class="card-body mt-2">
-        <div class="table-wrapper fixed-height-table">
-            <table id="table" class="fixed-width-table table">
-                <thead id="table-header">
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
-        </div>
-        <!-- Paginator -->
-        <div class="paginator" id="paginator-table">
-        </div>
+    
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginator -->
+            <div class="paginator" id="paginator-table">
+            </div>
     </div>
 </div>
 <div id="txtCreatepage" style="display:none;">
     <div class="card shadow-sm" style="background-color:#e9e9ef">
-        <div class="card-body shadow-sm">
-            <div class="row">
+        <div class="tabs">
+            <div class="tab-header">
+                <div id="tab1" class="tab active" style="color:white"></div>
+            </div>
+            <div class="row pt-4">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code </label><sub style="color:red">*</sub>
-                            <input type="text" id="txtItemCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="16" placeholder="Item Code">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtItemNamelab" class="col-form-label-sm fw-bold" id="txtItemNamelab">Item Name </label><sub style="color:red">*</sub>
-                            <input type="hidden" id="hfCode" value="0">
-                            <input type="text" id="txtItemName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Item Name">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><sub style="color:red">*</sub>
-                            <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtItembarcodelab" class="col-form-label-sm fw-bold" id="txtItembarcodelab">Item Bar Code</label>
-                            <input type="text" id="txtItembarcode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" placeholder="Item Bar Code">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtUOM" class="col-form-label-sm fw-bold">UOM</label><sub style="color:red">*</sub>
-                            <datalist id="txtUOMList"></datalist>
-                            <input list="txtUOMList" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtHSNCode" class="col-form-label-sm fw-bold">HSN Code</label><sub style="color:red">*</sub>
-                            <input type="text" id="txtHSNCode" name="txtHSNCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="8" placeholder="HSN Code" />
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtCategory" class="col-form-label-sm fw-bold">Category</label><sub style="color:red">*</sub>
-                            <datalist id="txtCategoryList"></datalist>
-                            <input list="txtCategoryList" id="txtCategory" name="txtCategory" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Category Name">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="GroupItemHeaderlab" class="col-form-label-sm fw-bold" id="GroupItemHeaderlab">Group Item</label>
-                            <datalist id="txtGroupItemList"></datalist>
-                            <input list="txtGroupItemList" id="txtGroupItem" name="txtGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Group Item">
-                        </div>
-                    </div>
-                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code </label><sub style="color:red">*</sub>
+                                    <input type="text" id="txtItemCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="16" placeholder="Item Code">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtItemNamelab" class="col-form-label-sm fw-bold" id="txtItemNamelab">Item Name </label><sub style="color:red">*</sub>
+                                    <input type="hidden" id="hfCode" value="0">
+                                    <input type="text" id="txtItemName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Item Name">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><sub style="color:red">*</sub>
+                                    <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtItembarcodelab" class="col-form-label-sm fw-bold" id="txtItembarcodelab">Item Bar Code</label>
+                                    <input type="text" id="txtItembarcode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" placeholder="Item Bar Code">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtUOM" class="col-form-label-sm fw-bold">UOM</label><sub style="color:red">*</sub>
+                                    <datalist id="txtUOMList"></datalist>
+                                    <input list="txtUOMList" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtHSNCode" class="col-form-label-sm fw-bold">HSN Code</label><sub style="color:red">*</sub>
+                                    <input type="text" id="txtHSNCode" name="txtHSNCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="8" placeholder="HSN Code" />
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtCategory" class="col-form-label-sm fw-bold">Category</label><sub style="color:red">*</sub>
+                                    <datalist id="txtCategoryList"></datalist>
+                                    <input list="txtCategoryList" id="txtCategory" name="txtCategory" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Category Name">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="GroupItemHeaderlab" class="col-form-label-sm fw-bold" id="GroupItemHeaderlab">Group Item</label>
+                                    <datalist id="txtGroupItemList"></datalist>
+                                    <input list="txtGroupItemList" id="txtGroupItem" name="txtGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Group Item">
+                                </div>
+                            </div>
+                            <div class="row">
 
-                        <div class="col-md-3 col-sm-6">
-                            <label for="SubGroupItemHeaderlab" class="col-form-label-sm fw-bold" id="SubGroupItemHeaderlab">Sub Group Item</label>
-                            <datalist id="txtSubGroupItemList"></datalist>
-                            <input list="txtSubGroupItemList" id="txtSubGroupItem" name="txtSubGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Sub Group Item">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtBrand" class="col-form-label-sm fw-bold">Brand</label><sub style="color:red">*</sub>
-                            <datalist id="txtBrandList"></datalist>
-                            <input list="txtBrandList" id="txtBrand" name="txtBrand" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Brand Name">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtReorderLevel" class="col-form-label-sm fw-bold">Reorder Level </label>
-                            <input type="text" id="txtReorderLevel" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Level" value="0">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtReorderQty" class="col-form-label-sm fw-bold">Reorder Qty </label>
-                            <input type="text" id="txtReorderQty" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Qty" value="0">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6">
-                            <label for="SubLocationItemHeaderlab" class="col-form-label-sm fw-bold" id="SubLocationItemHeaderlab">Location Item</label>
-                            <datalist id="txtItemLocationList"></datalist>
-                            <input list="txtItemLocationList" id="txtItemLocation" name="txtItemLocation" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Item Location">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtBoxPacking" class="col-form-label-sm fw-bold">Box Packing </label>
-                            <select id="txtBoxPacking" class="box_border form-control form-control-sm" onchange="updateQtyBox(this.value)">
-                                <option value="N" selected>N</option>
-                                <option value="Y">Y</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtQtyinBox" class="col-form-label-sm fw-bold">Qtyin Box </label>
-                            <input type="text" id="txtQtyinBox" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Qtyin Box" value="0" disabled>
-                        </div>
-                        <div class="col-md-2 mt-4">
-                            <label for="txtBatchApplicable"></label>
-                            <input type="checkbox" id="txtBatchApplicable" name="txtBatchApplicable" class="box_border" checked />
-                            <label for="txtBatchApplicable">Batch Applicable</label>
-                        </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="SubGroupItemHeaderlab" class="col-form-label-sm fw-bold" id="SubGroupItemHeaderlab">Sub Group Item</label>
+                                    <datalist id="txtSubGroupItemList"></datalist>
+                                    <input list="txtSubGroupItemList" id="txtSubGroupItem" name="txtSubGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Sub Group Item">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtBrand" class="col-form-label-sm fw-bold">Brand</label><sub style="color:red">*</sub>
+                                    <datalist id="txtBrandList"></datalist>
+                                    <input list="txtBrandList" id="txtBrand" name="txtBrand" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Brand Name">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtReorderLevel" class="col-form-label-sm fw-bold">Reorder Level </label>
+                                    <input type="text" id="txtReorderLevel" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Level" value="0">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtReorderQty" class="col-form-label-sm fw-bold">Reorder Qty </label>
+                                    <input type="text" id="txtReorderQty" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Qty" value="0">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="SubLocationItemHeaderlab" class="col-form-label-sm fw-bold" id="SubLocationItemHeaderlab">Location Item</label>
+                                    <datalist id="txtItemLocationList"></datalist>
+                                    <input list="txtItemLocationList" id="txtItemLocation" name="txtItemLocation" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Item Location">
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtBoxPacking" class="col-form-label-sm fw-bold">Box Packing </label>
+                                    <select id="txtBoxPacking" class="box_border form-control form-control-sm" onchange="updateQtyBox(this.value)">
+                                        <option value="N" selected>N</option>
+                                        <option value="Y">Y</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label for="txtQtyinBox" class="col-form-label-sm fw-bold">Qtyin Box </label>
+                                    <input type="text" id="txtQtyinBox" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Qtyin Box" value="0" disabled>
+                                </div>
+                                <div class="col-md-2 mt-4">
+                                    <label for="txtBatchApplicable"></label>
+                                    <input type="checkbox" id="txtBatchApplicable" name="txtBatchApplicable" class="box_border" checked />
+                                    <label for="txtBatchApplicable">Batch Applicable</label>
+                                </div>
 
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2 mt-4">
-                            <label for="txtMaintainExpiry"></label>
-                            <input type="checkbox" id="txtMaintainExpiry" name="txtMaintainExpiry" class="box_border" checked />
-                            <label for="txtMaintainExpiry">Maintain Expiry</label>
-                        </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 mt-4">
+                                    <label for="txtMaintainExpiry"></label>
+                                    <input type="checkbox" id="txtMaintainExpiry" name="txtMaintainExpiry" class="box_border" checked />
+                                    <label for="txtMaintainExpiry">Maintain Expiry</label>
+                                </div>
 
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row text-end">
+            <div class="row m-2">
                 <div class="col-md-12" style="margin-top: 30px !important;">
-                    <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
-                    <button class="btn btn-danger btn-height" onclick="BackMaster()">Back</button>
+                    <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtsave">Save</button>
+                    <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
                 </div>
             </div>
         </div>

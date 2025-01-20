@@ -28,33 +28,11 @@ namespace Bizsol_ESMS.Controllers
 
             return View();
         }
-
-        public IActionResult CreateCategoryMaster()
-        {
-            string CCode = HttpContext.Request.Query["Code"].ToString();
-            string CMaode = HttpContext.Request.Query["Mode"].ToString();
-
-            ViewBag.CCode = CCode == "" ? 0 : Convert.ToInt32(CCode);
-            ViewBag.CMode = CMaode == "" ? "New" : CMaode;
-
-            return View();
-        }
         #endregion CategoryMaster
 
         #region GroupMaster
         public IActionResult GroupMasterList()
         {
-
-            return View();
-        }
-
-        public IActionResult CreateGroupMaster()
-        {
-            string GCode = HttpContext.Request.Query["Code"].ToString();
-            string GMaode = HttpContext.Request.Query["Mode"].ToString();
-
-            ViewBag.GCode = GCode == "" ? 0 : Convert.ToInt32(GCode);
-            ViewBag.GMode = GMaode == "" ? "New" : GMaode;
 
             return View();
         }
@@ -66,33 +44,11 @@ namespace Bizsol_ESMS.Controllers
 
             return View();
         }
-
-        public IActionResult CreateSubGroupMaster()
-        {
-            string SGCode = HttpContext.Request.Query["Code"].ToString();
-            string SGMaode = HttpContext.Request.Query["Mode"].ToString();
-
-            ViewBag.SGCode = SGCode == "" ? 0 : Convert.ToInt32(SGCode);
-            ViewBag.SGMode = SGMaode == "" ? "New" : SGMaode;
-
-            return View();
-        }
         #endregion  SubGroupMaster
 
         #region BrandMaster
         public IActionResult BrandMasterList()
         {
-
-            return View();
-        }
-
-        public IActionResult CreateBrandMaster()
-        {
-            string BCode = HttpContext.Request.Query["Code"].ToString();
-            string BMaode = HttpContext.Request.Query["Mode"].ToString();
-
-            ViewBag.BCode = BCode == "" ? 0 : Convert.ToInt32(BCode);
-            ViewBag.BMode = BMaode == "" ? "New" : BMaode;
 
             return View();
         }

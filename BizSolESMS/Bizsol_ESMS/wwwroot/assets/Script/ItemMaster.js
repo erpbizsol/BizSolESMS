@@ -1,8 +1,12 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+
 $(document).ready(function () {
 
-    $("#ERPHeading").text("Item");
+    $("#ERPHeading").text("Item Master");
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
     });
@@ -270,7 +274,7 @@ function Save() {
             QtyInBox: $("#txtQtyinBox").val()
         };
         $.ajax({
-            url: `${appBaseURL}/api/Master/InsertItemMaster`,
+            url: `${appBaseURL}/api/Master/InsertItemMaster?UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             contentType: 'application/json',
             dataType: 'json',
@@ -296,7 +300,13 @@ function Save() {
 
     }
 }
-function CreateItemMaster() {
+async function CreateItemMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("New");
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -309,10 +319,15 @@ function BackMaster() {
     ClearData();
 }
 
-function deleteItem(code) {
+async function deleteItem(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteItem?Code=${code}`,
+            url: `${appBaseURL}/api/Master/DeleteItem?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -333,7 +348,13 @@ function deleteItem(code) {
         });
     }
 }
-function Edit(code) {
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $.ajax({
@@ -585,8 +606,15 @@ function ClearData() {
 }
 
 function updateQtyBox(boxPackingValue) {
-    // Enable or disable #txtQtyinBox based on the selected value
     document.getElementById("txtQtyinBox").disabled = boxPackingValue === "N";
     document.getElementById("txtQtyinBox").value = "0";
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Item Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }
 

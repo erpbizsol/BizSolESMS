@@ -1,7 +1,9 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
     $("#ERPHeading").text("Sub Group");
     $('#txtSubGroupName').on('keydown', function (e) {
@@ -16,34 +18,9 @@ $(document).ready(function () {
     });
     ShowSubGroupMasterlist();
     GetMainLocationList();
-    $('#exportExcel').click(function () {
-        exportTableToExcel();
-    });
   
 
-    if (SGMode === 'Edit') {
-        $.ajax({
-            url: `${appBaseURL}/api/Master/ShowSubGroupMasterByCode?Code=` + SGCode,
-            type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.length > 0) {
-                    response.forEach(function (item) {
-                        $("#txtSubGroupName").val(item.SubGroupName);
-                        $("#txtGroupName").val(item.GroupName);
-                    });
-                } else {
-                    toastr.error("Record not found...!");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-            }
-        });
-
-    }
+   
 });
 
 function Save() {
@@ -58,12 +35,12 @@ function Save() {
         }
         else {
             const payload = {
-                code: parseInt(SGCode) || 0,
+                code: $("#hftextCode").val(),
                 subGroupName: SubGroupName,
                 groupName: GroupName,
             };
             $.ajax({
-                url: `${appBaseURL}/api/Master/InsertSubGroupMaster`,
+                url: `${appBaseURL}/api/Master/InsertSubGroupMaster?UserMaster_Code=${UserMaster_Code}`,
                 type: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
@@ -124,21 +101,34 @@ function ShowSubGroupMasterlist() {
     });
 
 }
-function CreateSubgroupMaster() {
+async function CreateSubgroupMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("New");
     ClearData();
-    window.location.href = `${AppBaseURLMenu}/Master/CreateSubGroupMaster?Mode=New`;
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
 
 }
 
 function BackMaster() {
-    window.location.href = `${AppBaseURLMenu}/Master/SubGroupMasterList`;
+    $("#txtListpage").show();
+    $("#txtCreatepage").hide();
     ClearData();
 }
 
-function deleteSubGroupMaster(code) {
+async function deleteSubGroupMaster(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteSubGroupMaster?Code=${code}`,
+            url: `${appBaseURL}/api/Master/DeleteSubGroupMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -159,30 +149,36 @@ function deleteSubGroupMaster(code) {
         });
     }
 }
-function Edit(code) {
-    window.location.href = `${AppBaseURLMenu}/Master/CreateSubGroupMaster?Code=${code}&Mode=Edit`;
-}
-
-function exportTableToExcel() {
-    var table = document.getElementById("table");
-    var workbook = XLSX.utils.book_new();
-    var worksheet = XLSX.utils.table_to_sheet(table);
-    var hiddenColumns = ["Action"];
-    for (var row in worksheet) {
-        if (row.startsWith('!')) continue;
-        var cellIndex = parseInt(row.match(/\d+/));
-        if (!isNaN(cellIndex)) {
-            hiddenColumns.forEach(colIdx => {
-                var colLetter = XLSX.utils.encode_col(colIdx);
-                delete worksheet[colLetter + cellIndex];
-            });
-        }
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
     }
-    var range = XLSX.utils.decode_range(worksheet['!ref']);
-    range.e.c -= hiddenColumns.length; // Adjust end column
-    worksheet['!ref'] = XLSX.utils.encode_range(range);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "UOMMaster.xlsx");
+    $("#tab1").text("Edit");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowSubGroupMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $("#hftextCode").val(item.Code);
+                    $("#txtSubGroupName").val(item.SubGroupName);
+                    $("#txtGroupName").val(item.GroupName);
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }
 
 function GetMainLocationList() {
@@ -214,4 +210,12 @@ function GetMainLocationList() {
 function ClearData() {
     $("#txtSubGroupName").val("");
     $("#txtGroupName").val("");
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Sub Group Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }
