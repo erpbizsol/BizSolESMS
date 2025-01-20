@@ -112,84 +112,7 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     ClearData();
 }
-//async function Edit(code) {
-//    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
-//    if (hasPermission == false) {
-//        toastr.error(msg);
-//        return;
-//    }
-//    $("#tab1").text("EDIT");
-//    $("#txtListpage").hide();
-//    $("#txtCreatepage").show();
 
-//    $.ajax({
-//        url: `${appBaseURL}/api/OrderMaster/GetDispatchOrderByCode?Code=` + code,
-//        type: 'GET',
-//        beforeSend: function (xhr) {
-//            xhr.setRequestHeader('Auth-Key', authKeyData);
-//        },
-//        success: function (response) {
-//            if (response) {
-//                if (response.DispatchMaster && response.DispatchMaster.length > 0) {
-//                    const DispatchMaster = response.DispatchMaster[0];
-//                    $("#hfCode").val(DispatchMaster.Code || "0");
-//                    $("#txtChallanNo").val(DispatchMaster.OrderNo || "");
-//                    $("#txtChallanDate").val(DispatchMaster.ChallanDate || "");
-//                    $("#txtClientName").val(DispatchMaster.AccountName || "");
-//                    $("#txtAddress").val(DispatchMaster.Address || "");
-//                    $("#txtVehicleNo").val(DispatchMaster.VehicleNo || "");
-//                    GetOrderNoList(DispatchMaster.AccountName);
-//                } else {
-//                    toastr.warning("Account master data is missing.");
-//                }
-//                $("#Orderdata").empty();
-//                if (response.DispatchDetails && response.DispatchDetails.length > 0) {
-//                    response.DispatchDetails.forEach(function (address, index) {
-
-//                        addNewRowEdit(index, address);
-//                    });
-//                } else {
-//                    toastr.info("No addresses available for this account.");
-//                }
-//            } else {
-//                toastr.error("Record not found...!");
-//            }
-//        },
-//        error: function (xhr, status, error) {
-//            console.error("Error:", error);
-//            toastr.error("Failed to fetch data. Please try again.");
-//        }
-//    });
-//}
-//async function deleteItem(code) {
-//    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
-//    if (hasPermission == false) {
-//        toastr.error(msg);
-//        return;
-//    }
-//    if (confirm("Are you sure you want to delete this item?")) {
-//        $.ajax({
-//            url: `${appBaseURL}/api/OrderMaster/DeleteOrderMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
-//            type: 'POST',
-//            beforeSend: function (xhr) {
-//                xhr.setRequestHeader('Auth-Key', authKeyData);
-//            },
-//            success: function (response) {
-//                if (response.Status === 'Y') {
-//                    toastr.success(response.Msg);
-//                    GetDispatchOrderList();
-//                } else {
-//                    toastr.error("Unexpected response format.");
-//                }
-
-//            },
-//            error: function (xhr, status, error) {
-//                toastr.error("Error deleting item:");
-
-//            }
-//        });
-//    }
-//}
 function GetAccountMasterList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetAccountIsClientDropDown`,
@@ -405,42 +328,7 @@ function Save() {
         },
     });
 }
-//function addNewRowEdit(index, address) {
-//    const rowCount = index + 1;
-//    const table = document.getElementById("Orderdata");
-//    const newRow = document.createElement("tr");
-//    newRow.innerHTML = `
-//            <td><input type="text" list="txtOrderNo" onchange="GetItemDetails(this);" class="txtOrderNo box_border form-control form-control-sm mandatory" id="txtOrderNo_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-//            <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-//            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-//            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
-//            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
-//            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-//            <td><input type="text" disabled class="txtBalanceOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBalanceOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-//            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-//            <td><input type="text" class="txtDispatchQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtDispatchQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-//            <td><input type="text" disabled class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-//            <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-//            <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-//            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
-//    `;
-//    table.appendChild(newRow);
 
-//    if (address !== undefined) {
-//        $("#txtUOM_" + rowCount).val(address.UOMName || "");
-//        $("#txtItemAddress_" + rowCount).val(address.LocationName || "");
-//        $("#txtItemBarCode_" + rowCount).val(address.ItemBarCode || "");
-//        $("#txtItemCode_" + rowCount).val(address.ItemCode || "");
-//        $("#txtItemName_" + rowCount).val(address.ItemName || "");
-//        $("#txtQtyBox_" + rowCount).val(address.QtyBox || "");
-//        $("#txtOrderQty_" + rowCount).val(address.OrderQty || "");
-//        $("#txtRate_" + rowCount).val(address.Rate || "");
-//        $("#txtAmount_" + rowCount).val(address.Amount || "");
-//        $("#txtRemarks_" + rowCount).val(address.Remarks || "");
-//        $("#txtOrderNo_" + rowCount).val(address.OrderNo || "");
-//        $("#txtDispatchQty_" + rowCount).val(address.DispatchQty || "");
-//    }
-//}
 function OnChangeNumericTextBox(element) {
 
     element.value = element.value.replace(/[^0-9]/g, "");
@@ -613,6 +501,7 @@ function FillallItemfield(inputElement, value) {
     const currentRow = inputElement.closest('tr');
     if (currentRow) {
         const inputValue = inputElement.value;
+        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
         const itemBarCode = currentRow.querySelector('.txtItemBarCode');
         const itemCode = currentRow.querySelector('.txtItemCode');
         const itemName = currentRow.querySelector('.txtItemName');
@@ -692,6 +581,11 @@ function FillallItemfield(inputElement, value) {
         }).catch(error => {
             console.error('Error fetching rate:', error);
         });
+        let lastRow = $('#tblorderbooking #Orderdata tr').length;
+        if (lastRow > 1) {
+            var Check = checkDuplicateEntries(inputElement,itemCode, itemName, itemOrderNo);
+            alert(Check);
+        }
     }
 }
 function CalculateAmount(inputElement) {
@@ -777,3 +671,20 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
         }
     }
 });
+function checkDuplicateEntries(inputElement, itemCode, itemName, OrderNo) {
+    let isDuplicate = false;
+    const currentRow = inputElement.closest('tr'); 
+    document.querySelectorAll('#tblorderbooking tbody tr').forEach(row => {
+        if (row === currentRow) return; 
+
+        const existingItemCode = row.querySelector('.txtItemCode')?.value || '';
+        const existingItemName = row.querySelector('.txtItemName')?.value || '';
+        const existingtxtOrderNo = row.querySelector('.txtOrderNo')?.value || '';
+
+        if (existingItemCode === itemCode.value && existingItemName === itemName.value && existingtxtOrderNo === OrderNo.value) {
+            isDuplicate = true;
+        }
+    });
+
+    return isDuplicate;
+}
