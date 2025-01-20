@@ -18,7 +18,21 @@ $(document).ready(function () {
     });
     ShowSubGroupMasterlist();
     GetMainLocationList();
-  
+    $("#txtGroupName").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtGroupNameList option").each(function () {
+            if ($(this).val() === value) {
+              
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtGroupNameList").val("")
+        }
+    });
 
    
 });

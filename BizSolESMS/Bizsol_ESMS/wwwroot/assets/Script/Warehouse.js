@@ -54,7 +54,21 @@ $(document).ready(function () {
  
     GetCityDropDownList();
     ShowItemMasterlist();
-   
+    $("#txtCity").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtCityList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtCityList").val("")
+        }
+    });
 });
 function Save() {
     var WarehouseName = $("#txtWarehouseName").val();
