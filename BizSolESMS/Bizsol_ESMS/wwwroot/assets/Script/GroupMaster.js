@@ -1,12 +1,14 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 
 $(document).ready(function () {
 
 
-    $("#ERPHeading").text("Group");
+    $("#ERPHeading").text("Group Master");
     $('#txtGroupName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
@@ -17,29 +19,6 @@ $(document).ready(function () {
         exportTableToExcel();
     });
 
-
-    if (GMode === 'Edit') {
-        $.ajax({
-            url: `${appBaseURL}/api/Master/ShowGroupMasterByCode?Code=` + GCode,
-            type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.length > 0) {
-                    response.forEach(function (item) {
-                        $("#txtGroupName").val(item.GroupName)
-                    });
-                } else {
-                    toastr.error("Record not found...!");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-            }
-        });
-
-    }
 });
 
 function Save() {
@@ -49,11 +28,11 @@ function Save() {
         $("#txtGroupName").focus();
     } else {
         const payload = {
-            code: parseInt(GCode) || 0,
+            code: $("#hftxtCode").val(),
             GroupName: GroupName
         };
         $.ajax({
-            url: `${appBaseURL}/api/Master/InsertGroupMaster`,
+            url: `${appBaseURL}/api/Master/InsertGroupMaster?UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             contentType: 'application/json',
             dataType: 'json',
@@ -115,21 +94,33 @@ function ShowMasterlist() {
     });
 
 }
-function CreateGroupMaster() {
+async function CreateGroupMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("New");
     ClearData();
-    window.location.href = `${AppBaseURLMenu}/Master/CreateGroupMaster?Mode=New`;
-
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
 }
 
 function BackMaster() {
-    window.location.href = `${AppBaseURLMenu}/Master/GroupMasterList`;
+    $("#txtListpage").show();
+    $("#txtCreatepage").hide();
     ClearData();
 }
 
-function deleteGroup(code) {
+async function deleteGroup(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteGroupMaster?Code=${code}`,
+            url: `${appBaseURL}/api/Master/DeleteGroupMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -150,11 +141,39 @@ function deleteGroup(code) {
         });
     }
 }
-function Edit(code) {
-    window.location.href = `${AppBaseURLMenu}/Master/CreateGroupMaster?Code=${code}&Mode=Edit`;
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("Edit");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowGroupMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $("#hftxtCode").val(item.Code);
+                    $("#txtGroupName").val(item.GroupName);
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }
 
 function ClearData() {
+    $("#hftxtCode").val("0");
     $("#txtGroupName").val("");
 
 }
@@ -178,4 +197,11 @@ function exportTableToExcel() {
     worksheet['!ref'] = XLSX.utils.encode_range(range);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "UOMMaster.xlsx");
+}
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Group Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }

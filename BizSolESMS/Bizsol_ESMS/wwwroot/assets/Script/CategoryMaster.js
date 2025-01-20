@@ -1,9 +1,11 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
-    $('#ERPHeading').text('Category');
+    $('#ERPHeading').text('Category Master');
     $('#txtCategoryName').on('keydown', function (e) {
         if (e.key === 'Enter') {
             $('#txtbtnSave').focus();
@@ -14,28 +16,6 @@ $(document).ready(function () {
     });
     ShowCategoryMasterlist();
    
-    if (CMode === 'Edit') {
-            $.ajax({
-                url: `${appBaseURL}/api/Master/ShowCategoryMasterByCode?Code=` + CCode,
-                type: 'GET',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('Auth-Key', authKeyData);
-                },
-                success: function (response) {
-                    if (response.length > 0) {
-                        response.forEach(function (item) {
-                            $("#txtCategoryName").val(item.CategoryName)
-                        });
-                    } else {
-                        toastr.error("Record not found...!");
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", error);
-                }
-            });
-
-        }
     
 });
 
@@ -46,11 +26,11 @@ function Save() {
             $("#txtCategoryName").focus();
         } else {
             const payload = {
-                code: parseInt(CCode) || 0,
+                code: $("#hftxtCode").val(),
                 categoryName: CategoryName
             };
             $.ajax({
-                url: `${appBaseURL}/api/Master/InsertCategoryMaster`,
+                url: `${appBaseURL}/api/Master/InsertCategoryMaster?UserMaster_Code=${UserMaster_Code}`,
                 type: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
@@ -113,19 +93,32 @@ function ShowCategoryMasterlist() {
     });
 
 }
-function CreateCategoryMaster() {
+async function CreateCategoryMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("New");
     ClearData();
-    window.location.href = `${AppBaseURLMenu}/Master/CreateCategoryMaster?Mode=New`;
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
 
 }
 
 function BackMaster() {
-    window.location.href = `${AppBaseURLMenu}/Master/CategoryMasterList`;
+    $("#txtListpage").show();
+    $("#txtCreatepage").hide();
     ClearData();
 
 }
 
-function deleteCatagery(code) {
+async function deleteCatagery(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteCategoryMaster?Code=${code}`,
@@ -150,11 +143,39 @@ function deleteCatagery(code) {
     }
 }
 
-function Edit(code) {
-    window.location.href = `${AppBaseURLMenu}/Master/CreateCategoryMaster?Code=${code}&Mode=Edit`;
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("Edit");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowCategoryMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $("#hftxtCode").val(item.Code)
+                    $("#txtCategoryName").val(item.CategoryName)
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }
 
 function ClearData() {
+    $("#hftxtCode").val("0");
     $("#txtCategoryName").val("");
 }
 function exportTableToExcel() {
@@ -177,4 +198,12 @@ function exportTableToExcel() {
     worksheet['!ref'] = XLSX.utils.encode_range(range);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "CatageryMaster.xlsx");
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Category Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }

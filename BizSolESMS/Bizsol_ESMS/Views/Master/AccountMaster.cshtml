@@ -51,12 +51,12 @@
         opacity: 0.9;
     }
 </style>
-<div class="" id="txtListpage" style="display:block;">
+<div class="" id="txtListpage" style="display:block; width:50%; margin: 0 auto;">
     <div class="row">
         <div class="col-sm-12 text-end">
             <label></label>
-            <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
-            <button type="button" class="btn btn-success btn-height" onclick="CreateItemMaster()">CREATE NEW</button>
+            <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" id="exportExcel">DOWNLOAD</button>
+            <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateItemMaster()">CREATE NEW</button>
         </div>
     </div>
     <div class="card-body mt-2">
@@ -77,7 +77,7 @@
     <div class="card shadow-sm" style="background-color:#e9e9ef">
         <div class="tabs">
             <div class="tab-header">
-                <div id="tab1" class="tab active" style="color:white">Account Master</div>
+                <div id="tab1" class="tab active" style="color:white"></div>
             </div>
        
                 <div class="row pt-4">
@@ -174,8 +174,8 @@
           
                 <div class="row m-2">
                     <div class="col-md-12" style="margin-top: 30px !important;">
-                        <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
-                        <button class="btn btn-danger btn-height" onclick="BackMaster()">Back</button>
+                    <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtsave">Save</button>
+                    <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
                     </div>
                 </div>
         </div>

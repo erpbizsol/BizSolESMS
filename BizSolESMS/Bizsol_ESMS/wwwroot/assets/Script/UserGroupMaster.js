@@ -1,4 +1,7 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
     $("#ERPHeading").text("User Group Master");
@@ -53,8 +56,14 @@ function UserGroupMasterList() {
         }
     });
 }
-function Create() {
+async function Create() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     ClearData();
+    $("#tab1").text("New");
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
 }
@@ -63,10 +72,15 @@ function Back() {
     $("#tblUserMaster").show();
     ClearData();
 }
-function Delete(code) {
+async function Delete(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteUserGroupMaster?Code=${code}&UserMaster_Code=1&Reason=Test`,
+            url: `${appBaseURL}/api/Master/DeleteUserGroupMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}&Reason=Test`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -87,7 +101,13 @@ function Delete(code) {
         });
     }
 }
-function Edit(Code) {
+async function Edit(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("Edit");
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
     UserGroupMasterByCode(Code);
@@ -133,7 +153,7 @@ function SaveUserGroupMaster() {
             UserMaster_Code: 0
         };
         $.ajax({
-            url: `${appBaseURL}/api/Master/SaveUserGroupMaster`,
+            url: `${appBaseURL}/api/Master/SaveUserGroupMaster?UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             contentType: 'application/json',
             dataType: 'json',
@@ -164,4 +184,12 @@ function ClearData() {
     $("#ddlGroupType").val("A");
     $("#txtGroupName").val("");
     $("#hfCode").val("0");
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "User Group Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }

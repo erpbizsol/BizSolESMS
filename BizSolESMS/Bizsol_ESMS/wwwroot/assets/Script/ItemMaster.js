@@ -1,8 +1,12 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+
 $(document).ready(function () {
 
-    $("#ERPHeading").text("Item");
+    $("#ERPHeading").text("Item Master");
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
     });
@@ -91,6 +95,7 @@ $(document).ready(function () {
             $("#txtsave").focus();
         }
     });
+
     ShowItemMasterlist();
     GetGroupMasterList();
     GetUOMDropDownList();
@@ -117,7 +122,7 @@ function UpdateLabelforItemMaster() {
                     if (item.ItemNameHeader) {
                         $("#txtItemNamelab").text(item.ItemNameHeader);
                     } else {
-                        $("#txtItemNamelab").text("Item Name"); 
+                        $("#txtItemNamelab").text("Item Name");
                     }
                     if (item.ItembarcodeHeader) {
                         $("#txtItembarcodelab").text(item.ItembarcodeHeader);
@@ -139,15 +144,15 @@ function UpdateLabelforItemMaster() {
                     } else {
                         $("#SubLocationItemHeaderlab").text("Location Item");
                     }
-                    
+
                 });
             } else {
-                $("#txtItemNamelab").text("Static Label for Item Name"); 
+                $("#txtItemNamelab").text("Static Label for Item Name");
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-            $("#txtItemNamelab").text("Error fetching label data"); 
+            $("#txtItemNamelab").text("Error fetching label data");
         }
     });
 }
@@ -258,18 +263,18 @@ function Save() {
             BrandName: $("#txtBrand").val(),
             ReorderLevel: ReorderLevels,
             ReorderQty: ReorderQtys,
-           // ReorderLevel: parseInt($("#txtReorderLevel").val()),
-           // ReorderQty: parseInt($("#txtReorderQty").val()),
+            // ReorderLevel: parseInt($("#txtReorderLevel").val()),
+            // ReorderQty: parseInt($("#txtReorderQty").val()),
             LocationName: $("#txtItemLocation").val(),
             BoxPacking: $("#txtBoxPacking").val(),
             //batchApplicable: $("#txtBatchApplicable").val(),
             //maintainExpiry: $("#txtMaintainExpiry").val(),
             batchApplicable: $("#txtBatchApplicable").is(":checked") ? "Y" : "N",
-            maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N", 
+            maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N",
             QtyInBox: $("#txtQtyinBox").val()
         };
         $.ajax({
-            url: `${appBaseURL}/api/Master/InsertItemMaster`,
+            url: `${appBaseURL}/api/Master/InsertItemMaster?UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             contentType: 'application/json',
             dataType: 'json',
@@ -295,7 +300,13 @@ function Save() {
 
     }
 }
-function CreateItemMaster() {
+async function CreateItemMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("New");
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -308,10 +319,15 @@ function BackMaster() {
     ClearData();
 }
 
-function deleteItem(code) {
+async function deleteItem(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteItem?Code=${code}`,
+            url: `${appBaseURL}/api/Master/DeleteItem?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -332,7 +348,13 @@ function deleteItem(code) {
         });
     }
 }
-function Edit(code) {
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $.ajax({
@@ -344,7 +366,7 @@ function Edit(code) {
         success: function (item) {
             if (item) {
                 $("#hfCode").val(item.Code),
-                $("#txtItemCode").val(item.ItemCode);
+                    $("#txtItemCode").val(item.ItemCode);
                 $("#txtItemName").val(item.ItemName);
                 $("#txtDisplayName").val(item.DisplayName);
                 $("#txtItembarcode").val(item.ItemBarCode);
@@ -358,6 +380,10 @@ function Edit(code) {
                 $("#txtReorderQty").val(item.ReorderQty);
                 $("#txtItemLocation").val(item.locationName);
                 $("#txtBoxPacking").val(item.BoxPacking);
+                if (item.BoxPacking == 'Y') {
+                    $("#txtQtyinBox").prop("disabled", false);
+                }
+                $("#txtQtyinBox").val(item.QtyInBox)
                 //$("#txtBatchApplicable").val(item.BatchApplicable),
                 //$("#txtMaintainExpiry").val(item.MaintainExpiry),
                 if (item.BatchApplicable == 'N') {
@@ -366,7 +392,7 @@ function Edit(code) {
                 if (item.MaintainExpiry == 'N') {
                     $("#txtMaintainExpiry").prop("checked", false);
                 }
-                $("#txtQtyinBox").val(item.QtyInBox)
+
             } else {
                 toastr.error("Record not found...!");
             }
@@ -574,7 +600,21 @@ function ClearData() {
     $("#txtReorderLevel").val("0");
     $("#txtReorderQty").val("0");
     $("#txtItemLocation").val("");
-    $("#txtBoxPacking").val("");
+    $("#txtBoxPacking").val("N");
     $("#txtQtyinBox").val("0");
-    
+
 }
+
+function updateQtyBox(boxPackingValue) {
+    document.getElementById("txtQtyinBox").disabled = boxPackingValue === "N";
+    document.getElementById("txtQtyinBox").value = "0";
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Item Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
+}
+
