@@ -419,7 +419,7 @@ function addNewRowEdit(index, address) {
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
     `;
@@ -438,7 +438,7 @@ function addNewRowEdit(index, address) {
         $("#txtQtyBox_" + rowCount).prop("disabled", isDisabled);
         $("#txtOrderQty_" + rowCount).val(address.OrderQty || "");
         $("#txtRate_" + rowCount).val(address.Rate || "");
-        $("#txtAmount_" + rowCount).val(address.Amount || "");
+        $("#txtAmount_" + rowCount).val(address.Amount || isDisabled);
         $("#txtRemarks_" + rowCount).val(address.Remarks || "");
     }
 }
@@ -505,7 +505,7 @@ function addNewRow() {
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueBillQtyBox(this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueReceivedQtyBox(this);"  oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled/></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
               <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
@@ -522,7 +522,7 @@ function addNewRow() {
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueBillQtyBox(this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" "oninput="SetvalueReceivedQtyBox(this);" oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled/></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
               <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
@@ -659,6 +659,8 @@ function FillallItemfield(inputElement, value) {
         const itemAddress = currentRow.querySelector('.txtItemAddress');
         const itemUOM = currentRow.querySelector('.txtUOM');
         const itemRate = currentRow.querySelector('.txtRate');
+        const QtyBox = currentRow.querySelector(".txtQtyBox");
+        const OrderQty = currentRow.querySelector(".txtOrderQty");
         if (value == 'BarCode') {
             $("#txtItemBarCode option").each(function () {
                 if ($(this).val() === inputValue) {
@@ -668,6 +670,11 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
+                    const isDisabled = item.QtyInBox === 0;
+                    QtyBox.value = '';
+                    OrderQty.value = '';
+                    QtyBox.disabled = isDisabled;
+                  
                     isValid = true;
                     return false;
                 } else {
@@ -688,6 +695,10 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
+                    const isDisabled = item.QtyInBox === 0;
+                    QtyBox.value = '';
+                    OrderQty.value = '';
+                    QtyBox.disabled = isDisabled;
                     isValid = true;
                     return false;
                 } else {
@@ -708,6 +719,10 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
+                    const isDisabled = item.QtyInBox === 0;
+                    QtyBox.value = '';
+                    OrderQty.value = '';
+                    QtyBox.disabled = isDisabled;
                     isValid = true;
                     return false;
                 } else {

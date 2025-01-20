@@ -20,17 +20,6 @@ namespace Bizsol_ESMS.Controllers
 
             return View();
         }
-
-        public IActionResult CreateLocationMaster()
-        {
-            string MLaCode = HttpContext.Request.Query["Code"].ToString();
-            string MMaode = HttpContext.Request.Query["Mode"].ToString();
-
-            ViewBag.MLCode = MLaCode == "" ? 0 : Convert.ToInt32(MLaCode);
-            ViewBag.MMode = MMaode == "" ? "New" : MMaode;
-
-            return View();
-        }
         #endregion LocationMaster
 
         #region CategoryMaster

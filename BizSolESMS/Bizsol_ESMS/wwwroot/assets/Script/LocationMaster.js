@@ -1,77 +1,19 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 
 $(document).ready(function () {
-    $("#ERPHeading").text("Location");
-
+    $("#ERPHeading").text("Location Master");
     $('#txtLocationName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
     });
     LocationList();
-   
-    if (MMode === 'Edit') {
-        $.ajax({
-            url: `${appBaseURL}/api/Master/ShowLocationMasterByCode?Code=` + MLCode,
-            type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.length > 0) {
-                    response.forEach(function (item) {
-                        $("#txtLocationName").val(item.LocationName);
-                    });
-                } else {
-                    toastr.error("Record not found...!");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-            }
-        });
-
-    }
 });
 
-function Save() {
-        const LocationName = $("#txtLocationName").val();
-        if (LocationName === "") {
-            toastr.error('Please enter a Main Location Name.');
-            $("#txtLocationName").focus();
-        } else {
-            const payload = {
-                code: parseInt(MLCode) || 0,
-                LocationName: LocationName
-            };
-            $.ajax({
-                url: `${appBaseURL}/api/Master/InsertLocationMaster`,
-                type: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(payload),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('Auth-Key', authKeyData);
-                },
-                success: function (response) {
-                    if (response.Status === 'Y') {
-                        toastr.success(response.Msg);
-                        BackLocation();
-                        LocationList();
-                    }
-                    else {
-                        toastr.error(response.Msg);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", xhr.responseText);
-                    toastr.error("An error occurred while saving the data.");
-                }
-            });
-        }
-}
 function LocationList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowLocationMaster`,
@@ -108,21 +50,70 @@ function LocationList() {
     });
 
 }
-function CreateLocation() {
-    ClearData();
-    window.location.href = `${AppBaseURLMenu}/Master/CreateLocationMaster?Mode=New`;
-
+function Save() {
+        const LocationName = $("#txtLocationName").val();
+        if (LocationName === "") {
+            toastr.error('Please enter a Main Location Name.');
+            $("#txtLocationName").focus();
+        } else {
+            const payload = {
+                Code: $("#hftxtCode").val(),
+                LocationName: LocationName
+            };
+            $.ajax({
+                url: `${appBaseURL}/api/Master/InsertLocationMaster?UserMaster_Code=${UserMaster_Code}`,
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(payload),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Auth-Key', authKeyData);
+                },
+                success: function (response) {
+                    if (response.Status === 'Y') {
+                        toastr.success(response.Msg);
+                        BackMaster();
+                        LocationList();
+                    }
+                    else {
+                        toastr.error(response.Msg);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    toastr.error("An error occurred while saving the data.");
+                }
+            });
+        }
 }
 
-function BackLocation() {
-    window.location.href = `${AppBaseURLMenu}/Master/LocationMasterList`;
+async function Create() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    ClearData();
+    $("#tab1").text("New");
+
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+
+}
+function BackMaster() {
+    $("#txtListpage").show();
+    $("#txtCreatepage").hide();
     ClearData();
 }
-
-function deleteLocation(code) {
+async function deleteLocation(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteLocationMaster?Code=${code}`,
+            url: `${appBaseURL}/api/Master/DeleteLocationMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -137,19 +128,58 @@ function deleteLocation(code) {
 
             },
             error: function (xhr, status, error) {
-                toastr.error("Error deleting item:", Msg);
+                toastr.error("Error deleting item:");
 
             }
         });
     }
 }
-function Edit(code) {
-    window.location.href = `${AppBaseURLMenu}/Master/CreateLocationMaster?Code=${code}&Mode=Edit`;
+
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("Edit");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowLocationMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.length > 0) {
+                    response.forEach(function (item) {
+                        $("#hftxtCode").val(item.Code);
+                        $("#txtLocationName").val(item.LocationName);
+                    });
+                } else {
+                    toastr.error("Record not found...!");
+                }
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Location Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }
 
 function ClearData() {
     $("#txtLocationName").val("");
 }
-
-
-
