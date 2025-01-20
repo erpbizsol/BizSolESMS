@@ -834,7 +834,7 @@ function SetvalueBillQtyBox(inputElement) {
         const Rate = currentRow.querySelector(".txtRate");
         const Amount = currentRow.querySelector(".txtAmount");
         const item = ItemDetail.find(entry => entry.ItemName == ItemName.value);
-        QtyBox.value = item.QtyInBox * OrderQty.value;
+        OrderQty.value = item.QtyInBox * QtyBox.value;
         CalculateAmount(inputElement);
     }
 }
