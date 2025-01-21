@@ -92,10 +92,20 @@ $(document).ready(function () {
     });
     $('#txtQtyinBox').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#txtBatchApplicable").focus();
+        }
+    });
+    $('#txtBatchApplicable').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtMaintainExpiry").focus();
+        }
+    });
+    $('#txtMaintainExpiry').on('keydown', function (e) {
+        if (e.key === "Enter") {
             $("#txtsave").focus();
         }
     });
-
+  
     ShowItemMasterlist();
     GetGroupMasterList();
     GetUOMDropDownList();

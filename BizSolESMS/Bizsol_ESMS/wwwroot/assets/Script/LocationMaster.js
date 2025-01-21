@@ -7,7 +7,7 @@ $(document).ready(function () {
     $("#ERPHeading").text("Location Master");
     $('#txtLocationName').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtbtnSave").focus();
+            $("#txtsave").focus();
         }
     });
     LocationList();
