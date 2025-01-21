@@ -103,11 +103,102 @@ $(document).ready(function () {
     GetSubGroupDropDownList();
     GetBrandDropDownList();
     GetLocationDropDownList();
+    GetModuleMasterCode();
     $('#exportExcel').click(function () {
         exportTableToExcel();
     });
     UpdateLabelforItemMaster();
+    $("#txtUOM").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtUOMList option").each(function () {
+            if ($(this).val() === value) {
 
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtUOMList").val("")
+        }
+    });
+    $("#txtCategory").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtCategoryList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtCategoryList").val("")
+        }
+    });
+    $("#txtGroupItem").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtGroupItemList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtGroupItemList").val("")
+        }
+    });
+    $("#txtSubGroupItem").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtSubGroupItemList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtSubGroupItemList").val("")
+        }
+    });
+    $("#txtBrand").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtBrandList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtBrandList").val("")
+        }
+    });
+
+    $("#txtItemLocation").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtItemLocationList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtItemLocationList").val("")
+        }
+    });
 });
 function UpdateLabelforItemMaster() {
     $.ajax({

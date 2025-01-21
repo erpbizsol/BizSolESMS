@@ -1,9 +1,8 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
-const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
-
+const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
     $("#ERPHeading").text("Location Master");
     $('#txtLocationName').on('keydown', function (e) {
@@ -12,6 +11,7 @@ $(document).ready(function () {
         }
     });
     LocationList();
+    GetModuleMasterCode()
 });
 
 function LocationList() {

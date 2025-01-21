@@ -1,10 +1,9 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
-const appBaseURL = sessionStorage.getItem('AppBaseURL');
-//const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
+const appBaseURL = sessionStorage.getItem('AppBaseURL');
 
 $(document).ready(function () {
         $("#ERPHeading").text("UOM Master");
@@ -21,7 +20,8 @@ $(document).ready(function () {
                 $("#txtbtnSave").focus();
             }
         });
-        ShowUomMasterlist();
+    ShowUomMasterlist();
+    GetModuleMasterCode();
 });
 function ShowUomMasterlist() {
     $.ajax({
@@ -58,6 +58,51 @@ function ShowUomMasterlist() {
         }
     });
 
+}
+
+function Save() {
+    var uomName = $("#txtUOM").val();
+    var digitAfterDecimal = $("#txtDigitAfterDecimal").val();
+    if ($("#txtUOM").val() == "") {
+        toastr.error('Please enter a UOM Name.');
+        $("#txtUOM").focus();
+    } else if ($("#txtDigitAfterDecimal").val() == "" || isNaN($("#txtDigitAfterDecimal").val()) || parseInt($("#txtDigitAfterDecimal").val()) < 0) {
+        toastr.error('Please enter a valid digit after decimal is 0.');
+        $("#txtDigitAfterDecimal").focus();
+    }
+    else {
+        var digitAfterDecimalValue = digitAfterDecimal === "" ? 0 : parseInt(digitAfterDecimal);
+        const payload = {
+            Code: $("#hftxtCode").val(),
+            uomName: uomName,
+            digitAfterDecimal: digitAfterDecimalValue,
+        };
+        $.ajax({
+            url: `${appBaseURL}/api/Master/InsertUOMMaster?UserMaster_Code=${UserMaster_Code}`,
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Auth-Key", authKeyData);
+            },
+            success: function (response) {
+                if (response.Status === "Y") {
+                    setTimeout(() => {
+                        toastr.success(response.Msg);
+                        ShowUomMasterlist();
+                        BackMaster();
+                    }, 1000);
+                } else {
+                    toastr.error(response.Msg);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText);
+                toastr.error("An error occurred while saving the data.");
+            },
+        });
+    }
 }
 async function Create() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
@@ -146,51 +191,11 @@ async function deleteItem(code) {
 }
 
 function ClearData() {  
-$("#txtUOM").val("");
-$("#txtDigitAfterDecimal").val("");  
+    $("#txtUOM").val("");
+    $("#txtDigitAfterDecimal").val("0");
+    $("#hftxtCode").val("0")
 }
-function Save() {
-        var uomName = $("#txtUOM").val().trim();
-        var digitAfterDecimal = $("#txtDigitAfterDecimal").val().trim();
-        if (uomName === "") {
-            toastr.error('Please enter a UOM Name.');
-            $("#txtUOM").focus();
-        } else if (digitAfterDecimal === "" || isNaN(digitAfterDecimal) || parseInt(digitAfterDecimal) < 0) {
-            toastr.error('Please enter a valid digit after decimal is 0.');
-            $("#txtDigitAfterDecimal").focus();
-        }
-    var digitAfterDecimalValue = digitAfterDecimal === "" ? 0 : parseInt(digitAfterDecimal);
-    const payload = {
-        Code: $("#hftxtCode").val(),
-        uomName: uomName,
-        digitAfterDecimal: digitAfterDecimalValue,
-    };
-    $.ajax({
-        url: `${appBaseURL}/api/Master/InsertUOMMaster?UserMaster_Code=${UserMaster_Code}`,
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify(payload),
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Auth-Key", authKeyData);
-        },
-        success: function (response) {
-            if (response.Status === "Y") {
-                setTimeout(() => {
-                    toastr.success(response.Msg);
-                    ShowUomMasterlist();
-                    BackMaster();
-                }, 1000);
-            } else {
-                toastr.error(response.Msg);
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", xhr.responseText);
-            toastr.error("An error occurred while saving the data.");
-        },
-    });
-}
+
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "UOM Master");

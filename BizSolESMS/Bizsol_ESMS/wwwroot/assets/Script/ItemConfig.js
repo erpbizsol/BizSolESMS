@@ -33,7 +33,7 @@ $(document).ready(function () {
         }
     });
     Edit();
-
+    //GetModuleMasterCode();
 });
 function BackMaster() {
     $("#txtCreatepage").show();

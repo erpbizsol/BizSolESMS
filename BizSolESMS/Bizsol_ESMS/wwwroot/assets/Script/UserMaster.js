@@ -135,6 +135,7 @@ $(document).ready(function () {
     if (Profile != undefined && Profile !== '') {
         Edit(UserMaster_Code);
     };
+    GetModuleMasterCode();
 });
 function UserGroupList() {
     $.ajax({

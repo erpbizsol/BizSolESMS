@@ -1,26 +1,79 @@
-﻿@{
+﻿
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="~/assets/script/warehouse.js"></script>
-<script>
-        var WCode = '';
-        var WMode = '';
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        /* background: #fff;  */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
 
-</script>
-<div class="">
+    .tab-header {
+        display: flex;
+        /* background: #e3e7ed; */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    }
+
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            /* color: #fffffff5; */
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
+            border-top-left-radius: 40px;
+        }
+
+            .tab-header div:hover {
+                background: #586e87;
+                color: white;
+            }
+
+        .tab-header .active {
+            background: #1d4b7d;
+        }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .fixed-height-table {
+        height: auto;
+    }
+</style>
+<div class="" id="txtListpage" style="display:block;  width:80%; margin: 0 auto;">
     <div class="row">
-        <div class="col-sm-12 text-end" style="width: 80%; margin: 0 auto;">
+        <div class="col-sm-12 text-end">
             <label></label>
-            <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
-            <button type="button" class="btn btn-success btn-height" onclick="CreateWarehouseMaster()">CREATE NEW</button>
+            <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" id="exportExcel">DOWNLOAD</button>
+            <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateWarehouseMaster()">CREATE NEW</button>
         </div>
     </div>
     <div class="card-body mt-2">
         <div class="table-wrapper fixed-height-table">
-            <table id="table" class="fixed-width-table table" style="width: 80%; margin: 0 auto;">
+            <table id="table" class="fixed-width-table table">
                 <thead id="table-header">
                 </thead>
                 <tbody id="table-body">
@@ -28,11 +81,77 @@
             </table>
         </div>
         <!-- Paginator -->
-        <div class="paginator" id="paginator-table" style="width: 80%; margin: 0 auto;">
+        <div class="paginator" id="paginator-table">
+        </div>
+    </div>
+</div>
+<div id="txtCreatepage" style="display:none;">
+    <div class="card shadow-sm" style="background-color:#e9e9ef">
+        <div class="tabs">
+            <div class="tab-header">
+                <div id="tab1" class="tab active" style="color:white"></div>
+            </div>
+            <div class="row pt-4">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="txtUOM" class="col-form-label-sm fw-bold">
+                                Warehouse Name <span style="color:red">*</span>
+                            </label>
+                            <input type="hidden" value="0" id="hftxtCode" />
+                            <input type="text" id="txtWarehouseName" name="txtWarehouseName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Warehouse Name" maxlength="50">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="txtWarehouseType" class="col-form-label-sm fw-bold">
+                                Warehouse Type
+                            </label>
+                            <input type="text" id="txtWarehouseType" name="txtWarehouseType" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Warehouse Type" maxlength="64">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="txtAddress" class="col-form-label-sm fw-bold">
+                                Address
+                            </label>
+                            <input type="text" id="txtAddress" name="txtAddress" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Address" maxlength="128">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="txtPin" class="col-form-label-sm fw-bold">
+                                Pin
+                            </label>
+                            <input type="text" id="txtPin" name="txtPin" autocomplete="off" class="Number form-control form-control-sm box_border" placeholder="Pin" maxlength="6">
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="txtCity" class="col-form-label-sm fw-bold">
+                                City
+                            </label>
+                            <datalist id="txtCityList"></datalist>
+                            <input list="txtCityList" id="txtCity" name="txtCity" autocomplete="off" class="form-control form-control-sm box_border" placeholder="City">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="txtGSTIN" class="col-form-label-sm fw-bold">
+                                GSTIN
+                            </label>
+                            <input type="text" id="txtGSTIN" name="txtGSTIN" autocomplete="off" class="form-control form-control-sm box_border" placeholder="GST IN" maxlength="15">
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <label for="txtDefaultWarehouse"></label>
+                            <input type="checkbox" id="txtDefaultWarehouse" name="txtDefaultWarehouse" class="box_border" checked/>
+                            <label for="txtDefaultWarehouse">Default Warehouse</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-md-12" style="margin-top: 30px !important;">
+                    <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtsave">Save</button>
+                    <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <script src="~/assets/js/filter.js"></script>
-
 
 

@@ -29,7 +29,22 @@ $(document).ready(function () {
     $('#exportExcel').click(function () {
         exportTableToExcel();
     });
-   
+    $("#txtCountryName").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtCountryNameList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtCountryNameList").val("")
+        }
+    });
+    GetModuleMasterCode();
 });
 function ShowStateMasterlist() {
     $.ajax({

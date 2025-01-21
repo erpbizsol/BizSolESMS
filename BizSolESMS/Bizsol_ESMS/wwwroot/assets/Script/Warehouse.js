@@ -1,10 +1,11 @@
-﻿
-var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 
 $(document).ready(function () {
-    $("#ERPHeading").text("Warehouse");
+    $("#ERPHeading").text("Warehouse  Master");
     $(".Number").on("keypress", function (e) {
         // Allow only digits (0-9)
         if (e.which < 48 || e.which > 57) {
@@ -13,7 +14,6 @@ $(document).ready(function () {
     });
 
     $(".Number").on("input", function () {
-        // Ensure no non-numeric characters exist in the field
         this.value = this.value.replace(/[^0-9]/g, '');
     });
     $('#txtWarehouseName').on('keydown', function (e) {
@@ -48,80 +48,37 @@ $(document).ready(function () {
     });
     $('#txtDefaultWarehouse').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtStoreWarehouse").focus();
-        }
-    });
-    $('#txtStoreWarehouse').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtInTransitwarehouse").focus();
-        }
-    });
-    $('#txtInTransitwarehouse').on('keydown', function (e) {
-        if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
     });
+ 
     GetCityDropDownList();
     ShowItemMasterlist();
-    $('#exportExcel').click(function () {
-        exportTableToExcel();
-    });
-    if (WMode === 'Edit') {
-        $.ajax({
-            url: `${appBaseURL}/api/Master/ShowWarehouseMasterByCode?Code=` + WCode,
-            type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.length > 0) {
-                    response.forEach(function (item) {
-                        $("#txtWarehouseName").val(item.warehouseName);
-                        $("#txtWarehouseType").val(item.WarehouseType);
-                        $("#txtAddress").val(item.Address);
-                        $("#txtPin").val(item.Pin);
-                        $("#txtCity").val(item.CityName);
-                        $("#txtGSTIN").val(item.GSTIN);
-                        if (item.DefaultWarehouse == 'N') {
-                            $('#txtDefaultWarehouse').prop("checked", false);
-                        }
-                        if (item.StoreWarehouse == 'N') {
-                            $('#txtStoreWarehouse').prop("checked", false);
-                        }
-                        if (item.InTransitwarehouse == 'N') {
-                            $('#txtInTransitwarehouse').prop("checked", false);
-                        }
-                        //$("#txtDefaultWarehouse").val(item.DefaultWarehouse);
-                        //$("#txtStoreWarehouse").val(item.StoreWarehouse);
-                        //$("#txtInTransitwarehouse").val(item.InTransitwarehouse);
-                    });
-                } else {
-                    toastr.error("Record not found...!");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
+    $("#txtCity").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtCityList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
             }
         });
-
-    }
+        if (!isValid) {
+            $(this).val("");
+            $("#txtCityList").val("")
+        }
+    });
+    GetModuleMasterCode();
 });
 function Save() {
-    // Collect input values
     var WarehouseName = $("#txtWarehouseName").val();
     var WarehouseType = $("#txtWarehouseType").val();
     var Address = $("#txtAddress").val();
     var Pin = $("#txtPin").val();
     var City = $("#txtCity").val();
     var GSTIN = $("#txtGSTIN").val();
-    //var DefaultWarehouse = $("#txtDefaultWarehouse").val();
-    //var StoreWarehouse = $("#txtStoreWarehouse").val();
-    //var InTransitwarehouse = $("#txtInTransitwarehouse").val();
     const DefaultWarehouse = $('#txtDefaultWarehouse').is(":checked");
-            
-    const StoreWarehouse = $('#txtStoreWarehouse').is(":checked");
-    const InTransitwarehouse = $('#txtInTransitwarehouse').is(":checked");
-    // Client-side validation
     if (!WarehouseName) {
         toastr.error('Please enter a Warehouse Name.');
         $("#txtWarehouseName").focus();
@@ -152,25 +109,8 @@ function Save() {
         $("#txtGSTIN").focus();
         return;
     }
-    //if (!DefaultWarehouse) {
-    //    toastr.error('Please specify if it is the Default Warehouse.');
-    //    $("#txtDefaultWarehouse").focus();
-    //    return;
-    //}
-    //if (!StoreWarehouse) {
-    //    toastr.error('Please specify if it is a Store Warehouse.');
-    //    $("#txtStoreWarehouse").focus();
-    //    return;
-    //}
-    //if (!InTransitwarehouse) {
-    //    toastr.error('Please specify if it is an In-Transit Warehouse.');
-    //    $("#txtInTransitwarehouse").focus();
-    //    return;
-    //}
-
-    // Prepare payload
     const payload = {
-        code: parseInt(WCode) || 0,
+        code: $("#hftxtCode").val(),
         WarehouseName: WarehouseName,
         WarehouseType: WarehouseType,
         Address: Address,
@@ -178,13 +118,9 @@ function Save() {
         City: City,
         GSTIN: GSTIN,
         DefaultWarehouse: DefaultWarehouse == true ? 'Y' : 'N',
-        StoreWarehouse: StoreWarehouse == true ? 'Y' : 'N',
-        InTransitwarehouse: InTransitwarehouse == true ? 'Y' : 'N',
     };
-
-    // Make AJAX request
     $.ajax({
-        url: `${appBaseURL}/api/Master/InsertWarehouseMaster`,
+        url: `${appBaseURL}/api/Master/InsertWarehouseMaster?UserMaster_Code=${UserMaster_Code}`,
         type: 'POST',
         contentType: 'application/json',
         dataType: 'json',
@@ -255,21 +191,34 @@ function ShowItemMasterlist() {
     });
 
 }
-function CreateWarehouseMaster() {
+async function CreateWarehouseMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("New");
     ClearData();
-    window.location.href = `${AppBaseURLMenu}/Master/CreateWarehouseMaster?Mode=New`;
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
 
 }
 
 function BackMaster() {
-    window.location.href = `${AppBaseURLMenu}/Master/WarehouseMasterList`;
+    $("#txtListpage").show();
+    $("#txtCreatepage").hide();
     ClearData();
 }
 
-function deleteWarehouse(code) {
+async function deleteWarehouse(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteWarehouseMaster?Code=${code}`,
+            url: `${appBaseURL}/api/Master/DeleteWarehouseMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -290,8 +239,45 @@ function deleteWarehouse(code) {
         });
     }
 }
-function Edit(code) {
-    window.location.href = `${AppBaseURLMenu}/Master/CreateWarehouseMaster?Code=${code}&Mode=Edit`;
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("Edit");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowWarehouseMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $("#hftxtCode").val(item.Code);
+                    $("#txtWarehouseName").val(item.warehouseName);
+                    $("#txtWarehouseType").val(item.WarehouseType);
+                    $("#txtAddress").val(item.Address);
+                    $("#txtPin").val(item.Pin);
+                    $("#txtCity").val(item.CityName);
+                    $("#txtGSTIN").val(item.GSTIN);
+                    if (item.DefaultWarehouse == 'N') {
+                        $('#txtDefaultWarehouse').prop("checked", false);
+                    } else {
+                        $('#txtDefaultWarehouse').prop("checked", true);
+                    }
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }
 
 function exportTableToExcel() {
@@ -343,6 +329,7 @@ function GetCityDropDownList() {
 }
 
 function ClearData() {
+    $("#hftxtCode").val("0");
     $("#txtWarehouseName").val("");
     $("#txtWarehouseType").val("");
     $("#txtAddress").val("");
@@ -352,4 +339,12 @@ function ClearData() {
     $("#txtDefaultWarehouse").val("");
     $("#txtStoreWarehouse").val("");
     $("#txtInTransitwarehouse").val("");
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Warehouse Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }
