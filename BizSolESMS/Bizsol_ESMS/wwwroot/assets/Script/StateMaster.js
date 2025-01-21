@@ -168,7 +168,7 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("Edit");
+    $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $.ajax({
@@ -231,7 +231,7 @@ async function CreateStateMaster() {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("New");
+    $("#tab1").text("NEW");
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();

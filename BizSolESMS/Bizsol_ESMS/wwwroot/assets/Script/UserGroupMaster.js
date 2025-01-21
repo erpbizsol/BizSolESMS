@@ -64,7 +64,7 @@ async function Create() {
         return;
     }
     ClearData();
-    $("#tab1").text("New");
+    $("#tab1").text("NEW");
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
 }
@@ -108,7 +108,7 @@ async function Edit(Code) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("Edit");
+    $("#tab1").text("EDIT");
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
     UserGroupMasterByCode(Code);

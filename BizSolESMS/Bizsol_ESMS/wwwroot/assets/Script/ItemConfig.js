@@ -104,7 +104,7 @@ async function Edit() {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("New");
+    $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $.ajax({
