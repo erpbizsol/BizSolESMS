@@ -15,6 +15,7 @@ $(document).ready(function () {
         exportTableToExcel();
     });
     ShowCategoryMasterlist();
+    GetModuleMasterCode();
 });
 
 function Save() {

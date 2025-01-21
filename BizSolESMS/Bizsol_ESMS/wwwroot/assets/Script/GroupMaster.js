@@ -6,7 +6,7 @@ let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 
 $(document).ready(function () {
-
+    GetModuleMasterCode();
 
     $("#ERPHeading").text("Group Master");
     $('#txtGroupName').on('keydown', function (e) {
@@ -18,7 +18,6 @@ $(document).ready(function () {
     $('#exportExcel').click(function () {
         exportTableToExcel();
     });
-
 });
 
 function Save() {
@@ -200,7 +199,7 @@ function exportTableToExcel() {
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Group Master");
+    const result = Data.find(item => item.ModuleDesp === "Group  Master");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }

@@ -41,7 +41,7 @@ $(document).ready(function () {
             $("#txtStateNameList").val("")
         }
     });
-   
+    GetModuleMasterCode();
 });
 function ShowCityMasterlist() {
     $.ajax({

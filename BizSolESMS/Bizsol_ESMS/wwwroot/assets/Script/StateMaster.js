@@ -44,6 +44,7 @@ $(document).ready(function () {
             $("#txtCountryNameList").val("")
         }
     });
+    GetModuleMasterCode();
 });
 function ShowStateMasterlist() {
     $.ajax({

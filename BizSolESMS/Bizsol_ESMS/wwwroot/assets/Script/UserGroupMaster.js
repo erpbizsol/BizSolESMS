@@ -22,6 +22,7 @@ $(document).ready(function () {
             $("#btnSave").focus();
         }
     });
+    GetModuleMasterCode();
 });
 function UserGroupMasterList() {
     $.ajax({

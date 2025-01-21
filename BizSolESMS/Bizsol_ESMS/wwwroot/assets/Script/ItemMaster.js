@@ -103,6 +103,7 @@ $(document).ready(function () {
     GetSubGroupDropDownList();
     GetBrandDropDownList();
     GetLocationDropDownList();
+    GetModuleMasterCode();
     $('#exportExcel').click(function () {
         exportTableToExcel();
     });

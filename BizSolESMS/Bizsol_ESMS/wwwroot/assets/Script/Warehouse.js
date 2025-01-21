@@ -69,6 +69,7 @@ $(document).ready(function () {
             $("#txtCityList").val("")
         }
     });
+    GetModuleMasterCode();
 });
 function Save() {
     var WarehouseName = $("#txtWarehouseName").val();
