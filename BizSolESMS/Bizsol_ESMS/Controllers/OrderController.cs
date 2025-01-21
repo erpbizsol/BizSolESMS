@@ -20,5 +20,11 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion  Dispatch 
+        #region  ItemOpeningBalance 
+        public IActionResult ItemOpeningBalance()
+        {
+            return View();
+        }
+        #endregion  ItemOpeningBalance 
     }
 }

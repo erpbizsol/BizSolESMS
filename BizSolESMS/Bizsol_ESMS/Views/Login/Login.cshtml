@@ -9,7 +9,7 @@
         .login-containers {
             padding: 20px 30px;
             border-radius: 10px;
-            box-shadow: 0 0 90px rgb(191 201 191);
+            box-shadow: 0 0 11px 1px #ccc;
             max-width: 370px;
             margin: 0 auto;
             margin-top: 5rem;
@@ -51,21 +51,21 @@
         </h4> *@
        
         <form>
-            <div class="mb-3">
+        <div class="mt-2">
                 <label for="txtCompanyCode" class="form-label">Company Code</label>
                 <input id="txtCompanyCode" name="CompanyCode" class="form-control" placeholder="Enter Company Code" type="text" required autocomplete="off">
             </div>
-            <input type="button" class="btn btn-primary" id="btnValidateCompany" value="Proceed" />
+            <input type="button" class="btn btn-primary mt-3" id="btnValidateCompany" value="Proceed" />
             <div id="userCredentials" style="display: none;">
-                <div class="mb-2"id="txtU">
+                <div class="mt-2"id="txtU">
                     <label for="txtUserID" class="form-label">UserID</label>
                     <input id="txtUserID" name="UserID" class="form-control" placeholder="Enter User ID" type="text" required autocomplete="off">
                 </div>
-                <div class="mb-2" id="txtP">
+                <div class="mt-2" id="txtP">
                     <label for="txtPassword" class="form-label">Password</label>
                     <input id="txtPassword" name="Password" class="form-control" placeholder="Enter Password" autocomplete="off" type="password" required>
                 </div>
-            <input type="button" class="btn btn-primary" id="btnProceed" value="Proceed" />
+                <input type="button" class="btn btn-primary mt-3" id="btnProceed" value="Login" />
             </div>
         </form>
     </div>

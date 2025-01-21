@@ -379,29 +379,29 @@ function addNewRow() {
             rowCount = rows.length;
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
-                <td><input type="text" list="txtOrderNo" onchange="GetItemDetails(this);" class="txtOrderNo box_border form-control form-control-sm mandatory" id="txtOrderNo_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-                <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-                <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-                <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
-                <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
-                <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-                <td><input type="text" disabled class="txtBalanceOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBalanceOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-                <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-                <td><input type="text" class="txtDispatchQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtDispatchQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-                <td><input type="text" disabled class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-                <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-                <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-                <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+                    <td><input type="text" list="txtOrderNo" onfocus="focusblank(this);" onfocusout="CheckOrderNo(this);" onchange="GetItemDetails(this);" class="txtOrderNo box_border form-control form-control-sm mandatory" id="txtOrderNo_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+                    <td><input type="text" list="txtItemBarCode" onfocus="focusblank(this);" onfocusout="CheckItemBarCode(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+                    <td><input type="text" list="txtItemCode" onfocus="focusblank(this);" onfocusout="CheckItemCode(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+                    <td><input type="text" list="txtItemName" onfocus="focusblank(this);" onfocusout="CheckItemName(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+                    <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
+                    <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
+                    <td><input type="text" disabled class="txtBalanceOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBalanceOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+                    <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
+                    <td><input type="text" class="txtDispatchQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtDispatchQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+                    <td><input type="text" disabled class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+                    <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+                    <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
+                    <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
             table.appendChild(newRow);
         }
     } else {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
-            <td><input type="text" list="txtOrderNo" onchange="GetItemDetails(this);" class="txtOrderNo box_border form-control form-control-sm mandatory" id="txtOrderNo_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemBarCode" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtOrderNo" onfocus="focusblank(this);" onfocusout="CheckOrderNo(this);" onchange="GetItemDetails(this);" class="txtOrderNo box_border form-control form-control-sm mandatory" id="txtOrderNo_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemBarCode" onfocus="focusblank(this);" onfocusout="CheckItemBarCode(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" onfocus="focusblank(this);" onfocusout="CheckItemCode(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" onfocus="focusblank(this);" onfocusout="CheckItemName(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" disabled class="txtBalanceOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBalanceOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
@@ -519,6 +519,7 @@ function FillallItemfield(inputElement, value) {
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
                     BalanceOrderQty.value = item.OrderQty;
+                    itemRate.value = item.Rate;
                     isValid = true;
                     return false;
                 } else {
@@ -541,6 +542,7 @@ function FillallItemfield(inputElement, value) {
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
                     BalanceOrderQty.value = item.OrderQty;
+                    itemRate.value = item.Rate;
 
                     isValid = true;
                     return false;
@@ -564,6 +566,7 @@ function FillallItemfield(inputElement, value) {
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
                     BalanceOrderQty.value = item.OrderQty;
+                    itemRate.value = item.Rate;
                     isValid = true;
                     return false;
                 } else {
@@ -576,15 +579,20 @@ function FillallItemfield(inputElement, value) {
                 }
             });
         }
-        GetRate($("#txtClientName").val(), itemName.value).then(response => {
-            itemRate.value = response[0].Rate;
-        }).catch(error => {
-            console.error('Error fetching rate:', error);
-        });
+        
         let lastRow = $('#tblorderbooking #Orderdata tr').length;
         if (lastRow > 1) {
             var Check = checkDuplicateEntries(inputElement,itemCode, itemName, itemOrderNo);
-            alert(Check);
+            if (Check) {
+                alert('Duplicate entry not allowed for Order No and Same Item Name!');
+                itemBarCode.value = "";
+                itemCode.value = "";
+                itemName.value = "";
+                itemAddress.value = "";
+                itemUOM.value = "";
+                itemRate.value = "";
+                BalanceOrderQty.value = "";
+            } 
         }
     }
 }
@@ -687,4 +695,129 @@ function checkDuplicateEntries(inputElement, itemCode, itemName, OrderNo) {
     });
 
     return isDuplicate;
+}
+function CheckItemName(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const value = inputElement.value;
+        let isValid = false;
+        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
+        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
+        const itemCode = currentRow.querySelector('.txtItemCode');
+        const itemName = currentRow.querySelector('.txtItemName');
+        const itemAddress = currentRow.querySelector('.txtItemAddress');
+        const itemUOM = currentRow.querySelector('.txtUOM');
+        const itemRate = currentRow.querySelector('.txtRate');
+        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
+        $("#txtItemName option").each(function () {
+            if ($(this).val() === value) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            itemBarCode.value = "";
+            itemCode.value = "";
+            itemName.value = "";
+            itemAddress.value = "";
+            itemUOM.value = "";
+            itemRate.value = "";
+            BalanceOrderQty.value = "";
+        }
+    }
+}
+function CheckItemCode(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const value = inputElement.value;
+        let isValid = false;
+        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
+        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
+        const itemCode = currentRow.querySelector('.txtItemCode');
+        const itemName = currentRow.querySelector('.txtItemName');
+        const itemAddress = currentRow.querySelector('.txtItemAddress');
+        const itemUOM = currentRow.querySelector('.txtUOM');
+        const itemRate = currentRow.querySelector('.txtRate');
+        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
+        $("#txtItemCode option").each(function () {
+            if ($(this).val() === value) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            itemBarCode.value = "";
+            itemCode.value = "";
+            itemName.value = "";
+            itemAddress.value = "";
+            itemUOM.value = "";
+            itemRate.value = "";
+            BalanceOrderQty.value = "";
+        }
+    }
+}
+function CheckItemBarCode(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const value = inputElement.value;
+        let isValid = false;
+        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
+        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
+        const itemCode = currentRow.querySelector('.txtItemCode');
+        const itemName = currentRow.querySelector('.txtItemName');
+        const itemAddress = currentRow.querySelector('.txtItemAddress');
+        const itemUOM = currentRow.querySelector('.txtUOM');
+        const itemRate = currentRow.querySelector('.txtRate');
+        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
+        $("#txtItemBarCode option").each(function () {
+            if ($(this).val() === value) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            itemBarCode.value = "";
+            itemCode.value = "";
+            itemName.value = "";
+            itemAddress.value = "";
+            itemUOM.value = "";
+            itemRate.value = "";
+            BalanceOrderQty.value = "";
+        }
+    }
+}
+function CheckOrderNo(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const value = inputElement.value;
+        let isValid = false;
+        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
+        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
+        const itemCode = currentRow.querySelector('.txtItemCode');
+        const itemName = currentRow.querySelector('.txtItemName');
+        const itemAddress = currentRow.querySelector('.txtItemAddress');
+        const itemUOM = currentRow.querySelector('.txtUOM');
+        const itemRate = currentRow.querySelector('.txtRate');
+        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
+        $("#txtOrderNo option").each(function () {
+            if ($(this).val() === value) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            itemOrderNo.value = "";
+            itemBarCode.value = "";
+            itemCode.value = "";
+            itemName.value = "";
+            itemAddress.value = "";
+            itemUOM.value = "";
+            itemRate.value = "";
+            BalanceOrderQty.value = "";
+        }
+    }
+}
+
+function focusblank(element) {
+    $(element).val("");
 }
