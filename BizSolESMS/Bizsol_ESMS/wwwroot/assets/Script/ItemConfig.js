@@ -33,13 +33,20 @@ $(document).ready(function () {
         }
     });
     Edit();
-    //GetModuleMasterCode();
+    GetModuleMasterCode();
 });
 function BackMaster() {
     $("#txtCreatepage").show();
     window.location.href = `${AppBaseURLMenu}/Master/ItemMasterList`;
 }
-function Save() {
+async function Save() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    
+ 
     //var ItemName = $("#txtItemName").val();
     //var Itembarcode = $("#txtItembarcode").val();
     //var GroupItem = $("#txtGroupItem").val();
@@ -99,11 +106,6 @@ function Save() {
     //}
 }
 async function Edit() {
-    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
-    if (hasPermission == false) {
-        toastr.error(msg);
-        return;
-    }
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
