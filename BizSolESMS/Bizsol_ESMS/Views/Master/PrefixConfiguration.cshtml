@@ -1,0 +1,103 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        /* background: #fff;  */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+    .tab-header {
+        display: flex;
+        /* background: #e3e7ed; */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 7px 16px;
+            cursor: pointer;
+            /* color: #fffffff5; */
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
+            border-top-left-radius: 40px;
+            font-weight: bold;
+        }
+
+            .tab-header div:hover {
+                background: #586e87;
+                color: white;
+            }
+
+        .tab-header .active {
+            background: #1d4b7d;
+        }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .fixed-height-table {
+        height: auto;
+    }
+</style>
+<div id="txtCreatepage">
+    <div class="card shadow-sm" style="background-color:#e9e9ef">
+        <div class="tabs">
+            <div class="tab-header">
+                <div id="tab1" class="tab active" style="color:white">EDIT</div>
+            </div>
+            <div class="row pt-4">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtMRNNo" class="col-form-label-sm fw-bold">Pre.MRN No</label><span class="text-danger">*</span>
+                                    <input type="text" id="txtMRNNo" class="box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Pre.MRN No">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtOrderNo" class="col-form-label-sm fw-bold">Pre.Order No</label><span class="text-danger">*</span>
+                                    <input type="text" id="txtOrderNo" class="box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Pre.Order No">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtChallanNo" class="col-form-label-sm fw-bold">Pre.Challan No</label><span class="text-danger">*</span>
+                                    <input type="text" id="txtChallanNo" autocomplete="off" class="form-control form-control-sm box_border" maxlength="10"  placeholder="Pre.Challan No">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12 text-end">
+                    <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtsave">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
