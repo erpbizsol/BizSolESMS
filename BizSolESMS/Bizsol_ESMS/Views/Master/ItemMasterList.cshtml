@@ -63,6 +63,10 @@
     .fixed-height-table {
         height: auto;
     }
+
+    .mt-3 {
+        margin-top: 1.9rem !important;
+    }
 </style>
 <div class="" id="txtListpage" style="display:block;">
     <div class="row">
@@ -153,12 +157,11 @@
                                     <label for="txtReorderLevel" class="col-form-label-sm fw-bold">Reorder Level </label>
                                     <input type="text" id="txtReorderLevel" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Level" value="0">
                                 </div>
-                                <div class="col-md-3 col-sm-6">
+                                <div class="col-md-3 col-sm-6 d-none">
                                     <label for="txtReorderQty" class="col-form-label-sm fw-bold">Reorder Qty </label>
                                     <input type="text" id="txtReorderQty" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Qty" value="0">
                                 </div>
-                            </div>
-                            <div class="row">
+                           
                                 <div class="col-md-3 col-sm-6">
                                     <label for="SubLocationItemHeaderlab" class="col-form-label-sm fw-bold" id="SubLocationItemHeaderlab">Location Item</label>
                                     <datalist id="txtItemLocationList"></datalist>
@@ -175,15 +178,12 @@
                                     <label for="txtQtyinBox" class="col-form-label-sm fw-bold">Qtyin Box </label>
                                     <input type="text" id="txtQtyinBox" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Qtyin Box" value="0" disabled>
                                 </div>
-                                <div class="col-md-2 mt-4">
+                                <div class="col-md-2 mt-3">
                                     <label for="txtBatchApplicable"></label>
                                     <input type="checkbox" id="txtBatchApplicable" name="txtBatchApplicable" class="box_border" checked />
                                     <label for="txtBatchApplicable">Batch Applicable</label>
                                 </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2 mt-4">
+                                <div class="col-md-2 mt-3">
                                     <label for="txtMaintainExpiry"></label>
                                     <input type="checkbox" id="txtMaintainExpiry" name="txtMaintainExpiry" class="box_border" checked />
                                     <label for="txtMaintainExpiry">Maintain Expiry</label>

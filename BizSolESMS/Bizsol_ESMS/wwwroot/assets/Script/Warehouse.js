@@ -18,7 +18,7 @@ $(document).ready(function () {
     });
     $('#txtWarehouseName').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtWarehouseType").focus();
+            $("#txtCity").focus();
         }
     });
     $('#txtWarehouseType').on('keydown', function (e) {
@@ -38,14 +38,14 @@ $(document).ready(function () {
     });
     $('#txtCity').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtGSTIN").focus();
-        }
-    });
-    $('#txtGSTIN').on('keydown', function (e) {
-        if (e.key === "Enter") {
             $("#txtDefaultWarehouse").focus();
         }
     });
+    //$('#txtGSTIN').on('keydown', function (e) {
+    //    if (e.key === "Enter") {
+    //        $("#txtDefaultWarehouse").focus();
+    //    }
+    //});
     $('#txtDefaultWarehouse').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
@@ -83,30 +83,9 @@ function Save() {
         toastr.error('Please enter a Warehouse Name.');
         $("#txtWarehouseName").focus();
         return;
-    }
-    if (!WarehouseType) {
-        toastr.error('Please select a Warehouse Type.');
-        $("#txtWarehouseType").focus();
-        return;
-    }
-    if (!Address) {
-        toastr.error('Please enter the Address.');
-        $("#txtAddress").focus();
-        return;
-    }
-    if (!Pin) {
-        toastr.error('Please enter the Pin.');
-        $("#txtPin").focus();
-        return;
-    }
-    if (!City) {
+    } else if (!City) {
         toastr.error('Please enter the City.');
         $("#txtCity").focus();
-        return;
-    }
-    if (!GSTIN) {
-        toastr.error('Please enter the GSTIN.');
-        $("#txtGSTIN").focus();
         return;
     }
     const payload = {
@@ -114,7 +93,7 @@ function Save() {
         WarehouseName: WarehouseName,
         WarehouseType: WarehouseType,
         Address: Address,
-        Pin: Pin,
+        Pin: 0,
         City: City,
         GSTIN: GSTIN,
         DefaultWarehouse: DefaultWarehouse == true ? 'Y' : 'N',
@@ -164,13 +143,13 @@ function ShowItemMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["Warehouse Name", "Warehouse Type", "Address","	City Name"];
+                const StringFilterColumn = ["Warehouse Name","City Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code"];
+                const hiddenColumns = ["Code", "Warehouse Type", "Address", "Pin","GST IN"];
                 const ColumnAlignment = {
                     "CreatedOn": 'center',
                     "Digit After Decimal": 'right',

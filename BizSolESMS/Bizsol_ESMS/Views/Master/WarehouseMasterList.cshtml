@@ -64,6 +64,10 @@
     .fixed-height-table {
         height: auto;
     }
+
+    .mt-3 {
+        margin-top: 1.9rem !important;
+    }
 </style>
 <div class="sm-table" id="txtListpage">
     <div class="row">
@@ -98,46 +102,43 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label for="txtUOM" class="col-form-label-sm fw-bold">
-                                Warehouse Name <span style="color:red">*</span>
+                                Warehouse Name <span class="text-danger">*</span>
                             </label>
                             <input type="hidden" value="0" id="hftxtCode" />
                             <input type="text" id="txtWarehouseName" name="txtWarehouseName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Warehouse Name" maxlength="50">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 d-none">
                             <label for="txtWarehouseType" class="col-form-label-sm fw-bold">
                                 Warehouse Type
                             </label>
                             <input type="text" id="txtWarehouseType" name="txtWarehouseType" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Warehouse Type" maxlength="64">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 d-none">
                             <label for="txtAddress" class="col-form-label-sm fw-bold">
                                 Address
                             </label>
                             <input type="text" id="txtAddress" name="txtAddress" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Address" maxlength="128">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 d-none">
                             <label for="txtPin" class="col-form-label-sm fw-bold">
                                 Pin
                             </label>
                             <input type="text" id="txtPin" name="txtPin" autocomplete="off" class="Number form-control form-control-sm box_border" placeholder="Pin" maxlength="6">
                         </div>
-
-                    </div>
-                    <div class="row">
                         <div class="col-md-3">
                             <label for="txtCity" class="col-form-label-sm fw-bold">
                                 City
-                            </label>
+                            </label><span class="text-danger">*</span>
                             <datalist id="txtCityList"></datalist>
                             <input list="txtCityList" id="txtCity" name="txtCity" autocomplete="off" class="form-control form-control-sm box_border" placeholder="City">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 d-none ">
                             <label for="txtGSTIN" class="col-form-label-sm fw-bold">
                                 GSTIN
                             </label>
                             <input type="text" id="txtGSTIN" name="txtGSTIN" autocomplete="off" class="form-control form-control-sm box_border" placeholder="GST IN" maxlength="15">
                         </div>
-                        <div class="col-md-2 mt-4">
+                        <div class="col-md-2 mt-3">
                             <label for="txtDefaultWarehouse"></label>
                             <input type="checkbox" id="txtDefaultWarehouse" name="txtDefaultWarehouse" class="box_border" checked/>
                             <label for="txtDefaultWarehouse">Default Warehouse</label>

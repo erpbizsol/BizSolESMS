@@ -1,6 +1,10 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
+
 $(document).ready(function () {
     $("#ERPHeading").text("Item Config");
     $('#txtItemName').on('keydown', function (e) {
@@ -29,7 +33,7 @@ $(document).ready(function () {
         }
     });
     Edit();
-
+    //GetModuleMasterCode();
 });
 function BackMaster() {
     $("#txtCreatepage").show();
@@ -60,7 +64,7 @@ function Save() {
     //    toastr.error('Please enter  Location Item!');
     //    $("#txtItemLocation").focus();
     //}
-   /* else {*/
+    /* else {*/
         const payload = {
             Code: $("#hfCode").val(),
             ItemNameHeader: $("#txtItemName").val(),
@@ -94,7 +98,13 @@ function Save() {
 
     //}
 }
-function Edit() {
+async function Edit() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $.ajax({
@@ -127,3 +137,10 @@ function Edit() {
     });
 }
 
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Item Config");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
+}

@@ -4,7 +4,7 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
-    $("#ERPHeading").text("Location Master");
+    $("#ERPHeading").text("Location Master (Bin)");
     $('#txtLocationName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtsave").focus();
@@ -174,7 +174,7 @@ async function Edit(code) {
 
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Location Master");
+    const result = Data.find(item => item.ModuleDesp === "Location Master (Bin)");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }

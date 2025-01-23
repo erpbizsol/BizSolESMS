@@ -1,0 +1,97 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/assets/script/pagesizeconfiguration.js"></script>
+
+<style>
+    .form-group {
+        margin-bottom: 8px;
+    }
+
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        /* background: #fff;  */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+    .tab-header {
+        display: flex;
+        /* background: #e3e7ed; */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 7px 16px;
+            cursor: pointer;
+            /* color: #fffffff5; */
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
+            border-top-left-radius: 40px;
+            font-weight: bold;
+        }
+
+            .tab-header div:hover {
+                background: #586e87;
+                color: white;
+            }
+
+        .tab-header .active {
+            background: #1d4b7d;
+        }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .fixed-height-table {
+        height: auto;
+    }
+</style>
+<form class="BizSolFormControl">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="tab-header">
+                    <div id="tab1" class="tab active" style="color:white">NEW</div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtPageSizeOption" class="col-form-label-sm fw-bold">Page Size Option<span class="text-danger">*</span> </label>
+                            <input type="text" id="txtPageSizeOption" onkeypress="return OnChangeNumericWithCommaTextBox(event,this);" class="box_border form-control form-control-sm" placeholder="Please enter comma separated value " autocomplete="off" maxlength="300">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtPageSize" class="col-form-label-sm fw-bold">Par Page Value <span class="text-danger">*</span> </label>
+                            <input type="text" id="txtPageSize" onkeypress="return OnChangeNumericTextBox(event,this);" class="box_border form-control form-control-sm" placeholder="Please enter par page value" autocomplete="off" maxlength="3">
+                            </div>
+                            <div class="col-md-3  col-sm-6 tex-end" style="margin-top: 30px !important;">
+                                <input type="button" class="btn btn-primary btn-height" title="Save" id="txtSave" value="Save"/>
+                                <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+

@@ -58,7 +58,7 @@ function ShowCityMasterlist() {
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code"];
+                const hiddenColumns = ["Code","CountryName"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',

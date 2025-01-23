@@ -7,7 +7,7 @@ let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
     GetCurrentDate();
-    $("#ERPHeading").text("MRN Master");
+    $("#ERPHeading").text("Material Receipt Note");
     $('#txtMRNDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtVendorName").focus();
@@ -103,6 +103,7 @@ async function Create() {
         return;
     }
     ClearData();
+    $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
@@ -119,6 +120,7 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
+    $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
@@ -333,54 +335,70 @@ function Save() {
         return;
     }
     let validationFailed = false;
+    let CheckItemName = false;
+    let lastRow = $('#tblorderbooking #Orderdata tr').length;
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
-        if (row.find(".txtItemBarCode").val() == '') {
-            toastr.error("Please enter item bar code !");
-            row.find(".txtItemBarCode").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtItemCode").val() == '') {
-            toastr.error("Please enter item code !");
-            row.find(".txtItemCode").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtItemName").val() == '') {
-            toastr.error("Please enter item name !");
-            row.find(".txtItemName").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtItemAddress").val() == '') {
-            toastr.error("Please enter item address !");
-            row.find(".txtItemAddress").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtUOM").val() == '') {
-            toastr.error("Please enter UOM !");
-            row.find(".txtUOM").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtBillQty").val() == '') {
-            toastr.error("Please enter Bill Qty !");
-            row.find(".txtBillQty").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtReceivedQty").val() == '') {
-            toastr.error("Please enter Received Qty!");
-            row.find(".txtReceivedQty").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtRate").val() == '') {
-            toastr.error("Please enter rate !");
-            row.find(".txtRate").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtAmount").val()=='') {
-            toastr.error("Please enter amount !");
-            row.find(".txtAmount").focus();
-            validationFailed = true;
-            return;
-        } 
+            if (lastRow > 1) { 
+                CheckItemName = row.find(".txtItemName").val() !== '';
+            }
+            else if (lastRow === 1) {
+                CheckItemName = true;
+            }
+        if (CheckItemName) {
+            if (row.find(".txtItemBarCode").val() == '') {
+                toastr.error("Please enter item bar code !");
+                row.find(".txtItemBarCode").focus();
+                validationFailed = true;
+                return;
+            } else if (row.find(".txtItemCode").val() == '') {
+                toastr.error("Please enter item code !");
+                row.find(".txtItemCode").focus();
+                validationFailed = true;
+                return;
+            } else if (row.find(".txtItemName").val() == '') {
+                toastr.error("Please enter item name !");
+                row.find(".txtItemName").focus();
+                validationFailed = true;
+                return;
+            } else if (row.find(".txtItemAddress").val() == '') {
+                toastr.error("Please enter item address !");
+                row.find(".txtItemAddress").focus();
+                validationFailed = true;
+                return;
+            } else if (row.find(".txtUOM").val() == '') {
+                toastr.error("Please enter UOM !");
+                row.find(".txtUOM").focus();
+                validationFailed = true;
+                return;
+            } else if (row.find(".txtBillQty").val() == '') {
+                toastr.error("Please enter Bill Qty !");
+                row.find(".txtBillQty").focus();
+                validationFailed = true;
+                return;
+            } else if (row.find(".txtReceivedQty").val() == '') {
+                toastr.error("Please enter Received Qty!");
+                row.find(".txtReceivedQty").focus();
+                validationFailed = true;
+                return;
+            } else if (row.find(".txtRate").val() == '') {
+                toastr.error("Please enter rate !");
+                row.find(".txtRate").focus();
+                validationFailed = true;
+                return;
+            } else if (row.find(".txtAmount").val() == '') {
+                toastr.error("Please enter amount !");
+                row.find(".txtAmount").focus();
+                validationFailed = true;
+                return;
+            }
+            else if (row.find(".txtWarehouse").val() == '') {
+                toastr.error("Please enter Warehouse !");
+                row.find(".txtWarehouse").focus();
+                validationFailed = true;
+                return;
+            }
+        }
     });
     if (validationFailed) {
         return;
@@ -397,18 +415,20 @@ function Save() {
     const Data = [];
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
-        const RowData = {
-            itemName: row.find(".txtItemName").val(),
-            billQtyBox: row.find(".txtBillQtyBox").val() || 0,
-            receivedQtyBox: row.find(".txtReceivedQtyBox").val() || 0,
-            billQty: row.find(".txtBillQty").val(),
-            receivedQty: row.find(".txtReceivedQty").val(),
-            itemRate: row.find(".txtRate").val(),
-            amount: row.find(".txtAmount").val(),
-            warehouseName: row.find(".txtWarehouse").val(),
-            remarks: row.find(".txtRemarks").val()
-        };
-        Data.push(RowData);
+        if (row.find(".txtItemName").val() != '') {
+            const RowData = {
+                itemName: row.find(".txtItemName").val(),
+                billQtyBox: row.find(".txtBillQtyBox").val() || 0,
+                receivedQtyBox: row.find(".txtReceivedQtyBox").val() || 0,
+                billQty: row.find(".txtBillQty").val(),
+                receivedQty: row.find(".txtReceivedQty").val(),
+                itemRate: row.find(".txtRate").val(),
+                amount: row.find(".txtAmount").val(),
+                warehouseName: row.find(".txtWarehouse").val(),
+                remarks: row.find(".txtRemarks").val()
+            };
+            Data.push(RowData);
+        }
     });
 
     const payload = {
@@ -450,12 +470,12 @@ function addNewRowEdit(index, Data) {
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" onfocusout="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" oninput="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
@@ -464,6 +484,8 @@ function addNewRowEdit(index, Data) {
     table.appendChild(newRow);
 
     if (Data !== undefined) {
+        const item = ItemDetail.find(entry => entry.ItemName == Data.ItemName);
+        const isDisabled = item.QtyInBox === 0;
         $("#txtItemBarCode_" + rowCount).val(Data.ItemBarCode || "");
         $("#txtItemCode_" + rowCount).val(Data.ItemCode || "");
         $("#txtItemName_" + rowCount).val(Data.ItemName || "");
@@ -471,6 +493,8 @@ function addNewRowEdit(index, Data) {
         $("#txtUOM_" + rowCount).val(Data.UOMName || "");
         $("#txtBillQtyBox_" + rowCount).val(Data.BillQtyBox || "");
         $("#txtReceivedQtyBox_" + rowCount).val(Data.ReceivedQtyBox || "");
+        $("#txtBillQtyBox_" + rowCount).prop("disabled", isDisabled);
+        $("#txtReceivedQtyBox_" + rowCount).prop("disabled", isDisabled);
         $("#txtBillQty_" + rowCount).val(Data.BillQty || "");
         $("#txtReceivedQty_" + rowCount).val(Data.ReceivedQty || "");
         $("#txtRate_" + rowCount).val(Data.ItemRate || "");
@@ -478,6 +502,7 @@ function addNewRowEdit(index, Data) {
         $("#txtWarehouse_" + rowCount).val(Data.WarehouseName || "");
         $("#txtRemarks_" + rowCount).val(Data.Remarks || "");
     }
+    
 }
 function OnChangeNumericTextBox(element) {
 
@@ -509,6 +534,7 @@ function SetvalueReceivedQty(event, element) {
     if (currentRow) {
             const value = element.value;
             ReceivedQty.value = value;
+            CalculateAmount(element);
     }
     else {
            
@@ -528,9 +554,19 @@ function BizSolhandleEnterKey(event) {
         event.preventDefault();
     }
 }
+//function isRowComplete(row) {
+//    const inputs = row.querySelectorAll("input.mandatory");
+//    return Array.from(inputs).every(input => input.value.trim() !== "");
+//}
 function isRowComplete(row) {
     const inputs = row.querySelectorAll("input.mandatory");
-    return Array.from(inputs).every(input => input.value.trim() !== "");
+    for (const input of inputs) {
+        if (input.value.trim() === "") {
+            input.focus(); 
+            return false; 
+        }
+    }
+    return true; 
 }
 function addNewRow() {
     let rowCount = 0;
@@ -549,12 +585,12 @@ function addNewRow() {
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" onfocusout="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
@@ -569,12 +605,12 @@ function addNewRow() {
             <td><input type="text" list="txtItemName" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" onfocusout="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" onfocusout="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" input="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
@@ -592,7 +628,7 @@ $(document).on("click", ".deleteRow", function () {
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "MRN Master");
+    const result = Data.find(item => item.ModuleDesp === "Material Receipt Note");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
@@ -703,6 +739,8 @@ function FillallItemfield(inputElement, value) {
         const itemAddress = currentRow.querySelector('.txtItemAddress');
         const itemUOM = currentRow.querySelector('.txtUOM');
         const itemRate = currentRow.querySelector('.txtRate');
+        const ReceivedQtyBox = currentRow.querySelector('.txtReceivedQtyBox');
+        const BillQtyBox = currentRow.querySelector('.txtBillQtyBox');
         if (value == 'BarCode') {
             $("#txtItemBarCode option").each(function () {
                 if ($(this).val() === inputValue) {
@@ -712,6 +750,11 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
+                    const isDisabled = item.QtyInBox === 0;
+                    ReceivedQtyBox.value = '' ;
+                    BillQtyBox.value = '';
+                    ReceivedQtyBox.disabled = isDisabled;
+                    BillQtyBox.disabled = isDisabled;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -731,6 +774,11 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
+                    const isDisabled = item.QtyInBox === 0;
+                    ReceivedQtyBox.value = '';
+                    BillQtyBox.value = '';
+                    ReceivedQtyBox.disabled = isDisabled;
+                    BillQtyBox.disabled = isDisabled;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -750,6 +798,11 @@ function FillallItemfield(inputElement, value) {
                     itemName.value = item.ItemName;
                     itemAddress.value = item.locationName;
                     itemUOM.value = item.UomName;
+                    const isDisabled = item.QtyInBox === 0;
+                    ReceivedQtyBox.value = '';
+                    BillQtyBox.value = '';
+                    ReceivedQtyBox.disabled = isDisabled;
+                    BillQtyBox.disabled = isDisabled;
                     return false;
                 } else {
                     itemBarCode.value = "";
@@ -765,6 +818,7 @@ function FillallItemfield(inputElement, value) {
             }).catch(error => {
                 console.error('Error fetching rate:', error);
             });
+      
     }
 }
 function CheckWarehouse(inputElement) {
@@ -829,12 +883,17 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         let currentInput = $(this);
+        let currentRow = currentInput.closest('tr')[0]; 
+        
         let lastRow = $('#tblorderbooking #Orderdata tr').last();
         if (lastRow && currentInput.hasClass('txtRemarks')) {
             currentInput.hasClass('txtRemarks')
             let parentRow = currentInput.closest('tr'); 
             if (parentRow.is(lastRow)) {
                 addNewRow(); 
+                if (!isRowComplete(currentRow)) {
+                    return;
+                }
             }
         }
         let inputs = $('#tblorderbooking').find('input:not([disabled])');
@@ -851,4 +910,32 @@ function CreateVendorlist(){
         options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
     });
     $('#txtVendorNameList').html(options);
+}
+function SetvalueBillQtyBox(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const inputValue = inputElement.value;
+        const BillQty = currentRow.querySelector('.txtBillQty');
+        const ReceivedQty = currentRow.querySelector('.txtReceivedQty');
+        const itemName = currentRow.querySelector('.txtItemName');
+        const ReceivedQtyBox = currentRow.querySelector('.txtReceivedQtyBox');
+        const BillQtyBox = currentRow.querySelector('.txtBillQtyBox');
+        const item = ItemDetail.find(entry => entry.ItemName == itemName.value);
+        BillQty.value = item.QtyInBox * BillQtyBox.value;
+        CalculateAmount(inputElement);
+    }
+}
+function SetvalueReceivedQtyBox(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const inputValue = inputElement.value;
+        const BillQty = currentRow.querySelector('.txtBillQty');
+        const ReceivedQty = currentRow.querySelector('.txtReceivedQty');
+        const itemName = currentRow.querySelector('.txtItemName');
+        const ReceivedQtyBox = currentRow.querySelector('.txtReceivedQtyBox');
+        const BillQtyBox = currentRow.querySelector('.txtBillQtyBox');
+        const item = ItemDetail.find(entry => entry.ItemName == itemName.value);
+        ReceivedQty.value = item.QtyInBox * ReceivedQtyBox.value;
+        CalculateAmount(inputElement);
+    }
 }
