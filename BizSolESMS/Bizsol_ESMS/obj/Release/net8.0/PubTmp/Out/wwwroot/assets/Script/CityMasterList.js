@@ -1,4 +1,8 @@
-﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿
+var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
     $("#ERPHeading").text("City");
@@ -22,7 +26,22 @@ $(document).ready(function () {
     });
     ShowCityMasterlist();
     GetGroupMasterList();
+    $("#txtStateName").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtStateNameList option").each(function () {
+            if ($(this).val() === value) {
 
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtStateNameList").val("")
+        }
+    });
+    GetModuleMasterCode();
 });
 function ShowCityMasterlist() {
     $.ajax({
@@ -111,7 +130,13 @@ function Save() {
 
     }
 }
-function CreateCityMaster() {
+async  function CreateCityMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("NEW");
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -122,7 +147,12 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     ClearData();
 }
-function deleteItem(code) {
+async function deleteItem(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteCityMaster?Code=${code}`,
@@ -146,7 +176,13 @@ function deleteItem(code) {
         });
     }
 }
-function Edit(code) {
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $.ajax({
@@ -203,4 +239,12 @@ function ClearData() {
     $("#txtPinCode").val("");
     $("#txtStateName").val("");
 
+}
+
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "City Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }

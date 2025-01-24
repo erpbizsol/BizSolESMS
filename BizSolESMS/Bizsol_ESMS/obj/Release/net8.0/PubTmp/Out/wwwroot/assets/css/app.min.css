@@ -6255,3 +6255,9 @@ a.icon-height {
 .text-right {
     text-align: right;
 }
+@media (min-width: 500px) {
+    .sm-table {
+        width: 50%;
+        margin:auto;
+    }
+}

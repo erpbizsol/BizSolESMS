@@ -466,7 +466,6 @@ function OnKeyDownPressFloatTextBox(event, element) {
         return false;
     }
 }
-
 function BizSolhandleEnterKey(event) {
     if (event.key === "Enter") {
         //const inputs = document.getElementsByTagName('input')
@@ -759,7 +758,6 @@ function CalculateAmount(inputElement) {
         }
     }
 }
-
 function GetRate(VendorName, ItemName) {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -834,7 +832,6 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
         }
     }
 });
-
 function CreateVendorlist() {
     $('#txtClientNameList').empty();
     let options = '';

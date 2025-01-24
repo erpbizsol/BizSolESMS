@@ -1,85 +1,21 @@
 ﻿
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
-    $("#ERPHeading").text("Brand");
+    $("#ERPHeading").text("Brand Master");
     $('#txtBrandName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
     });
     ShowBrandMasterlist();
-    $('#exportExcel').click(function () {
-        exportTableToExcel();
-    });
-   
-
-    if (BMode === 'Edit') {
-        $.ajax({
-            url: `${appBaseURL}/api/Master/ShowBrandMasterByCode?Code=` + BCode,
-            type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.length > 0) {
-                    response.forEach(function (item) {
-                        $("#txtBrandName").val(item.BrandName);
-                     
-                    });
-                } else {
-                    toastr.error("Record not found...!");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-            }
-        });
-
-    }
+    GetModuleMasterCode();
 });
 
-function Save() {
-        const BrandName = $("#txtBrandName").val();
-        if (BrandName === "") {
-            toastr.error('Please enter a Brand Name.');
-            $("#txtBrandName").focus();
-        }
-        else {
-            const payload = {
-                code: parseInt(BCode) || 0,
-                brandName: BrandName
 
-            };
-            $.ajax({
-                url: `${appBaseURL}/api/Master/InsertBrandMaster`,
-                type: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(payload),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('Auth-Key', authKeyData);
-                },
-                success: function (response) {
-                    if (response.Status === 'Y') {
-                        toastr.success(response.Msg);
-                        BackMaster();
-                        ShowBrandMasterlist();
-                        
-
-                    }
-                    else {
-                        toastr.error(response.Msg);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", xhr.responseText);
-                    toastr.error("An error occurred while saving the data.");
-                }
-            });
-        }
-}
 function ShowBrandMasterlist() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowBrandMaster`,
@@ -116,21 +52,88 @@ function ShowBrandMasterlist() {
     });
 
 }
-function CreateBrandMaster() {
-    ClearData();
-    window.location.href = `${AppBaseURLMenu}/Master/CreateBrandMaster?Mode=New`;
+function Save() {
+    const BrandName = $("#txtBrandName").val();
+    if (BrandName === "") {
+        toastr.error('Please enter a Brand Name.');
+        $("#txtBrandName").focus();
+    }
+    else {
+        const payload = {
+            code: $("#hftextCode").val(),
+            brandName: BrandName
 
+        };
+        $.ajax({
+            url: `${appBaseURL}/api/Master/InsertBrandMaster?UserMaster_Code=${UserMaster_Code}`,
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response.Status === 'Y') {
+                    toastr.success(response.Msg);
+                    BackMaster();
+                    ShowBrandMasterlist();
+
+
+                }
+                else {
+                    toastr.error(response.Msg);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText);
+                toastr.error("An error occurred while saving the data.");
+            }
+        });
+    }
 }
 
-function BackMaster() {
-    window.location.href = `${AppBaseURLMenu}/Master/BrandMasterList`;
-    ClearData();
-}
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("EDIT");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowBrandMasterByCode?Code=${code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (item) {
+            if (item.length > 0) {
+                item.forEach(function (item) {
+                    $("#hftextCode").val(item.Code),
+                    $("#txtBrandName").val(item.BrandName);
 
-function deleteBrand(code) {
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+async function deleteBrand(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteBrandMaster?Code=${code}`,
+            url: `${appBaseURL}/api/Master/DeleteBrandMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -151,33 +154,33 @@ function deleteBrand(code) {
         });
     }
 }
-function Edit(code) {
-    window.location.href = `${AppBaseURLMenu}/Master/CreateBrandMaster?Code=${code}&Mode=Edit`;
-}
-
 function ClearData() {
+    $("#hftextCode").val("0");
     $("#txtBrandName").val("");
 }
-function exportTableToExcel() {
-    var table = document.getElementById("table");
-    var workbook = XLSX.utils.book_new();
-    var worksheet = XLSX.utils.table_to_sheet(table);
-    var hiddenColumns = ["Action"];
-    for (var row in worksheet) {
-        if (row.startsWith('!')) continue;
-        var cellIndex = parseInt(row.match(/\d+/));
-        if (!isNaN(cellIndex)) {
-            hiddenColumns.forEach(colIdx => {
-                var colLetter = XLSX.utils.encode_col(colIdx);
-                delete worksheet[colLetter + cellIndex];
-            });
-        }
+async function CreateBrandMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
     }
-    var range = XLSX.utils.decode_range(worksheet['!ref']);
-    range.e.c -= hiddenColumns.length; // Adjust end column
-    worksheet['!ref'] = XLSX.utils.encode_range(range);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "UOMMaster.xlsx");
+    $("#tab1").text("NEW");
+    ClearData();
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+
+
+}
+function BackMaster() {
+    $("#txtListpage").show();
+    $("#txtCreatepage").hide();
+    ClearData();
 }
 
-
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Brand Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
+}

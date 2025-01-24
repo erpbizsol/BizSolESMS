@@ -92,6 +92,7 @@ async function CreateItemMaster() {
         toastr.error(msg);
         return;
     }
+    $("#tab1").text("NEW");
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -109,6 +110,7 @@ async function Edit(code) {
         toastr.error(msg);
         return;
     }
+    $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 

@@ -1,7 +1,11 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+let UserMaster_Code = authKeyData.UserMaster_Code;
+let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+
 $(document).ready(function () {
-    $("#ERPHeading").text("State");
+    $("#ERPHeading").text("State Master");
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
     });
@@ -25,7 +29,22 @@ $(document).ready(function () {
     $('#exportExcel').click(function () {
         exportTableToExcel();
     });
-   
+    $("#txtCountryName").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtCountryNameList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtCountryNameList").val("")
+        }
+    });
+    GetModuleMasterCode();
 });
 function ShowStateMasterlist() {
     $.ajax({
@@ -87,7 +106,7 @@ function Save() {
             CountryName: $("#txtCountryName").val()
         };
         $.ajax({
-            url: `${appBaseURL}/api/Master/InsertStateMaster`,
+            url: `${appBaseURL}/api/Master/InsertStateMaster?UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             contentType: 'application/json',
             dataType: 'json',
@@ -113,21 +132,16 @@ function Save() {
 
     }
 }
-function CreateStateMaster() {
-    ClearData();
-    $("#txtListpage").hide();
-    $("#txtCreatepage").show();
 
-}
-function BackMaster() {
-    $("#txtListpage").show();
-    $("#txtCreatepage").hide();
-    ClearData();
-}
-function deleteItem(code) {
+async function deleteItem(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteStateMaster?Code=${code}`,
+            url: `${appBaseURL}/api/Master/DeleteStateMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -148,8 +162,13 @@ function deleteItem(code) {
         });
     }
 }
-function Edit(code) {
-   
+async function Edit(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $.ajax({
@@ -199,7 +218,6 @@ function GetGroupMasterList() {
         }
     });
 }
-
 function ClearData() {
     $("#hfCode").val("0");
     $("#txtCountryName").val("");
@@ -207,5 +225,29 @@ function ClearData() {
     $("#txtStateCode").val("");
 
 }
+async function CreateStateMaster() {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("NEW");
+    ClearData();
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    
+  
+}
+function BackMaster() {
+    $("#txtListpage").show();
+    $("#txtCreatepage").hide();
+    ClearData();
+}
 
-
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "State Master");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
+}

@@ -3,8 +3,9 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+let CityList = [];
 $(document).ready(function () {
-    $("#ERPHeading").text("Account Master");
+    $("#ERPHeading").text("Client/Vendor Master");
     $('#txtAccountName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtDisplayName").focus();
@@ -21,17 +22,7 @@ $(document).ready(function () {
             firstInput.focus();
         }
     });
-    //$('#txtIsClient').on('keydown', function (e) {
-    //    if (e.key === "Enter") {
-    //        $("#txtIsVendor").focus();
-    //    }
-    //});
-    //$('#txtIsVendor').on('keydown', function (e) {
-    //    if (e.key === "Enter") {
-    //        $("#txtIsMSME").focus();
-    //    }
-    //});
-   
+  
     ShowAccountMasterlist();
     GetGroupMasterList();
     GetCountryMasterList();
@@ -48,6 +39,7 @@ $(document).ready(function () {
         DeleteRow(e);
     });
     GetModuleMasterCode();
+    ShowCityMasterlist();
 });
 function ShowAccountMasterlist() {
     $.ajax({
@@ -429,9 +421,9 @@ function addNewRowEdit(index, address) {
         <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
         <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off"  maxlength="225"/></td>
         <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="225" /></td>
-        <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off" /></td>
-        <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}" autocomplete="off"  /></td>
-        <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}" autocomplete="off" /></td>
+        <td><input type="text" list="txtCityList" onchange="FillallItemfield(this);" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off" /></td>
+        <td><input type="text" list="txtStateNameList" disabled class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}" autocomplete="off"  /></td>
+        <td><input type="text" list="txtCountryList" disabled class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}" autocomplete="off" /></td>
         <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off"  maxlength="6"/></td>
         <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}" autocomplete="off"  maxlength="20"/></td>
         <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="50" /></td>
@@ -498,8 +490,13 @@ function convertToUppercase(element) {
 }
 function isRowComplete(row) {
     const inputs = row.querySelectorAll("input.mandatory");
-    //const inputs = row.querySelectorAll("input[type='text']");
-    return Array.from(inputs).every(input => input.value.trim() !== "");
+    for (const input of inputs) {
+        if (input.value.trim() === "") {
+            input.focus();
+            return false;
+        }
+    }
+    return true;
 }
 function addNewRow() {
     let rowCount = 0;
@@ -516,9 +513,9 @@ function addNewRow() {
             <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
             <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" list="txtCityList" onchange="FillallItemfield(this);" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
+            <td><input type="text" list="txtStateNameList" disabled class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
+            <td><input type="text" list="txtCountryList" disabled class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
             <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
@@ -538,9 +535,9 @@ function addNewRow() {
             <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
             <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" list="txtCityList" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
-            <td><input type="text" list="txtStateNameList" class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
-            <td><input type="text" list="txtCountryList" class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" list="txtCityList" onchange="FillallItemfield(this);" class="txtCity box_border form-control form-control-sm mandatory" id="txtCity_${rowCount}" autocomplete="off"  /></td>
+            <td><input type="text" list="txtStateNameList" disabled class="txtState box_border form-control form-control-sm mandatory" id="txtState_${rowCount}"  autocomplete="off" /></td>
+            <td><input type="text" list="txtCountryList" disabled class="txtNation box_border form-control form-control-sm mandatory" id="txtNation_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtPIN box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtPIN_${rowCount}" autocomplete="off" maxlength="6" /></td>
             <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPerson_${rowCount}" autocomplete="off" maxlength="200" /></td>
@@ -553,7 +550,6 @@ function addNewRow() {
         table.appendChild(newRow);
     }
 }
-
 $(document).on("click", ".deleteRow", function () {
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
     if (table.querySelectorAll("tr").length > 1) {
@@ -564,12 +560,11 @@ $(document).on("click", ".deleteRow", function () {
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Account Master");
+    const result = Data.find(item => item.ModuleDesp === "Client/Vendor Master");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
 }
-
 $(document).on('keydown', '#tblorderbooking input', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
@@ -580,6 +575,9 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
             let parentRow = currentInput.closest('tr');
             if (parentRow.is(lastRow)) {
                 addNewRow();
+                if (!isRowComplete(currentRow)) {
+                    return;
+                }
             }
         }
         let inputs = $('#tblorderbooking').find('input:not([disabled])');
@@ -589,3 +587,39 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
         }
     }
 });
+function FillallItemfield(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const inputValue = inputElement.value;
+        const Nation = currentRow.querySelector('.txtNation');
+        const State = currentRow.querySelector('.txtState');
+        if (inputValue != "") {
+            const item = CityList.find(entry => entry["City Name"] == inputValue);
+            Nation.value = item.CountryName;
+            State.value = item["State Name"];
+        } else {
+            Nation.value = "";
+            State.value = "";
+        }
+    }
+}
+function ShowCityMasterlist() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowCityMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                CityList = response;
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}

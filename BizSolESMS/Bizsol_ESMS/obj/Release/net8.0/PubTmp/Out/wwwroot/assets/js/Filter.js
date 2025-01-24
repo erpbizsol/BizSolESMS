@@ -8,7 +8,7 @@ let button = false;
 //let hiddenColumns = [];
 //let columnAlignment = [];
 const BizsolCustomFilterGrid = {
-    CreateDataTable: function CreateDataTable(headerId, bodyId, data, Button, ShowButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, HiddenColumns, ColumnAlignment) {
+    CreateDataTable: function CreateDataTable(headerId, bodyId, data, Button, ShowButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, HiddenColumns, ColumnAlignment, Paginator = true) {
         const columns = Object.keys(data[0]);
         const tableId = $('#' + bodyId).closest('table').attr('id');
         renderTableHeader(HiddenColumns, headerId, bodyId, columns, Button, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn);
@@ -26,8 +26,10 @@ const BizsolCustomFilterGrid = {
         window[`currentPage_${tableId}`] = 1;
         window[`itemsPerPage_${tableId}`] = 10;
         //itemsPerPage = 5;
-        createPaginator(tableId, bodyId);
-        renderTableWithPagination(tableId, bodyId);
+        if (Paginator) {
+            createPaginator(tableId, bodyId);
+            renderTableWithPagination(tableId, bodyId);
+        }
     }
 
 }
