@@ -28,3 +28,32 @@
         return Promise.resolve({ hasPermission: true, msg: 'Permission granted for Admin' });
     }
 }
+
+function CheckRelatedRecord(Code, TableName) {
+   
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: `${appBaseURL}/api/Master/CheckRelatedRecord?Code=${Code}&TableName=${TableName}`,
+                type: 'GET',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Auth-Key', authKeyData);
+                },
+                success: function (response) {
+                    if (response.length > 0) {
+                        if (response[0].Status == 'Y') {
+                            resolve({ Status: true, msg1: response[0].Message });
+                        } else {
+                            resolve({ Status: false, msg1: response[0].Message });
+                        }
+                    } else {
+                        resolve({ Status: false, msg1: 'No response, assume no permission' });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    reject(error);
+                }
+            });
+        });
+   
+}

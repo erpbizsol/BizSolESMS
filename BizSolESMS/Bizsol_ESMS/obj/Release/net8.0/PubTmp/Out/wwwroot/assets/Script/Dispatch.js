@@ -112,7 +112,6 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     ClearData();
 }
-
 function GetAccountMasterList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetAccountIsClientDropDown`,
@@ -152,7 +151,7 @@ function GetOrderNoList(ClientName) {
                     $('#txtOrderNo').empty();
                     let options = '';
                     response.forEach(item => {
-                        options += '<option value="' + item.OrderNo + '" text="' + item.OrderNo + '"></option>';
+                        options += '<option value="' + item.OrderNoWithPrefix + '" text="' + item.OrderNoWithPrefix + '"></option>';
                     });
                     $('#txtOrderNo').html(options);
                 } else {
@@ -328,7 +327,6 @@ function Save() {
         },
     });
 }
-
 function OnChangeNumericTextBox(element) {
 
     element.value = element.value.replace(/[^0-9]/g, "");
@@ -405,7 +403,7 @@ function addNewRow() {
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" disabled class="txtBalanceOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBalanceOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
+            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" oninput="SetvalueBillQtyBox(this);" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtDispatchQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtDispatchQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" disabled class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
@@ -509,6 +507,8 @@ function FillallItemfield(inputElement, value) {
         const itemUOM = currentRow.querySelector('.txtUOM');
         const itemRate = currentRow.querySelector('.txtRate');
         const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
+        const QtyBox = currentRow.querySelector(".txtQtyBox");
+
         if (value == 'BarCode') {
             $("#txtItemBarCode option").each(function () {
                 if ($(this).val() === inputValue) {
@@ -520,6 +520,9 @@ function FillallItemfield(inputElement, value) {
                     itemUOM.value = item.UomName;
                     BalanceOrderQty.value = item.OrderQty;
                     itemRate.value = item.Rate;
+                    const isDisabled = item.QtyInBox === 0;
+                    QtyBox.value = '';
+                    QtyBox.disabled = isDisabled;
                     isValid = true;
                     return false;
                 } else {
@@ -543,7 +546,9 @@ function FillallItemfield(inputElement, value) {
                     itemUOM.value = item.UomName;
                     BalanceOrderQty.value = item.OrderQty;
                     itemRate.value = item.Rate;
-
+                    const isDisabled = item.QtyInBox === 0;
+                    QtyBox.value = '';
+                    QtyBox.disabled = isDisabled;
                     isValid = true;
                     return false;
                 } else {
@@ -567,6 +572,9 @@ function FillallItemfield(inputElement, value) {
                     itemUOM.value = item.UomName;
                     BalanceOrderQty.value = item.OrderQty;
                     itemRate.value = item.Rate;
+                    const isDisabled = item.QtyInBox === 0;
+                    QtyBox.value = '';
+                    QtyBox.disabled = isDisabled;
                     isValid = true;
                     return false;
                 } else {
@@ -592,6 +600,8 @@ function FillallItemfield(inputElement, value) {
                 itemUOM.value = "";
                 itemRate.value = "";
                 BalanceOrderQty.value = "";
+                QtyBox.value = '';
+                OrderQty.value = '';
             } 
         }
     }
@@ -814,10 +824,24 @@ function CheckOrderNo(inputElement) {
             itemUOM.value = "";
             itemRate.value = "";
             BalanceOrderQty.value = "";
+            GetItemDetails('');
         }
     }
 }
-
 function focusblank(element) {
     $(element).val("");
+}
+function SetvalueBillQtyBox(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const inputValue = inputElement.value;
+        const ItemName = currentRow.querySelector(".txtItemName");
+        const QtyBox = currentRow.querySelector(".txtQtyBox");
+        const OrderQty = currentRow.querySelector(".txtDispatchQty");
+        const Rate = currentRow.querySelector(".txtRate");
+        const Amount = currentRow.querySelector(".txtAmount");
+        const item = ItemDetail.find(entry => entry.ItemName == ItemName.value);
+        OrderQty.value = item.QtyInBox * QtyBox.value;
+        CalculateAmount(inputElement);
+    }
 }

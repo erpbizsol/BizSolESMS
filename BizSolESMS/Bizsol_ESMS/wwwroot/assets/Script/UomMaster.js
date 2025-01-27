@@ -49,6 +49,7 @@ function ShowUomMasterlist() {
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
+                
             } else {
                 toastr.error("Record not found...!");
             }
@@ -181,6 +182,7 @@ async function deleteItem(code) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    
                     ShowUomMasterlist();
                 } else {
                     toastr.error("Unexpected response format.");

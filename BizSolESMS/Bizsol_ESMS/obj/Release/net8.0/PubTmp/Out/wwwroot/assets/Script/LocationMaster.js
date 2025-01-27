@@ -4,7 +4,7 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
-    $("#ERPHeading").text("Location Master");
+    $("#ERPHeading").text("Location Master (Bin)");
     $('#txtLocationName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtsave").focus();
@@ -111,6 +111,11 @@ async function deleteLocation(code) {
         toastr.error(msg);
         return;
     }
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'locationmaster');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteLocationMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
@@ -174,7 +179,7 @@ async function Edit(code) {
 
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Location Master");
+    const result = Data.find(item => item.ModuleDesp === "Location Master (Bin)");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
