@@ -3,7 +3,6 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 $(document).ready(function () {
 
     $("#ERPHeading").text("Item Master");
@@ -72,7 +71,7 @@ $(document).ready(function () {
     });
     $('#txtReorderLevel').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtReorderQty").focus();
+            $("#txtItemLocation").focus();
         }
     });
     $('#txtReorderQty').on('keydown', function (e) {
@@ -105,12 +104,16 @@ $(document).ready(function () {
             $("#txtsave").focus();
         }
     });
+    $('#txtGroupItem').on('change', function (e) {
+        if ($(this).val() != '') {
+            GetSubGroupDropDownList($(this).val());
+        }
+    });
   
     ShowItemMasterlist();
     GetGroupMasterList();
     GetUOMDropDownList();
     GetCategoryDropDownList();
-    GetSubGroupDropDownList();
     GetBrandDropDownList();
     GetLocationDropDownList();
     GetModuleMasterCode();
@@ -193,7 +196,6 @@ $(document).ready(function () {
             $("#txtBrandList").val("")
         }
     });
-
     $("#txtItemLocation").on("change", function () {
         let value = $(this).val();
         let isValid = false;
@@ -209,6 +211,25 @@ $(document).ready(function () {
             $("#txtItemLocationList").val("")
         }
     });
+    $("#txtUOM").on("focus", function () {
+         $(this).val("");
+    });
+    $("#txtCategory").on("focus", function () {
+        $(this).val("");
+    });
+    $("#txtGroupItem").on("focus", function () {
+        $(this).val("");
+    });
+    $("#txtSubGroupItem").on("focus", function () {
+        $(this).val("");
+    });
+    $("#txtBrand").on("focus", function () {
+        $(this).val("");
+    });
+    $("#txtItemLocation").on("focus", function () {
+        $(this).val("");
+    });
+   ;
 });
 function UpdateLabelforItemMaster() {
     $.ajax({
@@ -257,7 +278,6 @@ function UpdateLabelforItemMaster() {
         }
     });
 }
-
 function ShowItemMasterlist() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemMaster`,
@@ -413,17 +433,20 @@ async function CreateItemMaster() {
     $("#txtCreatepage").show();
 
 }
-
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
 }
-
 async function deleteItem(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
+        return;
+    }
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'itemmaster');
+    if (Status == true) {
+        toastr.error(msg1);
         return;
     }
     if (confirm("Are you sure you want to delete this item?")) {
@@ -504,7 +527,6 @@ async function Edit(code) {
     });
 
 }
-
 function exportTableToExcel() {
     var table = document.getElementById("table");
     var workbook = XLSX.utils.book_new();
@@ -526,7 +548,6 @@ function exportTableToExcel() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "UOMMaster.xlsx");
 }
-
 function GetGroupMasterList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetDropDown`,
@@ -552,7 +573,6 @@ function GetGroupMasterList() {
         }
     });
 }
-
 function GetUOMDropDownList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetUOMDropDown`,
@@ -578,7 +598,6 @@ function GetUOMDropDownList() {
         }
     });
 }
-
 function GetCategoryDropDownList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetCategoryDropDown`,
@@ -604,10 +623,9 @@ function GetCategoryDropDownList() {
         }
     });
 }
-
-function GetSubGroupDropDownList() {
+function GetSubGroupDropDownList(GroupName) {
     $.ajax({
-        url: `${appBaseURL}/api/Master/GetSubGroupDropDown`,
+        url: `${appBaseURL}/api/Master/ShowSubGroupByGroupName?GroupName=${GroupName}`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -617,7 +635,7 @@ function GetSubGroupDropDownList() {
                 $('#txtSubGroupItemList').empty();
                 let options = '';
                 response.forEach(item => {
-                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
+                    options += '<option value="' + item.SubGroupName + '" text="' + item.Code + '"></option>';
                 });
                 $('#txtSubGroupItemList').html(options);
             } else {
@@ -630,7 +648,6 @@ function GetSubGroupDropDownList() {
         }
     });
 }
-
 function GetBrandDropDownList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetBrandDropDown`,
@@ -681,7 +698,6 @@ function GetLocationDropDownList() {
         }
     });
 }
-
 function updateDisplayName() {
     const itemName = document.getElementById('txtItemName').value;
     document.getElementById('txtDisplayName').value = itemName;
@@ -705,12 +721,10 @@ function ClearData() {
     $("#txtQtyinBox").val("0");
 
 }
-
 function updateQtyBox(boxPackingValue) {
     document.getElementById("txtQtyinBox").disabled = boxPackingValue === "N";
     document.getElementById("txtQtyinBox").value = "0";
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Item Master");

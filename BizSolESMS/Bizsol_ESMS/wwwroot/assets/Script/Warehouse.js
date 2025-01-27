@@ -195,6 +195,11 @@ async function deleteWarehouse(code) {
         toastr.error(msg);
         return;
     }
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'warehousemaster');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteWarehouseMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,

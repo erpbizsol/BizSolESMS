@@ -118,6 +118,11 @@ async function deleteCatagery(code) {
         toastr.error(msg);
         return;
     }
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'categorymaster');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteCategoryMaster?Code=${code}`,

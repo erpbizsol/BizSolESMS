@@ -193,6 +193,11 @@ async function deleteItem(code) {
         toastr.error(msg);
         return;
     }
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'ordermaster');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/OrderMaster/DeleteOrderMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
@@ -466,7 +471,6 @@ function OnKeyDownPressFloatTextBox(event, element) {
         return false;
     }
 }
-
 function BizSolhandleEnterKey(event) {
     if (event.key === "Enter") {
         //const inputs = document.getElementsByTagName('input')
@@ -759,7 +763,6 @@ function CalculateAmount(inputElement) {
         }
     }
 }
-
 function GetRate(VendorName, ItemName) {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -834,7 +837,6 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
         }
     }
 });
-
 function CreateVendorlist() {
     $('#txtClientNameList').empty();
     let options = '';

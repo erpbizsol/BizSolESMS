@@ -193,6 +193,11 @@ async function deleteItem(code) {
         toastr.error(msg);
         return;
     }
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'ordermaster');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/OrderMaster/DeleteOrderMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,

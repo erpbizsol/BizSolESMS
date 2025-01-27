@@ -49,6 +49,7 @@ function ShowUomMasterlist() {
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
+                
             } else {
                 toastr.error("Record not found...!");
             }
@@ -166,6 +167,11 @@ async function deleteItem(code) {
         toastr.error(msg);
         return;
     }
+    const { Status, msg1 } = await CheckRelatedRecord(code,'UomMaster');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteUOM?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
@@ -176,6 +182,7 @@ async function deleteItem(code) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    
                     ShowUomMasterlist();
                 } else {
                     toastr.error("Unexpected response format.");
