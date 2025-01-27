@@ -78,14 +78,14 @@
                         <div class="row">
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtPageSizeOption" class="col-form-label-sm fw-bold">Page Size Option<span class="text-danger">*</span> </label>
-                            <input type="text" id="txtPageSizeOption" onkeypress="return OnChangeNumericWithCommaTextBox(event,this);" class="box_border form-control form-control-sm" placeholder="Please enter comma separated value " autocomplete="off" maxlength="300">
+                            <input type="text" id="txtPageSizeOption" onkeypress="return OnChangeNumericWithCommaTextBox(event,this);" class="box_border form-control form-control-sm BizSolFormControl" placeholder="Please enter comma separated value " autocomplete="off" maxlength="300">
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtPageSize" class="col-form-label-sm fw-bold">Par Page Value <span class="text-danger">*</span> </label>
-                            <input type="text" id="txtPageSize" onkeypress="return OnChangeNumericTextBox(event,this);" class="box_border form-control form-control-sm" placeholder="Please enter par page value" autocomplete="off" maxlength="3">
+                            <input type="text" id="txtPageSize" onkeypress="return OnChangeNumericTextBox(event,this);" onkeydown="BizSolhandleEnterKey(event);" class="box_border form-control form-control-sm BizSolFormControl" placeholder="Please enter par page value" autocomplete="off" maxlength="3">
                             </div>
                             <div class="col-md-3  col-sm-6 tex-end" style="margin-top: 30px !important;">
-                                <input type="button" class="btn btn-primary btn-height" title="Save" id="txtSave" value="Save"/>
+                            <input type="button" class="btn btn-primary btn-height BizSolFormControl" title="Save" id="txtSave" value="Save" />
                                 <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
                             </div>
                         </div>
