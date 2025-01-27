@@ -175,6 +175,11 @@ async function DeleteItem(code) {
         toastr.error(msg);
         return;
     }
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'mrnmaster');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
     if (confirm("Are you sure you want to delete this item?")) {
         $.ajax({
             url: `${appBaseURL}/api/MRNMaster/DeleteMRNMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
