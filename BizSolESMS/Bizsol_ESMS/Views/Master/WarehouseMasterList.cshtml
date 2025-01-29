@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -61,8 +60,8 @@
         opacity: 0.9;
     }
 
-    .fixed-height-table {
-        height: auto;
+    .highlight {
+        background-color: #90e4ba;
     }
 
     .mt-3 {
@@ -77,7 +76,7 @@
             <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateWarehouseMaster()">CREATE NEW</button>
         </div>
     </div>
-    <div class="card-body mt-2">
+    <div class="card-body mt-2" id="txtwarehousetable">
         <div class="table-wrapper fixed-height-table">
             <table id="table" class="fixed-width-table table">
                 <thead id="table-header">
@@ -140,7 +139,7 @@
                         </div>
                         <div class="col-md-2 mt-3">
                             <label for="txtDefaultWarehouse"></label>
-                            <input type="checkbox" id="txtDefaultWarehouse" name="txtDefaultWarehouse" class="box_border" checked/>
+                            <input type="checkbox" id="txtDefaultWarehouse" name="txtDefaultWarehouse" class="box_border" checked />
                             <label for="txtDefaultWarehouse">Default Warehouse</label>
                         </div>
                     </div>

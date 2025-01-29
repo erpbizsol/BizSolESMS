@@ -91,10 +91,9 @@
         opacity: 0.9;
     }
 
-    .fixed-height-table {
-        height: auto;
+    .highlight {
+        background-color: #90e4ba;
     }
-
     .mt-3 {
         margin-top: 1.9rem !important;
     }
@@ -107,19 +106,18 @@
             <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateItemMaster()">CREATE NEW</button>
         </div>
     </div>
-    <div class="card-body mt-2">
-    
-            <div class="table-wrapper fixed-height-table">
-                <table id="table" class="fixed-width-table table">
-                    <thead id="table-header">
-                    </thead>
-                    <tbody id="table-body">
-                    </tbody>
-                </table>
-            </div>
-            <!-- Paginator -->
-            <div class="paginator" id="paginator-table">
-            </div>
+    <div class="card-body mt-2" id="txtitemtable">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginator -->
+        <div class="paginator" id="paginator-table">
+        </div>
     </div>
 </div>
 <div id="txtCreatepage" style="display:none;">
@@ -134,16 +132,16 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code </label><sub style="color:red">*</sub>
-                                    <input type="text" id="txtItemCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="16" placeholder="Item Code">
+                                    <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code </label><span class="text-danger">*</span>
+                                    <input type="text" id="txtItemCode" class="box_border form-control form-control-sm" oninput="convertToUppercase(this)" autocomplete="off" maxlength="16" placeholder="Item Code">
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="txtItemNamelab" class="col-form-label-sm fw-bold" id="txtItemNamelab">Item Name </label><sub style="color:red">*</sub>
+                                    <label for="txtItemNamelab" class="col-form-label-sm fw-bold" id="txtItemNamelab">Item Name </label><span class="text-danger">*</span>
                                     <input type="hidden" id="hfCode" value="0">
                                     <input type="text" id="txtItemName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Item Name">
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><sub style="color:red">*</sub>
+                                    <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><span class="text-danger">*</span>
                                     <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
                                 </div>
                                 <div class="col-md-3 col-sm-6">
@@ -153,21 +151,21 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="txtUOM" class="col-form-label-sm fw-bold">UOM</label><sub style="color:red">*</sub>
+                                    <label for="txtUOM" class="col-form-label-sm fw-bold">UOM</label><span class="text-danger">*</span>
                                     <datalist id="txtUOMList"></datalist>
                                     <input list="txtUOMList" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name">
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="txtHSNCode" class="col-form-label-sm fw-bold">HSN Code</label><sub style="color:red">*</sub>
+                                    <label for="txtHSNCode" class="col-form-label-sm fw-bold">HSN Code</label>
                                     <input type="text" id="txtHSNCode" name="txtHSNCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="8" placeholder="HSN Code" />
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="txtCategory" class="col-form-label-sm fw-bold">Category</label><sub style="color:red">*</sub>
+                                    <label for="txtCategory" class="col-form-label-sm fw-bold">Category</label><span class="text-danger">*</span>
                                     <datalist id="txtCategoryList"></datalist>
                                     <input list="txtCategoryList" id="txtCategory" name="txtCategory" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Category Name">
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="GroupItemHeaderlab" class="col-form-label-sm fw-bold" id="GroupItemHeaderlab">Group Item</label>
+                                    <label for="GroupItemHeaderlab" class="col-form-label-sm fw-bold" id="GroupItemHeaderlab">Group Item</label><span class="text-danger">*</span>
                                     <datalist id="txtGroupItemList"></datalist>
                                     <input list="txtGroupItemList" id="txtGroupItem" name="txtGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Group Item">
                                 </div>
@@ -175,12 +173,12 @@
                             <div class="row">
 
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="SubGroupItemHeaderlab" class="col-form-label-sm fw-bold" id="SubGroupItemHeaderlab">Sub Group Item</label>
+                                    <label for="SubGroupItemHeaderlab" class="col-form-label-sm fw-bold" id="SubGroupItemHeaderlab">Sub Group Item</label><span class="text-danger">*</span>
                                     <datalist id="txtSubGroupItemList"></datalist>
                                     <input list="txtSubGroupItemList" id="txtSubGroupItem" name="txtSubGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Sub Group Item">
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="txtBrand" class="col-form-label-sm fw-bold">Brand</label><sub style="color:red">*</sub>
+                                    <label for="txtBrand" class="col-form-label-sm fw-bold">Brand</label><span class="text-danger">*</span>
                                     <datalist id="txtBrandList"></datalist>
                                     <input list="txtBrandList" id="txtBrand" name="txtBrand" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Brand Name">
                                 </div>
@@ -194,16 +192,20 @@
                                 </div>
                            
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="SubLocationItemHeaderlab" class="col-form-label-sm fw-bold" id="SubLocationItemHeaderlab">Location Item</label>
+                                    <label for="SubLocationItemHeaderlab" class="col-form-label-sm fw-bold" id="SubLocationItemHeaderlab">Location Item</label><span class="text-danger">*</span>
                                     <datalist id="txtItemLocationList"></datalist>
                                     <input list="txtItemLocationList" id="txtItemLocation" name="txtItemLocation" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Item Location">
                                 </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtBoxPacking" class="col-form-label-sm fw-bold">Box Packing </label>
+                                <div class="col-md-3 mt-3">
+                                    <label for="txtBoxPacking"></label>
+                                    <input type="checkbox" id="txtBoxPacking" name="txtBoxPacking" class="box_border"  onchange="updateQtyBox(this.value)" />
+                                    <label for="txtBoxPacking">Box Packing</label>
+
+                                   @*  <label for="txtBoxPacking" class="col-form-label-sm fw-bold">Box Packing </label>
                                     <select id="txtBoxPacking" class="box_border form-control form-control-sm" onchange="updateQtyBox(this.value)">
                                         <option value="N" selected>N</option>
                                         <option value="Y">Y</option>
-                                    </select>
+                                    </select> *@
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <label for="txtQtyinBox" class="col-form-label-sm fw-bold">Qtyin Box </label>
