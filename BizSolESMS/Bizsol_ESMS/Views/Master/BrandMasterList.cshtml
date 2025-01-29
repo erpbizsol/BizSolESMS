@@ -23,26 +23,26 @@
         height: 36px;
     }
 
-        .tab-header div {
-            flex: 0.1;
-            text-align: center;
-            padding: 7px 16px;
-            cursor: pointer;
-            /* color: #fffffff5; */
-            transition: background 0.3s ease;
-            border-bottom-right-radius: 40px;
-            border-top-left-radius: 40px;
-            font-weight: bold;
-        }
+    .tab-header div {
+        flex: 0.1;
+        text-align: center;
+        padding: 7px 16px;
+        cursor: pointer;
+        /* color: #fffffff5; */
+        transition: background 0.3s ease;
+        border-bottom-right-radius: 40px;
+        border-top-left-radius: 40px;
+        font-weight: bold;
+    }
 
-            .tab-header div:hover {
-                background: #586e87;
-                color: white;
-            }
+    .tab-header div:hover {
+        background: #586e87;
+        color: white;
+    }
 
-        .tab-header .active {
-            background: #1d4b7d;
-        }
+    .tab-header .active {
+    background: #1d4b7d;
+    }
 
     .tab-content {
         display: none;
@@ -51,16 +51,17 @@
         border-radius: 5px;
     }
 
-        .tab-content.active {
-            display: block;
-        }
+    .tab-content.active {
+        display: block;
+    }
 
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
-    .fixed-height-table {
-        height: auto;
+
+    .highlight {
+        background-color: #90e4ba;
     }
 </style>
 <div class="sm-table" id="txtListpage">
@@ -71,7 +72,7 @@
             <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateBrandMaster()">CREATE NEW</button>
         </div>
     </div>
-    <div class="card-body mt-2">
+    <div class="card-body mt-2" id="txtbrandtable">
         <div class="table-wrapper fixed-height-table">
             <table id="table" class="fixed-width-table table">
                 <thead id="table-header">
