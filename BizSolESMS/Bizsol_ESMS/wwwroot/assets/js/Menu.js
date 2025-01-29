@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
     UserMenuRightsList();
+    GetPerPageSize();
 });
 var authKeyData1 = JSON.parse(sessionStorage.getItem('authKey'));
 var authKeyData = sessionStorage.getItem('authKey');
@@ -16,7 +17,7 @@ var authKeyData = sessionStorage.getItem('authKey');
     //        $('#ERPUserName')[0].innerHTML = UserDetailsobj[0].UserID;
     //        $('#ERPCompanyCode')[0].innerHTML = `(${UserDetailsobj[0].CompanyNameForShow})`;
 
-    function UserMenuRightsList() {
+function UserMenuRightsList() {
         $.ajax({
             url: `${baseUrl1}/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${userMasterCode}`,
             type: 'GET',
@@ -96,7 +97,6 @@ var authKeyData = sessionStorage.getItem('authKey');
             }
         });
     }
-
 function getChildMenu(value, masterCode) {
     // var baseUrl = `${window.location.protocol}//${window.location.host}`;
     var childMenuHtml = '';
@@ -118,7 +118,6 @@ function getChildMenu(value, masterCode) {
     });
     return childMenuHtml;
 }
-
 function setActiveMenu() {
     var currentUrl = window.location.pathname;
 
@@ -136,4 +135,23 @@ function setActiveMenu() {
         }
     });
 }
-
+async function GetPerPageSize() {
+    $.ajax({
+        url: `${appBaseURL}/api/Configuration/GetPerPageSizeList`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (value) {
+            if (value.length > 0) {
+                sessionStorage.setItem('PerPageSize', JSON.stringify(value));
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch item data. Please try again.");
+        }
+    });
+}

@@ -127,5 +127,16 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion  MRNMaster 
+
+        #region  PrefixConfiguration 
+        public IActionResult PrefixConfiguration()
+        {
+            return View();
+        }
+        public IActionResult PageSizeConfiguration()
+        {
+            return View();
+        }
+        #endregion  PrefixConfiguration 
     }
 }
