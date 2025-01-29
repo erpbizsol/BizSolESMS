@@ -229,7 +229,15 @@ $(document).ready(function () {
     $("#txtItemLocation").on("focus", function () {
         $(this).val("");
     });
-   ;
+    $("#txtBoxPacking").on("change", function () {
+        var a = $("#txtBoxPacking").is(":checked");
+        if (a) {
+            $("#txtQtyinBox").prop("disabled",false);
+        } else {
+            $("#txtQtyinBox").prop("disabled", true);
+            $("#txtQtyinBox").val("0");
+        }
+    });
 });
 function UpdateLabelforItemMaster() {
     $.ajax({
@@ -263,9 +271,44 @@ function UpdateLabelforItemMaster() {
                     }
                     if (item.SubLocationItemHeader) {
                         $("#SubLocationItemHeaderlab").text(item.SubLocationItemHeader);
-                    } else {
+                    }
+                    else {
                         $("#SubLocationItemHeaderlab").text("Location Item");
                     }
+                    if (item.ItemCode) {
+                        const escapedItemCode = item.ItemCode.replace("[\/\\^$*+?.()|[\]{}]/g, ''");
+                        const itemCodeRegex = new RegExp(`^[a-zA-Z0-9${escapedItemCode}]*$`);
+
+                        $('#txtItemCode').on('input', function () {
+                            const currentValue = $(this).val();
+                            let isInvalid = false; 
+                            const validValue = currentValue.replace(new RegExp(`[^a-zA-Z0-9${escapedItemCode}]`, 'g'), (match) => {
+                                isInvalid = true; 
+                                return ''; 
+                            });
+
+                            if (currentValue !== validValue) {
+                                $(this).val(validValue);
+
+                                if (isInvalid) {
+                                    alert('This character is not allowed!');
+                                }
+                            }
+                        });
+                    }
+
+                    //if (item.ItemCode) {
+                    
+                    //    const escapedItemCode = item.ItemCode.replace("[\/\\^$*+?.()|[\]{}]/g, ''");
+                    //    const itemCodeRegex = new RegExp(`^[a-zA-Z0-9${escapedItemCode}]*$`);
+                    //    $('#txtItemCode').on('input', function () {
+                    //        const currentValue = $(this).val();
+                    //        const validValue = currentValue.replace(new RegExp(`[^a-zA-Z0-9${escapedItemCode}]`, 'g'), '');
+                    //        if (currentValue !== validValue) {
+                    //            $(this).val(validValue);
+                    //        }
+                    //    });
+                    //}
 
                 });
             } else {
@@ -287,6 +330,8 @@ function ShowItemMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
+                $("#txtitemtable").show();
+               
                 const StringFilterColumn = ["Item Name", "Display Name", "Category Name", "Group Name", "Sub Group Name", "Brand Name", "Location Name"];
                 const NumericFilterColumn = ["Reorder Level", "Reorder Qty", "Qty In Box"];
                 const DateFilterColumn = [];
@@ -301,11 +346,12 @@ function ShowItemMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
+                $("#txtitemtable").hide();
                 toastr.error("Record not found...!");
             }
         },
@@ -327,6 +373,9 @@ function Save() {
     var Brand = $("#txtBrand").val();
     var ReorderLevel = $("#txtReorderLevel").val();
     var ReorderQty = $("#txtReorderQty").val();
+    var GroupItem = $("#txtGroupItem").val();
+    var SubGroupItem = $("#txtSubGroupItem").val();
+    var ItemLocation = $("#txtItemLocation").val();
     if (!ItemCode) {
         toastr.error('Please enter an Item Code!');
         $("#txtItemCode").focus();
@@ -351,6 +400,14 @@ function Save() {
         toastr.error('Please select a Category!');
         $("#txtCategory").focus();
     }
+    else if (GroupItem === "") {
+        toastr.error('Please select a Group Item!');
+        $("#txtGroupItem").focus();
+    }
+    else if (SubGroupItem === "") {
+        toastr.error('Please select a Sub Group Item!');
+        $("#txtSubGroupItem").focus();
+    }
     else if (Brand === "") {
         toastr.error('Please select a Brand!');
         $("#txtBrand").focus();
@@ -358,6 +415,10 @@ function Save() {
     else if (ReorderLevel === "" || isNaN(ReorderLevel) || parseInt(ReorderLevel) < 0) {
         toastr.error('Please enter a valid digit after decimal is 0.');
         $("#txtReorderLevel").focus();
+    }
+    else if (ItemLocation === "") {
+        toastr.error('Please select a Item Location!');
+        $("#ItemLocation").focus();
     }
     else if (ReorderQty === "" || isNaN(ReorderQty) || parseInt(ReorderQty) < 0) {
         toastr.error('Please enter a valid digit after decimal is 0.');
@@ -384,12 +445,8 @@ function Save() {
             BrandName: $("#txtBrand").val(),
             ReorderLevel: ReorderLevels,
             ReorderQty: ReorderQtys,
-            // ReorderLevel: parseInt($("#txtReorderLevel").val()),
-            // ReorderQty: parseInt($("#txtReorderQty").val()),
             LocationName: $("#txtItemLocation").val(),
-            BoxPacking: $("#txtBoxPacking").val(),
-            //batchApplicable: $("#txtBatchApplicable").val(),
-            //maintainExpiry: $("#txtMaintainExpiry").val(),
+            BoxPacking: $("#txtBoxPacking").is(":checked") ? "Y" : "N",
             batchApplicable: $("#txtBatchApplicable").is(":checked") ? "Y" : "N",
             maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N",
             QtyInBox: $("#txtQtyinBox").val()
@@ -438,7 +495,11 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     ClearData();
 }
-async function deleteItem(code) {
+async function deleteItem(code, ItemName) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -449,7 +510,7 @@ async function deleteItem(code) {
         toastr.error(msg1);
         return;
     }
-    if (confirm("Are you sure you want to delete this item?")) {
+    if (confirm(`Are you sure you want to delete this item? ${ItemName}`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteItem?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
@@ -490,7 +551,7 @@ async function Edit(code) {
         success: function (item) {
             if (item) {
                 $("#hfCode").val(item.Code),
-                    $("#txtItemCode").val(item.ItemCode);
+                $("#txtItemCode").val(item.ItemCode);
                 $("#txtItemName").val(item.ItemName);
                 $("#txtDisplayName").val(item.DisplayName);
                 $("#txtItembarcode").val(item.ItemBarCode);
@@ -503,13 +564,17 @@ async function Edit(code) {
                 $("#txtReorderLevel").val(item.ReorderLevel);
                 $("#txtReorderQty").val(item.ReorderQty);
                 $("#txtItemLocation").val(item.locationName);
-                $("#txtBoxPacking").val(item.BoxPacking);
+                //$("#txtBoxPacking").val(item.BoxPacking);
+             
+                if (item.BoxPacking == 'N') {
+                    $("#txtBoxPacking").prop("checked", false);
+                } else {
+                    $("#txtBoxPacking").prop("checked", true);
+                }
                 if (item.BoxPacking == 'Y') {
                     $("#txtQtyinBox").prop("disabled", false);
                 }
                 $("#txtQtyinBox").val(item.QtyInBox)
-                //$("#txtBatchApplicable").val(item.BatchApplicable),
-                //$("#txtMaintainExpiry").val(item.MaintainExpiry),
                 if (item.BatchApplicable == 'N') {
                     $("#txtBatchApplicable").prop("checked", false);
                 }
@@ -733,3 +798,6 @@ function GetModuleMasterCode() {
     }
 }
 
+function convertToUppercase(element) {
+    element.value = element.value.toUpperCase();
+}
