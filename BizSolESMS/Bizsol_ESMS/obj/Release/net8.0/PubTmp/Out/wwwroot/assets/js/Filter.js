@@ -1,4 +1,4 @@
-﻿
+﻿var PerPageSize = JSON.parse(sessionStorage.getItem('PerPageSize'));
 let data = [];
 //let filteredData = [];
 //let currentPage = 1;
@@ -28,6 +28,7 @@ const BizsolCustomFilterGrid = {
         //itemsPerPage = 5;
         if (Paginator) {
             createPaginator(tableId, bodyId);
+            createPaginatorDropdown(tableId);
             renderTableWithPagination(tableId, bodyId);
         }
     }
@@ -789,10 +790,7 @@ window.createPaginator = function createPaginator(tableId, bodyId) {
         <div class="page-size-select">
             <label for="pageSize-${tableId}">Lines Per Page:</label>
             <select onchange="pageSize('${tableId}','${bodyId}')" class="pageSize" id="pageSize-${tableId}">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="50">50</option>   
+                   
             </select>
         </div>
         <button id="firstBtn-${tableId}" onclick="firstBtn('${tableId}','${bodyId}')" class="btn btn-primary paginator-btn icon-height">
@@ -828,4 +826,20 @@ window.OpenFilter = function OpenFilter(columnName) {
 window.CloseFilter = function CloseFilter() {
     $(".filter-division").hide();
 }
+
+window.createPaginatorDropdown = function createPaginatorDropdown(tableId){
+    const selectElement = document.getElementById(`pageSize-${tableId}`);
+        const optionsArray = PerPageSize[0].PerPageOption.split(',').map(Number);
+        const selectedValue = PerPageSize[0].PerPage;
+        selectElement.innerHTML = '';
+        optionsArray.forEach(value => {
+            let option = document.createElement('option');
+            option.value = value;
+            option.textContent = value;
+            if (value === selectedValue) {
+                option.selected = true;
+            }
+            selectElement.appendChild(option);
+        });
+    }
 
