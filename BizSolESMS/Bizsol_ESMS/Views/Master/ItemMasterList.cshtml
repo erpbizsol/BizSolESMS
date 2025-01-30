@@ -6,6 +6,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="~/assets/script/itemmaster.js"></script>
 <style>
+    /* table heading text adjust in one line  */
+    table {
+        /* width: 165% !important */
+        /*table-layout: fixed;*/
+    }
+
+   /*  table .action {
+        width: 100px !important;
+    } */
+
+    th, .filter-table-heading {
+        /* width: 50px !important; */
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .filter-table-heading {
+        overflow: hidden;
+    }
+
+    .table th {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .table-filter-arrow {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* End table heading text adjust in one line  */
     .tabs {
         width: 100%;
         max-width: 2000px;
