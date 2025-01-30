@@ -29,9 +29,15 @@ $(document).ready(function () {
     });
     $('#txtItemLocation').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#txtItemCode").focus();
+        }
+    });
+    $('#txtItemCode').on('keydown', function (e) {
+        if (e.key === "Enter") {
             $("#txtsave").focus();
         }
     });
+    
     Edit();
     GetModuleMasterCode();
 });
@@ -78,7 +84,8 @@ async function Save() {
             ItembarcodeHeader : $("#txtItembarcode").val(),
             GroupItemHeader: $("#txtGroupItem").val(),
             SubGroupItemHeader: $("#txtSubGroupItem").val(),
-            LocationItemHeader: $("#txtItemLocation").val()
+            LocationItemHeader: $("#txtItemLocation").val(),
+            itemCode: $("#txtItemCode").val()
         };
         $.ajax({
             url: `${appBaseURL}/api/Master/SaveConfig`,
@@ -126,6 +133,7 @@ async function Edit() {
                         $("#txtGroupItem").val(item.GroupItemHeader || "");
                         $("#txtSubGroupItem").val(item.SubGroupItemHeader || "");
                         $("#txtItemLocation").val(item.SubLocationItemHeader || "");
+                        $("#txtItemCode").val(item.ItemCode);
                     } 
                 });
             } else {

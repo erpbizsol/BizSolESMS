@@ -23,6 +23,7 @@ function LocationList() {
         },
         success: function (response) {
             if (response.length > 0) {
+                $("#txtlocationtable").show();
                 const StringFilterColumn = ["Location Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
@@ -36,11 +37,12 @@ function LocationList() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteLocation('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteLocation('${item.Code}','${item[`Location Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
+                $("#txtlocationtable").hide();
                 toastr.error("Record not found...!");
             }
         },
@@ -105,7 +107,11 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     ClearData();
 }
-async function deleteLocation(code) {
+async function deleteLocation(code, location) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -116,7 +122,7 @@ async function deleteLocation(code) {
         toastr.error(msg1);
         return;
     }
-    if (confirm("Are you sure you want to delete this item?")) {
+    if (confirm(`Are you sure you want to delete this location ${location}?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteLocationMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',

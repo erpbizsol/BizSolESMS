@@ -1099,6 +1099,9 @@ function SaveImportFile() {
                 toastr.success(response.Msg);
                 ShowMRNMasterlist();
                 BackImport();
+            }else if (response.Status === "N") {
+                toastr.success(response.Msg);
+                BackImport();
             } else {
                 toastr.error(response.Msg);
             }
