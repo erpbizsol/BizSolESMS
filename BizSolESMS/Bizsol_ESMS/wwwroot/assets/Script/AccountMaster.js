@@ -27,10 +27,69 @@ $(document).ready(function () {
     GetGroupMasterList();
     GetCountryMasterList();
     GetCityDropDownList();
+
+    GetGroupMasterList1();
+    GetCountryMasterList1();
+    GetCityDropDownList1();
     $(document).on("change", ".chkIsDefault", function () {
         if (this.checked) {
             $(".chkIsDefault").not(this).prop("checked", false);
         }
+    });
+    $("#tdsCitysList").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#tdsCitysAllList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#tdsCitysAllList").val("")
+        }
+    });
+    $("#tdsStatelist").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#tdsStateAlllist option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#tdsStateAlllist").val("")
+        }
+    });
+    $("#tdsNationlist").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#tdsNationAlllist option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#tdsNationAlllist").val("")
+        }
+    });
+
+    $("#tdsCitysList").on("focus", function () {
+        $(this).val("");
+    });
+    $("#tdsStatelist").on("focus", function () {
+        $(this).val("");
+    });
+    $("#tdsNationlist").on("focus", function () {
+        $(this).val("");
     });
     $("#btnAddNewRow").click(function(){
         addNewRow();
@@ -50,6 +109,7 @@ function ShowAccountMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
+                $("#txtAccounttable").show();
                 const StringFilterColumn = ["Account Name","Display Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
@@ -64,11 +124,12 @@ function ShowAccountMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Account Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
+                $("#txtAccounttable").hide();
                 toastr.error("Record not found...!");
             }
         },
@@ -149,7 +210,11 @@ async function Edit(code) {
         }
     });
 }
-async function deleteItem(code) {
+async function deleteItem(code, account) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -160,7 +225,7 @@ async function deleteItem(code) {
         toastr.error(msg1);
         return;
     }
-    if (confirm("Are you sure you want to delete this item?")) {
+    if (confirm(`Are you sure you want to delete this account ${account} .?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteAccountMaster?Code=${code}`,
             type: 'POST',
@@ -628,3 +693,141 @@ function ShowCityMasterlist() {
     });
 
 }
+
+function updateAddressCode() {
+    const inputMappings = {
+        tdsAddressCode1: "txtAddressCode",
+        tdsAddressLine1: "txtAddressLine1",
+        tdsAddressLine2: "txtAddressLine2",
+        tdsCitysList: "txtCity",
+        tdsStatelist: "txtState",
+        tdsNationlist: "txtNation",
+        tdsPIN: "txtPIN",
+        tdsGSTIN: "txtGSTIN",
+        tdsContactPerson: "txtContactPerson",
+        tdsPhone: "txtPhone",
+        tdsMobile: "txtMobile",
+        tdsEmail: "txtEmail",
+    };
+
+    Object.keys(inputMappings).forEach(inputId => {
+        let inputElement = document.getElementById(inputId);
+        if (inputElement) {
+            inputElement.addEventListener("input", function () {
+                updateLatestRow(inputId, inputMappings[inputId]);
+            });
+        }
+    });
+    function updateLatestRow(inputId, tableFieldClass) {
+        const table = document.getElementById("tblorderbooking").querySelector("tbody");
+        const rows = table.querySelectorAll("tr");
+        if (rows.length === 0) return;
+        const lastRow = rows[rows.length - 1];
+        const targetInput = lastRow.querySelector(`.${tableFieldClass}`);
+        if (targetInput) {
+            if (targetInput.type === "checkbox") {
+                targetInput.checked = document.getElementById(inputId).checked;
+            } else {
+               
+                targetInput.value = document.getElementById(inputId).value;
+            }
+        }
+    }
+   
+};
+
+
+function GetGroupMasterList1() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetStateDropDown`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#tdsStateAlllist').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
+                });
+                $('#tdsStateAlllist').html(options);
+            } else {
+                $('#tdsStateAlllist').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtCountryNameList').empty();
+        }
+    });
+}
+function GetCityDropDownList1() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetCityDropDown`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#tdsCitysAllList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
+                });
+                $('#tdsCitysAllList').html(options);
+            } else {
+                $('#tdsCitysAllList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtCityList').empty();
+        }
+    });
+}
+function GetCountryMasterList1() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetCountryDropDown`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#tdsNationAlllist').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
+                });
+                $('#tdsNationAlllist').html(options);
+            } else {
+                $('#tdsNationAlllist').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtCountryList').empty();
+        }
+    });
+}
+
+function FillallItemfield1(inputElement) {
+    const inputValue = inputElement.value.trim(); 
+    const Nation = document.querySelector('#tdsStatelist');
+    const State = document.querySelector('#tdsNationlist');
+
+    if (!Nation || !State) return;
+        const item = CityList.find(entry => entry["City Name"] === inputValue);
+        if (item) {
+            Nation.value = item.CountryName || "";
+            State.value = item["State Name"] || "";
+        } else {
+            Nation.value = "";
+            State.value = "";
+        }
+    
+}
+
+
