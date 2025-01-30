@@ -1086,7 +1086,7 @@ function SaveImportFile() {
         UserMaster_Code: UserMaster_Code
     };
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/ImportMRNMaster`,
+        url: `${appBaseURL}/api/MRNMaster/ImportMRNMasterForTemp`,
         type: "POST",
         contentType: "application/json",
         dataType: "json",
