@@ -291,24 +291,11 @@ function UpdateLabelforItemMaster() {
                                 $(this).val(validValue);
 
                                 if (isInvalid) {
-                                    alert('This character is not allowed!');
+                                    toastr.error(`This character is not allowed ${currentValue } then change other special characters allowe in item config page.!`);
                                 }
                             }
                         });
                     }
-
-                    //if (item.ItemCode) {
-                    
-                    //    const escapedItemCode = item.ItemCode.replace("[\/\\^$*+?.()|[\]{}]/g, ''");
-                    //    const itemCodeRegex = new RegExp(`^[a-zA-Z0-9${escapedItemCode}]*$`);
-                    //    $('#txtItemCode').on('input', function () {
-                    //        const currentValue = $(this).val();
-                    //        const validValue = currentValue.replace(new RegExp(`[^a-zA-Z0-9${escapedItemCode}]`, 'g'), '');
-                    //        if (currentValue !== validValue) {
-                    //            $(this).val(validValue);
-                    //        }
-                    //    });
-                    //}
 
                 });
             } else {

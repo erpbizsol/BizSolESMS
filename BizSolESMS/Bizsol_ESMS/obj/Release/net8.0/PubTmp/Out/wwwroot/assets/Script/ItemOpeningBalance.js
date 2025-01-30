@@ -28,11 +28,15 @@ function ShowItemOpeningBalancelist() {
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = ["Category", "Group", "Sub Group", "Brand", "Warehouse", "Item Code", "Item Name", "UOM"];
-                const hiddenColumns = [];
+                const hiddenColumns = ["Code"];
                 const ColumnAlignment = {
                     "Opening Balance": "right"
                 };
-                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment,false);
+                const updatedResponse = response.map(item => ({
+                    ...item, Action: `
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Code`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment,false);
                 addNewRow();
             } else {
                 toastr.error("Record not found...!");
@@ -415,4 +419,43 @@ function CheckWarehouse(inputElement) {
 }
 function focusblank(element) {
     $(element).val("");
+}
+
+async function deleteItem(Code, ItemCode) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
+    //const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    //if (hasPermission == false) {
+    //    toastr.error(msg);
+    //    return;
+    //}
+    //const { Status, msg1 } = await CheckRelatedRecord(code, 'ItemOpeningBalance');
+    //if (Status == true) {
+    //    toastr.error(msg1);
+    //    return;
+    //}
+    if (confirm(`Are you sure you want to delete this  ${ItemCode}.?`)) {
+        $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/DeleteOpeningBalance?Code=${Code}&UserMaster_Code=${UserMaster_Code}`,
+            type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response[0].Status === 'Y') {
+                    toastr.success(response[0].Msg);
+                    ShowItemOpeningBalancelist();
+
+                } else {
+                    toastr.error("Unexpected response format.");
+                }
+            },
+            error: function (xhr, status, error) {
+                toastr.error("Error deleting item:", Msg);
+
+            }
+        });
+    }
 }
