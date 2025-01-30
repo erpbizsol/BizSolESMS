@@ -15,44 +15,51 @@
         overflow: hidden;
         padding: 0.7rem;
     }
+
     .tab-header {
         display: flex;
         /* background: #e3e7ed; */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
     }
-    .tab-header div {
-        flex: 0.1;
-        text-align: center;
-        padding: 12px 16px;
-        cursor: pointer;
-        /* color: #fffffff5; */
-        transition: background 0.3s ease;
-        border-bottom-right-radius: 40px;
+
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            /* color: #fffffff5; */
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
             border-top-left-radius: 40px;
-    }
-    .tab-header div:hover {
-     background: #586e87;
-     color:white;
-    }
-    .tab-header .active {
+        }
+
+            .tab-header div:hover {
+                background: #586e87;
+                color: white;
+            }
+
+        .tab-header .active {
             background: #1d4b7d;
-    }
+        }
+
     .tab-content {
         display: none;
         padding: 16px;
         border: 1px solid lightgray;
         border-radius: 5px;
     }
-    .tab-content.active {
-        display: block;
-    }
+
+        .tab-content.active {
+            display: block;
+        }
+
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
 
-    .fixed-height-table {
-        height: auto;
+    .highlight {
+        background-color: #90e4ba;
     }
 </style>
 <div class="sm-table" id="txtListpage">
@@ -63,7 +70,7 @@
             <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateItemMaster()">CREATE NEW</button>
         </div>
     </div>
-    <div class="card-body mt-2">
+    <div class="card-body mt-2" id="txtAccounttable">
         <div class="table-wrapper fixed-height-table">
             <table id="table" class="fixed-width-table table">
                 <thead id="table-header">
@@ -83,61 +90,116 @@
             <div class="tab-header">
                 <div id="tab1" class="tab active" style="color:white"></div>
             </div>
-       
-                <div class="row pt-4">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-4 col-sm-6">
-                                <label for="txtAccountName" class="col-form-label-sm fw-bold">Account Name </label><sub style="color:red">*</sub>
-                                <input type="hidden" id="hfCode" value="0">
-                                <input type="text" id="txtAccountName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Account Name">
-                            </div>
-                            <div class="col-md-4 col-sm-6">
-                                <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><sub style="color:red">*</sub>
-                                <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
-                            </div>
-                            <div class="col-md-4 col-sm-6">
+
+            <div class="row p-2">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtAccountName" class="col-form-label-sm fw-bold">Account Name </label><sub style="color:red">*</sub>
+                            <input type="hidden" id="hfCode" value="0">
+                            <input type="text" id="txtAccountName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Account Name">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><sub style="color:red">*</sub>
+                            <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
                             <label for="txtPANNo" class="col-form-label-sm fw-bold">PAN No<span class="text-danger">*</span></label>
                             <input type="text" id="txtPANNo" class="box_border form-control form-control-sm" oninput="convertToUppercase(this)" autocomplete="off" maxlength="20" placeholder="PAN No">
-                            </div>
                         </div>
-                        <div class="row">
-                        <div class="col-md-2 mt-4">
+                        <div class="col-md-1 without-label-field">
                             <label for="txtIsClient"></label>
                             <input type="checkbox" id="txtIsClient" name="txtIsClient" class="box_border" checked />
                             <label for="txtIsClient">Client</label>
                         </div>
-                        <div class="col-md-2 mt-4">
+                        <div class="col-md-1 without-label-field">
                             <label for="txtIsVendor"></label>
                             <input type="checkbox" id="txtIsVendor" name="txtIsVendor" class="box_border" checked />
                             <label for="txtIsVendor">Vendor</label>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsAddressCode1" class="col-form-label-sm fw-bold">Address Code </label><span class="text-danger">*</span>
+                            <input type="text" id="tdsAddressCode1" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" placeholder="Address Code">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsAddressLine1" class="col-form-label-sm fw-bold">Address Line1 </label><span class="text-danger">*</span>
+                            <input type="text" id="tdsAddressLine1" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address Line1">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsAddressLine2" class="col-form-label-sm fw-bold">Address Line2 </label>
+                            <input type="text" id="tdsAddressLine2" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address Line2">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsCitysList" class="col-form-label-sm fw-bold">City </label><span class="text-danger">*</span>
+                            <datalist id="tdsCitysAllList"></datalist>
+                            <input list="tdsCitysAllList" id="tdsCitysList" onchange="FillallItemfield1(this);" oninput="updateAddressCode()" name="tdsCitysList" autocomplete="off" class="form-control form-control-sm box_border" placeholder="City">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsStatelist" class="col-form-label-sm fw-bold">State </label>
+                            <datalist id="tdsStateAlllist"></datalist>
+                            <input list="tdsStateAlllist" id="tdsStatelist" oninput="updateAddressCode()" name="tdsStatelist" autocomplete="off" class="form-control form-control-sm box_border" placeholder="State">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsNationlist" class="col-form-label-sm fw-bold">Nation </label>
+                            <datalist id="tdsNationAlllist"></datalist>
+                            <input list="tdsNationAlllist" id="tdsNationlist" oninput="updateAddressCode()" name="tdsNationlist" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Nation">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsPIN" class="col-form-label-sm fw-bold">PIN </label><span class="text-danger">*</span>
+                            <input type="text" id="tdsPIN" oninput="updateAddressCode()" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="6" placeholder="PIN">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsGSTIN" class="col-form-label-sm fw-bold">GSTIN </label>
+                            <input type="text" id="tdsGSTIN" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="GSTIN">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsContactPerson" class="col-form-label-sm fw-bold">Contact Person </label>
+                            <input type="text" id="tdsContactPerson" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Contact Person">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsPhone" class="col-form-label-sm fw-bold">Phone </label>
+                            <input type="text" id="tdsPhone" oninput="updateAddressCode()" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="Phone">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsMobile" class="col-form-label-sm fw-bold">Mobile </label>
+                            <input type="text" id="tdsMobile" oninput="updateAddressCode()" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="Mobile">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="tdsEmail" class="col-form-label-sm fw-bold">Email </label><span class="text-danger">*</span>
+                            <input type="text" id="tdsEmail" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="100" placeholder="Email">
                         </div>
                     </div>
                 </div>
-               
-                <div class="row" id="divOrderBooking mb-2">
-                    <div class="accordion accordion-flush" id="accordionFlushOrder">
+            </div>
+
+            <div class="row" id="divOrderBooking mb-2">
+                <div class="accordion accordion-flush" id="accordionFlushOrder">
                     <div class="accordion-item tab active">
                         <h2 class="accordion-header tab-header .active" id="flush-headingOne">
                             <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
                                 Account Address
-                                </button>
-                            </h2>
-                            <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
-                                <div class="accordion-body-sec">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="table-wrapper" style="overflow: auto;">
-                                                <table id="tblorderbooking" class="table">
-                                                    <thead role="rowgroup" class="text-sm-center">
-                                                        <tr role="row">
+                            </button>
+                        </h2>
+                        <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
+                            <div class="accordion-body-sec">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-wrapper" style="overflow: auto;">
+                                            <table id="tblorderbooking" class="table">
+                                                <thead role="rowgroup" class="text-sm-center">
+                                                    <tr role="row">
                                                         <th class="lead-Date width_cust" role="columnheader">Address Code<span class="text-danger">*</span></th>
                                                         <th class="lead-Date width_cust" role="columnheader">Address Line1<span class="text-danger">*</span></th>
                                                         <th class="lead-text width_cust" role="columnheader">Address Line2</th>
                                                         <th class="lead-text width_cust" role="columnheader">City<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">State<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Nation<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">State
+                                                        <th class="lead-Date width_cust" role="columnheader">Nation
                                                         <th class="lead-Date width_cust" role="columnheader">PIN<span class="text-danger">*</span></th>
                                                         <th class="lead-text width_cust" role="columnheader">GSTIN</th>
                                                         <th class="lead-text width_cust" role="columnheader">Contact Person</th>
@@ -146,45 +208,45 @@
                                                         <th class="lead-text width_cust" role="columnheader">Email<span class="text-danger">*</span></th>
                                                         <th class="lead-text width_cust" role="columnheader">Default</th>
                                                         <th class="lead-text width_cust" role="columnheader">Delete</th>
-                                                        </tr>
-                                                        <!-- end table row-->
-                                                    </thead>
-                                                    <tbody id="Orderdata" role="rowgroup"></tbody>
-                                                    <tfoot>
-                                                     
-                                                        <tr role="row" id="trAddBtn">
-                                                      
-                                                            <td style="text-align: left;">
-                                                                <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
+                                                    </tr>
+                                                    <!-- end table row-->
+                                                </thead>
+                                                <tbody id="Orderdata" role="rowgroup"></tbody>
+                                                <tfoot>
 
-                                                            </td>
-                                                        </tr>
+                                                    <tr role="row" id="trAddBtn">
 
-                                                    </tfoot>
-                                                </table>
-                                            </div>
+                                                        <td style="text-align: left;">
+                                                            <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
+
+                                                        </td>
+                                                    </tr>
+
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
-
-                                 
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
                 </div>
-                <datalist id="txtStateNameList"></datalist>
-                <datalist id="txtCityList"></datalist>
-                <datalist id="txtCountryList"></datalist>
-          
-                <div class="row m-2">
-                    <div class="col-md-12" style="margin-top: 30px !important;">
+            </div>
+            <datalist id="txtStateNameList"></datalist>
+            <datalist id="txtCityList"></datalist>
+            <datalist id="txtCountryList"></datalist>
+
+            <div class="row m-2">
+                <div class="col-md-12" style="margin-top: 30px !important;">
                     <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtsave">Save</button>
                     <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
-                    </div>
                 </div>
+            </div>
         </div>
     </div>
-</div> 
+</div>
 
 
 <script src="~/assets/js/filter.js"></script>
