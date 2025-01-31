@@ -18,11 +18,14 @@ $(document).ready(function () {
             $("#txtsave").focus();
         }
     });
-    //$('#txtsave').on('keydown', function (e) {
-    //    if (e.key === "Enter") {
-    //        $("#txtsave").focus();
-    //    }
-    //});
+    $('#txtSave').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            Save();
+        }
+    });
+    $('#txtSave').click(function () {
+            Save();
+    });
 });
 async function Save() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
@@ -31,22 +34,19 @@ async function Save() {
         return;
     }
     if ($("#txtPageSizeOption").val() === '') {
-        toastr.error('Please enter Prefix MRN No !');
-        $("#txtMRNNo").focus();
-    } else if ($("#txtOrderNo").val() === '') {
-        toastr.error('Please enter Prefix Order No !');
-        $("#txtOrderNo").focus();
-    } else if ($("#txtChallanNo").val() === '') {
-        toastr.error('Please enter Prefix Challan No !');
-        $("#txtChallanNo").focus();
+        toastr.error('Please enter Page Size with comma separated value !');
+        $("#txtPageSizeOption").focus();
+    } else if ($("#txtPageSize").val() === '') {
+        toastr.error('Please enter par page value !');
+        $("#txtPageSize").focus();
     } else {
         const payload = {
-            MRNNo: $("#txtMRNNo").val(),
-            OrderNo: $("#txtOrderNo").val(),
-            ChallanNo: $("#txtChallanNo").val(),
+            Code: 0,
+            perPageOption: $("#txtPageSizeOption").val(),
+            perPage: $("#txtPageSize").val(),
         };
         $.ajax({
-            url: `${appBaseURL}/api/Configuration/SavePrefixConfiguration`,
+            url: `${appBaseURL}/api/Configuration/SavePerPageSizeConfiguration`,
             type: 'POST',
             contentType: 'application/json',
             dataType: 'json',
@@ -73,7 +73,7 @@ async function Save() {
 async function Edit() {
     $("#tab1").text("NEW");
     $.ajax({
-        url: `${appBaseURL}/api/Configuration/GetPrefixConfigurationList`,
+        url: `${appBaseURL}/api/Configuration/GetPerPageSizeList`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -83,9 +83,8 @@ async function Edit() {
             if (Array.isArray(items) && items.length > 0) {
                 items.forEach(function (item, index) {
                     if (index === 0) {
-                        $("#txtMRNNo").val(item.MRNNo || "");
-                        $("#txtOrderNo").val(item.OrderNo || "");
-                        $("#txtChallanNo").val(item.ChallanNo || "");
+                        $("#txtPageSizeOption").val(item.PerPageOption || "");
+                        $("#txtPageSize").val(item.PerPage || "");
                     }
                 });
             } else {
@@ -105,7 +104,6 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
-
 function OnChangeNumericWithCommaTextBox(event, element) {
     if (event.charCode == 44 || (event.charCode >= 48 && event.charCode <= 57)) {
         element.setCustomValidity("");

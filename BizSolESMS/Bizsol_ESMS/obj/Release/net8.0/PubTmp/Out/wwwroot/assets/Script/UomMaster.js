@@ -32,6 +32,7 @@ function ShowUomMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
+                $("#txtUomTable").show();
                 const StringFilterColumn = ["UOM Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
@@ -45,12 +46,13 @@ function ShowUomMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}', '${item[`UOM Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-
+               
                 
             } else {
+                $("#txtUomTable").hide();
                 toastr.error("Record not found...!");
             }
         },
@@ -161,41 +163,42 @@ async function Edit(code) {
         }
     });
 }
-async function deleteItem(code) {
-    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
-    if (hasPermission == false) {
-        toastr.error(msg);
-        return;
-    }
-    const { Status, msg1 } = await CheckRelatedRecord(code,'UomMaster');
-    if (Status == true) {
-        toastr.error(msg1);
-        return;
-    }
-    if (confirm("Are you sure you want to delete this item?")) {
-        $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteUOM?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
-            type: 'POST',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.Status === 'Y') {
-                    toastr.success(response.Msg);
+//async function deleteItem(code) {
+   
+//    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+//    if (hasPermission == false) {
+//        toastr.error(msg);
+//        return;
+//    }
+//    const { Status, msg1 } = await CheckRelatedRecord(code,'UomMaster');
+//    if (Status == true) {
+//        toastr.error(msg1);
+//        return;
+//    }
+//    if (confirm(`Are you sure you want to delete this item?`)) {
+//        $.ajax({
+//            url: `${appBaseURL}/api/Master/DeleteUOM?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
+//            type: 'POST',
+//            beforeSend: function (xhr) {
+//                xhr.setRequestHeader('Auth-Key', authKeyData);
+//            },
+//            success: function (response) {
+//                if (response.Status === 'Y') {
+//                    toastr.success(response.Msg);
                     
-                    ShowUomMasterlist();
-                } else {
-                    toastr.error("Unexpected response format.");
-                }
+//                    ShowUomMasterlist();
+//                } else {
+//                    toastr.error("Unexpected response format.");
+//                }
 
-            },
-            error: function (xhr, status, error) {
-                toastr.error("Error deleting item:");
+//            },
+//            error: function (xhr, status, error) {
+//                toastr.error("Error deleting item:");
 
-            }
-        });
-    }
-}
+//            }
+//        });
+//    }
+//}
 
 function ClearData() {  
     $("#txtUOM").val("");
@@ -211,4 +214,44 @@ function GetModuleMasterCode() {
     }
 }
 
+async function deleteItem(code, uomName, button) {
 
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (!hasPermission) {
+        toastr.error(msg);
+        return;
+    }
+
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'UomMaster');
+    if (Status) {
+        toastr.error(msg1);
+        return;
+    }
+
+    if (confirm(`Are you sure you want to delete this Uom ${uomName}?`)) {
+
+        $.ajax({
+            url: `${appBaseURL}/api/Master/DeleteUOM?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
+            type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response.Status === 'Y') {
+                    toastr.success(response.Msg);
+                    ShowUomMasterlist();
+                } else {
+                    toastr.error("Unexpected response format.");
+                }
+            },
+            error: function (xhr, status, error) {
+                toastr.error("Error deleting item:");
+            }
+        });
+        return;
+    }
+}

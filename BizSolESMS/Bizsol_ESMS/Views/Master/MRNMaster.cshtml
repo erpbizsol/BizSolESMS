@@ -74,16 +74,18 @@
     .fixed-height-table {
         height: auto;
     }
+    
 </style>
 <div class="" id="txtListpage" style="display:block;">
     <div class="row">
         <div class="col-sm-12 text-end">
             <label></label>
+            <button type="button" class="btn btn-info btn-height" onclick="ImportExcel()" id="ImportExcel">IMPORT</button>
             <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
             <button type="button" class="btn btn-success btn-height" onclick="Create()">CREATE NEW</button>
         </div>
     </div>
-    <div class="card-body mt-2">
+    <div class="card-body mt-2" id="MRNTable">
         <div class="table-wrapper fixed-height-table">
             <table id="table" class="fixed-width-table table">
                 <thead id="table-header">
@@ -107,36 +109,37 @@
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-3 col-sm-6">
-                         <label for="txtMRNNo" class="col-form-label-sm fw-bold">MRN No</label><sub style="color:red">*</sub>
+                         <label for="txtMRNNo" class="col-form-label-sm fw-bold">MRN No</label><span class="text-danger">*</span>
                         <input type="text" id="txtMRNNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="MRN No.." disabled>
                         </div>
                         <div class="col-md-3 col-sm-6">
-                        <label for="txtMRNDate" class="col-form-label-sm fw-bold">MRN Date</label><sub style="color:red">*</sub>
+                            <label for="txtMRNDate" class="col-form-label-sm fw-bold">MRN Date</label><span class="text-danger">*</span>
                             <input type="hidden" id="hfCode" value="0">
                         <input type="text" id="txtMRNDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="MRN Date..">
                         </div>
                         <div class="col-md-3 col-sm-6">
-                            <label for="txtVendorName" class="col-form-label-sm fw-bold">Vendor Name</label><sub style="color:red">*</sub>
+                            <label for="txtVendorName" class="col-form-label-sm fw-bold">Vendor Name</label><span class="text-danger">*</span>
                             <datalist id="txtVendorNameList"></datalist>
                             <input list="txtVendorNameList" id="txtVendorName" name="txtVendorName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Vender Name">
                         </div>
                         <div class="col-md-3 col-sm-6">
-                        <label for="txtAddress" class="col-form-label-sm fw-bold">Address<span class="text-danger">*</span></label>
+                            <label for="txtAddress" class="col-form-label-sm fw-bold">
+                                Address</label><span class="text-danger">*</span>
                         <input type="text" id="txtAddress" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address.." disabled>
                         </div>
                     </div>
                     <div class="row">
                     <div class="col-md-3 col-sm-6">
-                        <label for="txtChallanNo" class="col-form-label-sm fw-bold">Bill /Challan No</label><sub style="color:red">*</sub>
+                            <label for="txtChallanNo" class="col-form-label-sm fw-bold">Bill /Challan No</label><span class="text-danger">*</span>
                         <input type="text" id="txtChallanNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Bill/Challan No..">
                     </div>
                     <div class="col-md-3 col-sm-6">
-                        <label for="txtChallanDate" class="col-form-label-sm fw-bold">Bill/Challan Date</label><sub style="color:red">*</sub>
+                            <label for="txtChallanDate" class="col-form-label-sm fw-bold">Bill/Challan Date</label><span class="text-danger">*</span>
                         <input type="text" id="txtChallanDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200">
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
-                        <input type="text" id="txtVehicleNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Vehicle No..">
+                            <input type="text" id="txtVehicleNo" onkeyup="convertToUppercase(this);" class="box_border form-control form-control-sm" maxlength="50"  autocomplete="off" placeholder="Vehicle No..">
                     </div>
                    
                     </div>
@@ -161,8 +164,8 @@
                                                     <th class="lead-Date width_cust" role="columnheader">Item Barcode<span class="text-danger">*</span></th>
                                                     <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
                                                     <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Item Location<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">UOM<span class="text-danger">*</span></th>
+                                                    <th class="lead-text width_cust" role="columnheader">Item Location</th>
+                                                    <th class="lead-text width_cust" role="columnheader">UOM</th>
                                                     <th class="lead-Date width_cust" role="columnheader">Bill Qty Box</th>
                                                     <th class="lead-Date width_cust" role="columnheader">Received Qty Box</th>
                                                     <th class="lead-text width_cust" role="columnheader">Bill Qty<span class="text-danger">*</span></th>
@@ -181,6 +184,13 @@
                                                         <td style="text-align: left;">
                                                             <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
                                                         </td>
+                                                        <td colspan="4"></td>
+                                                        <td id="txtBillQtyBox" class="text-right">BQB</td>
+                                                        <td id="txtReceivedQtyBox" class="text-right">RQB</td>
+                                                        <td id="txtBillQty" class="text-right">BQ</td>
+                                                        <td id="txtReceivedQty" class="text-right">RecQ</td>
+                                                        <td id="txtRate" class="text-right">Rate</td>
+                                                        <td id="txtAmount" class="text-right">Amt</td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -205,4 +215,51 @@
     </div>
     </div>
 </div>
+
+<div id="txtImportPage" style="display:none;">
+    <div class="card shadow-sm" style="background-color:#e9e9ef">
+        <div class="tabs">
+            <div class="tab-header">
+                <div id="tab2" class="tab active" style="color:white">IMPORT</div>
+            </div>
+            <div class="row p-2">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtVendorName" class="col-form-label-sm fw-bold">Vendor Name</label><span class="text-danger">*</span>
+                            <datalist id="txtVendorNameList"></datalist>
+                            <input list="txtVendorNameList" id="txtImportVendorName" name="txtVendorName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Vender Name">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label><span class="text-danger">*</span>
+                            <input type="text" id="txtImportVehicleNo" class="box_border form-control form-control-sm" onkeyup="convertToUppercase(this);" autocomplete="off" placeholder="Vehicle No..">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtExcelFile" class="col-form-label-sm fw-bold">Choose File</label><span class="text-danger">*</span>
+                            <input type="file" id="txtExcelFile" class="box_border form-control form-control-sm" autocomplete="off" accept=".xlsx, .xls">
+                        </div>
+                        <div class ="col-md-3 col-sm-6" style="margin-top: 33px !important;">
+                            <button class="btn btn-primary btn-height" id="btnImport" onclick="SaveImportFile()">Save</button>
+                            <button class="btn btn-danger btn-height" onclick="BackImport()">Back</button>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+    <div class="card-body mt-2" id="ImportTable">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table1" class="fixed-width-table table">
+                <thead id="table-header1">
+                </thead>
+                <tbody id="table-body1">
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginator -->
+        <div class="paginator" id="paginator-table1">
+        </div>
+    </div>
+</div>
+
 <script src="~/assets/js/filter.js"></script>
