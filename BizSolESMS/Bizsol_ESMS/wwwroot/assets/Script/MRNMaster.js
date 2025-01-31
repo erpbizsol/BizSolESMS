@@ -190,6 +190,11 @@ async function Edit(code) {
                     response.MRNDetails.forEach(function (Data, index) {
                         addNewRowEdit(index, Data);
                     });
+                    updateTotalBillQty();
+                    updateTotalRate();
+                    updateTotalAmount();
+                    updateTotalBillQtyBox();
+                    updateTotalReceivedQtyBox();
                     updateTotalReceivedQty();
                 } else {
                     toastr.info("No addresses available for this account.");
@@ -503,7 +508,7 @@ function addNewRowEdit(index, Data) {
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" oninput="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" oninput="updateTotalReceivedQty();" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
@@ -521,6 +526,16 @@ function addNewRowEdit(index, Data) {
         $("#txtItemName_" + rowCount).val(Data.ItemName || "");
         $("#txtItemAddress_" + rowCount).val(Data.LocationName || "");
         $("#txtUOM_" + rowCount).val(Data.UOMName || "");
+        if (Data.BillQtyBox > 0) {
+            $("#txtBillQty_" + rowCount).prop("disabled", true);
+        } else {
+            $("#txtBillQty_" + rowCount).prop("disabled", false);
+        }
+        if (Data.ReceivedQtyBox > 0) {
+            $("#txtReceivedQty_" + rowCount).prop("disabled", true);
+        } else {
+            $("#txtReceivedQty_" + rowCount).prop("disabled", false);
+        }
         $("#txtBillQtyBox_" + rowCount).val(Data.BillQtyBox || "");
         $("#txtReceivedQtyBox_" + rowCount).val(Data.ReceivedQtyBox || "");
         $("#txtBillQtyBox_" + rowCount).prop("disabled", isDisabled);
@@ -566,7 +581,6 @@ function SetvalueReceivedQty(event, element) {
             ReceivedQty.value = value;
         CalculateAmount(element);
         updateTotalReceivedQty();
-
     }
     else {
            
@@ -617,7 +631,7 @@ function addNewRow() {
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" oninput="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" oninput="updateTotalReceivedQty();" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
@@ -637,7 +651,7 @@ function addNewRow() {
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" oninput="updateTotalReceivedQty();" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
@@ -763,6 +777,8 @@ function FillallItemfield(inputElement, value) {
     if (currentRow) {
         const inputValue = inputElement.value;
         const itemBarCode = currentRow.querySelector('.txtItemBarCode');
+        const txtBillQty = currentRow.querySelector('.txtBillQty');
+        const txtReceivedQty = currentRow.querySelector('.txtReceivedQty');
         const itemCode = currentRow.querySelector('.txtItemCode');
         const itemName = currentRow.querySelector('.txtItemName');
         const itemAddress = currentRow.querySelector('.txtItemAddress');
@@ -770,6 +786,8 @@ function FillallItemfield(inputElement, value) {
         const itemRate = currentRow.querySelector('.txtRate');
         const ReceivedQtyBox = currentRow.querySelector('.txtReceivedQtyBox');
         const BillQtyBox = currentRow.querySelector('.txtBillQtyBox');
+        txtBillQty.disabled = false;
+        txtReceivedQty.disabled = false;
         if (value == 'BarCode') {
             $("#txtItemBarCode option").each(function () {
                 if ($(this).val() === inputValue) {
@@ -879,6 +897,9 @@ function CalculateAmount(inputElement) {
         const calculatedAmount = billQtyValue * rateValue;
         if (Amount) {
             Amount.value = calculatedAmount.toFixed(2);
+            updateTotalBillQty();
+            updateTotalRate();
+            updateTotalAmount();
         }
      }
 }
@@ -954,6 +975,8 @@ function SetvalueBillQtyBox(inputElement) {
         const item = ItemDetail.find(entry => entry.ItemName == itemName.value);
         BillQty.value = item.QtyInBox * BillQtyBox.value;
         CalculateAmount(inputElement);
+        updateTotalReceivedQty();
+        updateTotalBillQtyBox();
     }
 }
 function SetvalueReceivedQtyBox(inputElement) {
@@ -971,7 +994,7 @@ function SetvalueReceivedQtyBox(inputElement) {
         ReceivedQty.value = item.QtyInBox * ReceivedQtyBox.value;
         CalculateAmount(inputElement);
         updateTotalReceivedQty();
-
+        updateTotalReceivedQtyBox();
     }
 }
 function convertToUppercase(element) {
@@ -1277,8 +1300,7 @@ function CheckItemBarCode(inputElement) {
         }
     }
 }
-
-function updateTotalReceivedQty() {
+function updateTotalBillQty() {
     let totalReceivedQty = 0;
     const receivedQtyElements = document.querySelectorAll('.txtBillQty');
     receivedQtyElements.forEach(input => {
@@ -1290,5 +1312,64 @@ function updateTotalReceivedQty() {
         txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
     }
 }
-
+function updateTotalReceivedQty() {
+    let totalReceivedQty = 0;
+    const receivedQtyElements = document.querySelectorAll('.txtReceivedQty');
+    receivedQtyElements.forEach(input => {
+        const value = parseFloat(input.value) || 0;
+        totalReceivedQty += value;
+    });
+    const txtReceivedQtyBoxFooter = document.querySelector("#txtReceivedQty");
+    if (txtReceivedQtyBoxFooter) {
+        txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
+    }
+}
+function updateTotalReceivedQtyBox() {
+    let totalReceivedQty = 0;
+    const receivedQtyElements = document.querySelectorAll('.txtReceivedQtyBox');
+    receivedQtyElements.forEach(input => {
+        const value = parseFloat(input.value) || 0;
+        totalReceivedQty += value;
+    });
+    const txtReceivedQtyBoxFooter = document.querySelector("#txtReceivedQtyBox");
+    if (txtReceivedQtyBoxFooter) {
+        txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
+    }
+}
+function updateTotalBillQtyBox() {
+    let totalReceivedQty = 0;
+    const receivedQtyElements = document.querySelectorAll('.txtBillQtyBox');
+    receivedQtyElements.forEach(input => {
+        const value = parseFloat(input.value) || 0;
+        totalReceivedQty += value;
+    });
+    const txtReceivedQtyBoxFooter = document.querySelector("#txtBillQtyBox");
+    if (txtReceivedQtyBoxFooter) {
+        txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
+    }
+}
+function updateTotalRate() {
+    let totalReceivedQty = 0;
+    const receivedQtyElements = document.querySelectorAll('.txtRate');
+    receivedQtyElements.forEach(input => {
+        const value = parseFloat(input.value) || 0;
+        totalReceivedQty += value;
+    });
+    const txtReceivedQtyBoxFooter = document.querySelector("#txtRate");
+    if (txtReceivedQtyBoxFooter) {
+        txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
+    }
+}
+function updateTotalAmount() {
+    let totalReceivedQty = 0;
+    const receivedQtyElements = document.querySelectorAll('.txtAmount');
+    receivedQtyElements.forEach(input => {
+        const value = parseFloat(input.value) || 0;
+        totalReceivedQty += value;
+    });
+    const txtReceivedQtyBoxFooter = document.querySelector("#txtAmount");
+    if (txtReceivedQtyBoxFooter) {
+        txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
+    }
+}
 
