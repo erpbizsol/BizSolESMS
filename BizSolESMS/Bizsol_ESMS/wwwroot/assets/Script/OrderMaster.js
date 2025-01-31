@@ -86,6 +86,7 @@ function ShowOrderMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
+                $("#txtordertable").show();
                 const StringFilterColumn = ["Client Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = ["Order Date","Buyer PO Date"];
@@ -105,6 +106,7 @@ function ShowOrderMasterlist() {
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
+                $("#txtordertable").hide();
                 toastr.error("Record not found...!");
             }
         },

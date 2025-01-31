@@ -12,9 +12,9 @@
         /*table-layout: fixed;*/
     }
 
-   /*  table .action {
-        width: 100px !important;
-    } */
+    /*  table .action {
+            width: 100px !important;
+        } */
 
     th, .filter-table-heading {
         /* width: 50px !important; */
@@ -94,6 +94,7 @@
     .highlight {
         background-color: #f5c0bfc4;
     }
+
     .mt-3 {
         margin-top: 1.9rem !important;
     }
@@ -190,24 +191,18 @@
                                     <label for="txtReorderQty" class="col-form-label-sm fw-bold">Reorder Qty </label>
                                     <input type="text" id="txtReorderQty" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Qty" value="0">
                                 </div>
-                           
+
                                 <div class="col-md-3 col-sm-6">
                                     <label for="SubLocationItemHeaderlab" class="col-form-label-sm fw-bold" id="SubLocationItemHeaderlab">Location Item</label><span class="text-danger">*</span>
                                     <datalist id="txtItemLocationList"></datalist>
                                     <input list="txtItemLocationList" id="txtItemLocation" name="txtItemLocation" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Item Location">
                                 </div>
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-1 mt-3">
                                     <label for="txtBoxPacking"></label>
-                                    <input type="checkbox" id="txtBoxPacking" name="txtBoxPacking" class="box_border"  onchange="updateQtyBox(this.value)" />
+                                    <input type="checkbox" id="txtBoxPacking" name="txtBoxPacking" class="box_border" onchange="updateQtyBox(this.value)" />
                                     <label for="txtBoxPacking">Box Packing</label>
-
-                                   @*  <label for="txtBoxPacking" class="col-form-label-sm fw-bold">Box Packing </label>
-                                    <select id="txtBoxPacking" class="box_border form-control form-control-sm" onchange="updateQtyBox(this.value)">
-                                        <option value="N" selected>N</option>
-                                        <option value="Y">Y</option>
-                                    </select> *@
                                 </div>
-                                <div class="col-md-3 col-sm-6">
+                                <div class="col-md-2 col-sm-6">
                                     <label for="txtQtyinBox" class="col-form-label-sm fw-bold">Qtyin Box </label>
                                     <input type="text" id="txtQtyinBox" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Qtyin Box" value="0" disabled>
                                 </div>
