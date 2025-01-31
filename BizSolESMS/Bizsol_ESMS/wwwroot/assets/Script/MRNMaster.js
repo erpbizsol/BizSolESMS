@@ -105,7 +105,7 @@ function ShowMRNMasterlist() {
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-
+                
             } else {
                 $("#MRNTable").hide();
                 toastr.error("Record not found...!");
@@ -190,6 +190,7 @@ async function Edit(code) {
                     response.MRNDetails.forEach(function (Data, index) {
                         addNewRowEdit(index, Data);
                     });
+                    updateTotalReceivedQty();
                 } else {
                     toastr.info("No addresses available for this account.");
                 }
@@ -494,9 +495,9 @@ function addNewRowEdit(index, Data) {
     const table = document.getElementById("Orderdata");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-            <td><input type="text" list="txtItemBarCode" onfocus="focusblank(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" onfocus="focusblank(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" list="txtItemName" onfocus="focusblank(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtItemBarCode" onfocusout="CheckItemBarCode(this);" onfocus="focusblank(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" onfocusout="CheckItemCode(this);" onfocus="focusblank(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" onfocusout="CheckItemName(this);" onfocus="focusblank(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
@@ -563,7 +564,9 @@ function SetvalueReceivedQty(event, element) {
     if (currentRow) {
             const value = element.value;
             ReceivedQty.value = value;
-            CalculateAmount(element);
+        CalculateAmount(element);
+        updateTotalReceivedQty();
+
     }
     else {
            
@@ -598,6 +601,7 @@ function addNewRow() {
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
     const rows = table.querySelectorAll("tr");
     const lastRow = rows[rows.length - 1];
+   
     if (rows.length > 0) {
         if (!isRowComplete(lastRow)) {
             alert("Please fill in all mandatory fields in the current row before adding a new row.");
@@ -605,9 +609,9 @@ function addNewRow() {
             rowCount = rows.length;
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
-            <td><input type="text" list="txtItemBarCode" onfocus="focusblank(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" onfocus="focusblank(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" list="txtItemName" onfocus="focusblank(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtItemBarCode" onfocusout="CheckItemBarCode(this);" onfocus="focusblank(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" onfocusout="CheckItemCode(this);" onfocus="focusblank(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" onfocusout="CheckItemName(this);" onfocus="focusblank(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm " id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm " id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
@@ -625,9 +629,9 @@ function addNewRow() {
     } else {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
-            <td><input type="text" list="txtItemBarCode" onfocus="focusblank(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" onfocus="focusblank(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" list="txtItemName" onfocus="focusblank(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
+            <td><input type="text" list="txtItemBarCode" onfocusout="CheckItemBarCode(this);" onfocus="focusblank(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+            <td><input type="text" list="txtItemCode" onfocusout="CheckItemCode(this);" onfocus="focusblank(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
+            <td><input type="text" list="txtItemName" onfocusout="CheckItemName(this);" onfocus="focusblank(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
             <td><input type="text" class="txtItemAddress box_border form-control form-control-sm" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
             <td><input type="text" class="txtUOM box_border form-control form-control-sm" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
@@ -966,6 +970,8 @@ function SetvalueReceivedQtyBox(inputElement) {
         const item = ItemDetail.find(entry => entry.ItemName == itemName.value);
         ReceivedQty.value = item.QtyInBox * ReceivedQtyBox.value;
         CalculateAmount(inputElement);
+        updateTotalReceivedQty();
+
     }
 }
 function convertToUppercase(element) {
@@ -1214,4 +1220,75 @@ function ChangecolorTr() {
         }
     });
 }
+function CheckItemName(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const value = inputElement.value;
+        let isValid = false;
+        $("#txtItemName option").each(function () {
+            if ($(this).val() === value) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            const inputs = currentRow.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.value = '';
+            });;
+        }
+    }
+}
+function CheckItemCode(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const value = inputElement.value;
+        let isValid = false;
+        $("#txtItemCode option").each(function () {
+            if ($(this).val() === value) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            const inputs = currentRow.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+        }
+    }
+}
+function CheckItemBarCode(inputElement) {
+    const currentRow = inputElement.closest('tr');
+    if (currentRow) {
+        const value = inputElement.value;
+        let isValid = false;
+        $("#txtItemBarCode option").each(function () {
+            if ($(this).val() === value) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            const inputs = currentRow.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.value = ''; 
+            });
+        }
+    }
+}
+
+function updateTotalReceivedQty() {
+    let totalReceivedQty = 0;
+    const receivedQtyElements = document.querySelectorAll('.txtBillQty');
+    receivedQtyElements.forEach(input => {
+        const value = parseFloat(input.value) || 0; 
+        totalReceivedQty += value;
+    });
+    const txtReceivedQtyBoxFooter = document.querySelector("#txtBillQty");
+    if (txtReceivedQtyBoxFooter) {
+        txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
+    }
+}
+
 
