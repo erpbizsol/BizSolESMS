@@ -100,7 +100,7 @@ function ShowOrderMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Order Date`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -187,7 +187,11 @@ async function Edit(code) {
         }
     });
 }
-async function deleteItem(code) {
+async function deleteItem(code, Order) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -198,7 +202,7 @@ async function deleteItem(code) {
         toastr.error(msg1);
         return;
     }
-    if (confirm("Are you sure you want to delete this item?")) {
+    if (confirm(`Are you sure you want to delete this Order ? ${Order}`)) {
         $.ajax({
             url: `${appBaseURL}/api/OrderMaster/DeleteOrderMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',

@@ -59,7 +59,7 @@
     }
 
     .highlight {
-        background-color: #90e4ba;
+        background-color: #f5c0bfc4;
     }
 </style>
 <div class="sm-table" id="txtListpage">
@@ -121,58 +121,58 @@
                     <div class="row">
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsAddressCode1" class="col-form-label-sm fw-bold">Address Code </label><span class="text-danger">*</span>
-                            <input type="text" id="tdsAddressCode1" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" placeholder="Address Code">
+                            <input type="text" id="tdsAddressCode1" oninput="getCheckedRows(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" placeholder="Address Code">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsAddressLine1" class="col-form-label-sm fw-bold">Address Line1 </label><span class="text-danger">*</span>
-                            <input type="text" id="tdsAddressLine1" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address Line1">
+                            <input type="text" id="tdsAddressLine1" oninput="getCheckedRows(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address Line1">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsAddressLine2" class="col-form-label-sm fw-bold">Address Line2 </label>
-                            <input type="text" id="tdsAddressLine2" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address Line2">
+                            <input type="text" id="tdsAddressLine2" oninput="getCheckedRows(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address Line2">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsCitysList" class="col-form-label-sm fw-bold">City </label><span class="text-danger">*</span>
                             <datalist id="tdsCitysAllList"></datalist>
-                            <input list="tdsCitysAllList" id="tdsCitysList" onchange="FillallItemfield1(this);" oninput="updateAddressCode()" name="tdsCitysList" autocomplete="off" class="form-control form-control-sm box_border" placeholder="City">
+                            <input list="tdsCitysAllList" id="tdsCitysList" onchange="FillallItemfield1(this);" oninput="getCheckedRows(this);" name="tdsCitysList" autocomplete="off" class="form-control form-control-sm box_border" placeholder="City">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsStatelist" class="col-form-label-sm fw-bold">State </label>
                             <datalist id="tdsStateAlllist"></datalist>
-                            <input list="tdsStateAlllist" id="tdsStatelist" oninput="updateAddressCode()" name="tdsStatelist" autocomplete="off" class="form-control form-control-sm box_border" placeholder="State">
+                            <input list="tdsStateAlllist" id="tdsStatelist" oninput="getCheckedRows(this);" name="tdsStatelist" autocomplete="off" class="form-control form-control-sm box_border" disabled placeholder="State">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsNationlist" class="col-form-label-sm fw-bold">Nation </label>
                             <datalist id="tdsNationAlllist"></datalist>
-                            <input list="tdsNationAlllist" id="tdsNationlist" oninput="updateAddressCode()" name="tdsNationlist" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Nation">
+                            <input list="tdsNationAlllist" id="tdsNationlist" oninput="getCheckedRows(this);" name="tdsNationlist" autocomplete="off" class="form-control form-control-sm box_border" disabled placeholder="Nation">
                         </div>
                         <div class="col-md-3 col-sm-6">
-                            <label for="tdsPIN" class="col-form-label-sm fw-bold">PIN </label><span class="text-danger">*</span>
-                            <input type="text" id="tdsPIN" oninput="updateAddressCode()" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="6" placeholder="PIN">
+                            <label for="tdsPIN" class="col-form-label-sm fw-bold">PIN </label>
+                            <input type="text" id="tdsPIN" oninput="getCheckedRows(this);" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="6" disabled placeholder="PIN">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsGSTIN" class="col-form-label-sm fw-bold">GSTIN </label>
-                            <input type="text" id="tdsGSTIN" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="GSTIN">
+                            <input type="text" id="tdsGSTIN" oninput="getCheckedRows(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="GSTIN">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsContactPerson" class="col-form-label-sm fw-bold">Contact Person </label>
-                            <input type="text" id="tdsContactPerson" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Contact Person">
+                            <input type="text" id="tdsContactPerson" oninput="getCheckedRows(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Contact Person">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsPhone" class="col-form-label-sm fw-bold">Phone </label>
-                            <input type="text" id="tdsPhone" oninput="updateAddressCode()" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="Phone">
+                            <input type="text" id="tdsPhone" oninput="getCheckedRows(this);" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="Phone">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsMobile" class="col-form-label-sm fw-bold">Mobile </label>
-                            <input type="text" id="tdsMobile" oninput="updateAddressCode()" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="Mobile">
+                            <input type="text" id="tdsMobile" oninput="getCheckedRows(this);" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="15" placeholder="Mobile">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="tdsEmail" class="col-form-label-sm fw-bold">Email </label><span class="text-danger">*</span>
-                            <input type="text" id="tdsEmail" oninput="updateAddressCode()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="100" placeholder="Email">
+                            <input type="text" id="tdsEmail" oninput="getCheckedRows(this);" class="box_border form-control form-control-sm" autocomplete="off" maxlength="100" placeholder="Email">
                         </div>
                     </div>
                 </div>
@@ -200,7 +200,7 @@
                                                         <th class="lead-text width_cust" role="columnheader">City<span class="text-danger">*</span></th>
                                                         <th class="lead-text width_cust" role="columnheader">State
                                                         <th class="lead-Date width_cust" role="columnheader">Nation
-                                                        <th class="lead-Date width_cust" role="columnheader">PIN<span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">PIN</th>
                                                         <th class="lead-text width_cust" role="columnheader">GSTIN</th>
                                                         <th class="lead-text width_cust" role="columnheader">Contact Person</th>
                                                         <th class="lead-text width_cust" role="columnheader">Phone</th>
