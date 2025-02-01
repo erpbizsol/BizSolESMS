@@ -379,10 +379,6 @@ function Save() {
         toastr.error('Please select a UOM Name!');
         $("#txtUOM").focus();
     }
-    else if (HSNCode === "") {
-        toastr.error('Please enter a HSN Code!');
-        $("#txtHSNCode").focus();
-    }
     else if (Category === "") {
         toastr.error('Please select a Category!');
         $("#txtCategory").focus();

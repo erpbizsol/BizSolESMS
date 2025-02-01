@@ -971,79 +971,6 @@ function SetvalueReceivedQtyBox(inputElement) {
 function convertToUppercase(element) {
     element.value = element.value.toUpperCase();
 }
-//function Import(event) {
-//      const file = event.target.files[0];
-
-//      if (!file) {
-//          alert("Please select an Excel file");
-//          return;
-//      }
-//    const allowedExtensions = ['xlsx', 'xls'];
-//    const fileExtension = file.name.split('.').pop().toLowerCase();
-
-//    if (!allowedExtensions.includes(fileExtension)) {
-//        alert("Invalid file type. Please upload an Excel file (.xlsx or .xls).");
-//        event.target.value = '';  
-//        return;
-//    }
-//      const reader = new FileReader();
-
-//      reader.onload = function (e) {
-//          const data = new Uint8Array(e.target.result);
-//          const workbook = XLSX.read(data, { type: 'array' });
-//          const sheetName = workbook.SheetNames[0];
-//          const sheet = workbook.Sheets[sheetName];
-
-//          const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-//          const formattedData = convertToKeyValuePairs(jsonData);
-
-//          JsonData = formattedData;
-//          CreateTable(formattedData);
-//      };
-
-//      reader.readAsArrayBuffer(file);
-//  };
-//function convertToKeyValuePairs(data) {
-//    if (data.length < 2) return [];
-
-//    const headers = data[0].map(header => header.replace(/[\s+.]/g, ''));
-//    const rows = data.slice(1);
-
-//    const mappedData = rows.map(row => {
-//        let obj = {};
-//        headers.forEach((header, index) => {
-//            obj[header] = row[index] !== undefined ? row[index] : null;
-//            if (header.toLowerCase().includes('Packeddate') && obj[header]) {
-//                obj[header] = convertDateFormat1(obj[header]); 
-//            }
-
-//            obj[header] = obj[header];
-//        });
-//        return obj;
-//    });
-
-//    const uniqueData = [];
-//    const seenRows = new Set();
-
-//    mappedData.forEach(row => {
-//        const uniqueKey = headers.map(header => row[header]).join('|');
-
-//        if (!seenRows.has(uniqueKey)) {
-//            seenRows.add(uniqueKey);
-//            uniqueData.push(row);
-//        }
-//    });
-//    uniqueData.sort((a, b) => {
-//        const invoiceA = a["InvoiceNo"];
-//        const invoiceB = b["InvoiceNo"];
-//        if (typeof invoiceA === "string" && typeof invoiceB === "string") {
-//            return invoiceA.localeCompare(invoiceB, undefined, { numeric: true });
-//        }
-//        return invoiceA - invoiceB;
-//    });
-
-//    return uniqueData;
-//}
 function CreateTable(response) {
     if (response.length > 0) {
         $("#ImportTable").show();
@@ -1057,7 +984,7 @@ function CreateTable(response) {
         const ColumnAlignment = {
         };
         BizsolCustomFilterGrid.CreateDataTable("table-header1", "table-body1", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment,true);
-
+        ChangecolorTr();
     } else {
         $("#ImportTable").hide();
         toastr.error("Record not found...!");
@@ -1086,7 +1013,7 @@ function SaveImportFile() {
         UserMaster_Code: UserMaster_Code
     };
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/ImportMRNMasterForTemp`,
+        url: `${appBaseURL}/api/MRNMaster/ImportMRNMaster`,
         type: "POST",
         contentType: "application/json",
         dataType: "json",
@@ -1099,9 +1026,8 @@ function SaveImportFile() {
                 toastr.success(response.Msg);
                 ShowMRNMasterlist();
                 BackImport();
-            }else if (response.Status === "N") {
-                toastr.success(response.Msg);
-                BackImport();
+            } else if (response.Status === "N") {
+                toastr.error(response.Msg);
             } else {
                 toastr.error(response.Msg);
             }
@@ -1208,7 +1134,7 @@ function Import(event) {
 
             const formattedData = convertToKeyValuePairs(jsonData);
             JsonData = formattedData;
-            CreateTable(formattedData);
+            GetImportFile();
         } catch (error) {
             alert("Error reading the Excel file. Ensure it is a valid Excel format.");
             console.error(error);
@@ -1235,3 +1161,57 @@ function validateExcelFormat(data) {
 function focusblank(element) {
     $(element).val("");
 }
+function GetImportFile() {
+    const VendorName = $("#txtImportVendorName").val();
+    const VehicleNo = $("#txtImportVehicleNo").val();
+    if (VendorName == '') {
+        toastr.error("Please enter vendor name !");
+        $("#txtImportVendorName").focus();
+        return;
+    } else if (VehicleNo == '') {
+        toastr.error("Please enter Vehicle No !");
+        $("#txtImportVehicleNo").focus();
+        return;
+    } else if (JsonData.length == 0) {
+        toastr.error("Please select xlx file !");
+        $("#txtExcelFile").focus();
+        return;
+    }
+    const requestData = {
+        JsonData: JsonData,
+        VendorName: VendorName,
+        VehicleNo: VehicleNo,
+        UserMaster_Code: UserMaster_Code
+    };
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ImportMRNMasterForTemp`,
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(requestData),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Auth-Key", authKeyData);
+        },
+        success: function (response) {
+                CreateTable(response);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", xhr.responseText);
+            toastr.error("An error occurred while saving the data.");
+        },
+    });
+}
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#table-body1 tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = tds[0]?.textContent.trim();
+
+        if (columnValue === 'Y') {
+            row.style.backgroundColor = '#f5c0bf';
+        } else {
+            row.style.backgroundColor = '';
+        }
+    });
+}
+

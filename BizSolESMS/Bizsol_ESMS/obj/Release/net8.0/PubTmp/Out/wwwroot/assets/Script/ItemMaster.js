@@ -325,7 +325,7 @@ function ShowItemMasterlist() {
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code"];
+                const hiddenColumns = ["Code","DataImported"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',
@@ -336,7 +336,7 @@ function ShowItemMasterlist() {
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-
+                ChangecolorTr();
             } else {
                 $("#txtitemtable").hide();
                 toastr.error("Record not found...!");
@@ -497,7 +497,7 @@ async function deleteItem(code, ItemName) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this item? ${ItemName}`)) {
+    if (confirm(`Are you sure you want to delete this item ${ItemName} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteItem?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
@@ -784,7 +784,19 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
-
 function convertToUppercase(element) {
     element.value = element.value.toUpperCase();
+}
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#table-body tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = tds[19]?.textContent.trim();
+
+        if (columnValue === 'Y') {
+            row.style.backgroundColor = '#f5c0bf';
+        } else {
+            row.style.backgroundColor = '';
+        }
+    });
 }

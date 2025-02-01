@@ -3,7 +3,6 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 $(document).ready(function () {
     $("#ERPHeading").text("Warehouse  Master");
     $(".Number").on("keypress", function (e) {
@@ -12,7 +11,6 @@ $(document).ready(function () {
             e.preventDefault(); // Prevent the character from being entered
         }
     });
-
     $(".Number").on("input", function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
@@ -41,19 +39,13 @@ $(document).ready(function () {
             $("#txtDefaultWarehouse").focus();
         }
     });
-    //$('#txtGSTIN').on('keydown', function (e) {
-    //    if (e.key === "Enter") {
-    //        $("#txtDefaultWarehouse").focus();
-    //    }
-    //});
     $('#txtDefaultWarehouse').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
     });
- 
     GetCityDropDownList();
-    ShowItemMasterlist();
+    ShowWarehouseMaster();
     $("#txtCity").on("change", function () {
         let value = $(this).val();
         let isValid = false;
@@ -111,7 +103,7 @@ function Save() {
             if (response.Status === 'Y') {
                 toastr.success(response.Msg);
                 BackMaster();
-                ShowItemMasterlist();
+                ShowWarehouseMaster();
             } else {
                 toastr.error(response.Msg);
             }
@@ -133,8 +125,7 @@ function Save() {
         }
     });
 }
-
-function ShowItemMasterlist() {
+function ShowWarehouseMaster() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowWarehouseMaster`,
         type: 'GET',
@@ -184,13 +175,11 @@ async function CreateWarehouseMaster() {
     $("#txtCreatepage").show();
 
 }
-
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
 }
-
 async function deleteWarehouse(code, warehouse) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
@@ -216,7 +205,7 @@ async function deleteWarehouse(code, warehouse) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowItemMasterlist();
+                    ShowWarehouseMaster();
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -269,7 +258,6 @@ async function Edit(code) {
         }
     });
 }
-
 function exportTableToExcel() {
     var table = document.getElementById("table");
     var workbook = XLSX.utils.book_new();
@@ -291,7 +279,6 @@ function exportTableToExcel() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "UOMMaster.xlsx");
 }
-
 function GetCityDropDownList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetCityDropDown`,
@@ -317,7 +304,6 @@ function GetCityDropDownList() {
         }
     });
 }
-
 function ClearData() {
     $("#hftxtCode").val("0");
     $("#txtWarehouseName").val("");
@@ -330,7 +316,6 @@ function ClearData() {
     $("#txtStoreWarehouse").val("");
     $("#txtInTransitwarehouse").val("");
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Warehouse Master");
