@@ -19,17 +19,15 @@
 
 .tabSec {
     color: white;
-    width: 100px;
-    height: 28px;
+    width: 117px;
+    height: 36px;
     float: inline-end;
     font-size: 12px;
     text-align: center;
-    border-top-right-radius: 15px;
-    border-bottom-left-radius: 15px;
-    /* border-bottom-right-radius: 15px; */
-    /* border-top-left-radius: 15px; */
-    line-height: 2.4;
-    margin-top: -4px;
+    border-top-right-radius: 40px;
+    border-bottom-left-radius: 40px;
+    line-height: 3;
+    margin-top: -8px;
 }
 
 .tab-header .active {
@@ -78,14 +76,17 @@
     display: block;
 }
 
-.textCreatepage .tabs .new-header {
+    .textCreatepage .tabs .fix-header {
     position: sticky;
     top: 0;
-        background-color: #c9cae7;
+        background-color: #dddde4;
+       /*  background-color: #c9cae7; */
     z-index: 1000;
-    padding: 9px 6px;
+        padding: 8px 0 8px 9px;
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
 }
 
 .shadow-sm {
@@ -132,15 +133,20 @@
 <div class="textCreatepage" id="txtCreatepage" style="display:none;">
     <div class="card shadow-sm">
         <div class="tabs">
-            <div class="new-header tab-header">
-                <div id="tab1" class="tabSec tab active"></div>
-                <div class="icon-tab">
-                    <a class="btn-icon me-1" title="Save"><i class='bx bx-save'></i></a>
-                    <a class="btn-icon btn-danger" title="Back"><i class='bx bx-arrow-back'></i></a>
+            <div class="fix-header tab-header">
+                <div class="row">
+                    <div class="col-md-6 col-6">
+                        <div class="icon-tab">
+                            <a class="btn-icon me-1" title="Save"><i class='bx bx-save'></i></a>
+                            <a class="btn-icon btn-danger" title="Back"><i class='bx bx-arrow-back'></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-6">
+                        <div id="tab1" class="tabSec tab active"></div>
+                    </div>
                 </div>
-                <div class="icon-tab">
-                    
-                </div>
+                
             </div>
             <div class="row p-2">
                 <div class="col-md-12">
