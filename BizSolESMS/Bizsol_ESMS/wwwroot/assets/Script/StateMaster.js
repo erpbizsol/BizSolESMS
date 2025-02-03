@@ -3,7 +3,6 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 $(document).ready(function () {
     $("#ERPHeading").text("State Master");
     $(".Number").keyup(function (e) {
@@ -71,7 +70,9 @@ function ShowStateMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`State Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`State Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -135,7 +136,6 @@ function Save() {
 
     }
 }
-
 async function deleteItem(code,state) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
@@ -194,7 +194,8 @@ async function Edit(code) {
                 $("#hfCode").val(item.Code),
                 $("#txtStateCode").val(item.StateCode),
                 $("#txtStateName").val(item.StateName),
-                $("#txtCountryName").val(item.CountryName)
+                $("#txtCountryName").val(item.CountryName),
+                $("#txtsave").prop("disabled", false)
             } else {
                 toastr.error("Record not found...!");
             }
@@ -247,6 +248,11 @@ async function CreateStateMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#hfCode").val(item.Code).prop("disabled", false),
+    $("#txtStateCode").val(item.StateCode).prop("disabled", false),
+    $("#txtStateName").val(item.StateName).prop("disabled", false),
+    $("#txtCountryName").val(item.CountryName).prop("disabled", false),
+    $("#txtsave").prop("disabled", false)
     
   
 }
@@ -254,12 +260,47 @@ function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hfCode").val(item.Code).prop("disabled", false),
+    $("#txtStateCode").val(item.StateCode).prop("disabled", false),
+    $("#txtStateName").val(item.StateName).prop("disabled", false),
+    $("#txtCountryName").val(item.CountryName).prop("disabled", false),
+    $("#txtsave").prop("disabled", false)
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "State Master");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowStateMasterByCode?Code=${code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (item) {
+            if (item) {
+                $("#hfCode").val(item.Code).prop("disabled", true),
+                $("#txtStateCode").val(item.StateCode).prop("disabled", true),
+                $("#txtStateName").val(item.StateName).prop("disabled", true),
+                $("#txtCountryName").val(item.CountryName).prop("disabled", true),
+                $("#txtsave").prop("disabled", true)
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }

@@ -61,6 +61,22 @@
     .highlight {
         background-color: #f5c0bfc4;
     }
+
+    .container-fluid {
+        overflow: auto;
+        height: 81vh;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .new-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+    }
 </style>
 <div class="sm-table" id="txtListpage">
     <div class="row">
@@ -241,7 +257,7 @@
             <div class="row m-2">
                 <div class="col-md-12" style="margin-top: 30px !important;">
                     <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtsave">Save</button>
-                    <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
+                    <button class="btn btn-danger btn-height" id="btnBack" title="Back" onclick="BackMaster()">Back</button>
                 </div>
             </div>
         </div>
