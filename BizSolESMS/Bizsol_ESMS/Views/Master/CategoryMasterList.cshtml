@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -65,6 +64,26 @@
     .highlight {
         background-color: #f5c0bfc4;
     }
+
+  /*   .fixed-height-table {
+        height: auto;
+    } */
+
+    .container-fluid {
+        overflow: auto;
+        height: 81vh;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .new-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+    }
 </style>
 <div class="sm-table" id="txtListpage">
     <div class="row">
@@ -101,7 +120,7 @@
                             <label for="txtUOM" class="col-form-label-sm fw-bold">
                                 Category Name <span class="text-danger">*</span>
                             </label>
-                            <input  type="hidden" value="0" id="hftxtCode"/>
+                            <input type="hidden" value="0" id="hftxtCode" />
                             <input type="text" id="txtCategoryName" name="txtCategoryName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Category Name" maxlength="50">
                         </div>
                         <div class="col-md-2" style="margin-top: 30px !important;">

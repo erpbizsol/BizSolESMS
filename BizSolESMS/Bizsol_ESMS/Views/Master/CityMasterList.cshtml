@@ -63,6 +63,22 @@
     .highlight {
         background-color: #f5c0bfc4;
     }
+
+    .container-fluid {
+        overflow: auto;
+        height: 81vh;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .new-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+    }
 </style>
 
 <div class="sm-table" id="txtListpage">
@@ -112,7 +128,7 @@
                             <input list="txtStateNameList" id="txtStateName" name="txtStateName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="State Name">
                         </div>
                     </div>
-                   
+
                 </div>
             </div>
             <div class="row m-2">
@@ -122,7 +138,7 @@
                 </div>
             </div>
         </div>
-   
+
     </div>
 </div>
 <script src="~/assets/js/filter.js"></script>
