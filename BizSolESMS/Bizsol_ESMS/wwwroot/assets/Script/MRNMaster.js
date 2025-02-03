@@ -3,12 +3,14 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const DefaultWarehouse = sessionStorage.getItem('DefaultWarehouse');
 let AccountList = [];
 let ItemDetail = [];
 let JsonData = [];
 $(document).ready(function () {
     GetCurrentDate();
     $("#ERPHeading").text("Material Receipt Note");
+    $("#txtImportWarehouse").val(DefaultWarehouse);
     $('#txtMRNDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtVendorName").focus();
@@ -46,11 +48,17 @@ $(document).ready(function () {
     $("#txtVendorName").on("focus", function () {
          $("#txtVendorName").val("");
     });
+    $("#txtImportVendorName").on("focus", function () {
+        $("#txtImportVendorName").val("");
+    });
+    $("#txtImportWarehouse").on("focus", function () {
+        $("#txtImportWarehouse").val("");
+    });
     $("#txtVendorName").on("change", function () {
         let value = $(this).val();
         let isValid = false;
         $("#txtVendorNameList option").each(function () {
-            if ($(this).val() === value) {
+            if ($(this).val().toUpperCase() === value.toUpperCase()) {
                 const item = AccountList.find(entry => entry.AccountName == value);
                 $("#txtAddress").val(item.Address)
                 isValid = true;
@@ -67,6 +75,11 @@ $(document).ready(function () {
     });
     $('#txtImportVendorName').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#txtImportWarehouse").focus();
+        }
+    });
+    $('#txtImportWarehouse').on('keydown', function (e) {
+        if (e.key === "Enter") {
             $("#txtImportVehicleNo").focus();
         }
     });
@@ -78,6 +91,32 @@ $(document).ready(function () {
     $('#txtExcelFile').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#btnImport").focus();
+        }
+    });
+    $("#txtImportVendorName").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtVendorNameList option").each(function () {
+            if ($(this).val().toUpperCase() === value.toUpperCase()) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+        }
+    });
+    $("#txtImportWarehouse").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtImportWarehouseList option").each(function () {
+            if ($(this).val().toUpperCase() === value.toUpperCase()) {
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
         }
     });
 });
@@ -316,13 +355,16 @@ function GetWareHouseList() {
         },
         success: function (response) {
             if (response.length > 0) {
+                $('#txtImportWarehouseList').empty();
                 $('#txtWarehouse').empty();
                 let options = '';
                 response.forEach(item => {
                     options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
                 });
+                $('#txtImportWarehouseList').html(options);
                 $('#txtWarehouse').html(options);
             } else {
+                $('#txtImportWarehouseList').empty();
                 $('#txtWarehouse').empty();
             }
         },
@@ -1029,22 +1071,28 @@ function CreateTable(response) {
 function SaveImportFile() {
     const VendorName = $("#txtImportVendorName").val();
     const VehicleNo = $("#txtImportVehicleNo").val();
-     if (VendorName == '') {
+    const ImportWarehouse = $("#txtImportWarehouse").val();
+    if (VendorName == '') {
         toastr.error("Please enter vendor name !");
-         $("#txtImportVendorName").focus();
+        $("#txtImportVendorName").focus();
         return;
-     } else if (VehicleNo == '') {
-         toastr.error("Please enter Vehicle No !");
-         $("#txtImportVehicleNo").focus();
-         return;
-     } else if (JsonData.length == 0) {
-         toastr.error("Please select xlx file !");
-         $("#txtExcelFile").focus();
-         return;
+    } else if (ImportWarehouse == '') {
+        toastr.error("Please enter Warehouse !");
+        $("#txtImportWarehouse").focus();
+        return;
+    } else if (VehicleNo == '') {
+        toastr.error("Please enter Vehicle No !");
+        $("#txtImportVehicleNo").focus();
+        return;
+    } else if (JsonData.length == 0) {
+        toastr.error("Please select xlx file !");
+        $("#txtExcelFile").focus();
+        return;
     }
     const requestData = {
         JsonData: JsonData,
         VendorName: VendorName,
+        WarehouseName: ImportWarehouse,
         VehicleNo: VehicleNo,
         UserMaster_Code: UserMaster_Code
     };
@@ -1124,6 +1172,7 @@ function ClearDataImport() {
     $("#txtImportVendorName").val("");
     $("#txtImportVehicleNo").val("");
     $("#txtExcelFile").val("");
+    $("#txtImportWarehouse").val(DefaultWarehouse);
     $("#Orderdata").empty();
     GetCurrentDate();
     GetAccountMasterList();
@@ -1200,9 +1249,14 @@ function focusblank(element) {
 function GetImportFile() {
     const VendorName = $("#txtImportVendorName").val();
     const VehicleNo = $("#txtImportVehicleNo").val();
+    const ImportWarehouse = $("#txtImportWarehouse").val();
     if (VendorName == '') {
         toastr.error("Please enter vendor name !");
         $("#txtImportVendorName").focus();
+        return;
+    } else if (ImportWarehouse == '') {
+        toastr.error("Please enter Warehouse !");
+        $("#txtImportWarehouse").focus();
         return;
     } else if (VehicleNo == '') {
         toastr.error("Please enter Vehicle No !");
@@ -1216,6 +1270,7 @@ function GetImportFile() {
     const requestData = {
         JsonData: JsonData,
         VendorName: VendorName,
+        WarehouseName: ImportWarehouse,
         VehicleNo: VehicleNo,
         UserMaster_Code: UserMaster_Code
     };
