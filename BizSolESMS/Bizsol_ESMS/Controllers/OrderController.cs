@@ -34,5 +34,12 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion  BoxUnloading 
+
+        #region  BoxValidation 
+        public IActionResult BoxValidation()
+        {
+            return View();
+        }
+        #endregion  BoxValidation 
     }
 }
