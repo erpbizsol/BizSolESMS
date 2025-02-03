@@ -1,5 +1,129 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script src="~/assets/script/BoxUnloading.js"></script>
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        /* background: #fff;  */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+    .tab-header {
+        display: flex;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+    .tab-header div {
+        flex: 0.1;
+        text-align: center;
+        padding: 7px 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        border-bottom-right-radius: 40px;
+        border-top-left-radius: 40px;
+        font-weight:bold;
+    }
+
+    .tab-header div:hover {
+        background: #586e87;
+        color: white;
+    }
+
+    .tab-header .active {
+        background: #1d4b7d;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+    }
+    .toast-container {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d35950;
+        color: white;
+        padding: 35px 55px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10000;
+        font-size: 18px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    table {
+        width: 30% !important;
+    }
+
+    table > thead, th {
+        width: 59px !important;
+    }
+</style>
+    <div class="card shadow-sm" style="background-color:#e9e9ef">
+        <div class="tabs">
+            <div class="tab-header">
+                <div id="tab1" class="tab active" style="color:white">UNLOADING</div>
+            </div>
+            <div class="row p-2">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No</label><span class="text-danger">*</span>
+                            <input type="text" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No.." onfocus="this.select()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3" sstyle="display:none" id="UnloadingTable">
+        <div class="card-body mt-2">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-table">
+            </div>
+        </div>
+    </div>
+<div id="overlay" class="overlay"></div>
+<div id="toast" class="toast-container"></div>
+<script src="~/assets/js/filter.js"></script>
