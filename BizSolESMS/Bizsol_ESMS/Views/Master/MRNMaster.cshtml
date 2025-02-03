@@ -17,25 +17,19 @@
     padding: 0.7rem;
 } */
 
-.tab-header {
-    display: flex;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-    height: 36px;
-}
-.tab-header div {
-    flex: 0.1;
-    text-align: center;
-    padding: 7px 16px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    border-bottom-right-radius: 40px;
-    border-top-left-radius: 40px;
-    font-weight:bold;
-}
-
-.tab-header div:hover {
-    background: #586e87;
+.tabSec {
     color: white;
+    width: 100px;
+    height: 28px;
+    float: inline-end;
+    font-size: 12px;
+    text-align: center;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    /* border-bottom-right-radius: 15px; */
+    /* border-top-left-radius: 15px; */
+    line-height: 2.4;
+    margin-top: -4px;
 }
 
 .tab-header .active {
@@ -87,10 +81,29 @@
 .textCreatepage .tabs .new-header {
     position: sticky;
     top: 0;
-    background-color: #dddde4;
+        background-color: #c9cae7;
     z-index: 1000;
+    padding: 9px 6px;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
 }
 
+.shadow-sm {
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+}
+.btn-icon{
+    font-size: 14px;
+    border-radius: 20px;
+    background: #1d4b7d;
+    color: #fff;
+    padding: 6px;
+}
+
+.btn-danger {
+    background-color: #ab1624;
+}
 
 </style>
 <div id="txtListpage" style="display:block;">
@@ -117,10 +130,17 @@
     </div>
 </div>
 <div class="textCreatepage" id="txtCreatepage" style="display:none;">
-    <div class="card shadow-sm" style="background-color:#e9e9ef">
+    <div class="card shadow-sm">
         <div class="tabs">
             <div class="new-header tab-header">
-                <div id="tab1" class="tab active" style="color:white"></div>
+                <div id="tab1" class="tabSec tab active"></div>
+                <div class="icon-tab">
+                    <a class="btn-icon me-1" title="Save"><i class='bx bx-save'></i></a>
+                    <a class="btn-icon btn-danger" title="Back"><i class='bx bx-arrow-back'></i></a>
+                </div>
+                <div class="icon-tab">
+                    
+                </div>
             </div>
             <div class="row p-2">
                 <div class="col-md-12">
