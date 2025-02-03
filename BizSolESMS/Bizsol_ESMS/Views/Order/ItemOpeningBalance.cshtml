@@ -8,17 +8,18 @@
 <script src="~/assets/script/ItemOpeningBalance.js"></script>
 
 <style>
-    .table th{
-        width:100px;
+    .table th {
+        width: 100px;
     }
 
-    #table th:last-child{
+    #table th:last-child {
         width: 20px;
     }
 
     .table-wrapper {
         height: 350px !important;
     }
+
     .tabs {
         width: 100%;
         max-width: 2000px;
@@ -33,28 +34,28 @@
         display: flex;
         /* background: #e3e7ed; */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-        height:36px;
+        height: 36px;
     }
 
-    .tab-header div {
-        flex: 0.1;
-        text-align: center;
-        padding: 7px 16px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        border-bottom-right-radius: 40px;
-        border-top-left-radius: 40px;
-        font-weight: bold;
-    }
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 7px 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
+            border-top-left-radius: 40px;
+            font-weight: bold;
+        }
 
-    .tab-header div:hover {
-        background: #586e87;
-        color: white;
-    }
+            .tab-header div:hover {
+                background: #586e87;
+                color: white;
+            }
 
-    .tab-header .active {
-        background: #1d4b7d;
-    }
+        .tab-header .active {
+            background: #1d4b7d;
+        }
 
     .tab-content {
         display: none;
@@ -63,14 +64,15 @@
         border-radius: 5px;
     }
 
-    .tab-content.active {
-        display: block;
-    }
+        .tab-content.active {
+            display: block;
+        }
 
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
+
     .datepicker td, .datepicker th {
         border-radius: 20px !important;
     }
@@ -87,16 +89,29 @@
     .highlight {
         background-color: #f5c0bfc4;
     }
-</style>
 
+</style>
+ 
 <div id="txtCreatepage">
     <div class="card shadow-sm" style="background-color:#e9e9ef">
         <div class="tabs">
             <div class="tab-header">
                 <div id="tab1" class="tab active" style="color:white">New</div>
             </div>
+            <div class="row pt-4">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
+                            <datalist id="txtWarehouseList"></datalist>
+                            <input list="txtWarehouseList" id="txtWarehouse" onfocusout="CheckWarehouse(this);" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Warehouse..">
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row pt-4" id="divOrderBooking mb-2">
                 <div class="accordion accordion-flush" id="accordionFlushOrder">
+
                     <div class="accordion-item tab active">
                         <h2 class="accordion-header tab-header .active" id="flush-headingOne">
                             <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
@@ -111,25 +126,25 @@
                                             <table id="table" class="table">
                                                 <thead role="rowgroup" id="table-header">
                                                     @* <tr role="row">
-                                                        <th class="lead-Date width_cust" role="columnheader">Category<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Group<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Sub Group<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Brand<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Warehouse<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Opening Balance<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Delete</th>
+                                                    <th class="lead-Date width_cust" role="columnheader">Category<span class="text-danger">*</span></th>
+                                                    <th class="lead-Date width_cust" role="columnheader">Group<span class="text-danger">*</span></th>
+                                                    <th class="lead-Date width_cust" role="columnheader">Sub Group<span class="text-danger">*</span></th>
+                                                    <th class="lead-Date width_cust" role="columnheader">Brand<span class="text-danger">*</span></th>
+                                                    <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
+                                                    <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
+                                                    <th class="lead-text width_cust" role="columnheader">Warehouse<span class="text-danger">*</span></th>
+                                                    <th class="lead-text width_cust" role="columnheader">Opening Balance<span class="text-danger">*</span></th>
+                                                    <th class="lead-text width_cust" role="columnheader">Delete</th>
                                                     </tr> *@
-                                                   
+
                                                 </thead>
                                                 <tbody role="rowgroup" id="table-body"></tbody>
                                                 @* <tfoot>
-                                                    <tr role="row" id="trAddBtn">
-                                                        <td style="text-align: left;">
-                                                            <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
-                                                        </td>
-                                                    </tr>
+                                                <tr role="row" id="trAddBtn">
+                                                <td style="text-align: left;">
+                                                <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
+                                                </td>
+                                                </tr>
                                                 </tfoot> *@
                                             </table>
                                         </div>
@@ -142,9 +157,55 @@
                     </div>
                 </div>
             </div>
-            <datalist id="txtItemCode"></datalist>
-            <datalist id="txtItemName"></datalist>
-            <datalist id="txtWarehouse"></datalist>
+        </div>
+        <!-- Modal -->
+        <div class="modal position-absolute" id="staticBackdrop" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header tab-header" style="background-color:#e9e9ef">
+                        <div id="tab1" class="tab active" style="color:white">New</div>
+                        <button type="button" class="close modal-close" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row pt-4">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtItemBarCode" class="col-form-label-sm fw-bold">Item Bar Code</label><span class="text-danger">*</span>
+                                        <datalist id="txtItemBarCodelist"></datalist>
+                                        <input list="txtItemBarCodelist" id="txtItemBarCode" onchange="FillallItemfield(this);" class=" box_border form-control form-control-sm" autocomplete="off" placeholder="Item Bar Code..">
+                                    </div>
+
+
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code</label><span class="text-danger">*</span>
+                                        <datalist id="txtItemCodelist"></datalist>
+                                        <input list="txtItemCodelist" id="txtItemCode" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Code..">
+                                    </div>
+
+
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtItemName" class="col-form-label-sm fw-bold">Item Name</label><span class="text-danger">*</span>
+                                        <datalist id="txtItemNamelist"></datalist>
+                                        <input list="txtItemNamelist" id="txtItemName" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Name..">
+                                    </div>
+
+
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtOpeningBalance" class="col-form-label-sm fw-bold ">Opening Balance</label><span class="text-danger">*</span>
+                                        <input type="text" id="txtOpeningBalance" onkeypress="return OnChangeNumericTextBox(event,this);" class="box_border form-control form-control-sm text-right" autocomplete="off" placeholder="Opening Balance..">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success btn-height" id="txtbtnSave" onclick="confirmSave()">Save</button>
+                            <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
