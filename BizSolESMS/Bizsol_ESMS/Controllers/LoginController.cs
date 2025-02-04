@@ -61,19 +61,28 @@ namespace Bizsol_ESMS.Controllers
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlPassword", dr["pwd"].ToString());
 
                                 HttpContext.Session.SetString("ConnectionString", connectionMYSqlString);
+                                CookieOptions options = new CookieOptions
+                                {
+                                    Expires = DateTime.UtcNow.AddMinutes(30),
+                                    HttpOnly = false,
+                                    Secure = true,
+                                    SameSite = SameSiteMode.Strict
+                                };
+                                Response.Cookies.Append("CompanyCode", model.CompanyCode, options);
                                 ViewBag.CompanyLogin = true;
                                 ViewBag.IsValidCompanyCode = false;
-                                return Json(new { success = true, message = "Company code is valid." });
+                                return Json(new { success = true, message = "Company code is valid.", model.CompanyCode });
                             }
                         }
                         dr.Close();
                     }
                     connection.Close();
+                    Response.Cookies.Delete("CompanyCode"); 
                 }
+                
                 return Json(new { success = false, message = "Invalid company code!" });
             }
         }
-
         [HttpPost]
         public IActionResult Authenticate([FromBody] LoginModel model)
         {
