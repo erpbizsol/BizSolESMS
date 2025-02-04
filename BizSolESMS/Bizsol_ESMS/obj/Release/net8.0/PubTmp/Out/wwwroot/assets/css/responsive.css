@@ -8,12 +8,11 @@
         text-align: center !important;
     }
 
-    .main-content {
+    /*.main-content {
         background-size: contain !important; 
-        background-position: top !important; /* Adjust the focus point */
-        height: auto;
+        background-position: top !important;*/ /* Adjust the focus point */
+        /*height: auto;
         min-height: 50vh !important;
-    }
+    }*/
 }
-
 

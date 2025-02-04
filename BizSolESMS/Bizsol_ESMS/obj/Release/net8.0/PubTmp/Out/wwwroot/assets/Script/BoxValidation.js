@@ -5,16 +5,23 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
-    $("#ERPHeading").text("Box-Unloading");
+    $("#ERPHeading").text("Box-Validation");
     $('#txtBoxNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             BoxUnloading();
             $("#txtBoxNo").focus();
         }
     });
-});
-$('#txtBoxNo').on('focusout', function (e) {
-    BoxUnloading();
+    $("#txtScanToggle").on("change", function () {
+        let value = $(this).prop("checked") ? "Scan" : "Manual";
+        if (value == 'Scan') {
+            //$("#txtScanProduct").prop("disabled", false);
+            $("#divScanProduct").show();
+        } else {
+            //$("#txtScanProduct").prop("disabled", true);
+            $("#divScanProduct").hide();
+        }
+    });
 });
 function BoxUnloading() {
     if ($("#txtBoxNo").val() == '') {
@@ -43,8 +50,8 @@ function BoxUnloading() {
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
-                    const StringdoubleFilterColumn = ["Item Name", "Item Code","Item Bar Code"];
-                    const hiddenColumns = ["Msg","Status"];
+                    const StringdoubleFilterColumn = ["Item Name", "Item Code", "Item Bar Code"];
+                    const hiddenColumns = ["Msg", "Status"];
                     const ColumnAlignment = {
                         Qty: "right"
                     };
@@ -79,7 +86,7 @@ function showToast(Msg) {
     setTimeout(() => toast.style.opacity = "1", 10);
     let blinkInterval = setInterval(() => {
         toast.style.visibility = (toast.style.visibility === "hidden") ? "visible" : "hidden";
-    }, 250);
+    }, 80);
     setTimeout(() => {
         clearInterval(blinkInterval);
         toast.style.visibility = "visible";

@@ -13,9 +13,6 @@ $(document).ready(function () {
         }
     });
 });
-$('#txtBoxNo').on('focusout', function (e) {
-    BoxUnloading();
-});
 function BoxUnloading() {
     if ($("#txtBoxNo").val() == '') {
         toastr.error("Please enter a Box No !");

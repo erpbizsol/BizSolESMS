@@ -37,7 +37,6 @@ $(document).ready(function () {
             firstInput.focus();
         }
     });
-    ShowMRNMasterlist();
     GetAccountMasterList();
     GetItemDetails();
     GetWareHouseList();
@@ -119,10 +118,39 @@ $(document).ready(function () {
             $(this).val("");
         }
     });
+    $('#txtFromDate').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtToDate").focus();
+        }
+    });
+    $('#txtToDate').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtShow").focus();
+        }
+    });
+    $('#txtShow').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            ShowMRNMasterlist();
+        }
+    });
+    $('#txtShow').on('click', function (e) {
+            ShowMRNMasterlist();
+    });
 });
 function ShowMRNMasterlist() {
+    var FromDate = convertDateFormat2($("#txtFromDate").val());
+    var ToDate = convertDateFormat2($("#txtToDate").val());
+    if (FromDate == '') {
+        toastr.error("Please select MRN Date !");
+        $("#txtMRNDate").focus();
+        return;
+    } else if (ToDate == '') {
+        toastr.error("Please enter vendor name !");
+        $("#txtVendorName").focus();
+        return;
+    }
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/GetMRNMasterList`,
+        url: `${appBaseURL}/api/MRNMaster/GetMRNMasterList?FromDate=${FromDate}&ToDate=${ToDate}`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -377,6 +405,7 @@ function GetCurrentDate() {
         success: function (response) {
             if (response.length > 0) {
                 DatePicker(response[0].Date);
+                FromDatePicker(response[0].Date);
             } 
         },
         error: function (xhr, status, error) {
@@ -722,7 +751,7 @@ function convertDateFormat(dateString) {
     const [day, month, year] = dateString.split('/');
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const monthAbbreviation = monthNames[parseInt(month) - 1];
-    return `${day} -${monthAbbreviation} -${year}`;
+    return `${day}-${monthAbbreviation}-${year}`;
 }
 function setupDateInputFormatting() {
     $('#txtMRNDate').on('input', function () {
@@ -742,6 +771,38 @@ function setupDateInputFormatting() {
         }
     });
     $('#txtChallanDate').on('input', function () {
+        let value = $(this).val().replace(/[^\d]/g, '');
+
+        if (value.length >= 2 && value.length < 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        } else if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+        }
+        $(this).val(value);
+
+        if (value.length === 10) {
+            validateChallanDate(value);
+        } else {
+            $(this).val(value);
+        }
+    });
+    $('#txtFromDate').on('input', function () {
+        let value = $(this).val().replace(/[^\d]/g, '');
+
+        if (value.length >= 2 && value.length < 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        } else if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+        }
+        $(this).val(value);
+
+        if (value.length === 10) {
+            validateChallanDate(value);
+        } else {
+            $(this).val(value);
+        }
+    });
+    $('#txtToDate').on('input', function () {
         let value = $(this).val().replace(/[^\d]/g, '');
 
         if (value.length >= 2 && value.length < 4) {
@@ -805,13 +866,6 @@ function validateDate(value) {
         $('#txtMRNDate').val('');
 
     }
-}
-function DatePicker(date) {
-    $('#txtMRNDate, #txtChallanDate').val(date);
-    $('#txtMRNDate, #txtChallanDate').datepicker({
-        format: 'dd/mm/yyyy',
-        autoclose: true,
-    });
 }
 function FillallItemfield(inputElement, value) {
 
@@ -944,12 +998,6 @@ function CalculateAmount(inputElement) {
             updateTotalAmount();
         }
      }
-}
-function convertDateFormat(dateString) {
-    const [day, month, year] = dateString.split('/');
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthAbbreviation = monthNames[parseInt(month) - 1];
-    return `${day}-${monthAbbreviation}-${year}`;
 }
 function GetRate(VendorName, ItemName) {
     return new Promise((resolve, reject) => {
@@ -1426,5 +1474,62 @@ function updateTotalAmount() {
     if (txtReceivedQtyBoxFooter) {
         txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
     }
+}
+function validateFromDate(value) {
+    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    let isValidFormat = regex.test(value);
+
+    if (isValidFormat) {
+        let parts = value.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parseInt(parts[2], 10);
+
+        let date = new Date(year, month - 1, day);
+
+        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
+
+            $(this).val(value);
+        } else {
+            $('#txtFromDate').val('');
+
+        }
+    } else {
+        $('#txtFromDate').val('');
+
+    }
+}
+function DatePicker(date) {
+    $('#txtMRNDate, #txtChallanDate,#txtToDate').val(date);
+    $('#txtMRNDate, #txtChallanDate,#txtToDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+    });
+}
+function FromDatePicker(dateStr) {
+    let parts = dateStr.split('/');
+    if (parts.length !== 3) return; 
+    let day = parseInt(parts[0], 10);
+    let month = parseInt(parts[1], 10) - 1; 
+    let year = parseInt(parts[2], 10);
+    if (year < 100) {
+        year += 2000;
+    }
+    let firstDateOfMonth = new Date(year, month, 1);
+    let formattedDate = ('0' + firstDateOfMonth.getDate()).slice(-2) + '/' +
+        ('0' + (firstDateOfMonth.getMonth() + 1)).slice(-2) + '/' +
+        firstDateOfMonth.getFullYear();
+    $('#txtFromDate').val(formattedDate);
+    ShowMRNMasterlist();
+    $('#txtFromDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+    });
+}
+function convertDateFormat2(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${day}/${monthAbbreviation}/${year}`;
 }
 
