@@ -125,7 +125,9 @@ function ShowAccountMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Account Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Account Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -152,12 +154,16 @@ async function CreateItemMaster() {
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
     addNewRow();
+    $("#txtsave").prop("disabled", false);
+    disableFields(false);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
     ClearData1();
+    $("#txtsave").prop("disabled", false);
+    disableFields(false);
 }
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -184,6 +190,7 @@ async function Edit(code) {
                     $("#txtDisplayName").val(accountMaster.DisplayName || "");
                     $("#txtPANNo").val(accountMaster.PANNo || "");
                     $("#txtIsMSME").val(accountMaster.IsMSME || "");
+                    disableFields(false);
                     if (accountMaster.IsClient == 'N') {
                         $("#txtIsClient").prop("checked",false);
                     }
@@ -990,5 +997,62 @@ function ClearData1() {
     $("#tdsEmail").val("")
 }
 
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowAccountMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.AccountMaster && response.AccountMaster.length > 0) {
+                    disableFields(true);
+                    const accountMaster = response.AccountMaster[0];
+                    $("#hfCode").val(accountMaster.Code || "").prop("disabled", true);
+                    $("#txtAccountName").val(accountMaster.AccountName || "").prop("disabled", true);
+                    $("#txtDisplayName").val(accountMaster.DisplayName || "").prop("disabled", true);
+                    $("#txtPANNo").val(accountMaster.PANNo || "").prop("disabled", true);
+                    $("#txtIsMSME").val(accountMaster.IsMSME || "").prop("disabled", true);
+                    $("#txtIsClient").prop("disabled", true);
+                    $("#txtIsVendor").prop("disabled", true);
+                    $("#txtsave").prop("disabled", true);
 
+                } else {
+                    toastr.warning("Account master data is missing.");
+                }
+                $("#Orderdata").empty();
+                if (response.AccountAddress && response.AccountAddress.length > 0) {
+                    response.AccountAddress.forEach(function (address, index) {
 
+                        $("#txtAddressCode").val(index, address).prop("disabled", true);
+                        addNewRowEdit(index, address);
+                    });
+                } else {
+                    toastr.info("No addresses available for this account.");
+                }
+                disableFields(true);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
+   
+}
+
+// Function to disable or enable form fields
+function disableFields(disable) {
+    $("input, select, button").not("#btnBack").prop("disabled", disable);
+}

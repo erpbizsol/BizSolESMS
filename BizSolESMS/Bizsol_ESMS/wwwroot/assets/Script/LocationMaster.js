@@ -13,7 +13,6 @@ $(document).ready(function () {
     LocationList();
     GetModuleMasterCode()
 });
-
 function LocationList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowLocationMaster`,
@@ -37,7 +36,9 @@ function LocationList() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteLocation('${item.Code}','${item[`Location Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteLocation('${item.Code}','${item[`Location Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -88,7 +89,6 @@ function Save() {
             });
         }
 }
-
 async function Create() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -97,15 +97,20 @@ async function Create() {
     }
     ClearData();
     $("#tab1").text("NEW");
-
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtLocationName").prop("disabled", false);
+    $("#txtsave").prop("disabled", false);
 
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtLocationName").prop("disabled", false);
+    $("#txtsave").prop("disabled", false);
 }
 async function deleteLocation(code, location) {
     $('table').on('click', 'tr', function () {
@@ -145,7 +150,6 @@ async function deleteLocation(code, location) {
         });
     }
 }
-
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -168,6 +172,7 @@ async function Edit(code) {
                     response.forEach(function (item) {
                         $("#hftxtCode").val(item.Code);
                         $("#txtLocationName").val(item.LocationName);
+                        $("#txtsave").prop("disabled", false);
                     });
                 } else {
                     toastr.error("Record not found...!");
@@ -182,7 +187,6 @@ async function Edit(code) {
         }
     });
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Location Master (Bin)");
@@ -190,7 +194,44 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
-
 function ClearData() {
+    $("#hftxtCode").val("0");
     $("#txtLocationName").val("");
+}
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowLocationMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.length > 0) {
+                    response.forEach(function (item) {
+                        $("#hftxtCode").val(item.Code).prop("disabled", true);
+                        $("#txtLocationName").val(item.LocationName).prop("disabled", true);
+                        $("#txtsave").prop("disabled", true);
+                    });
+                } else {
+                    toastr.error("Record not found...!");
+                }
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
 }

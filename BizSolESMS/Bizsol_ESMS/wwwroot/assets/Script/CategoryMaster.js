@@ -17,7 +17,6 @@ $(document).ready(function () {
     ShowCategoryMasterlist();
     GetModuleMasterCode();
 });
-
 function Save() {
         const CategoryName = $("#txtCategoryName").val();
         if (CategoryName === "") {
@@ -55,7 +54,6 @@ function Save() {
         }
     
 }
-
 function ShowCategoryMasterlist() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowCategoryMaster`,
@@ -79,7 +77,9 @@ function ShowCategoryMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteCatagery('${item.Code}','${item[`Category Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteCatagery('${item.Code}','${item[`Category Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -104,16 +104,20 @@ async function CreateCategoryMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtCategoryName").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 
 }
-
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtCategoryName").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 
 }
-
 async function deleteCatagery(code, category) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
@@ -152,7 +156,6 @@ async function deleteCatagery(code, category) {
         });
     }
 }
-
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -171,8 +174,9 @@ async function Edit(code) {
         success: function (response) {
             if (response.length > 0) {
                 response.forEach(function (item) {
-                    $("#hftxtCode").val(item.Code)
-                    $("#txtCategoryName").val(item.CategoryName)
+                    $("#hftxtCode").val(item.Code);
+                    $("#txtCategoryName").val(item.CategoryName);
+                    $("#txtbtnSave").prop("disabled", false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -183,7 +187,6 @@ async function Edit(code) {
         }
     });
 }
-
 function ClearData() {
     $("#hftxtCode").val("0");
     $("#txtCategoryName").val("");
@@ -209,11 +212,42 @@ function exportTableToExcel() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "CatageryMaster.xlsx");
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Category Master");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+async function View(code) {
+    //const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    //if (hasPermission == false) {
+    //    toastr.error(msg);
+    //    return;
+    //}
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowCategoryMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $("#hftxtCode").val(item.Code).prop("disabled", true);
+                    $("#txtCategoryName").val(item.CategoryName).prop("disabled", true);
+                    $("#txtbtnSave").prop("disabled", true);
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }

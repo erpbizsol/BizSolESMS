@@ -89,6 +89,22 @@
     .highlight {
         background-color: #f5c0bfc4;
     }
+
+    .container-fluid {
+        overflow: auto;
+        height: 81vh;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .new-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+    }
 </style>
 <script>
     var Profile = '@ViewBag.Profile';
@@ -152,7 +168,7 @@
                                     </div>
                                     <div class="col-md-4 col-sm-6">
                                         <label for="txtEmailId" class="col-form-label-sm fw-bold">Email Id<span class="text-danger">*</span></label>
-                                        <input type="text" id="txtEmailId" class="box_border form-control form-control-sm" placeholder="Enter Email Id" autocomplete="off" maxlength="20">
+                                        <input type="text" id="txtEmailId" class="box_border form-control form-control-sm" placeholder="Enter Email Id" autocomplete="off" maxlength="50">
                                     </div>
 
                                 </div>

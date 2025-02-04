@@ -8,89 +8,114 @@
 
 <script src="~/assets/script/MRNMaster.js"></script>
 <style>
-/* .tabs {
-    width: 100%;
-    max-width: 2000px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    overflow: hidden;
-    padding: 0.7rem;
-} */
+    /* .tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+        background:#fff;
+    } */
 
-.tab-header {
-    display: flex;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-    height: 36px;
-}
-.tab-header div {
-    flex: 0.1;
-    text-align: center;
-    padding: 7px 16px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    border-bottom-right-radius: 40px;
-    border-top-left-radius: 40px;
-    font-weight:bold;
-}
+    .tabSec {
+        color: white;
+        width: 117px;
+        height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        margin-top: -8px;
+        background: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    }
 
-.tab-header div:hover {
-    background: #586e87;
-    color: white;
-}
+    .tab-header .active {
+        background: #1d4b7d;
+    }
 
-.tab-header .active {
-    background: #1d4b7d;
-}
+    .tab-header {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    }
 
-.tab-content {
-    display: none;
-    padding: 16px;
-    border: 1px solid lightgray;
-    border-radius: 5px;
-}
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
 
-.tab-content.active {
-    display: block;
-}
+        .tab-content.active {
+            display: block;
+        }
 
-.tab[disabled] {
-    cursor: not-allowed;
-    opacity: 0.9;
-}
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
 
-.datepicker td, .datepicker th {
-    border-radius: 20px !important;
-}
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
+    }
 
-.datepicker table tr td, .datepicker table tr td {
-    padding: 8px 9px !important;
-    height: 16px !important;
-}
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
 
-.datepicker table tfoot {
-    display: none;
-}
+    .datepicker table tfoot {
+        display: none;
+    }
 
-.fixed-height-table {
-    height: auto;
-}
+    .fixed-height-table {
+        height: auto;
+    }
 
-.container-fluid {
-    overflow: auto;
-    height: 81vh;
-}
+    .container-fluid {
+        overflow: auto;
+        height: 81vh;
+    }
 
-.page-content {
-    display: block;
-}
+    .page-content {
+        display: block;
+    }
 
-.textCreatepage .tabs .new-header {
-    position: sticky;
-    top: 0;
-    background-color: #dddde4;
-    z-index: 1000;
-}
+    .textCreatepage .tabs .fix-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0 8px 9px;
+        transition: background 0.3s ease;
+        /* border-radius: 30px; */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
 
+    .shadow-sm {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 20px;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-danger {
+        background-color: #ab1624;
+    }
+
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
 
 </style>
 <div id="txtListpage" style="display:block;">
@@ -137,23 +162,33 @@
         </div>
     </div>
 </div>
-<div class="textCreatepage" id="txtCreatepage" style="display:none;">
+<div class="textCreatepage" id="txtCreatepage" style="display:none;box-shadow: rgb(130 127 127 / 200%) 0px 4px 6px; border-radius: 10px;">
     <div class="card shadow-sm" style="background-color:#e9e9ef">
         <div class="tabs">
-            <div class="new-header tab-header">
-                <div id="tab1" class="tab active" style="color:white"></div>
+            <div class="fix-header tab-header">
+                <div class="row">
+                    <div class="col-md-6 col-6">
+                        <div class="icon-tab">
+                            <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                            <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-6">
+                        <div id="tab1" class="tabSec tab active" style="font-weight: bold;"></div>
+                    </div>
+                </div>
             </div>
             <div class="row p-2">
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-3 col-sm-6">
-                         <label for="txtMRNNo" class="col-form-label-sm fw-bold">MRN No</label><span class="text-danger">*</span>
-                        <input type="text" id="txtMRNNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="MRN No.." disabled>
+                            <label for="txtMRNNo" class="col-form-label-sm fw-bold">MRN No</label><span class="text-danger">*</span>
+                            <input type="text" id="txtMRNNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="MRN No.." disabled>
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="txtMRNDate" class="col-form-label-sm fw-bold">MRN Date</label><span class="text-danger">*</span>
                             <input type="hidden" id="hfCode" value="0">
-                        <input type="text" id="txtMRNDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="MRN Date..">
+                            <input type="text" id="txtMRNDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="MRN Date..">
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="txtVendorName" class="col-form-label-sm fw-bold">Vendor Name</label><span class="text-danger">*</span>
@@ -162,24 +197,24 @@
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="txtAddress" class="col-form-label-sm fw-bold">
-                                Address</label><span class="text-danger">*</span>
-                        <input type="text" id="txtAddress" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address.." disabled>
+                                Address
+                            </label><span class="text-danger">*</span>
+                            <input type="text" id="txtAddress" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address.." disabled>
                         </div>
                     </div>
                     <div class="row">
-                    <div class="col-md-3 col-sm-6">
+                        <div class="col-md-3 col-sm-6">
                             <label for="txtChallanNo" class="col-form-label-sm fw-bold">Bill /Challan No</label><span class="text-danger">*</span>
-                        <input type="text" id="txtChallanNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Bill/Challan No..">
-                    </div>
-                    <div class="col-md-3 col-sm-6">
+                            <input type="text" id="txtChallanNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Bill/Challan No..">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
                             <label for="txtChallanDate" class="col-form-label-sm fw-bold">Bill/Challan Date</label><span class="text-danger">*</span>
-                        <input type="text" id="txtChallanDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200">
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
-                            <input type="text" id="txtVehicleNo" onkeyup="convertToUppercase(this);" class="box_border form-control form-control-sm" maxlength="50"  autocomplete="off" placeholder="Vehicle No..">
-                    </div>
-                   
+                            <input type="text" id="txtChallanDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
+                            <input type="text" id="txtVehicleNo" onkeyup="convertToUppercase(this);" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Vehicle No..">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -199,20 +234,20 @@
                                             <table id="tblorderbooking" class="table">
                                                 <thead role="rowgroup" class="text-sm-center">
                                                     <tr role="row">
-                                                    <th class="lead-Date width_cust" role="columnheader">Item Barcode<span class="text-danger">*</span></th>
-                                                    <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Item Location</th>
-                                                    <th class="lead-text width_cust" role="columnheader">UOM</th>
-                                                    <th class="lead-Date width_cust" role="columnheader">Bill Qty Box</th>
-                                                    <th class="lead-Date width_cust" role="columnheader">Received Qty Box</th>
-                                                    <th class="lead-text width_cust" role="columnheader">Bill Qty<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Received Qty<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Rate<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Amount<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Warehouse<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Remarks</th>
-                                                     <th class="lead-text width_cust" role="columnheader">Delete</th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Item Barcode<span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Item Location</th>
+                                                        <th class="lead-text width_cust" role="columnheader">UOM</th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Bill Qty Box</th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Received Qty Box</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Bill Qty<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Received Qty<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Rate<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Amount<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Warehouse<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Remarks</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Delete</th>
                                                     </tr>
                                                     <!-- end table row-->
                                                 </thead>
@@ -240,25 +275,37 @@
                     </div>
                 </div>
             </div>
-        <datalist id="txtItemBarCode"></datalist>
-        <datalist id="txtItemName"></datalist>
-        <datalist id="txtItemCode"></datalist>
-        <datalist id="txtWarehouse"></datalist>
-        <div class="row m-2">
-            <div class="col-md-12" style="margin-top: 30px !important;">
-                <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
-                <button class="btn btn-danger btn-height" onclick="BackMaster()">Back</button>
-            </div>
+            <datalist id="txtItemBarCode"></datalist>
+            <datalist id="txtItemName"></datalist>
+            <datalist id="txtItemCode"></datalist>
+            <datalist id="txtWarehouse"></datalist>
+           @*  <div class="row m-2">
+                <div class="col-md-12" style="margin-top: 30px !important;">
+                    <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
+                    <button class="btn btn-danger btn-height" id="btnBack" onclick="BackMaster()">Back</button>
+                </div>
+            </div> *@
         </div>
-    </div>
     </div>
 </div>
 
-<div id="txtImportPage" style="display:none;">
+<div class="textCreatepage" id="txtImportPage" style="display:none;box-shadow: rgb(130 127 127 / 200%) 0px 4px 6px; border-radius: 10px;">
     <div class="card shadow-sm" style="background-color:#e9e9ef">
         <div class="tabs">
-            <div class="tab-header">
-                <div id="tab2" class="tab active" style="color:white">IMPORT</div>
+            <div class="fix-header tab-header">
+                <div class="row">
+                    <div class="col-md-6 col-6">
+                        <div class="icon-tab">
+                            <a class="btn-icon me-1" id="btnImport" onclick="SaveImportFile()" title="Save"><i class='bx bx-save'></i></a>
+                            <a class="btn-icon btn-danger" id="btnBack" onclick="BackImport()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-6">
+
+                        <div id="tab1" class="tabSec tab active" style="font-weight: bold;">IMPORT</div>
+                    </div>
+                </div>
             </div>
             <div class="row p-2">
                 <div class="col-md-12">
@@ -281,13 +328,13 @@
                             <label for="txtExcelFile" class="col-form-label-sm fw-bold">Choose File</label><span class="text-danger">*</span>
                             <input type="file" id="txtExcelFile" class="box_border form-control form-control-sm" autocomplete="off" accept=".xlsx, .xls">
                         </div>
-                        <div class ="col-md-3 col-sm-6" style="margin-top: 33px !important;">
+                       @*  <div class="col-md-3 col-sm-6" style="margin-top: 33px !important;">
                             <button class="btn btn-primary btn-height" id="btnImport" onclick="SaveImportFile()">Save</button>
                             <button class="btn btn-danger btn-height" onclick="BackImport()">Back</button>
-                        </div>
+                        </div> *@
                     </div>
                 </div>
-             </div>
+            </div>
         </div>
     </div>
     <div class="card-body mt-2" id="ImportTable">
