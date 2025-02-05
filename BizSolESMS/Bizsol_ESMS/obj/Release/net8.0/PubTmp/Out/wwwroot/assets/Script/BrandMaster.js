@@ -14,8 +14,6 @@ $(document).ready(function () {
     ShowBrandMasterlist();
     GetModuleMasterCode();
 });
-
-
 function ShowBrandMasterlist() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowBrandMaster`,
@@ -39,7 +37,9 @@ function ShowBrandMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteBrand('${item.Code}','${item[`Brand Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteBrand('${item.Code}','${item[`Brand Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -94,7 +94,6 @@ function Save() {
         });
     }
 }
-
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -115,7 +114,7 @@ async function Edit(code) {
                 item.forEach(function (item) {
                     $("#hftextCode").val(item.Code),
                     $("#txtBrandName").val(item.BrandName);
-
+                    $("#txtbtnSave").prop("disabled", false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -179,19 +178,56 @@ async function CreateBrandMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#hftextCode").prop("disabled", false);
+    $("#txtBrandName").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false)
 
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hftextCode").prop("disabled", false);
+    $("#txtBrandName").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false)
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Brand Master");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowBrandMasterByCode?Code=${code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (item) {
+            if (item.length > 0) {
+                item.forEach(function (item) {
+                    $("#hftextCode").val(item.Code).prop("disabled", true),
+                    $("#txtBrandName").val(item.BrandName).prop("disabled", true),
+                    $("#txtbtnSave").prop("disabled", true)
+
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+    
 }

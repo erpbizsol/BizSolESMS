@@ -37,7 +37,6 @@ $(document).ready(function () {
             firstInput.focus();
         }
     });
-    ShowMRNMasterlist();
     GetAccountMasterList();
     GetItemDetails();
     GetWareHouseList();
@@ -119,10 +118,39 @@ $(document).ready(function () {
             $(this).val("");
         }
     });
+    $('#txtFromDate').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtToDate").focus();
+        }
+    });
+    $('#txtToDate').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtShow").focus();
+        }
+    });
+    $('#txtShow').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            ShowMRNMasterlist();
+        }
+    });
+    $('#txtShow').on('click', function (e) {
+            ShowMRNMasterlist();
+    });
 });
 function ShowMRNMasterlist() {
+    var FromDate = convertDateFormat2($("#txtFromDate").val());
+    var ToDate = convertDateFormat2($("#txtToDate").val());
+    if (FromDate == '') {
+        toastr.error("Please select MRN Date !");
+        $("#txtMRNDate").focus();
+        return;
+    } else if (ToDate == '') {
+        toastr.error("Please enter vendor name !");
+        $("#txtVendorName").focus();
+        return;
+    }
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/GetMRNMasterList`,
+        url: `${appBaseURL}/api/MRNMaster/GetMRNMasterList?FromDate=${FromDate}&ToDate=${ToDate}`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -141,7 +169,9 @@ function ShowMRNMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                 
@@ -168,6 +198,8 @@ async function Create() {
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
     addNewRow();
+    disableFields(false);
+    $("#txtsave").prop("disabled", false);
 }
 async function ImportExcel() {
     $("#txtListpage").hide();
@@ -179,6 +211,8 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
     ClearData();
+    disableFields(false);
+    $("#txtsave").prop("disabled", false);
 }
 function BackImport() {
     $("#txtListpage").show();
@@ -215,6 +249,7 @@ async function Edit(code) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
                     $("#txtVendorName").val(MRNMaster.AccountName || "");
                     $("#txtAddress").val(MRNMaster.Address || "");
+                    $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
@@ -248,7 +283,11 @@ async function Edit(code) {
         }
     });
 }
-async function DeleteItem(code) {
+async function DeleteItem(code, Challan) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -259,7 +298,7 @@ async function DeleteItem(code) {
         toastr.error(msg1);
         return;
     }
-    if (confirm("Are you sure you want to delete this item?")) {
+    if (confirm(`Are you sure you want to delete this item ${Challan} ?.!`)) {
         $.ajax({
             url: `${appBaseURL}/api/MRNMaster/DeleteMRNMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
@@ -377,6 +416,7 @@ function GetCurrentDate() {
         success: function (response) {
             if (response.length > 0) {
                 DatePicker(response[0].Date);
+                FromDatePicker(response[0].Date);
             } 
         },
         error: function (xhr, status, error) {
@@ -722,7 +762,7 @@ function convertDateFormat(dateString) {
     const [day, month, year] = dateString.split('/');
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const monthAbbreviation = monthNames[parseInt(month) - 1];
-    return `${day} -${monthAbbreviation} -${year}`;
+    return `${day}-${monthAbbreviation}-${year}`;
 }
 function setupDateInputFormatting() {
     $('#txtMRNDate').on('input', function () {
@@ -742,6 +782,38 @@ function setupDateInputFormatting() {
         }
     });
     $('#txtChallanDate').on('input', function () {
+        let value = $(this).val().replace(/[^\d]/g, '');
+
+        if (value.length >= 2 && value.length < 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        } else if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+        }
+        $(this).val(value);
+
+        if (value.length === 10) {
+            validateChallanDate(value);
+        } else {
+            $(this).val(value);
+        }
+    });
+    $('#txtFromDate').on('input', function () {
+        let value = $(this).val().replace(/[^\d]/g, '');
+
+        if (value.length >= 2 && value.length < 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        } else if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+        }
+        $(this).val(value);
+
+        if (value.length === 10) {
+            validateChallanDate(value);
+        } else {
+            $(this).val(value);
+        }
+    });
+    $('#txtToDate').on('input', function () {
         let value = $(this).val().replace(/[^\d]/g, '');
 
         if (value.length >= 2 && value.length < 4) {
@@ -805,13 +877,6 @@ function validateDate(value) {
         $('#txtMRNDate').val('');
 
     }
-}
-function DatePicker(date) {
-    $('#txtMRNDate, #txtChallanDate').val(date);
-    $('#txtMRNDate, #txtChallanDate').datepicker({
-        format: 'dd/mm/yyyy',
-        autoclose: true,
-    });
 }
 function FillallItemfield(inputElement, value) {
 
@@ -944,12 +1009,6 @@ function CalculateAmount(inputElement) {
             updateTotalAmount();
         }
      }
-}
-function convertDateFormat(dateString) {
-    const [day, month, year] = dateString.split('/');
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthAbbreviation = monthNames[parseInt(month) - 1];
-    return `${day}-${monthAbbreviation}-${year}`;
 }
 function GetRate(VendorName, ItemName) {
     return new Promise((resolve, reject) => {
@@ -1427,4 +1486,128 @@ function updateTotalAmount() {
         txtReceivedQtyBoxFooter.textContent = totalReceivedQty.toFixed(2);
     }
 }
+function validateFromDate(value) {
+    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    let isValidFormat = regex.test(value);
 
+    if (isValidFormat) {
+        let parts = value.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parseInt(parts[2], 10);
+
+        let date = new Date(year, month - 1, day);
+
+        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
+
+            $(this).val(value);
+        } else {
+            $('#txtFromDate').val('');
+
+        }
+    } else {
+        $('#txtFromDate').val('');
+
+    }
+}
+function DatePicker(date) {
+    $('#txtMRNDate, #txtChallanDate,#txtToDate').val(date);
+    $('#txtMRNDate, #txtChallanDate,#txtToDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+    });
+}
+function FromDatePicker(dateStr) {
+    let parts = dateStr.split('/');
+    if (parts.length !== 3) return; 
+    let day = parseInt(parts[0], 10);
+    let month = parseInt(parts[1], 10) - 1; 
+    let year = parseInt(parts[2], 10);
+    if (year < 100) {
+        year += 2000;
+    }
+    let firstDateOfMonth = new Date(year, month, 1);
+    let formattedDate = ('0' + firstDateOfMonth.getDate()).slice(-2) + '/' +
+        ('0' + (firstDateOfMonth.getMonth() + 1)).slice(-2) + '/' +
+        firstDateOfMonth.getFullYear();
+    $('#txtFromDate').val(formattedDate);
+    ShowMRNMasterlist();
+    $('#txtFromDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+    });
+}
+function convertDateFormat2(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${day}/${monthAbbreviation}/${year}`;
+}
+
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.MRNMaster && response.MRNMaster.length > 0) {
+                   
+                    const MRNMaster = response.MRNMaster[0];
+                    $("#hfCode").val(MRNMaster.Code || "").prop("disabled", true);
+                    $("#txtMRNNo").val(MRNMaster.MRNNo || "").prop("disabled", true);
+                    $("#txtMRNDate").val(MRNMaster.MRNDate || "").prop("disabled", true);
+                    $("#txtChallanNo").val(MRNMaster.Bill_ChallanNo || "").prop("disabled", true);
+                    $("#txtVehicleNo").val(MRNMaster.VehicleNo || "").prop("disabled", true);
+                    $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
+                    $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
+                    $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);
+                    const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
+                    if (!item) {
+                        var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
+                        AccountList.push(newData);
+                    }
+                    CreateVendorlist();
+                } else {
+                    toastr.warning("Account master data is missing.");
+                }
+                $("#Orderdata").empty();
+                if (response.MRNDetails && response.MRNDetails.length > 0) {
+                    response.MRNDetails.forEach(function (Data, index) {
+                        addNewRowEdit(index, Data);
+                    });
+                    updateTotalBillQty();
+                    updateTotalRate();
+                    updateTotalAmount();
+                    updateTotalBillQtyBox();
+                    updateTotalReceivedQtyBox();
+                    updateTotalReceivedQty();
+                } else {
+                    toastr.info("No addresses available for this account.");
+                }
+                disableFields(true);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
+
+}
+
+function disableFields(disable) {
+    $("input, select, button").not("#btnBack").prop("disabled", disable);
+}

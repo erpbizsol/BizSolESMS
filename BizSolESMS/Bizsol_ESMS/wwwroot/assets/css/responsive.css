@@ -8,8 +8,12 @@
         text-align: center !important;
     }
 
+    .ssm-table {
+        width: 100% !important;
+    }
     .sm-table {
         width: 100% !important;
+        margin: auto;
     }
     .btnAuto {
         width: 100% !important;
@@ -36,8 +40,12 @@
 
 @media (min-width: 481px) and (max-width: 767px) {
 
+    .ssm-table {
+        width: 100% !important;
+    }
     .sm-table {
         width: 100% !important;
+        margin: auto;
     }
 
 }

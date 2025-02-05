@@ -4,7 +4,6 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 $(document).ready(function () {
         $("#ERPHeading").text("UOM Master");
         $(".Number").keyup(function (e) {
@@ -46,7 +45,9 @@ function ShowUomMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}', '${item[`UOM Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}', '${item[`UOM Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1" title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                
@@ -62,7 +63,6 @@ function ShowUomMasterlist() {
     });
 
 }
-
 function Save() {
     var uomName = $("#txtUOM").val();
     var digitAfterDecimal = $("#txtDigitAfterDecimal").val();
@@ -115,15 +115,21 @@ async function Create() {
     }
     ClearData();
     $("#tab1").text("NEW");
-
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-    
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtUOM").prop("disabled", false);
+    $("#txtDigitAfterDecimal").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtUOM").prop("disabled", false);
+    $("#txtDigitAfterDecimal").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 }
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -148,6 +154,7 @@ async function Edit(code) {
                             $("#hftxtCode").val(item.Code);
                             $("#txtUOM").val(item.UOMName);
                             $("#txtDigitAfterDecimal").val(item.DigitAfterDecimal);
+                            $("#txtbtnSave").prop("disabled", false);
                         });
                     } else {
                         toastr.error("Record not found...!");
@@ -163,49 +170,11 @@ async function Edit(code) {
         }
     });
 }
-//async function deleteItem(code) {
-   
-//    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
-//    if (hasPermission == false) {
-//        toastr.error(msg);
-//        return;
-//    }
-//    const { Status, msg1 } = await CheckRelatedRecord(code,'UomMaster');
-//    if (Status == true) {
-//        toastr.error(msg1);
-//        return;
-//    }
-//    if (confirm(`Are you sure you want to delete this item?`)) {
-//        $.ajax({
-//            url: `${appBaseURL}/api/Master/DeleteUOM?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
-//            type: 'POST',
-//            beforeSend: function (xhr) {
-//                xhr.setRequestHeader('Auth-Key', authKeyData);
-//            },
-//            success: function (response) {
-//                if (response.Status === 'Y') {
-//                    toastr.success(response.Msg);
-                    
-//                    ShowUomMasterlist();
-//                } else {
-//                    toastr.error("Unexpected response format.");
-//                }
-
-//            },
-//            error: function (xhr, status, error) {
-//                toastr.error("Error deleting item:");
-
-//            }
-//        });
-//    }
-//}
-
 function ClearData() {  
     $("#txtUOM").val("");
     $("#txtDigitAfterDecimal").val("0");
-    $("#hftxtCode").val("0")
+    $("#hftxtCode").val("0");
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "UOM Master");
@@ -213,9 +182,7 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
-
 async function deleteItem(code, uomName, button) {
-
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
         $(this).addClass('highlight');
@@ -254,4 +221,43 @@ async function deleteItem(code, uomName, button) {
         });
         return;
     }
+}
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowUOMMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.length > 0) {
+                    response.forEach(function (item) {
+                        $("#hftxtCode").val(item.Code).prop("disabled", true);
+                        $("#txtUOM").val(item.UOMName).prop("disabled", true);
+                        $("#txtDigitAfterDecimal").val(item.DigitAfterDecimal).prop("disabled", true);
+                        $("#txtbtnSave").prop("disabled", true);
+                    });
+                } else {
+                    toastr.error("Record not found...!");
+                }
+
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
 }

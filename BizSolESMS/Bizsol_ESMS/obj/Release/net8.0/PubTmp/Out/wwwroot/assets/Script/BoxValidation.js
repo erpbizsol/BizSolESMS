@@ -4,36 +4,40 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+let Data = [];
 $(document).ready(function () {
     $("#ERPHeading").text("Box-Validation");
     $('#txtBoxNo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            BoxUnloading();
-            $("#txtBoxNo").focus();
+            BoxValidationDetail();
+            $("#txtScanProduct").focus();
         }
     });
-    $("#txtScanToggle").on("change", function () {
-        let value = $(this).prop("checked") ? "Scan" : "Manual";
-        if (value == 'Scan') {
-            //$("#txtScanProduct").prop("disabled", false);
-            $("#divScanProduct").show();
-        } else {
-            //$("#txtScanProduct").prop("disabled", true);
-            $("#divScanProduct").hide();
+    $('#txtBoxNo').on('focusout', function (e) {
+            BoxValidationDetail();
+    });
+    $('#txtScanProduct').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            SaveScanValidationDetail();
         }
+    });
+    $("#btnAutoUpdate").click(function () {
+        AutoUpdateReceivedQty();
     });
 });
-function BoxUnloading() {
+function BoxValidationDetail() {
     if ($("#txtBoxNo").val() == '') {
         toastr.error("Please enter a Box No !");
         $("#txtBoxNo").focus();
         return;
     }
     const payload = {
-        BoxNo: $("#txtBoxNo").val()
+        BoxNo: $("#txtBoxNo").val(),
+        Code: $("#txtCode").val(),
+        ScanNo: $("#txtScanProduct").val()
     }
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/BoxUnloading`,
+        url: `${appBaseURL}/api/MRNMaster/GetBoxValidateDetail`,
         type: 'POST',
         contentType: "application/json",
         dataType: "json",
@@ -43,6 +47,7 @@ function BoxUnloading() {
         },
         success: function (response) {
             if (response.length > 0) {
+                Data = response;
                 if (response[0].Status == 'Y') {
                     $("#UnloadingTable").show();
                     const StringFilterColumn = [];
@@ -51,12 +56,20 @@ function BoxUnloading() {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = ["Item Name", "Item Code", "Item Bar Code"];
-                    const hiddenColumns = ["Msg", "Status"];
+                    const hiddenColumns = ["Msg", "Status","Code"];
                     const ColumnAlignment = {
                         Qty: "right"
                     };
-                    BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-                    $("#txtBoxNo").focus();
+                    const updatedResponse = response.map(item => ({
+                        ...item, 
+                        "Scan Qty": `
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        "Manual Qty": `
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        "Received Qty":`
+                        <input type="text" id="txtReceivedQty_${item.Code}" value="${item["Received Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Received Qty..">`
+                    }));
+                    BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                 } else {
                     $("#txtBoxNo").focus();
                     showToast(response[0].Msg);
@@ -86,7 +99,7 @@ function showToast(Msg) {
     setTimeout(() => toast.style.opacity = "1", 10);
     let blinkInterval = setInterval(() => {
         toast.style.visibility = (toast.style.visibility === "hidden") ? "visible" : "hidden";
-    }, 80);
+    }, 300);
     setTimeout(() => {
         clearInterval(blinkInterval);
         toast.style.visibility = "visible";
@@ -96,4 +109,186 @@ function showToast(Msg) {
             overlay.style.display = "none";
         }, 300);
     }, 3000);
+}
+function checkValidateqty(element, Code) {
+    var manualQty = parseInt($(element).val());
+    var scanQty = parseInt($("#txtScanQty_" + Code).val());
+
+    const item = Data.find(entry => entry.Code == Code);
+    var total = scanQty + manualQty;
+
+    if (total > parseInt(item.Qty)) {
+        toastr.error("Invalid Received Qty!");
+        $("#txtReceivedQty_" + Code).val(0);
+        $("#txtManualQty_" + Code).focus();
+        $(element).val(0);
+    } else {
+        $("#txtReceivedQty_" + Code).val(total);
+        if (manualQty > 0) {
+            SaveManualValidationDetail(Code, scanQty, manualQty, total );
+        }
+        var currentRow = $(element).closest("tr");
+        var nextRow = currentRow.next("tr");
+
+        if (nextRow.length > 0) {
+            var nextInput = nextRow.find(".txtManualQty").first();
+            if (nextInput.length > 0) {
+                nextInput.focus();
+            }
+        }
+    }
+}
+function checkValidateqty1(element, Code) {
+    var manualQty = parseInt($(element).val());
+    var scanQty = parseInt($("#txtScanQty_" + Code).val());
+
+    const item = Data.find(entry => entry.Code == Code);
+    var total = scanQty + manualQty;
+
+    if (total > parseInt(item.Qty)) {
+        toastr.error("Invalid Received Qty!");
+        $("#txtReceivedQty_" + Code).val(0);
+        $(element).val(0);
+    } else {
+        $("#txtReceivedQty_" + Code).val(total);
+        if (manualQty > 0) {
+            SaveManualValidationDetail(Code, scanQty, manualQty, total);
+        }
+    }
+}
+function OnChangeNumericTextBox(event, element) {
+    if (event.charCode == 13 || event.charCode == 46 || event.charCode == 8 || (event.charCode >= 48 && event.charCode <= 57)) {
+        element.setCustomValidity("");
+        element.reportValidity();
+        BizSolhandleEnterKey(event);
+        return true;
+    }
+    else {
+        element.setCustomValidity("Only allowed Float Numbers");
+        element.reportValidity();
+        return false;
+    }
+}
+function BizSolhandleEnterKey(event) {
+    if (event.key === "Enter") {
+        const inputs = $('.BizSolFormControl')
+        const index = [...inputs].indexOf(event.target);
+        if ((index + 1) == inputs.length) {
+            inputs[0].focus();
+        } else {
+            inputs[index + 1].focus();
+        }
+
+        event.preventDefault();
+    }
+}
+function SaveManualValidationDetail(Code,ScanQty,ManualQty,ReceivedQty) {
+    if ($("#txtBoxNo").val() == '') {
+        toastr.error("Please enter a Box No !");
+        $("#txtBoxNo").focus();
+        return;
+    }
+    const payload = {
+        BoxNo: $("#txtBoxNo").val(),
+        Code: Code,
+        ScanNo:"",
+        ScanQty: ScanQty,
+        ManualQty: ManualQty,
+        ReceivedQty: ReceivedQty
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/SaveManualBoxValidateDetail`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status=='Y') {
+                BoxValidationDetail();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function SaveScanValidationDetail() {
+    if ($("#txtBoxNo").val() == '') {
+        toastr.error("Please enter a Box No !");
+        $("#txtBoxNo").focus();
+        return;
+    } if ($("#txtScanProduct").val() == '') {
+        toastr.error("Please scan product !");
+        $("#txtScanProduct").focus();
+        return;
+    }
+    const payload = {
+        BoxNo: $("#txtBoxNo").val(),
+        Code: 0,
+        ScanNo: $("#txtScanProduct").val(),
+        ScanQty: 0,
+        ManualQty: 0,
+        ReceivedQty: 0
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/SaveScanBoxValidateDetail`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                BoxValidationDetail();
+                $("#txtScanProduct").focus();
+            } else if (response[0].Status == 'N') {
+                toastr.error(response[0].Msg);
+                $("#txtScanProduct").focus();
+            } else {
+                toastr.error("No Data found");
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Error:", error);
+        }
+    });
+
+}
+function AutoUpdateReceivedQty() {
+    if ($("#txtBoxNo").val() == '') {
+        toastr.error("Please enter a Box No !");
+        $("#txtBoxNo").focus();
+        return;
+    }
+    const payload = {
+        BoxNo: $("#txtBoxNo").val(),
+        Code: 0,
+        ScanNo:""
+    }
+    if (confirm("Are you sure you want to auto update received qty ?")) {
+        $.ajax({
+            url: `${appBaseURL}/api/MRNMaster/AutoUpdateReceivedQty`,
+            type: 'POST',
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response[0].Status == 'Y') {
+                    BoxValidationDetail();
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+    }
 }
