@@ -199,6 +199,7 @@ async function Create() {
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
+    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function ImportExcel() {
@@ -212,6 +213,7 @@ function BackMaster() {
     $("#txtImportPage").hide();
     ClearData();
     disableFields(false);
+    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 function BackImport() {
@@ -249,6 +251,7 @@ async function Edit(code) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
                     $("#txtVendorName").val(MRNMaster.AccountName || "");
                     $("#txtAddress").val(MRNMaster.Address || "");
+                    $("#txtMRNNo").prop("disabled", true);
                     $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {

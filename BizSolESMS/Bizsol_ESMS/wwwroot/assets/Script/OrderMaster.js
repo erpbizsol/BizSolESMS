@@ -131,6 +131,7 @@ async function Create() {
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
+    $("#txtOrderNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 function BackMaster() {
@@ -138,6 +139,7 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     ClearData();
     disableFields(false);
+    $("#txtOrderNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function Edit(code) {
@@ -168,6 +170,7 @@ async function Edit(code) {
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
                     $("#txtsave").prop("disabled", false);
+                    $("#txtOrderNo").prop("disabled", true);
                     const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: OrderMaster.AccountName, Address: OrderMaster.Address }
