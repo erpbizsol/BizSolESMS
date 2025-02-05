@@ -1,5 +1,6 @@
 ﻿let AppBaseURLMenu=window.location.href.toLowerCase().includes('local') == true ? 'https://localhost:7072' : 'https://web.bizsol.in/esms'
 $(document).ready(function () {
+
     $('#txtCompanyCode').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#btnValidateCompany").focus();
@@ -21,9 +22,22 @@ $(document).ready(function () {
     $('#btnProceed').click(function () {
         Login();
     });
-   
+
+  
+    let companyCode = getCookie('CompanyCode');
+    if (companyCode) {
+        $('#txtCompanyCode').val(companyCode);
+        console.log("CompanyCode Set:", companyCode);
+    } else {
+        console.warn("CompanyCode cookie not found!");
+    }
+
 });
 
+function getCookie(name) {
+    let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+}
 function CheckCompany() {
     let companyCode = $("#txtCompanyCode").val();
     if (companyCode.trim() === "") {

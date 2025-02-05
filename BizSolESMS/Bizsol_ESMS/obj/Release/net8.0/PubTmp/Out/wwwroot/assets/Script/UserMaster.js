@@ -209,7 +209,9 @@ function UserMasterList() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="Delete('${item.Code}','${item[`User Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="Delete('${item.Code}','${item[`User Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -234,11 +236,15 @@ async function Create() {
     ClearData();
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
+    disableFields(false);
+    $("#btnSave").prop("disabled", false);
 }
 function Back() {
     $("#FrmUserMaster").hide();
     $("#tblUserMaster").show();
     ClearData();
+    disableFields(false);
+    $("#btnSave").prop("disabled", false);
 }
 async function Delete(code,username) {
     $('table').on('click', 'tr', function () {
@@ -288,6 +294,8 @@ async function Edit(Code) {
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
     UserMasterByCode(Code);
+    disableFields(false);
+    $("#btnSave").prop("disabled", false);
 }
 function UserMasterByCode(Code) {
     $.ajax({
@@ -581,4 +589,69 @@ function GetModuleMasterCode() {
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#tblUserMaster").hide();
+    $("#FrmUserMaster").show();
+    $.ajax({
+        url: `${appBaseURL}/api/UserMaster/GetUserMasterListByCode?Code=${code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+
+                disableFields(true);
+                $("#txtUserID").val(response.UserID).prop('disable',true);
+                $("#txtUserName").val(response.UserName).prop('disable', true);
+                $("#hfCode").val(response.Code).prop('disable', true);
+                $("#txtMobileNo").val(response.UserMobileNo).prop('disable', true);
+                $("#txtPassword").val('').prop('disable', true);
+                $("#txtConfirmPassword").val('').prop('disable', true);
+                $("#txtEmailId").val(response.EmailID).prop('disable', true);
+                $("#ddlGroupName").val(response.GroupMaster_Code).prop('disable', true);
+                $("#ddlDefaultCompany").val(response.FixedParameter_Code).prop('disable', true);
+                $("#ddlDesignation").val(response.DesignationMaster_Code).prop('disable', true);
+                $("#txtAddress").val(response.UserLocation).prop('disable', true);
+                $("#txtSystemName").val(response.LoginAllowFromSystem).prop('disable', true);
+
+                if (response.Status == 'N') {
+                    $('#chkActive').prop("checked", false);
+                }
+                if (response.OTPApplicable == 'N') {
+                    $('#chkOTPApplicable').prop("checked", false);
+                }
+                if (response.IsBizSolUser == 'N') {
+                    $('#chkIsBizSolUser').prop("checked", false);
+                }
+                if (response.ShowClientInProductionReport == 'N') {
+                    $('#chkShowClientInProductionReport').prop("checked", false);
+                }
+                if (response.ChangePasswordForNextLogIn == 'N') {
+                    $('#chkChangePasswordForNextLogIn').prop("checked", false);
+                }
+                if (response.ShowRatesInQuotation == 'N') {
+                    $('#chkShowRatesInQuotation').prop("checked", false);
+                }
+                $("#btnSave").prop("disabled", true);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+
+function disableFields(disable) {
+    $("input, select, button").not("#btnBack").prop("disabled", disable);
 }

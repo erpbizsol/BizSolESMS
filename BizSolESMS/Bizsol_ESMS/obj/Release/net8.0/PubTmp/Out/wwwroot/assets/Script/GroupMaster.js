@@ -4,7 +4,6 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 $(document).ready(function () {
     GetModuleMasterCode();
 
@@ -19,7 +18,6 @@ $(document).ready(function () {
         exportTableToExcel();
     });
 });
-
 function Save() {
     const GroupName = $("#txtGroupName").val();
     if (GroupName === "") {
@@ -80,7 +78,9 @@ function ShowMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteGroup('${item.Code}','${item[`Group Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteGroup('${item.Code}','${item[`Group Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -105,14 +105,18 @@ async function CreateGroupMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtGroupName").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 }
-
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtGroupName").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 }
-
 async function deleteGroup(code, group) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
@@ -181,7 +185,6 @@ async function Edit(code) {
         }
     });
 }
-
 function ClearData() {
     $("#hftxtCode").val("0");
     $("#txtGroupName").val("");
@@ -214,4 +217,37 @@ function GetModuleMasterCode() {
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowGroupMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $("#hftxtCode").val(item.Code).prop("disabled", true);
+                    $("#txtGroupName").val(item.GroupName).prop("disabled", true);
+                    $("#txtbtnSave").prop("disabled", true);
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }

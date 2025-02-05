@@ -1544,7 +1544,6 @@ function convertDateFormat2(dateString) {
     return `${day}/${monthAbbreviation}/${year}`;
 }
 
-}
 async function View(code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {

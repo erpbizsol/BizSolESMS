@@ -36,7 +36,6 @@ $(document).ready(function () {
     GetModuleMasterCode();
    
 });
-
 function Save() {
         const SubGroupName = $("#txtSubGroupName").val();
         const GroupName = $("#txtGroupName").val();
@@ -102,7 +101,9 @@ function ShowSubGroupMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteSubGroupMaster('${item.Code}','${item[`Sub Group Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteSubGroupMaster('${item.Code}','${item[`Sub Group Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -127,15 +128,21 @@ async function CreateSubgroupMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#hftextCode").prop("disabled", false);
+    $("#txtSubGroupName").prop("disabled", false);
+    $("#txtGroupName").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 
 }
-
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hftextCode").prop("disabled", false);
+    $("#txtSubGroupName").prop("disabled", false);
+    $("#txtGroupName").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 }
-
 async function deleteSubGroupMaster(code, subGroupName) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
@@ -195,6 +202,7 @@ async function Edit(code) {
                     $("#hftextCode").val(item.Code);
                     $("#txtSubGroupName").val(item.SubGroupName);
                     $("#txtGroupName").val(item.GroupName);
+                    $("#txtbtnSave").prop("disabled", false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -205,7 +213,6 @@ async function Edit(code) {
         }
     });
 }
-
 function GetMainLocationList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetDropDown`,
@@ -231,16 +238,46 @@ function GetMainLocationList() {
         }
     });
 }
-
 function ClearData() {
     $("#txtSubGroupName").val("");
     $("#txtGroupName").val("");
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Sub Group Master");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowSubGroupMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $("#hftextCode").val(item.Code).prop("disabled", true);
+                    $("#txtSubGroupName").val(item.SubGroupName).prop("disabled", true);
+                    $("#txtGroupName").val(item.GroupName).prop("disabled", true);
+                    $("#txtbtnSave").prop("disabled", true);
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }
