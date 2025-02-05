@@ -196,6 +196,7 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
@@ -206,21 +207,26 @@ async function ImportExcel() {
     $("#txtListpage").hide();
     $("#txtCreatepage").hide();
     $("#txtImportPage").show();
+    $("#txtheaderdiv2").show();
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
+    $("#txtheaderdiv").hide();
+
     ClearData();
     disableFields(false);
     $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
+
 }
 function BackImport() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
     $("#ImportTable").hide();
+    $("#txtheaderdiv2").hide();
     ClearDataImport();
 }
 async function Edit(code) {
@@ -232,7 +238,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
@@ -1557,6 +1563,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
@@ -1618,5 +1625,5 @@ async function View(code) {
 //    $("input, select, button").not("#btnBack").prop("disabled", disable);
 //}
 function disableFields(disable) {
-    $("input, select, button, a").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
+    $("input, select, button,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }

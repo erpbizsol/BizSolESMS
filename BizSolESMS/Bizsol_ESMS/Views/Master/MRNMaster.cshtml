@@ -159,7 +159,7 @@
         top: 0;
         background-color: #dddde4;
         z-index: 1000;
-        padding: 8px 9px 0px 9px;
+        padding: 8px 0px 0px 9px;
         /* border-top-right-radius: 5px;
                 border-top-left-radius: 5px; */
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
@@ -171,14 +171,31 @@
         padding: 3px 0;
     }
 </style>
-<section class="breadcrumbs1">
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
         <div class="fix-header">
             <div class="row">
                 <div class="col-md-6 col-6">
                     <div class="icon-tab">
-                        <a class="btn-icon me-1" title="Save"><i class='bx bx-save'></i></a>
-                        <a class="btn-icon btn-danger" title="Back"><i class='bx bx-arrow-back'></i></a>
+                        <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="breadcrumbs1" id="txtheaderdiv2" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" id="btnImport" onclick="SaveImportFile()" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackImport()" title="Back"><i class='bx bx-arrow-back'></i></a>
                     </div>
                 </div>
                 <div class="col-md-6 col-6">
@@ -364,7 +381,7 @@
     <div class="textCreatepage" id="txtImportPage" style="display:none;">
         <div class="card shadow-sm">
             <div class="tabs">
-                <div class="fix-header tab-header">
+                @* <div class="fix-header tab-header">
                     <div class="row">
                         <div class="col-md-6 col-6">
                             <div class="icon-tab">
@@ -378,7 +395,7 @@
                             <div id="tab1" class="tabSec tab active" style="font-weight: bold;">IMPORT</div>
                         </div>
                     </div>
-                </div>
+                </div> *@
                 <div class="row p-2">
                     <div class="col-md-12">
                         <div class="row">

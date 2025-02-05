@@ -117,19 +117,23 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#hftxtCode").prop("disabled", false);
     $("#txtUOM").prop("disabled", false);
     $("#txtDigitAfterDecimal").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    disableFields(false);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
+    $("#txtheaderdiv").hide();
     ClearData();
     $("#hftxtCode").prop("disabled", false);
     $("#txtUOM").prop("disabled", false);
     $("#txtDigitAfterDecimal").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    disableFields(false);
 }
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -140,6 +144,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
 
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowUOMMasterByCode?Code=` + code,
@@ -231,6 +236,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
 
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowUOMMasterByCode?Code=` + code,
@@ -246,6 +252,7 @@ async function View(code) {
                         $("#txtUOM").val(item.UOMName).prop("disabled", true);
                         $("#txtDigitAfterDecimal").val(item.DigitAfterDecimal).prop("disabled", true);
                         $("#txtbtnSave").prop("disabled", true);
+                        disableFields(true);
                     });
                 } else {
                     toastr.error("Record not found...!");
@@ -260,4 +267,7 @@ async function View(code) {
             toastr.error("Failed to fetch data. Please try again.");
         }
     });
+}
+function disableFields(disable) {
+    $("input, select, button,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }

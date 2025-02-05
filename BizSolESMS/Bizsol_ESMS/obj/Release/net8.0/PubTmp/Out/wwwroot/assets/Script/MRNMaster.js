@@ -1544,6 +1544,7 @@ function convertDateFormat2(dateString) {
     return `${day}/${monthAbbreviation}/${year}`;
 }
 
+
 async function View(code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -1572,6 +1573,7 @@ async function View(code) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
                     $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
                     $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);
+                    
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
@@ -1595,6 +1597,7 @@ async function View(code) {
                 } else {
                     toastr.info("No addresses available for this account.");
                 }
+                $("#txtsave").prop("disabled", true);
                 disableFields(true);
             } else {
                 toastr.error("Record not found...!");
@@ -1608,6 +1611,9 @@ async function View(code) {
 
 }
 
+//function disableFields(disable) {
+//    $("input, select, button").not("#btnBack").prop("disabled", disable);
+//}
 function disableFields(disable) {
-    $("input, select, button").not("#btnBack").prop("disabled", disable);
+    $("input, select, button, a").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }
