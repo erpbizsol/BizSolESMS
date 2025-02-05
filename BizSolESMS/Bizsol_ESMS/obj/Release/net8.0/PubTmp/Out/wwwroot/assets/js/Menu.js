@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     UserMenuRightsList();
     GetPerPageSize();
+    WarehouseNameForDefault();
 });
 var authKeyData1 = JSON.parse(sessionStorage.getItem('authKey'));
 var authKeyData = sessionStorage.getItem('authKey');
@@ -145,6 +146,26 @@ async function GetPerPageSize() {
         success: function (value) {
             if (value.length > 0) {
                 sessionStorage.setItem('PerPageSize', JSON.stringify(value));
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch item data. Please try again.");
+        }
+    });
+}
+async function WarehouseNameForDefault() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/WarehouseNameForDefault`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (value) {
+            if (value.length > 0) {
+                sessionStorage.setItem('DefaultWarehouse', value[0].WarehouseName);
             } else {
                 toastr.error("Record not found...!");
             }

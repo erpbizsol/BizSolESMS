@@ -8,39 +8,39 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
-        DatePicker();
-        $("#ERPHeading").text("Order Entry");
-        $('#txtOrderNo').on('keydown', function (e) {
-            if (e.key === "Enter") {
-                $("#txtOrderDate").focus();
-            }
-        });
-        $('#txtOrderDate').on('keydown', function (e) {
-            if (e.key === "Enter") {
-                $("#txtClientName").focus();
-            }
-        });
-        $('#txtClientName').on('keydown', function (e) {
-            if (e.key === "Enter") {
-                $("#txtBuyerPONo").focus();
-            }
-        });
-       
-        $('#txtBuyerPONo').on('keydown', function (e) {
-            if (e.key === "Enter") {
-                $("#txtBuyerPODate").focus();
-            }
-        });
-        $('#txtBuyerPODate').on('keydown', function (e) {
-                if (e.key === "Enter") {
-                    let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
-                    firstInput.focus();
-                }
-        });
+    DatePicker();
+    $("#ERPHeading").text("Order Entry");
+    $('#txtOrderNo').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtOrderDate").focus();
+        }
+    });
+    $('#txtOrderDate').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtClientName").focus();
+        }
+    });
+    $('#txtClientName').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtBuyerPONo").focus();
+        }
+    });
+
+    $('#txtBuyerPONo').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtBuyerPODate").focus();
+        }
+    });
+    $('#txtBuyerPODate').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
+            firstInput.focus();
+        }
+    });
     GetAccountMasterList();
     GetItemDetails();
     ShowOrderMasterlist();
- 
+
     $("#btnAddNewRow").click(function () {
         addNewRow();
     });
@@ -65,7 +65,7 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
-  
+
     //$("#txtClientName").on("focusout", function () {
     //    let value = $(this).val();
     //    if (value) {
@@ -75,7 +75,7 @@ $(document).ready(function () {
     //    }
     //});
 
-   
+
 });
 function ShowOrderMasterlist() {
     $.ajax({
@@ -86,9 +86,10 @@ function ShowOrderMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
+                $("#txtordertable").show();
                 const StringFilterColumn = ["Client Name"];
                 const NumericFilterColumn = [];
-                const DateFilterColumn = ["Order Date","Buyer PO Date"];
+                const DateFilterColumn = ["Order Date", "Buyer PO Date"];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
@@ -100,11 +101,14 @@ function ShowOrderMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Order Date`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
+                $("#txtordertable").hide();
                 toastr.error("Record not found...!");
             }
         },
@@ -126,11 +130,15 @@ async function Create() {
     $("#txtCreatepage").show();
     $("#Orderdata").empty();
     addNewRow();
+    disableFields(false);
+    $("#txtsave").prop("disabled", false);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    disableFields(false);
+    $("#txtsave").prop("disabled", false);
 }
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -147,7 +155,7 @@ async function Edit(code) {
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
-        }, 
+        },
         success: function (response) {
             if (response) {
                 if (response.OrderMaster && response.OrderMaster.length > 0) {
@@ -159,6 +167,7 @@ async function Edit(code) {
                     $("#txtAddress").val(OrderMaster.Address || "");
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
+                    $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: OrderMaster.AccountName, Address: OrderMaster.Address }
@@ -187,7 +196,11 @@ async function Edit(code) {
         }
     });
 }
-async function deleteItem(code) {
+async function deleteItem(code, Order) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -198,7 +211,7 @@ async function deleteItem(code) {
         toastr.error(msg1);
         return;
     }
-    if (confirm("Are you sure you want to delete this item?")) {
+    if (confirm(`Are you sure you want to delete this Order ? ${Order}`)) {
         $.ajax({
             url: `${appBaseURL}/api/OrderMaster/DeleteOrderMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
@@ -279,13 +292,13 @@ function GetItemDetails() {
     });
 }
 function ClearData() {
-        $("#hfCode").val("0");
-        $("#txtOrderNo").val("");
-        $("#txtClientName").val("");
-        $("#txtAddress").val("");
-        $("#txtBuyerPONo").val("");
-        $("#Orderdata").empty();
-    
+    $("#hfCode").val("0");
+    $("#txtOrderNo").val("");
+    $("#txtClientName").val("");
+    $("#txtAddress").val("");
+    $("#txtBuyerPONo").val("");
+    $("#Orderdata").empty();
+
 }
 function Save() {
     var OrderNo = $("#txtOrderNo").val();
@@ -302,7 +315,7 @@ function Save() {
         toastr.error("Please enter a Client Name!");
         $("#txtClientName").focus();
         return;
-    } 
+    }
     else if (!BuyerPONo) {
         toastr.error("Please enter a Buyer PO No!");
         $("#txtBuyerPONo").focus();
@@ -335,12 +348,14 @@ function Save() {
                 row.find(".txtItemCode").focus();
                 validationFailed = true;
                 return;
-            } else if (row.find(".txtItemAddress").val() == '') {
-                toastr.error("Please select Item Address !");
-                row.find(".txtItemAddress").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtOrderQty").val() == '') {
+            }
+            //else if (row.find(".txtItemAddress").val() == '') {
+            //    toastr.error("Please select Item Address !");
+            //    row.find(".txtItemAddress").focus();
+            //    validationFailed = true;
+            //    return;
+            //}
+            else if (row.find(".txtOrderQty").val() == '') {
                 toastr.error("Please enter Order Qty !");
                 row.find(".txtOrderQty").focus();
                 validationFailed = true;
@@ -638,7 +653,7 @@ function DatePicker() {
         method: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
-        }, 
+        },
         success: function (response) {
             let apiDate = response[0].Date;
             $('#txtOrderDate, #txtBuyerPODate').val(apiDate);
@@ -680,7 +695,7 @@ function FillallItemfield(inputElement, value) {
                     QtyBox.value = '';
                     OrderQty.value = '';
                     QtyBox.disabled = isDisabled;
-                  
+
                     isValid = true;
                     return false;
                 } else {
@@ -858,5 +873,65 @@ function SetvalueBillQtyBox(inputElement) {
         OrderQty.value = item.QtyInBox * QtyBox.value;
         CalculateAmount(inputElement);
     }
+}
+
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ShowOrderMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || "");
+                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    $("#txtOrderDate").val(OrderMaster.OrderDate || "");
+                    $("#txtClientName").val(OrderMaster.AccountName || "");
+                    $("#txtAddress").val(OrderMaster.Address || "");
+                    $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
+                    $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
+                    $("#txtsave").prop("disabled", false);
+                    const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
+                    if (!item) {
+                        var newData = { Code: 0, AccountName: OrderMaster.AccountName, Address: OrderMaster.Address }
+                        AccountList.push(newData);
+                    }
+                    CreateVendorlist();
+                } else {
+                    toastr.warning("Account master data is missing.");
+                }
+                $("#Orderdata").empty();
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    response.OrderDetial.forEach(function (address, index) {
+
+                        addNewRowEdit(index, address);
+                    });
+                    disableFields(true);
+                } else {
+                    toastr.info("No addresses available for this account.");
+                }
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
+}
+function disableFields(disable) {
+    $("input, select, button").not("#btnBack").prop("disabled", disable);
 }
 

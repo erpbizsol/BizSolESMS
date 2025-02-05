@@ -121,13 +121,9 @@
         width:120px !important;
     }
 
-    table {
-        width: 40% !important;
-    }
 
-        table > thead, th {
-            width: 59px !important;
-        }
+
+
 </style>
 <div class="card shadow-sm" style="background-color:#e9e9ef">
     <div class="tabs">
@@ -139,13 +135,9 @@
                 <div class="row">
                     <div class="col-md-4 col-sm-6">
                         <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No</label><span class="text-danger">*</span>
-                        <input type="text" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No.." onfocus="this.select()">
+                        <input type="text" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No..">
                     </div>
-                    <div class="col-md-2 col-sm-6 fixed-height" style="height:10px !important;">
-                        <label for="txtScanToggle" class="col-form-label-sm fw-bold">Scan/Manual</label><span class="text-danger">*</span><br />
-                        <input type="checkbox" data-size="small" id="txtScanToggle" class="box_border form-control form-control" checked data-toggle="toggle" data-on="Scan" data-off="Manual" data-onstyle="secondary" data-offstyle="info">
-                    </div>
-                    <div class="col-md-3 col-sm-6" id="divScanProduct" >
+                    <div class="col-md-3 col-sm-6">
                         <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product</label><span class="text-danger">*</span>
                         <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Scan Product.." onfocus="this.select()">
                     </div>
@@ -154,10 +146,11 @@
         </div>
     </div>
 </div>
-<div class="row mt-3" sstyle="display:none" id="UnloadingTable">
-    <div class="card-body mt-2">
+<div class="row m-2" style="display:none" id="UnloadingTable">
+    <div class="card-body mt-2 ">
         <div class="table-wrapper fixed-height-table">
-            <table id="table" class="fixed-width-table table">
+            <div class="text-end btnAuto p-1"><button class="btn btn-primary btn-height" title="AUTO UPDATE RECEIVED QTY" id="btnAutoUpdate">UPDATE QTY</button></div>
+            <table id="table" class="fixed-width-table table ssm-table">
                 <thead id="table-header">
                 </thead>
                 <tbody id="table-body">

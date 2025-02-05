@@ -3,7 +3,6 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 $(document).ready(function () {
     $("#ERPHeading").text("Warehouse  Master");
     $(".Number").on("keypress", function (e) {
@@ -12,7 +11,6 @@ $(document).ready(function () {
             e.preventDefault(); // Prevent the character from being entered
         }
     });
-
     $(".Number").on("input", function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
@@ -41,19 +39,13 @@ $(document).ready(function () {
             $("#txtDefaultWarehouse").focus();
         }
     });
-    //$('#txtGSTIN').on('keydown', function (e) {
-    //    if (e.key === "Enter") {
-    //        $("#txtDefaultWarehouse").focus();
-    //    }
-    //});
     $('#txtDefaultWarehouse').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
     });
- 
     GetCityDropDownList();
-    ShowItemMasterlist();
+    ShowWarehouseMaster();
     $("#txtCity").on("change", function () {
         let value = $(this).val();
         let isValid = false;
@@ -111,7 +103,7 @@ function Save() {
             if (response.Status === 'Y') {
                 toastr.success(response.Msg);
                 BackMaster();
-                ShowItemMasterlist();
+                ShowWarehouseMaster();
             } else {
                 toastr.error(response.Msg);
             }
@@ -133,8 +125,7 @@ function Save() {
         }
     });
 }
-
-function ShowItemMasterlist() {
+function ShowWarehouseMaster() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowWarehouseMaster`,
         type: 'GET',
@@ -157,7 +148,9 @@ function ShowItemMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteWarehouse('${item.Code}','${item[`Warehouse Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteWarehouse('${item.Code}','${item[`Warehouse Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -183,14 +176,31 @@ async function CreateWarehouseMaster() {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
-}
+    $("#hftxtCode").val(item.Code).prop("disabled", false);
+    $("#txtWarehouseName").val(item.warehouseName).prop("disabled", false);
+    $("#txtWarehouseType").val(item.WarehouseType).prop("disabled", false);
+    $("#txtAddress").val(item.Address).prop("disabled", false);
+    $("#txtPin").val(item.Pin).prop("disabled", false);
+    $("#txtCity").val(item.CityName).prop("disabled", false);
+    $("#txtGSTIN").val(item.GSTIN).prop("disabled", false);
+    $("#txtDefaultWarehouse").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 
+}
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hftxtCode").val(item.Code).prop("disabled", false);
+    $("#txtWarehouseName").val(item.warehouseName).prop("disabled", false);
+    $("#txtWarehouseType").val(item.WarehouseType).prop("disabled", false);
+    $("#txtAddress").val(item.Address).prop("disabled", false);
+    $("#txtPin").val(item.Pin).prop("disabled", false);
+    $("#txtCity").val(item.CityName).prop("disabled", false);
+    $("#txtGSTIN").val(item.GSTIN).prop("disabled", false);
+    $("#txtDefaultWarehouse").prop("disabled", false);
+    $("#txtbtnSave").prop("disabled", false);
 }
-
 async function deleteWarehouse(code, warehouse) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
@@ -216,7 +226,7 @@ async function deleteWarehouse(code, warehouse) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowItemMasterlist();
+                    ShowWarehouseMaster();
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -259,6 +269,7 @@ async function Edit(code) {
                     } else {
                         $('#txtDefaultWarehouse').prop("checked", true);
                     }
+                    $("#txtbtnSave").prop("disabled", false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -269,7 +280,6 @@ async function Edit(code) {
         }
     });
 }
-
 function exportTableToExcel() {
     var table = document.getElementById("table");
     var workbook = XLSX.utils.book_new();
@@ -291,7 +301,6 @@ function exportTableToExcel() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "UOMMaster.xlsx");
 }
-
 function GetCityDropDownList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetCityDropDown`,
@@ -317,7 +326,6 @@ function GetCityDropDownList() {
         }
     });
 }
-
 function ClearData() {
     $("#hftxtCode").val("0");
     $("#txtWarehouseName").val("");
@@ -330,11 +338,52 @@ function ClearData() {
     $("#txtStoreWarehouse").val("");
     $("#txtInTransitwarehouse").val("");
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Warehouse Master");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowWarehouseMasterByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $("#hftxtCode").val(item.Code).prop("disabled", true);
+                    $("#txtWarehouseName").val(item.warehouseName).prop("disabled", true);
+                    $("#txtWarehouseType").val(item.WarehouseType).prop("disabled", true);
+                    $("#txtAddress").val(item.Address).prop("disabled", true);
+                    $("#txtPin").val(item.Pin).prop("disabled", true);
+                    $("#txtCity").val(item.CityName).prop("disabled", true);
+                    $("#txtGSTIN").val(item.GSTIN).prop("disabled", true);
+                    if (item.DefaultWarehouse == 'N') {
+                        $('#txtDefaultWarehouse').prop("checked", false);
+                    } else {
+                        $('#txtDefaultWarehouse').prop("checked", true);
+                    }
+                    $("#txtDefaultWarehouse").prop("disabled", true);
+                    $("#txtbtnSave").prop("disabled", true);
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }

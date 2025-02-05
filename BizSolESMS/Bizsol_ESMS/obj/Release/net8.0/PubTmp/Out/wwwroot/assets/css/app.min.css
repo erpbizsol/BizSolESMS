@@ -2149,7 +2149,7 @@ body[data-layout=horizontal][data-layout-size=boxed] .navbar-header {
 }
 
     .accordion-button:not(.collapsed) {
-        background-color: #bdbede;
+        background-color: #c9cae7;
     }
 
     .accordion-button:focus {
@@ -6255,10 +6255,13 @@ a.icon-height {
 .text-right {
     text-align: right;
 }
-@media (min-width: 500px) {
-    .sm-table {
-        width: 50%;
-        margin:auto;
-    }
+
+.sm-table {
+    width: 60% !important;
 }
+
+.btnAuto {
+    width: 60% !important;
+}
+
 

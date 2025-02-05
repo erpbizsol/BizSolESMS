@@ -6255,10 +6255,16 @@ a.icon-height {
 .text-right {
     text-align: right;
 }
-@media (min-width: 500px) {
-    .sm-table {
-        width: 50%;
-        margin:auto;
-    }
+
+.sm-table {
+    width: 60% !important;
+    margin:auto;
 }
+.ssm-table {
+    width: 60% !important;
+}
+.btnAuto {
+    width: 60% !important;
+}
+
 

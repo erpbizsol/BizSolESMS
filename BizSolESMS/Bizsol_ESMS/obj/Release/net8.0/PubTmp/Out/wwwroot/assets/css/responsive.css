@@ -8,12 +8,39 @@
         text-align: center !important;
     }
 
-    .main-content {
-        background-size: contain !important; 
-        background-position: top !important; /* Adjust the focus point */
-        height: auto;
-        min-height: 50vh !important;
+    .sm-table {
+        width: 100% !important;
+    }
+    .btnAuto {
+        width: 100% !important;
     }
 }
 
+@media (min-width: 1025px) and (max-width: 1280px) {
 
+   
+
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+
+    
+
+}
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+
+   
+
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+
+    .sm-table {
+        width: 100% !important;
+    }
+
+}
+
+@media (min-width: 320px) and (max-width:  480px)   {
+}

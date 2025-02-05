@@ -333,7 +333,9 @@ function ShowItemMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                 ChangecolorTr();
@@ -378,10 +380,6 @@ function Save() {
     else if (UOM === "") {
         toastr.error('Please select a UOM Name!');
         $("#txtUOM").focus();
-    }
-    else if (HSNCode === "") {
-        toastr.error('Please enter a HSN Code!');
-        $("#txtHSNCode").focus();
     }
     else if (Category === "") {
         toastr.error('Please select a Category!');
@@ -476,11 +474,49 @@ async function CreateItemMaster() {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
+    $("#hfCode").prop("disabled", false);
+    $("#txtItemCode").prop("disabled", false);
+    $("#txtItemName").prop("disabled", false);
+    $("#txtItemName").prop("disabled", false);
+    $("#txtDisplayName").prop("disabled", false);
+    $("#txtItembarcode").prop("disabled", false);
+    $("#txtUOM").prop("disabled", false);
+    $("#txtHSNCode").prop("disabled", false);
+    $("#txtCategory").prop("disabled", false);
+    $("#txtGroupItem").prop("disabled", false);
+    $("#txtSubGroupItem").prop("disabled", false);
+    $("#txtBrand").prop("disabled", false);
+    $("#txtReorderLevel").prop("disabled", false);
+    $("#txtReorderQty").prop("disabled", false);
+    $("#txtItemLocation").prop("disabled", false);
+    $("#txtBoxPacking").prop("disabled", false);
+    $("#txtQtyinBox").prop("disabled", false);
+    $("#txtMaintainExpiry").prop("disabled", false);
+    $("#txtsave").prop("disabled", false);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    $("#hfCode").prop("disabled", false);
+    $("#txtItemCode").prop("disabled", false);
+    $("#txtItemName").prop("disabled", false);
+    $("#txtItemName").prop("disabled", false);
+    $("#txtDisplayName").prop("disabled", false);
+    $("#txtItembarcode").prop("disabled", false);
+    $("#txtUOM").prop("disabled", false);
+    $("#txtHSNCode").prop("disabled", false);
+    $("#txtCategory").prop("disabled", false);
+    $("#txtGroupItem").prop("disabled", false);
+    $("#txtSubGroupItem").prop("disabled", false);
+    $("#txtBrand").prop("disabled", false);
+    $("#txtReorderLevel").prop("disabled", false);
+    $("#txtReorderQty").prop("disabled", false);
+    $("#txtItemLocation").prop("disabled", false);
+    $("#txtBoxPacking").prop("disabled", false);
+    $("#txtQtyinBox").prop("disabled", false);
+    $("#txtMaintainExpiry").prop("disabled", false);
+    $("#txtsave").prop("disabled", false);
 }
 async function deleteItem(code, ItemName) {
     $('table').on('click', 'tr', function () {
@@ -568,6 +604,8 @@ async function Edit(code) {
                 if (item.MaintainExpiry == 'N') {
                     $("#txtMaintainExpiry").prop("checked", false);
                 }
+
+                $("#txtsave").prop("disabled", false);
 
             } else {
                 toastr.error("Record not found...!");
@@ -797,6 +835,68 @@ function ChangecolorTr() {
             row.style.backgroundColor = '#f5c0bf';
         } else {
             row.style.backgroundColor = '';
+        }
+    });
+}
+async function View(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("VIEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowItemByCode?Code=` + code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (item) {
+            if (item) {
+                $("#hfCode").val(item.Code).prop("disabled", true);
+                $("#txtItemCode").val(item.ItemCode).prop("disabled", true);
+                $("#txtItemName").val(item.ItemName).prop("disabled", true);
+                $("#txtItemName").val(item.ItemName).prop("disabled", true);
+                $("#txtDisplayName").val(item.DisplayName).prop("disabled", true);
+                $("#txtItembarcode").val(item.ItemBarCode).prop("disabled", true);
+                $("#txtUOM").val(item.UomName).prop("disabled", true);
+                $("#txtHSNCode").val(item.HSNCode).prop("disabled", true);
+                $("#txtCategory").val(item.CategoryName).prop("disabled", true);
+                $("#txtGroupItem").val(item.GroupName).prop("disabled", true);
+                $("#txtSubGroupItem").val(item.SubGroupName).prop("disabled", true);
+                $("#txtBrand").val(item.BrandName).prop("disabled", true);
+                $("#txtReorderLevel").val(item.ReorderLevel).prop("disabled", true);
+                $("#txtReorderQty").val(item.ReorderQty).prop("disabled", true);
+                $("#txtItemLocation").val(item.locationName).prop("disabled", true);
+                $("#txtBoxPacking").val(item.BoxPacking).prop("disabled", true);
+                $("#txtQtyinBox").val(item.QtyInBox).prop("disabled", true);
+                $("#txtMaintainExpiry").val(item.MaintainExpiry).prop("disabled", true);
+                $("#txtsave").prop("disabled", true);
+                //$("#txtBoxPacking").val(item.BoxPacking);
+                if (item.BoxPacking == 'N') {
+                    $("#txtBoxPacking").prop("checked", false);
+                } else {
+                    $("#txtBoxPacking").prop("checked", true);
+                }
+                if (item.BoxPacking == 'Y') {
+                    $("#txtQtyinBox").prop("disabled", false);
+                }
+                $("#txtQtyinBox").val(item.QtyInBox)
+                if (item.BatchApplicable == 'N') {
+                    $("#txtBatchApplicable").prop("checked", false);
+                }
+                if (item.MaintainExpiry == 'N') {
+                    $("#txtMaintainExpiry").prop("checked", false);
+                }
+
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
         }
     });
 }

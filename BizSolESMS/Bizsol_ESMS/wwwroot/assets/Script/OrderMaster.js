@@ -348,12 +348,14 @@ function Save() {
                 row.find(".txtItemCode").focus();
                 validationFailed = true;
                 return;
-            } else if (row.find(".txtItemAddress").val() == '') {
-                toastr.error("Please select Item Address !");
-                row.find(".txtItemAddress").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtOrderQty").val() == '') {
+            }
+            //else if (row.find(".txtItemAddress").val() == '') {
+            //    toastr.error("Please select Item Address !");
+            //    row.find(".txtItemAddress").focus();
+            //    validationFailed = true;
+            //    return;
+            //}
+            else if (row.find(".txtOrderQty").val() == '') {
                 toastr.error("Please enter Order Qty !");
                 row.find(".txtOrderQty").focus();
                 validationFailed = true;

@@ -176,13 +176,13 @@ async function CreateWarehouseMaster() {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
 
-    $("#hftxtCode").val(item.Code).prop("disabled", false);
-    $("#txtWarehouseName").val(item.warehouseName).prop("disabled", false);
-    $("#txtWarehouseType").val(item.WarehouseType).prop("disabled", false);
-    $("#txtAddress").val(item.Address).prop("disabled", false);
-    $("#txtPin").val(item.Pin).prop("disabled", false);
-    $("#txtCity").val(item.CityName).prop("disabled", false);
-    $("#txtGSTIN").val(item.GSTIN).prop("disabled", false);
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtWarehouseName").prop("disabled", false);
+    $("#txtWarehouseType").prop("disabled", false);
+    $("#txtAddress").prop("disabled", false);
+    $("#txtPin").prop("disabled", false);
+    $("#txtCity").prop("disabled", false);
+    $("#txtGSTIN").prop("disabled", false);
     $("#txtDefaultWarehouse").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
 
@@ -191,13 +191,13 @@ function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
-    $("#hftxtCode").val(item.Code).prop("disabled", false);
-    $("#txtWarehouseName").val(item.warehouseName).prop("disabled", false);
-    $("#txtWarehouseType").val(item.WarehouseType).prop("disabled", false);
-    $("#txtAddress").val(item.Address).prop("disabled", false);
-    $("#txtPin").val(item.Pin).prop("disabled", false);
-    $("#txtCity").val(item.CityName).prop("disabled", false);
-    $("#txtGSTIN").val(item.GSTIN).prop("disabled", false);
+    $("#hftxtCode").prop("disabled", false);
+    $("#txtWarehouseName").prop("disabled", false);
+    $("#txtWarehouseType").prop("disabled", false);
+    $("#txtAddress").prop("disabled", false);
+    $("#txtPin").prop("disabled", false);
+    $("#txtCity").prop("disabled", false);
+    $("#txtGSTIN").prop("disabled", false);
     $("#txtDefaultWarehouse").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
 }
