@@ -8,15 +8,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 <script src="~/assets/script/MRNMaster.js"></script>
 <style>
-    /* .tabs {
-                width: 100%;
-                max-width: 2000px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-                border-radius: 8px;
-                overflow: hidden;
-                padding: 0.7rem;
-                background:#fff;
-            } */
+.tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
 
 
     .tabSec {
@@ -170,177 +169,9 @@
     .page-content {
         padding: 3px 0;
     }
+
+    
 </style>
-<div id="txtListpage" style="display:block;">
-    <div class="row">
-        <div class="col-sm-12 text-end">
-            <label></label>
-            <button type="button" class="btn btn-info btn-height" onclick="ImportExcel()" id="ImportExcel">IMPORT</button>
-            <button type="button" class="btn btn-primary btn-height" id="exportExcel" onclick="ExportExcel()">DOWNLOAD</button>
-            <button type="button" class="btn btn-success btn-height" onclick="Create()">CREATE NEW</button>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-3  col-sm-6">
-                        <label for="txtFromDate" class="col-form-label-sm fw-bold">
-                            From Date <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" id="txtFromDate" name="txtFromDate" autocomplete="off" class="form-control form-control-sm box_border" placeholder="From Date.." maxlength="50">
-                    </div>
-                    <div class="col-md-3  col-sm-6">
-                        <label for="txtToDate" class="col-form-label-sm fw-bold">
-                            To Date <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" id="txtToDate" name="txtToDate" autocomplete="off" class="form-control form-control-sm box_border" placeholder="To Date.." maxlength="50">
-                    </div>
-                    <div class="col-md-3  col-sm-6 " style="margin-top: 33px !important;">
-                        <button class="btn btn-primary btn-height" title="Show" id="txtShow">Show</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card-body mt-2" id="MRNTable">
-        <div class="table-wrapper fixed-height-table">
-            <table id="table" class="fixed-width-table table">
-                <thead id="table-header">
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
-        </div>
-        <!-- Paginator -->
-        <div class="paginator" id="paginator-table">
-        </div>
-    </div>
-</div>
-<div class="textCreatepage" id="txtCreatepage" style="display:none;box-shadow: rgb(130 127 127 / 200%) 0px 4px 6px; border-radius: 10px;">
-    <div class="card shadow-sm" style="background-color:#e9e9ef">
-        <div class="tabs">
-            <div class="fix-header tab-header">
-                <div class="row">
-                    <div class="col-md-6 col-6">
-                        <div class="icon-tab">
-                            <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
-                            <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-6">
-                        <div id="tab1" class="tabSec tab active" style="font-weight: bold;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row p-2">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtMRNNo" class="col-form-label-sm fw-bold">MRN No</label><span class="text-danger">*</span>
-                            <input type="text" id="txtMRNNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="MRN No.." disabled>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtMRNDate" class="col-form-label-sm fw-bold">MRN Date</label><span class="text-danger">*</span>
-                            <input type="hidden" id="hfCode" value="0">
-                            <input type="text" id="txtMRNDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="MRN Date..">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtVendorName" class="col-form-label-sm fw-bold">Vendor Name</label><span class="text-danger">*</span>
-                            <datalist id="txtVendorNameList"></datalist>
-                            <input list="txtVendorNameList" id="txtVendorName" name="txtVendorName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Vender Name">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtAddress" class="col-form-label-sm fw-bold">
-                                Address
-                            </label><span class="text-danger">*</span>
-                            <input type="text" id="txtAddress" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Address.." disabled>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtChallanNo" class="col-form-label-sm fw-bold">Bill /Challan No</label><span class="text-danger">*</span>
-                            <input type="text" id="txtChallanNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Bill/Challan No..">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtChallanDate" class="col-form-label-sm fw-bold">Bill/Challan Date</label><span class="text-danger">*</span>
-                            <input type="text" id="txtChallanDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200">
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
-                            <input type="text" id="txtVehicleNo" onkeyup="convertToUppercase(this);" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Vehicle No..">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row" id="divOrderBooking mb-2">
-                <div class="accordion accordion-flush" id="accordionFlushOrder">
-                    <div class="accordion-item tab active">
-                        <h2 class="accordion-header tab-header .active" id="flush-headingOne">
-                            <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
-                                MRN Details
-                            </button>
-                        </h2>
-                        <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
-                            <div class="accordion-body-sec">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="table-wrapper" style="overflow: auto;">
-                                            <table id="tblorderbooking" class="table">
-                                                <thead role="rowgroup" class="text-sm-center">
-                                                    <tr role="row">
-                                                        <th class="lead-Date width_cust" role="columnheader">Item Barcode<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Item Location</th>
-                                                        <th class="lead-text width_cust" role="columnheader">UOM</th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Bill Qty Box</th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Received Qty Box</th>
-                                                        <th class="lead-text width_cust" role="columnheader">Bill Qty<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Received Qty<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Rate<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Amount<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Warehouse<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Remarks</th>
-                                                        <th class="lead-text width_cust" role="columnheader">Delete</th>
-                                                    </tr>
-                                                    <!-- end table row-->
-                                                </thead>
-                                                <tbody id="Orderdata" role="rowgroup"></tbody>
-                                                <tfoot>
-                                                    <tr role="row" id="trAddBtn" style="font-weight:bold">
-                                                        <td style="text-align: left;">
-                                                            <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
-                                                        </td>
-                                                        <td colspan="4" class="text-right">TOTAL :</td>
-                                                        <td id="txtBillQtyBox" class="text-right">0.00</td>
-                                                        <td id="txtReceivedQtyBox" class="text-right">0.00</td>
-                                                        <td id="txtBillQty" class="text-right">0.00</td>
-                                                        <td id="txtReceivedQty" class="text-right">0.00</td>
-                                                        <td id="txtRate" class="text-right">0.00</td>
-                                                        <td id="txtAmount" class="text-right">0.00</td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <datalist id="txtItemBarCode"></datalist>
-            <datalist id="txtItemName"></datalist>
-            <datalist id="txtItemCode"></datalist>
-            <datalist id="txtWarehouse"></datalist>
-           @*  <div class="row m-2">
-                <div class="col-md-12" style="margin-top: 30px !important;">
-                    <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
-                    <button class="btn btn-danger btn-height" id="btnBack" onclick="BackMaster()">Back</button>
-                </div>
-            </div> *@
-        </div>
-    </div>
-</div>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
         <div class="fix-header">
@@ -375,10 +206,9 @@
         </div>
     </div>
 </section>
-
 <div class="container">
     <div id="txtListpage" style="display:block;">
-        <div class="row">
+        <div class="row mt-3">
             <div class="col-sm-12 text-end">
                 <label></label>
                 <button type="button" class="btn btn-info btn-height" onclick="ImportExcel()" id="ImportExcel">IMPORT</button>
@@ -480,11 +310,14 @@
                 <div class="row" id="divOrderBooking mb-2">
                     <div class="accordion accordion-flush" id="accordionFlushOrder">
                         <div class="accordion-item tab active">
-                            <h2 class="accordion-header tab-header .active" id="flush-headingOne">
-                                <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
-                                    MRN Details
-                                </button>
-                            </h2>
+                            <div class="accordion-header tab-header .active" id="flush-headingOne">
+                                <h2>
+                                    <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
+                                        MRN Details
+                                    </button>
+                                </h2>
+                            </div>
+                            
                             <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
                                 <div class="accordion-body-sec">
                                     <div class="row">
