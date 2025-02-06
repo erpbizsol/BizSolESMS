@@ -12,9 +12,8 @@ $(document).ready(function () {
             $("#txtBoxNo").focus();
         }
     });
-});
-$('#txtBoxNo').on('focusout', function (e) {
-    BoxUnloading();
+    MRNDetail();
+    
 });
 function BoxUnloading() {
     if ($("#txtBoxNo").val() == '') {
@@ -22,8 +21,10 @@ function BoxUnloading() {
         $("#txtBoxNo").focus();
         return;
     }
+    var Code =parseInt($("#txtCode").val())
     const payload = {
-        BoxNo: $("#txtBoxNo").val()
+        BoxNo: $("#txtBoxNo").val(),
+        Code: Code
     }
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/BoxUnloading`,
@@ -89,4 +90,57 @@ function showToast(Msg) {
             overlay.style.display = "none";
         }, 300);
     }, 3000);
+}
+function MRNDetail() {
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/GetMRNDetailForUnloading`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                    $("#UnloadingTable1").show();
+                    const StringFilterColumn = ["PickList No", "Vehicle No"];
+                    const NumericFilterColumn = [];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = [];
+                    const hiddenColumns = ["Code","Status"];
+                    const ColumnAlignment = {
+                };
+                const updatedResponse = response.map(item => ({
+                    ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Start Un-Loading" onclick="StartUnloading('${item["PickList No"]}','${item["Vehicle No"]}','${item.Code}')"><i class="fa fa-hourglass-start"></i></button>
+                    `
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("table-header1", "table-body1", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+            } else {
+               $("#UnloadingTable1").hide();
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function StartUnloading(PickListNo, VehicleNo,Code) {
+    $("#UnloadingForm").show();
+    $("#UnloadingTable1").hide();
+    $("#txtPickListNo").val(PickListNo);
+    $("#txtVehicleNo").val(VehicleNo);
+    $("#txtCode").val(Code);
+}
+function Back() {
+    $("#UnloadingTable1").show();
+    $("#UnloadingTable").hide();
+    $("#UnloadingForm").hide();
+    $("#txtPickListNo").val("");
+    $("#txtVehicleNo").val("");
+    $("#txtCode").val("0");
+    $("#txtBoxNo").val("");
 }
