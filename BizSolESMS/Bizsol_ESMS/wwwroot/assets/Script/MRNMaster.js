@@ -196,29 +196,37 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
+    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function ImportExcel() {
     $("#txtListpage").hide();
     $("#txtCreatepage").hide();
     $("#txtImportPage").show();
+    $("#txtheaderdiv2").show();
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
+    $("#txtheaderdiv").hide();
+
     ClearData();
     disableFields(false);
+    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
+
 }
 function BackImport() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
     $("#ImportTable").hide();
+    $("#txtheaderdiv2").hide();
     ClearDataImport();
 }
 async function Edit(code) {
@@ -230,7 +238,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
@@ -249,6 +257,7 @@ async function Edit(code) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
                     $("#txtVendorName").val(MRNMaster.AccountName || "");
                     $("#txtAddress").val(MRNMaster.Address || "");
+                    $("#txtMRNNo").prop("disabled", true);
                     $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
@@ -1552,6 +1561,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
@@ -1571,6 +1581,7 @@ async function View(code) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
                     $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
                     $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);
+                    
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
@@ -1594,6 +1605,7 @@ async function View(code) {
                 } else {
                     toastr.info("No addresses available for this account.");
                 }
+                $("#txtsave").prop("disabled", true);
                 disableFields(true);
             } else {
                 toastr.error("Record not found...!");

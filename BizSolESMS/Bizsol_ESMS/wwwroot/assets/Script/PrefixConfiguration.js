@@ -72,6 +72,7 @@ async function Save() {
 }
 async function Edit() {
     $("#tab1").text("NEW");
+ 
     $.ajax({
         url: `${appBaseURL}/api/Configuration/GetPrefixConfigurationList`,
         type: 'GET',

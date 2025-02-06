@@ -104,12 +104,14 @@ async function Create() {
 
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#Orderdata").empty();
     addNewRow();
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
+    $("#txtheaderdiv").hide();
     ClearData();
 }
 function GetAccountMasterList() {

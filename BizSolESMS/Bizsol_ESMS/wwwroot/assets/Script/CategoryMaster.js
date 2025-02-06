@@ -107,6 +107,8 @@ async function CreateCategoryMaster() {
     $("#hftxtCode").prop("disabled", false);
     $("#txtCategoryName").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").show();
+    disableFields(false);
 
 }
 function BackMaster() {
@@ -116,6 +118,8 @@ function BackMaster() {
     $("#hftxtCode").prop("disabled", false);
     $("#txtCategoryName").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").hide();
+    disableFields(false);
 
 }
 async function deleteCatagery(code, category) {
@@ -165,6 +169,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowCategoryMasterByCode?Code=` + code,
         type: 'GET',
@@ -177,6 +182,7 @@ async function Edit(code) {
                     $("#hftxtCode").val(item.Code);
                     $("#txtCategoryName").val(item.CategoryName);
                     $("#txtbtnSave").prop("disabled", false);
+                    disableFields(false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -228,6 +234,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
 
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowCategoryMasterByCode?Code=` + code,
@@ -241,6 +248,7 @@ async function View(code) {
                     $("#hftxtCode").val(item.Code).prop("disabled", true);
                     $("#txtCategoryName").val(item.CategoryName).prop("disabled", true);
                     $("#txtbtnSave").prop("disabled", true);
+                    disableFields(true);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -250,4 +258,8 @@ async function View(code) {
             console.error("Error:", error);
         }
     });
+}
+
+function disableFields(disable) {
+    $("input, select, button,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }

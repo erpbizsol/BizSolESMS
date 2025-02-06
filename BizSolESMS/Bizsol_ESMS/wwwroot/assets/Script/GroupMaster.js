@@ -108,14 +108,18 @@ async function CreateGroupMaster() {
     $("#hftxtCode").prop("disabled", false);
     $("#txtGroupName").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").show();
+    disableFields(false);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
+    $("#txtheaderdiv").hide();
     ClearData();
     $("#hftxtCode").prop("disabled", false);
     $("#txtGroupName").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    disableFields(false);
 }
 async function deleteGroup(code, group) {
     $('table').on('click', 'tr', function () {
@@ -164,6 +168,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowGroupMasterByCode?Code=` + code,
         type: 'GET',
@@ -228,6 +233,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
 
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowGroupMasterByCode?Code=` + code,
@@ -241,6 +247,7 @@ async function View(code) {
                     $("#hftxtCode").val(item.Code).prop("disabled", true);
                     $("#txtGroupName").val(item.GroupName).prop("disabled", true);
                     $("#txtbtnSave").prop("disabled", true);
+                    disableFields(true);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -250,4 +257,8 @@ async function View(code) {
             console.error("Error:", error);
         }
     });
+}
+
+function disableFields(disable) {
+    $("input, select, button,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }

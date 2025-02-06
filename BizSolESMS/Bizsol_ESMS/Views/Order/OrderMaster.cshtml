@@ -8,14 +8,15 @@
 <script src="~/assets/script/OrderMaster.js"></script>
 <style>
     /* .tabs {
-                width: 100%;
-                max-width: 2000px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-                border-radius: 8px;
-                overflow: hidden;
-                padding: 0.7rem;
-                background:#fff;
-            } */
+                    width: 100%;
+                    max-width: 2000px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+                    border-radius: 8px;
+                    overflow: hidden;
+                    padding: 0.7rem;
+                    background:#fff;
+                } */
+
 
     .tabSec {
         color: white;
@@ -28,17 +29,13 @@
         border-bottom-left-radius: 40px;
         line-height: 3;
         margin-top: -8px;
-        background: #fff;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    }
-
-    .tab-header .active {
         background: #1d4b7d;
     }
 
-    .tab-header {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-    }
+
+    /*  .tab-header {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        } */
 
     .tab-content {
         display: none;
@@ -47,9 +44,9 @@
         border-radius: 5px;
     }
 
-    .tab-content.active {
-        display: block;
-    }
+        .tab-content.active {
+            display: block;
+        }
 
     .tab[disabled] {
         cursor: not-allowed;
@@ -65,17 +62,22 @@
         height: 16px !important;
     }
 
+
+    .fixed-height-table {
+        height: auto;
+    }
+    /*
+            .container-fluid {
+                overflow: auto;
+                height: 81vh;
+            } */
+
     .datepicker table tfoot {
         display: none;
     }
 
     .fixed-height-table {
         height: auto;
-    }
-
-    .container-fluid {
-        overflow: auto;
-        height: 81vh;
     }
 
     .page-content {
@@ -89,15 +91,25 @@
         z-index: 1000;
         padding: 8px 0 8px 9px;
         transition: background 0.3s ease;
-        /* border-radius: 30px; */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
         height: 36px;
     }
+
 
     .shadow-sm {
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
         background-color: #e9e9ef;
+        margin-top: 15px;
+        border-top: 1px solid #c9cae7;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 50%;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
     }
 
     .btn-icon {
@@ -115,7 +127,67 @@
     .highlight {
         background-color: #f5c0bfc4;
     }
+
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
+        /*  overflow: hidden;
+                    height: auto; */
+    }
+
+    .container {
+        overflow: auto;
+        height: 81vh;
+        /* overflow: hidden; */
+    }
+    /* .breadcrumbs .container-fluid .fix-header {
+                position: sticky;
+                top: 0;
+                background-color: #dddde4;
+                z-index: 1000;
+                padding: 8px 0 8px 9px;
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                height: 36px;
+            } */
+
+    .breadcrumbs1 {
+        background: #dddde4;
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        /* border-top-right-radius: 5px;
+                    border-top-left-radius: 5px; */
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        /* height: 36px; */
+        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
+    }
+
+    .page-content {
+        padding: 3px 0;
+    }
 </style>
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
 <div class="" id="txtListpage" style="display:block;">
     <div class="row">
         <div class="col-sm-12 text-end">
@@ -138,10 +210,10 @@
         </div>
     </div>
 </div>
-<div class="textCreatepage" id="txtCreatepage" style="display:none;box-shadow: rgb(130 127 127 / 200%) 0px 4px 6px; border-radius: 10px;">
+<div class="textCreatepage" id="txtCreatepage" style="display:none;">
     <div class="card shadow-sm" style="background-color:#e9e9ef">
-        <div class="tabs" style="padding:10px;">
-            <div class="fix-header tab-header">
+        <div class="tabs">
+          @*   <div class="fix-header tab-header">
                 <div class="row">
                     <div class="col-md-6 col-6">
                         <div class="icon-tab">
@@ -153,7 +225,7 @@
                         <div id="tab1" class="tabSec tab active" style="font-weight: bold;"></div>
                     </div>
                 </div>
-            </div>
+            </div> *@
             <div class="row p-2">
                 <div class="col-md-12">
                     <div class="row">
@@ -241,14 +313,15 @@
             <datalist id="txtItemCode"></datalist>
             <datalist id="txtItemName"></datalist>
             <datalist id="txtItemAddress"></datalist>
-            <div class="row m-2">
+       @*      <div class="row m-2">
                 <div class="col-md-12" style="margin-top: 30px !important;">
                     <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
                     <button class="btn btn-danger btn-height" id="btnBack" onclick="BackMaster()">Back</button>
                 </div>
-            </div>
+            </div> *@
         </div>
     </div>
+</div>
 </div>
 <script src="~/assets/js/filter.js"></script>
 
