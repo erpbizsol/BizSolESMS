@@ -132,6 +132,8 @@ async function CreateSubgroupMaster() {
     $("#txtSubGroupName").prop("disabled", false);
     $("#txtGroupName").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").show();
+    disableFields(false);
 
 }
 function BackMaster() {
@@ -142,6 +144,8 @@ function BackMaster() {
     $("#txtSubGroupName").prop("disabled", false);
     $("#txtGroupName").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").hide();
+    disableFields(false);
 }
 async function deleteSubGroupMaster(code, subGroupName) {
     $('table').on('click', 'tr', function () {
@@ -190,6 +194,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowSubGroupMasterByCode?Code=` + code,
         type: 'GET',
@@ -203,6 +208,7 @@ async function Edit(code) {
                     $("#txtSubGroupName").val(item.SubGroupName);
                     $("#txtGroupName").val(item.GroupName);
                     $("#txtbtnSave").prop("disabled", false);
+                    disableFields(false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -258,6 +264,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowSubGroupMasterByCode?Code=` + code,
         type: 'GET',
@@ -271,6 +278,7 @@ async function View(code) {
                     $("#txtSubGroupName").val(item.SubGroupName).prop("disabled", true);
                     $("#txtGroupName").val(item.GroupName).prop("disabled", true);
                     $("#txtbtnSave").prop("disabled", true);
+                    disableFields(true);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -280,4 +288,7 @@ async function View(code) {
             console.error("Error:", error);
         }
     });
+}
+function disableFields(disable) {
+    $("input, select, button,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }

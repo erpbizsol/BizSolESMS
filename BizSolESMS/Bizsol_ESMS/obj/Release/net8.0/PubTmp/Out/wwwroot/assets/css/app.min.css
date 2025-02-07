@@ -6004,7 +6004,7 @@ table, th, td, tr {
 
 .table > tbody > tr:nth-of-type(odd) > * {
     --bs-table-color-type: var(--bs-table-striped-color);
-    --bs-table-bg-type: var(--bs-table-striped-bg);
+    /*--bs-table-bg-type: var(--bs-table-striped-bg);*/
 }
 
 /*----- form design ---------*/
@@ -6258,10 +6258,15 @@ a.icon-height {
 
 .sm-table {
     width: 60% !important;
+    margin:auto;
 }
-
+.ssm-table {
+    width: 60% !important;
+}
 .btnAuto {
     width: 60% !important;
 }
-
+.tab-header {
+    height: 35px;
+}
 

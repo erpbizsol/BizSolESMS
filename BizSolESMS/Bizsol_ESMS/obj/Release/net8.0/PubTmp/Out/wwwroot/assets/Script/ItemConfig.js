@@ -43,6 +43,7 @@ $(document).ready(function () {
 });
 function BackMaster() {
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").hide();
     window.location.href = `${AppBaseURLMenu}/Master/ItemMasterList`;
 }
 async function Save() {
@@ -116,6 +117,7 @@ async function Edit() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemConfig`,
         type: 'GET',

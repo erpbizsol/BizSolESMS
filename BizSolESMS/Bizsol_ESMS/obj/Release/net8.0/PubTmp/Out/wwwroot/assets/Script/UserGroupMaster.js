@@ -71,12 +71,14 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
+    $("#txtheaderdiv").show();
     disableFields(false);
     $("#btnSave").prop("disabled", false);
 }
 function Back() {
     $("#FrmUserMaster").hide();
     $("#tblUserMaster").show();
+    $("#txtheaderdiv").hide();
     ClearData();
     disableFields(false);
     $("#btnSave").prop("disabled", false);
@@ -128,6 +130,7 @@ async function Edit(Code) {
     $("#tab1").text("EDIT");
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
+    $("#txtheaderdiv").show();
     UserGroupMasterByCode(Code);
     disableFields(false);
     $("#btnSave").prop("disabled", false);
@@ -222,6 +225,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#tblUserMaster").hide();
     $("#FrmUserMaster").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/GetUserGroupMasterByCode?Code=${code}`,
         type: 'GET',
@@ -243,7 +247,7 @@ async function View(code) {
         }
     });
 }
-
 function disableFields(disable) {
-    $("input, select, button").not("#btnBack").prop("disabled", disable);
+    $("input, select, button,#btnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }
+

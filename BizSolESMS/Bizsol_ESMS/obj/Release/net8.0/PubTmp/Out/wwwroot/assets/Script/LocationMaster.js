@@ -99,6 +99,7 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#hftxtCode").prop("disabled", false);
     $("#txtLocationName").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
@@ -107,6 +108,7 @@ async function Create() {
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
+    $("#txtheaderdiv").hide();
     ClearData();
     $("#hftxtCode").prop("disabled", false);
     $("#txtLocationName").prop("disabled", false);
@@ -159,6 +161,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
 
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowLocationMasterByCode?Code=` + code,
@@ -173,6 +176,7 @@ async function Edit(code) {
                         $("#hftxtCode").val(item.Code);
                         $("#txtLocationName").val(item.LocationName);
                         $("#txtsave").prop("disabled", false);
+                        disableFields(false);
                     });
                 } else {
                     toastr.error("Record not found...!");
@@ -207,6 +211,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
 
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowLocationMasterByCode?Code=` + code,
@@ -221,6 +226,7 @@ async function View(code) {
                         $("#hftxtCode").val(item.Code).prop("disabled", true);
                         $("#txtLocationName").val(item.LocationName).prop("disabled", true);
                         $("#txtsave").prop("disabled", true);
+                        disableFields(true);
                     });
                 } else {
                     toastr.error("Record not found...!");
@@ -234,4 +240,9 @@ async function View(code) {
             toastr.error("Failed to fetch data. Please try again.");
         }
     });
+}
+
+
+function disableFields(disable) {
+    $("input, select, button,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }

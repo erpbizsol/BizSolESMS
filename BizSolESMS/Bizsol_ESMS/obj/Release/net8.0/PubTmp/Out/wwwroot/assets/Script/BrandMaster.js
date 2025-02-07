@@ -103,6 +103,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowBrandMasterByCode?Code=${code}`,
         type: 'GET',
@@ -115,6 +116,7 @@ async function Edit(code) {
                     $("#hftextCode").val(item.Code),
                     $("#txtBrandName").val(item.BrandName);
                     $("#txtbtnSave").prop("disabled", false);
+                    disableFields(false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -180,7 +182,9 @@ async function CreateBrandMaster() {
     $("#txtCreatepage").show();
     $("#hftextCode").prop("disabled", false);
     $("#txtBrandName").prop("disabled", false);
-    $("#txtbtnSave").prop("disabled", false)
+    $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").show();
+    disableFields(false);
 
 }
 function BackMaster() {
@@ -189,7 +193,9 @@ function BackMaster() {
     ClearData();
     $("#hftextCode").prop("disabled", false);
     $("#txtBrandName").prop("disabled", false);
-    $("#txtbtnSave").prop("disabled", false)
+    $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").hide();
+    disableFields(false);
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
@@ -207,6 +213,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowBrandMasterByCode?Code=${code}`,
         type: 'GET',
@@ -217,8 +224,10 @@ async function View(code) {
             if (item.length > 0) {
                 item.forEach(function (item) {
                     $("#hftextCode").val(item.Code).prop("disabled", true),
-                    $("#txtBrandName").val(item.BrandName).prop("disabled", true),
-                    $("#txtbtnSave").prop("disabled", true)
+                        $("#txtBrandName").val(item.BrandName).prop("disabled", true),
+                        $("#txtbtnSave").prop("disabled", true),
+                        disableFields(true);
+
 
                 });
             } else {
@@ -230,4 +239,8 @@ async function View(code) {
         }
     });
     
+}
+
+function disableFields(disable) {
+    $("input, select, button,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }

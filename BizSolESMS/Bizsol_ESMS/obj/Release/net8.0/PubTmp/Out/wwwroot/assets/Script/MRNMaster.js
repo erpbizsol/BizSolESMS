@@ -141,12 +141,12 @@ function ShowMRNMasterlist() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
     var ToDate = convertDateFormat2($("#txtToDate").val());
     if (FromDate == '') {
-        toastr.error("Please select MRN Date !");
-        $("#txtMRNDate").focus();
+        toastr.error("Please select from date !");
+        $("#txtFromDate").focus();
         return;
     } else if (ToDate == '') {
-        toastr.error("Please enter vendor name !");
-        $("#txtVendorName").focus();
+        toastr.error("Please enter to date !");
+        $("#txtToDate").focus();
         return;
     }
     $.ajax({
@@ -196,29 +196,37 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
+    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function ImportExcel() {
     $("#txtListpage").hide();
     $("#txtCreatepage").hide();
     $("#txtImportPage").show();
+    $("#txtheaderdiv2").show();
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
+    $("#txtheaderdiv").hide();
+
     ClearData();
     disableFields(false);
+    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
+
 }
 function BackImport() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
     $("#ImportTable").hide();
+    $("#txtheaderdiv2").hide();
     ClearDataImport();
 }
 async function Edit(code) {
@@ -230,7 +238,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
@@ -249,6 +257,7 @@ async function Edit(code) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
                     $("#txtVendorName").val(MRNMaster.AccountName || "");
                     $("#txtAddress").val(MRNMaster.Address || "");
+                    $("#txtMRNNo").prop("disabled", true);
                     $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
@@ -1543,8 +1552,6 @@ function convertDateFormat2(dateString) {
     const monthAbbreviation = monthNames[parseInt(month) - 1];
     return `${day}/${monthAbbreviation}/${year}`;
 }
-
-
 async function View(code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -1554,6 +1561,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
@@ -1610,10 +1618,46 @@ async function View(code) {
     });
 
 }
-
-//function disableFields(disable) {
-//    $("input, select, button").not("#btnBack").prop("disabled", disable);
-//}
 function disableFields(disable) {
-    $("input, select, button, a").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
+    $("input, select, button").not("#btnBack").prop("disabled", disable);
+}
+function DataExport() {
+    var FromDate = convertDateFormat2($("#txtFromDate").val());
+    var ToDate = convertDateFormat2($("#txtToDate").val());
+    if (FromDate == '') {
+        toastr.error("Please select from date !");
+        $("#txtFromDate").focus();
+        return;
+    } else if (ToDate == '') {
+        toastr.error("Please enter to date !");
+        $("#txtToDate").focus();
+        return;
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ExportMRNMaster?FromDate=${FromDate}&ToDate=${ToDate}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "MRNMaster.xlsx");
+}
+function ExportExcel() {
+    DataExport();
 }
