@@ -473,7 +473,7 @@ async function CreateItemMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $("#hfCode").prop("disabled", false);
     $("#txtItemCode").prop("disabled", false);
     $("#txtItemName").prop("disabled", false);
@@ -493,6 +493,7 @@ async function CreateItemMaster() {
     $("#txtQtyinBox").prop("disabled", false);
     $("#txtMaintainExpiry").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
+    disableFields(false);
 }
 function BackMaster() {
     $("#txtListpage").show();
@@ -517,6 +518,8 @@ function BackMaster() {
     $("#txtQtyinBox").prop("disabled", false);
     $("#txtMaintainExpiry").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
+    $("#txtheaderdiv").hide();
+    disableFields(false);
 }
 async function deleteItem(code, ItemName) {
     $('table').on('click', 'tr', function () {
@@ -555,8 +558,14 @@ async function deleteItem(code, ItemName) {
             }
         });
     }
+    else {
+        $('table tr').removeClass('highlight');
+    }
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -565,6 +574,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemByCode?Code=` + code,
         type: 'GET',
@@ -606,7 +616,7 @@ async function Edit(code) {
                 }
 
                 $("#txtsave").prop("disabled", false);
-
+                disableFields(false);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -839,6 +849,9 @@ function ChangecolorTr() {
     });
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -847,6 +860,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemByCode?Code=` + code,
         type: 'GET',
@@ -874,6 +888,7 @@ async function View(code) {
                 $("#txtQtyinBox").val(item.QtyInBox).prop("disabled", true);
                 $("#txtMaintainExpiry").val(item.MaintainExpiry).prop("disabled", true);
                 $("#txtsave").prop("disabled", true);
+                disableFields(true);
                 //$("#txtBoxPacking").val(item.BoxPacking);
                 if (item.BoxPacking == 'N') {
                     $("#txtBoxPacking").prop("checked", false);
@@ -899,4 +914,8 @@ async function View(code) {
             console.error("Error:", error);
         }
     });
+}
+
+function disableFields(disable) {
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }

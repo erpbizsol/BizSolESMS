@@ -175,7 +175,7 @@ async function CreateWarehouseMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $("#hftxtCode").prop("disabled", false);
     $("#txtWarehouseName").prop("disabled", false);
     $("#txtWarehouseType").prop("disabled", false);
@@ -184,12 +184,14 @@ async function CreateWarehouseMaster() {
     $("#txtCity").prop("disabled", false);
     $("#txtGSTIN").prop("disabled", false);
     $("#txtDefaultWarehouse").prop("disabled", false);
+    disableFields(false); 
     $("#txtbtnSave").prop("disabled", false);
 
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
+    $("#txtheaderdiv").hide();
     ClearData();
     $("#hftxtCode").prop("disabled", false);
     $("#txtWarehouseName").prop("disabled", false);
@@ -200,6 +202,7 @@ function BackMaster() {
     $("#txtGSTIN").prop("disabled", false);
     $("#txtDefaultWarehouse").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    disableFields(false);
 }
 async function deleteWarehouse(code, warehouse) {
     $('table').on('click', 'tr', function () {
@@ -238,13 +241,20 @@ async function deleteWarehouse(code, warehouse) {
             }
         });
     }
+    else {
+        $('table tr').removeClass('highlight');
+    }
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
+    $("#txtheaderdiv").show();
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -270,6 +280,7 @@ async function Edit(code) {
                         $('#txtDefaultWarehouse').prop("checked", true);
                     }
                     $("#txtbtnSave").prop("disabled", false);
+                    disableFields(false); 
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -346,11 +357,15 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
+    $("#txtheaderdiv").show();
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -375,8 +390,9 @@ async function View(code) {
                     } else {
                         $('#txtDefaultWarehouse').prop("checked", true);
                     }
-                    $("#txtDefaultWarehouse").prop("disabled", true);
+                    $("#txtDefaultWarehouse").prop("disabled", false);
                     $("#txtbtnSave").prop("disabled", true);
+                    disableFields(true); 
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -386,4 +402,8 @@ async function View(code) {
             console.error("Error:", error);
         }
     });
+}
+
+function disableFields(disable) {
+    $("#txtCreatepage,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }

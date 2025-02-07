@@ -158,9 +158,14 @@ async function deleteCatagery(code, category) {
 
             }
         });
+    } else {
+        $('table tr').removeClass('highlight');
     }
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -226,11 +231,14 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
-    //const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
-    //if (hasPermission == false) {
-    //    toastr.error(msg);
-    //    return;
-    //}
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -260,5 +268,5 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+    $("#txtCreatepage,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
