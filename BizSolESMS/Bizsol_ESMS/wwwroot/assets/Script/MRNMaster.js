@@ -141,12 +141,12 @@ function ShowMRNMasterlist() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
     var ToDate = convertDateFormat2($("#txtToDate").val());
     if (FromDate == '') {
-        toastr.error("Please select MRN Date !");
-        $("#txtMRNDate").focus();
+        toastr.error("Please select from date !");
+        $("#txtFromDate").focus();
         return;
     } else if (ToDate == '') {
-        toastr.error("Please enter vendor name !");
-        $("#txtVendorName").focus();
+        toastr.error("Please enter to date !");
+        $("#txtToDate").focus();
         return;
     }
     $.ajax({
@@ -168,13 +168,13 @@ function ShowMRNMasterlist() {
                 const ColumnAlignment = {
                 };
                 const updatedResponse = response.map(item => ({
-                    ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}')"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-                
+                ChangecolorTr();
             } else {
                 $("#MRNTable").hide();
                 toastr.error("Record not found...!");
@@ -229,12 +229,17 @@ function BackImport() {
     $("#txtheaderdiv2").hide();
     ClearDataImport();
 }
-async function Edit(code) {
+async function Edit(code, Status) {
+    if (Status !== 'UNLOADING PENDING') {
+        toastr.error("Un-Loading start you can`t edit !.");
+        return;
+    }
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
+    
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -292,7 +297,11 @@ async function Edit(code) {
         }
     });
 }
-async function DeleteItem(code, Challan) {
+async function DeleteItem(code, Challan, status) {
+    if (status !== 'UNLOADING PENDING') {
+        toastr.error("Un-Loading start you can`t delete !.");
+        return;
+    }
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
         $(this).addClass('highlight');
@@ -302,6 +311,7 @@ async function DeleteItem(code, Challan) {
         toastr.error(msg);
         return;
     }
+    
     const { Status, msg1 } = await CheckRelatedRecord(code, 'mrnmaster');
     if (Status == true) {
         toastr.error(msg1);
@@ -750,6 +760,12 @@ function addNewRow() {
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
         table.appendChild(newRow);
+        updateTotalBillQty();
+        updateTotalRate();
+        updateTotalAmount();
+        updateTotalBillQtyBox();
+        updateTotalReceivedQtyBox();
+        updateTotalReceivedQty();
     }
 }
 $(document).on("click", ".deleteRow", function () {
@@ -1552,8 +1568,6 @@ function convertDateFormat2(dateString) {
     const monthAbbreviation = monthNames[parseInt(month) - 1];
     return `${day}/${monthAbbreviation}/${year}`;
 }
-
-
 async function View(code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -1620,10 +1634,79 @@ async function View(code) {
     });
 
 }
-
-//function disableFields(disable) {
-//    $("input, select, button").not("#btnBack").prop("disabled", disable);
-//}
 function disableFields(disable) {
-    $("input, select, button,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
+    $("input, select, button").not("#btnBack").prop("disabled", disable);
 }
+function DataExport() {
+    var FromDate = convertDateFormat2($("#txtFromDate").val());
+    var ToDate = convertDateFormat2($("#txtToDate").val());
+    if (FromDate == '') {
+        toastr.error("Please select from date !");
+        $("#txtFromDate").focus();
+        return;
+    } else if (ToDate == '') {
+        toastr.error("Please enter to date !");
+        $("#txtToDate").focus();
+        return;
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ExportMRNMaster?FromDate=${FromDate}&ToDate=${ToDate}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "MRNMaster.xlsx");
+}
+function ExportExcel() {
+    DataExport();
+}
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#table-body tr');
+
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const targetTd = tds[9]; 
+        const targetTd1 = tds[10]; 
+
+        if (targetTd) { 
+            const columnValue = targetTd.textContent.trim();
+            const columnValue1 = targetTd1.textContent.trim();
+            
+            if (columnValue === 'UNLOADED') {
+                targetTd.style.backgroundColor = '#009358';
+            } else if (columnValue === "PARTIAL UNLOADED") {
+                targetTd.style.backgroundColor = '#9ef3a5';
+            } else {
+                targetTd.style.backgroundColor = '#d5d5f5';
+            }
+            if (columnValue1 === 'VALIDATED') {
+                targetTd1.style.backgroundColor = '#009358';
+            } else if (columnValue1 === "PARTIAL VALIDATE") {
+                targetTd1.style.backgroundColor = '#9ef3a5';
+            } else {
+                targetTd1.style.backgroundColor = '#d5d5f5';
+            }
+            targetTd.style.fontWeight = 'bold';
+            targetTd1.style.fontWeight = 'bold';
+        }
+    });
+}
+
+setInterval(ChangecolorTr, 100);

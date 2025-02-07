@@ -86,7 +86,21 @@
     }
 
 </style>
-    <div class="card shadow-sm" style="background-color:#e9e9ef">
+<div class="row m-3" sstyle="display:none" id="UnloadingTable1">
+    <div class="card-body mt-2">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table1" class="fixed-width-table table ssm-table">
+                <thead id="table-header1">
+                </thead>
+                <tbody id="table-body1">
+                </tbody>
+            </table>
+        </div>
+        <div class="paginator" id="paginator-table1">
+        </div>
+    </div>
+</div>
+    <div class="card shadow-sm" id="UnloadingForm" style="background-color:#e9e9ef;display:none">
         <div class="tabs">
             <div class="tab-header">
                 <div id="tab1" class="tab active" style="color:white">UNLOADING</div>
@@ -94,9 +108,21 @@
             <div class="row p-2">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-md-4 col-sm-6">
+                        <div class="col-md-3 col-sm-6">
+                        <label for="txtPickListNo" class="col-form-label-sm fw-bold">PickList No</label>
+                            <input type="text" id="txtPickListNo" disabled class="box_border form-control form-control-sm" autocomplete="off">
+                            <input type="text" id="txtCode" class="box_border form-control form-control-sm d-none" autocomplete="off">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
+                            <input type="text" id="txtVehicleNo" disabled class="box_border form-control form-control-sm" autocomplete="off">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
                             <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No</label><span class="text-danger">*</span>
                             <input type="text" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No.." onfocus="this.select()">
+                        </div>
+                        <div class="col-md-3 col-sm-6" style="margin-top: 33px !important;">
+                            <button class="btn btn-danger btn-height" onclick="Back()">Back</button>
                         </div>
                     </div>
                 </div>

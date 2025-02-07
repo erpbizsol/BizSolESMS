@@ -128,16 +128,20 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
+    $("#txtOrderNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
+    $("#txtheaderdiv").hide();
     ClearData();
     disableFields(false);
+    $("#txtOrderNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function Edit(code) {
@@ -149,7 +153,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowOrderMasterByCode?Code=` + code,
         type: 'GET',
@@ -168,6 +172,7 @@ async function Edit(code) {
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
                     $("#txtsave").prop("disabled", false);
+                    $("#txtOrderNo").prop("disabled", true);
                     const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: OrderMaster.AccountName, Address: OrderMaster.Address }
@@ -884,6 +889,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowOrderMasterByCode?Code=` + code,
         type: 'GET',
@@ -932,6 +938,6 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button").not("#btnBack").prop("disabled", disable);
+    $("input, select, button,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
 }
 

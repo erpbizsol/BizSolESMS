@@ -5,18 +5,17 @@
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 <script src="~/assets/script/MRNMaster.js"></script>
 <style>
-    /* .tabs {
-                width: 100%;
-                max-width: 2000px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-                border-radius: 8px;
-                overflow: hidden;
-                padding: 0.7rem;
-                background:#fff;
-            } */
+.tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
 
 
     .tabSec {
@@ -170,6 +169,8 @@
     .page-content {
         padding: 3px 0;
     }
+
+    
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -205,14 +206,13 @@
         </div>
     </div>
 </section>
-
 <div class="container">
     <div id="txtListpage" style="display:block;">
-        <div class="row">
+        <div class="row mt-3">
             <div class="col-sm-12 text-end">
                 <label></label>
                 <button type="button" class="btn btn-info btn-height" onclick="ImportExcel()" id="ImportExcel">IMPORT</button>
-                <button type="button" class="btn btn-primary btn-height" id="exportExcel">DOWNLOAD</button>
+                <button type="button" class="btn btn-primary btn-height" id="exportExcel" onclick="ExportExcel()">DOWNLOAD</button>
                 <button type="button" class="btn btn-success btn-height" onclick="Create()">CREATE NEW</button>
             </div>
             <div class="row">
@@ -310,11 +310,14 @@
                 <div class="row" id="divOrderBooking mb-2">
                     <div class="accordion accordion-flush" id="accordionFlushOrder">
                         <div class="accordion-item tab active">
-                            <h2 class="accordion-header tab-header .active" id="flush-headingOne">
-                                <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
-                                    MRN Details
-                                </button>
-                            </h2>
+                            <div class="accordion-header tab-header .active" id="flush-headingOne">
+                                <h2>
+                                    <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
+                                        MRN Details
+                                    </button>
+                                </h2>
+                            </div>
+                            
                             <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
                                 <div class="accordion-body-sec">
                                     <div class="row">
