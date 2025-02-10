@@ -847,3 +847,6 @@ function SetvalueBillQtyBox(inputElement) {
         CalculateAmount(inputElement);
     }
 }
+function convertToUppercase(element) {
+    element.value = element.value.toUpperCase();
+}
