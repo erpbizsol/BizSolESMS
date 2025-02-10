@@ -201,27 +201,6 @@ function ClearData() {
     $("#txtGroupName").val("");
 
 }
-function exportTableToExcel() {
-    var table = document.getElementById("table");
-    var workbook = XLSX.utils.book_new();
-    var worksheet = XLSX.utils.table_to_sheet(table);
-    var hiddenColumns = ["Action"];
-    for (var row in worksheet) {
-        if (row.startsWith('!')) continue;
-        var cellIndex = parseInt(row.match(/\d+/));
-        if (!isNaN(cellIndex)) {
-            hiddenColumns.forEach(colIdx => {
-                var colLetter = XLSX.utils.encode_col(colIdx);
-                delete worksheet[colLetter + cellIndex];
-            });
-        }
-    }
-    var range = XLSX.utils.decode_range(worksheet['!ref']);
-    range.e.c -= hiddenColumns.length; // Adjust end column
-    worksheet['!ref'] = XLSX.utils.encode_range(range);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "UOMMaster.xlsx");
-}
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Group  Master");
@@ -268,4 +247,30 @@ async function View(code) {
 }
 function disableFields(disable) {
     $("#txtCreatepage,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+}
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowGroupMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "GroupMaster.xlsx");
 }

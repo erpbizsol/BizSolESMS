@@ -906,7 +906,6 @@ function FillallItemfield1(inputElement) {
     }
 
 }
-
 function FillValue(element) {
     const currentRow = element.closest('tr');
     const inputs = document.querySelectorAll('#Orderdata input');
@@ -987,7 +986,6 @@ function getCheckedRows(element) {
         }
     });
 }
-
 function fillFields(inputid, row, value) {
     if (inputid === "tdsAddressCode1") {
         let txtAddressCode = row.querySelector('.txtAddressCode');
@@ -1049,7 +1047,6 @@ function fillFields(inputid, row, value) {
         if (txtEmail) txtEmail.value = value;
     }
 }
-
 function ClearData1() {
     $("#tdsAddressCode1").val(""),
     $("#tdsAddressLine1").val(""),
@@ -1064,7 +1061,6 @@ function ClearData1() {
     $("#tdsMobile").val(""),
     $("#tdsEmail").val("")
 }
-
 async function View(code) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
@@ -1139,4 +1135,30 @@ async function View(code) {
 }
 function disableFields(disable) {
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+}
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowAccountMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "Client/VendorMaster.xlsx");
 }
