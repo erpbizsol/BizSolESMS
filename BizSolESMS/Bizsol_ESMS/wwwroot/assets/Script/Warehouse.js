@@ -427,8 +427,16 @@ function DataExport() {
 
 }
 function Export(jsonData) {
-    var ws = XLSX.utils.json_to_sheet(jsonData);
-    var wb = XLSX.utils.book_new();
+    const columnsToRemove = ["Code"];
+    if (!Array.isArray(columnsToRemove)) {
+        console.error("columnsToRemove should be an array");
+        return;
+    }
+    const filteredData = jsonData.map(row =>
+        Object.fromEntries(Object.entries(row).filter(([key]) => !columnsToRemove.includes(key)))
+    );
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "WarehouseMaster.xlsx");
 }
