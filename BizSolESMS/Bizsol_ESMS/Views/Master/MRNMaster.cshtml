@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
@@ -8,7 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 <script src="~/assets/script/MRNMaster.js"></script>
 <style>
-.tabs {
+    .tabs {
         width: 100%;
         max-width: 2000px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -299,6 +299,10 @@
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtChallanDate" class="col-form-label-sm fw-bold">Bill/Challan Date</label><span class="text-danger">*</span>
                                 <input type="text" id="txtChallanDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtPickListNo" class="col-form-label-sm fw-bold">PickList No</label><span class="text-danger">*</span>
+                                <input type="text" id="txtPickListNo" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="PickList No..">
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
