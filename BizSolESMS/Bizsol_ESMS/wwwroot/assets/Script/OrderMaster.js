@@ -463,7 +463,7 @@ function addNewRowEdit(index, address) {
         $("#txtQtyBox_" + rowCount).prop("disabled", isDisabled);
         $("#txtOrderQty_" + rowCount).val(address.OrderQty || "");
         $("#txtRate_" + rowCount).val(address.Rate || "");
-        $("#txtAmount_" + rowCount).val(address.Amount || isDisabled);
+        $("#txtAmount_" + rowCount).val(address.Amount);
         $("#txtRemarks_" + rowCount).val(address.Remarks || "");
     }
 }

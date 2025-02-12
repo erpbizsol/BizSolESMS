@@ -161,9 +161,9 @@ async function CreateItemMaster() {
     $("#tdsAddressLine1").prop("disabled", false);
     $("#tdsAddressLine2").prop("disabled", false);
     $("#tdsCitysList").prop("disabled", false);
-    $("#tdsStatelist").prop("disabled", false);
-    $("#tdsNationlist").prop("disabled", false);
-    $("#tdsPIN").prop("disabled", false);
+    //$("#tdsStatelist").prop("disabled", false);
+    //$("#tdsNationlist").prop("disabled", false);
+    //$("#tdsPIN").prop("disabled", false);
     $("#tdsGSTIN").prop("disabled", false);
     $("#tdsContactPerson").prop("disabled", false);
     $("#tdsPhone").prop("disabled", false);
@@ -193,9 +193,9 @@ function BackMaster() {
     $("#tdsAddressLine1").prop("disabled", false);
     $("#tdsAddressLine2").prop("disabled", false);
     $("#tdsCitysList").prop("disabled", false);
-    $("#tdsStatelist").prop("disabled", false);
-    $("#tdsNationlist").prop("disabled", false);
-    $("#tdsPIN").prop("disabled", false);
+    //$("#tdsStatelist").prop("disabled", false);
+    //$("#tdsNationlist").prop("disabled", false);
+    //$("#tdsPIN").prop("disabled", false);
     $("#tdsGSTIN").prop("disabled", false);
     $("#tdsContactPerson").prop("disabled", false);
     $("#tdsPhone").prop("disabled", false);
@@ -242,9 +242,9 @@ async function Edit(code) {
                     $("#tdsAddressLine1").prop("disabled", false);
                     $("#tdsAddressLine2").prop("disabled", false);
                     $("#tdsCitysList").prop("disabled", false);
-                    $("#tdsStatelist").prop("disabled", false);
-                    $("#tdsNationlist").prop("disabled", false);
-                    $("#tdsPIN").prop("disabled", false);
+                    //$("#tdsStatelist").prop("disabled", false);
+                    //$("#tdsNationlist").prop("disabled", false);
+                    //$("#tdsPIN").prop("disabled", false);
                     $("#tdsGSTIN").prop("disabled", false);
                     $("#tdsContactPerson").prop("disabled", false);
                     $("#tdsPhone").prop("disabled", false);
@@ -892,6 +892,7 @@ function FillallItemfield1(inputElement) {
     if (item) {
         Nation.value = item.CountryName || "";
         State.value = item["State Name"] || "";
+        PIN.value = item["Pin Code"] || "";
         $("#txtCityby_0").val(inputValue);
         $("#txtNationby_0").val(item.CountryName);
         $("#txtStateby_0").val(item["State Name"]);

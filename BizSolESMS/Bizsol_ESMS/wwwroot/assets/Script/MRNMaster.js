@@ -1649,7 +1649,7 @@ async function View(code) {
 
 }
 function disableFields(disable) {
-    $("input, select, button").not("#btnBack").prop("disabled", disable);
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
 function DataExport() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
