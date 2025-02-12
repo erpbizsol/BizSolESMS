@@ -18,11 +18,55 @@ $(document).ready(function () {
     });
     $('#txtPANNo').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#tdsAddressCode1").focus();
+        }
+    });
+    $('#tdsAddressCode1').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsAddressLine1").focus();
+        }
+    });
+    $('#tdsAddressLine1').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsAddressLine2").focus();
+        }
+    });
+    $('#tdsAddressLine2').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsCitysList").focus();
+        }
+    });
+    $('#tdsCitysList').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsGSTIN").focus();
+        }
+    });
+    $('#tdsGSTIN').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsContactPerson").focus();
+        }
+    });
+    $('#tdsContactPerson').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsPhone").focus();
+        }
+    });
+    $('#tdsPhone').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsMobile").focus();
+        }
+    });
+    $('#tdsMobile').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsEmail").focus();
+        }
+    });
+    $('#tdsEmail').on('keydown', function (e) {
+        if (e.key === "Enter") {
             let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
             firstInput.focus();
         }
     });
-  
     ShowAccountMasterlist();
     GetGroupMasterList();
     GetCountryMasterList();
@@ -454,7 +498,8 @@ function Save() {
             row.find(".txtCity").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtState").val() == '') {
+        }
+        else if (row.find(".txtState").val() == '') {
             toastr.error("Please select State !");
             row.find(".txtState").focus();
             validationFailed = true;
@@ -474,7 +519,8 @@ function Save() {
             row.find(".txtPIN").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtMobile").val()=='') {
+        }
+        else if (row.find(".txtMobile").val() == '') {
             toastr.error("Please enter Mobile No!");
             row.find(".txtMobile").focus();
             validationFailed = true;
