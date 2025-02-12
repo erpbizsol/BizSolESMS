@@ -144,11 +144,13 @@ async  function CreateCityMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#hfCode").prop("disabled", false),
     $("#txtCityName").prop("disabled", false),
     $("#txtPinCode").prop("disabled", false),
     $("#txtStateName").prop("disabled", false),
     $("#txtsave").prop("disabled", false);
+    disableFields(false);
 
 }
 function BackMaster() {
@@ -160,6 +162,8 @@ function BackMaster() {
     $("#txtPinCode").prop("disabled", false),
     $("#txtStateName").prop("disabled", false),
     $("#txtsave").prop("disabled", false);
+    $("#txtheaderdiv").hide();
+    disableFields(false);
 }
 async function deleteItem(code, city) {
     $('table').on('click', 'tr', function () {
@@ -198,8 +202,15 @@ async function deleteItem(code, city) {
             }
         });
     }
+    else {
+       $('table tr').removeClass('highlight');
+     
+    }
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -208,6 +219,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowCityMasterByCode?Code=${code}`,
         type: 'GET',
@@ -220,7 +232,8 @@ async function Edit(code) {
                 $("#txtCityName").val(item.CityName),
                 $("#txtPinCode").val(item.PinCode),
                 $("#txtStateName").val(item.StateName),
-                $("#txtsave").prop("disabled", false)
+                $("#txtsave").prop("disabled", false),
+                disableFields(false);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -271,6 +284,9 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -279,6 +295,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowCityMasterByCode?Code=${code}`,
         type: 'GET',
@@ -292,6 +309,8 @@ async function View(code) {
                 $("#txtPinCode").val(item.PinCode).prop("disabled", true),
                 $("#txtStateName").val(item.StateName).prop("disabled", true),
                 $("#txtsave").prop("disabled", true);
+                disableFields(true);
+
             } else {
                 toastr.error("Record not found...!");
             }
@@ -300,4 +319,33 @@ async function View(code) {
             console.error("Error:", error);
         }
     });
+}
+function disableFields(disable) {
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+}
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowCityMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "CityMaster.xlsx");
 }

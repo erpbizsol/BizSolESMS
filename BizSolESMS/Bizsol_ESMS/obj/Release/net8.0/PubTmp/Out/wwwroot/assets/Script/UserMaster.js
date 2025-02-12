@@ -239,6 +239,18 @@ async function Create() {
     $("#txtheaderdiv").show();
     disableFields(false);
     $("#btnSave").prop("disabled", false);
+    $("#txtUserID").prop('disabled', false);
+    $("#txtUserName").prop('disabled', false);
+    $("#hfCode").prop('disabled', false);
+    $("#txtMobileNo").prop('disabled', false);
+    $("#txtPassword").prop('disabled', false);
+    $("#txtConfirmPassword").prop('disabled', false);
+    $("#txtEmailId").prop('disabled', false);
+    $("#ddlGroupName").prop('disabled', false);
+    $("#ddlDefaultCompany").prop('disabled', false);
+    $("#ddlDesignation").prop('disabled', false);
+    $("#txtAddress").prop('disabled', false);
+    $("#txtSystemName").prop('disabled', false);
 }
 function Back() {
     $("#FrmUserMaster").hide();
@@ -247,6 +259,18 @@ function Back() {
     ClearData();
     disableFields(false);
     $("#btnSave").prop("disabled", false);
+    $("#txtUserID").prop('disabled', false);
+    $("#txtUserName").prop('disabled', false);
+    $("#hfCode").prop('disabled', false);
+    $("#txtMobileNo").prop('disabled', false);
+    $("#txtPassword").prop('disabled', false);
+    $("#txtConfirmPassword").prop('disabled', false);
+    $("#txtEmailId").prop('disabled', false);
+    $("#ddlGroupName").prop('disabled', false);
+    $("#ddlDefaultCompany").prop('disabled', false);
+    $("#ddlDesignation").prop('disabled', false);
+    $("#txtAddress").prop('disabled', false);
+    $("#txtSystemName").prop('disabled', false);
 }
 async function Delete(code,username) {
     $('table').on('click', 'tr', function () {
@@ -285,8 +309,14 @@ async function Delete(code,username) {
             }
         });
     }
+    else {
+        $('table tr').removeClass('highlight');
+    }
 }
 async function Edit(Code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -299,6 +329,18 @@ async function Edit(Code) {
     UserMasterByCode(Code);
     disableFields(false);
     $("#btnSave").prop("disabled", false);
+    $("#txtUserID").prop('disable', false);
+    $("#txtUserName").prop('disable', false);
+    $("#hfCode").prop('disable', false);
+    $("#txtMobileNo").prop('disable', false);
+    $("#txtPassword").prop('disable', false);
+    $("#txtConfirmPassword").prop('disable', false);
+    $("#txtEmailId").prop('disable', false);
+    $("#ddlGroupName").prop('disable', false);
+    $("#ddlDefaultCompany").prop('disable', false);
+    $("#ddlDesignation").prop('disable', false);
+    $("#txtAddress").prop('disable', false);
+    $("#txtSystemName").prop('disable', false);
 }
 function UserMasterByCode(Code) {
     $.ajax({
@@ -595,6 +637,9 @@ function GetModuleMasterCode() {
 }
 
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -612,21 +657,19 @@ async function View(code) {
         },
         success: function (response) {
             if (response) {
-
+                $("#txtUserID").val(response.UserID).prop('disabled',true);
+                $("#txtUserName").val(response.UserName).prop('disabled', true);
+                $("#hfCode").val(response.Code).prop('disabled', true);
+                $("#txtMobileNo").val(response.UserMobileNo).prop('disabled', true);
+                $("#txtPassword").val('').prop('disabled', true);
+                $("#txtConfirmPassword").val('').prop('disabled', true);
+                $("#txtEmailId").val(response.EmailID).prop('disabled', true);
+                $("#ddlGroupName").val(response.GroupMaster_Code).prop('disabled', true);
+                $("#ddlDefaultCompany").val(response.FixedParameter_Code).prop('disabled', true);
+                $("#ddlDesignation").val(response.DesignationMaster_Code).prop('disabled', true);
+                $("#txtAddress").val(response.UserLocation).prop('disabled', true);
+                $("#txtSystemName").val(response.LoginAllowFromSystem).prop('disabled', true);
                 disableFields(true);
-                $("#txtUserID").val(response.UserID).prop('disable',true);
-                $("#txtUserName").val(response.UserName).prop('disable', true);
-                $("#hfCode").val(response.Code).prop('disable', true);
-                $("#txtMobileNo").val(response.UserMobileNo).prop('disable', true);
-                $("#txtPassword").val('').prop('disable', true);
-                $("#txtConfirmPassword").val('').prop('disable', true);
-                $("#txtEmailId").val(response.EmailID).prop('disable', true);
-                $("#ddlGroupName").val(response.GroupMaster_Code).prop('disable', true);
-                $("#ddlDefaultCompany").val(response.FixedParameter_Code).prop('disable', true);
-                $("#ddlDesignation").val(response.DesignationMaster_Code).prop('disable', true);
-                $("#txtAddress").val(response.UserLocation).prop('disable', true);
-                $("#txtSystemName").val(response.LoginAllowFromSystem).prop('disable', true);
-
                 if (response.Status == 'N') {
                     $('#chkActive').prop("checked", false);
                 }
@@ -645,7 +688,6 @@ async function View(code) {
                 if (response.ShowRatesInQuotation == 'N') {
                     $('#chkShowRatesInQuotation').prop("checked", false);
                 }
-                $("#btnSave").prop("disabled", true);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -656,5 +698,5 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button,#btnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
+    $("#FrmUserMaster,#btnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
