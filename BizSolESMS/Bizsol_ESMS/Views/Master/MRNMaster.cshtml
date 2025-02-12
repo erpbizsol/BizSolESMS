@@ -1,5 +1,5 @@
 ﻿@{
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
@@ -33,8 +33,8 @@ Layout = "~/Views/Shared/_Layout.cshtml";
     }
 
 
-   /*  .tab-header {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    /*  .tab-header {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
     } */
 
     .tab-content {
@@ -63,23 +63,18 @@ Layout = "~/Views/Shared/_Layout.cshtml";
     }
 
 
-    .fixed-height-table {
-        height: auto;
-    }
+    
     /*
-        .container-fluid {
-            overflow: auto;
-            height: 81vh;
-        } */
+    .container-fluid {
+    overflow: auto;
+    height: 81vh;
+    } */
 
     .datepicker table tfoot {
         display: none;
     }
 
-    .fixed-height-table {
-        height: auto;
-    }
-
+   
     .page-content {
         display: block;
     }
@@ -132,7 +127,7 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         padding-right: 0;
         padding-left: 0;
         /*  overflow: hidden;
-                height: auto; */
+        height: auto; */
     }
 
     .container {
@@ -141,16 +136,16 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         /* overflow: hidden; */
     }
     /* .breadcrumbs .container-fluid .fix-header {
-            position: sticky;
-            top: 0;
-            background-color: #dddde4;
-            z-index: 1000;
-            padding: 8px 0 8px 9px;
-            border-top-right-radius: 5px;
-            border-top-left-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-            height: 36px;
-        } */
+    position: sticky;
+    top: 0;
+    background-color: #dddde4;
+    z-index: 1000;
+    padding: 8px 0 8px 9px;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    height: 36px;
+    } */
 
     .breadcrumbs1 {
         background: #dddde4;
@@ -160,7 +155,7 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         z-index: 1000;
         padding: 8px 0px 0px 9px;
         /* border-top-right-radius: 5px;
-                border-top-left-radius: 5px; */
+        border-top-left-radius: 5px; */
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
         /* height: 36px; */
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
@@ -170,7 +165,7 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         padding: 3px 0;
     }
 
-    
+ 
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -255,17 +250,17 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         <div class="card shadow-sm">
             <div class="tabs">
                 @* <div class="fix-header tab-header">
-                    <div class="row">
-                        <div class="col-md-6 col-6">
-                            <div class="icon-tab">
-                                <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
-                                <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-6">
-                            <div id="tab1" class="tabSec tab active" style="font-weight: bold;"></div>
-                        </div>
-                    </div>
+                <div class="row">
+                <div class="col-md-6 col-6">
+                <div class="icon-tab">
+                <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                </div>
+                </div>
+                <div class="col-md-6 col-6">
+                <div id="tab1" class="tabSec tab active" style="font-weight: bold;"></div>
+                </div>
+                </div>
                 </div> *@
                 <div class="row p-2">
                     <div class="col-md-12">
@@ -321,7 +316,7 @@ Layout = "~/Views/Shared/_Layout.cshtml";
                                     </button>
                                 </h2>
                             </div>
-                            
+
                             <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
                                 <div class="accordion-body-sec">
                                     <div class="row">
@@ -376,10 +371,10 @@ Layout = "~/Views/Shared/_Layout.cshtml";
                 <datalist id="txtItemCode"></datalist>
                 <datalist id="txtWarehouse"></datalist>
                 @*  <div class="row m-2">
-                    <div class="col-md-12" style="margin-top: 30px !important;">
-                        <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
-                        <button class="btn btn-danger btn-height" id="btnBack" onclick="BackMaster()">Back</button>
-                    </div>
+                <div class="col-md-12" style="margin-top: 30px !important;">
+                <button class="btn btn-primary btn-height" onclick="Save()" id="txtsave">Save</button>
+                <button class="btn btn-danger btn-height" id="btnBack" onclick="BackMaster()">Back</button>
+                </div>
                 </div> *@
             </div>
         </div>
@@ -389,19 +384,19 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         <div class="card shadow-sm">
             <div class="tabs">
                 @* <div class="fix-header tab-header">
-                    <div class="row">
-                        <div class="col-md-6 col-6">
-                            <div class="icon-tab">
-                                <a class="btn-icon me-1" id="btnImport" onclick="SaveImportFile()" title="Save"><i class='bx bx-save'></i></a>
-                                <a class="btn-icon btn-danger" id="btnBack" onclick="BackImport()" title="Back"><i class='bx bx-arrow-back'></i></a>
-                            </div>
-                        </div>
+                <div class="row">
+                <div class="col-md-6 col-6">
+                <div class="icon-tab">
+                <a class="btn-icon me-1" id="btnImport" onclick="SaveImportFile()" title="Save"><i class='bx bx-save'></i></a>
+                <a class="btn-icon btn-danger" id="btnBack" onclick="BackImport()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                </div>
+                </div>
 
-                        <div class="col-md-6 col-6">
+                <div class="col-md-6 col-6">
 
-                            <div id="tab1" class="tabSec tab active" style="font-weight: bold;">IMPORT</div>
-                        </div>
-                    </div>
+                <div id="tab1" class="tabSec tab active" style="font-weight: bold;">IMPORT</div>
+                </div>
+                </div>
                 </div> *@
                 <div class="row p-2">
                     <div class="col-md-12">
@@ -425,8 +420,8 @@ Layout = "~/Views/Shared/_Layout.cshtml";
                                 <input type="file" id="txtExcelFile" class="box_border form-control form-control-sm" autocomplete="off" accept=".xlsx, .xls">
                             </div>
                             @*  <div class="col-md-3 col-sm-6" style="margin-top: 33px !important;">
-                                <button class="btn btn-primary btn-height" id="btnImport" onclick="SaveImportFile()">Save</button>
-                                <button class="btn btn-danger btn-height" onclick="BackImport()">Back</button>
+                            <button class="btn btn-primary btn-height" id="btnImport" onclick="SaveImportFile()">Save</button>
+                            <button class="btn btn-danger btn-height" onclick="BackImport()">Back</button>
                             </div> *@
                         </div>
                     </div>
@@ -444,6 +439,68 @@ Layout = "~/Views/Shared/_Layout.cshtml";
             </div>
             <!-- Paginator -->
             <div class="paginator" id="paginator-table1">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal position-absolute" id="staticBackdrop" style="padding-top: 101px;" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header tab-header" style="background-color:#033764">
+                    <div id="tab1" class="tab active" style="color:white">MRN PickList Status Details</div>
+                    <button type="button" class="close modal-close btn-sm" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin:0;">
+                        <div class="card-body">
+                            <div class="table-wrapper fixed-height-table">
+                                <table id="ModalTable" class="fixed-width-table table">
+                                    <thead id="ModalTable-header">
+                                    </thead>
+                                    <tbody id="ModalTable-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Paginator -->
+                            <div class="paginator" id="paginator-ModalTable">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal position-absolute" id="staticBackdropQty" style="padding-top: 101px;" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header tab-header" style="background-color:#033764">
+                    <div id="tab1" class="tab active" style="color:white">MRN PickList Status Details</div>
+                    <button type="button" class="close modal-close btn-sm" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin:0;">
+                        <div class="card-body">
+                            <div class="table-wrapper fixed-height-table">
+                                <table id="ModalTableQty" class="fixed-width-table table">
+                                    <thead id="ModalTable-headerQty">
+                                    </thead>
+                                    <tbody id="ModalTable-bodyQty">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Paginator -->
+                            <div class="paginator" id="paginator-ModalTableQty">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

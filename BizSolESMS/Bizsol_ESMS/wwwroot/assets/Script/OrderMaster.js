@@ -463,7 +463,7 @@ function addNewRowEdit(index, address) {
         $("#txtQtyBox_" + rowCount).prop("disabled", isDisabled);
         $("#txtOrderQty_" + rowCount).val(address.OrderQty || "");
         $("#txtRate_" + rowCount).val(address.Rate || "");
-        $("#txtAmount_" + rowCount).val(address.Amount || isDisabled);
+        $("#txtAmount_" + rowCount).val(address.Amount);
         $("#txtRemarks_" + rowCount).val(address.Remarks || "");
     }
 }
@@ -937,7 +937,7 @@ function validateExcelFormat(data) {
 
     return { isValid: true, message: "Excel format is valid." };
 }
-function SaveImportFile() {
+function GetImportFile() {
     const ClientType = $("#txtClientType").val();
     const ClientName = $("#txtImportClientName").val();
     if (ClientType == '') {
@@ -970,6 +970,52 @@ function SaveImportFile() {
         },
         success: function (response) {
             if (response.length >0) {
+                createTable(response)
+            } else if (response.Status === "N") {
+                toastr.error(response.Msg);
+            } else {
+                toastr.error(response.Msg);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", xhr.responseText);
+            toastr.error("An error occurred while saving the data.");
+        },
+    });
+}
+function SaveImportFile() {
+    const ClientType = $("#txtClientType").val();
+    const ClientName = $("#txtImportClientName").val();
+    if (ClientType == '') {
+        toastr.error("Please select client type !");
+        $("#txtClientType").focus();
+        return;
+    } else if (ClientName == '' && ClientType == 'S') {
+        toastr.error("Please select client name !");
+        $("#txtImportClientName").focus();
+        return;
+    } else if (JsonData.length == 0) {
+        toastr.error("Please select xlx file !");
+        $("#txtExcelFile").focus();
+        return;
+    }
+    const requestData = {
+        JsonData: JsonData,
+        ClientType: ClientType,
+        ClientName: ClientName,
+        UserMaster_Code: UserMaster_Code
+    };
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ImportOrder`,
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(requestData),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Auth-Key", authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
                 createTable(response)
             } else if (response.Status === "N") {
                 toastr.error(response.Msg);
@@ -1040,7 +1086,7 @@ function Import(event) {
                         JsonData = [];
                         return false;
                     }
-                    SaveImportFile();
+                    GetImportFile();
                 });
                 JsonData = parseCSV(e.target.result);
             } else {
@@ -1065,7 +1111,7 @@ function Import(event) {
                     JsonData = [];
                     return;
                 }
-                SaveImportFile();
+                GetImportFile();
             }
             
             

@@ -848,6 +848,8 @@ function ChangecolorTr() {
         }
     });
 }
+
+setInterval(ChangecolorTr, 100);
 async function View(code) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
