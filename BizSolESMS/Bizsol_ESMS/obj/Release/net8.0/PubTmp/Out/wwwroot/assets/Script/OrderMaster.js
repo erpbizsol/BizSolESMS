@@ -128,16 +128,20 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
+    $("#txtOrderNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
+    $("#txtheaderdiv").hide();
     ClearData();
     disableFields(false);
+    $("#txtOrderNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function Edit(code) {
@@ -149,7 +153,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowOrderMasterByCode?Code=` + code,
         type: 'GET',
@@ -168,6 +172,7 @@ async function Edit(code) {
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
                     $("#txtsave").prop("disabled", false);
+                    $("#txtOrderNo").prop("disabled", true);
                     const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: OrderMaster.AccountName, Address: OrderMaster.Address }
@@ -500,10 +505,6 @@ function BizSolhandleEnterKey(event) {
         event.preventDefault();
     }
 }
-//function isRowComplete(row) {
-//    const inputs = row.querySelectorAll("input.mandatory");
-//    return Array.from(inputs).every(input => input.value.trim() !== "");
-//}
 function addNewRow() {
     let rowCount = 0;
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
@@ -798,26 +799,6 @@ function GetRate(VendorName, ItemName) {
         });
     });
 }
-
-//$(document).on('keydown', '#tblorderbooking input', function (e) {
-//    if (e.key === 'Enter') {
-//        e.preventDefault();
-//        let currentInput = $(this);
-//        let lastRow = $('#tblorderbooking #Orderdata tr').last();
-//        if (lastRow && currentInput.hasClass('txtRemarks')) {
-//            currentInput.hasClass('txtRemarks')
-//            let parentRow = currentInput.closest('tr');
-//            if (parentRow.is(lastRow)) {
-//                addNewRow();
-//            }
-//        }
-//        let inputs = $('#tblorderbooking').find('input:not([disabled])');
-//        let currentIndex = inputs.index(currentInput);
-//        if (currentIndex + 1 < inputs.length) {
-//            inputs.eq(currentIndex + 1).focus();
-//        }
-//    }
-//});
 function isRowComplete(row) {
     const inputs = row.querySelectorAll("input.mandatory");
     for (const input of inputs) {
@@ -874,7 +855,6 @@ function SetvalueBillQtyBox(inputElement) {
         CalculateAmount(inputElement);
     }
 }
-
 async function View(code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -884,6 +864,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowOrderMasterByCode?Code=` + code,
         type: 'GET',
@@ -932,6 +913,134 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button").not("#btnBack").prop("disabled", disable);
+    $("input, select, button,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
+function ClearDataImport() {
+    $("#txtImportVendorName").val("");
+    $("#txtImportVehicleNo").val("");
+    $("#txtExcelFile").val("");
+    $("#txtImportWarehouse").val(DefaultWarehouse);
+    $("#Orderdata").empty();
+    GetCurrentDate();
+    GetAccountMasterList();
+}
+function Import(event) {
+    const file = event.target.files[0];
 
+    if (!file) {
+        alert("Please select an Excel file.");
+        return;
+    }
+
+    const allowedExtensions = ['xlsx', 'xls'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+        alert("Invalid file type. Please upload an Excel file (.xlsx or .xls).");
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            if (workbook.SheetNames.length === 0) {
+                alert("Invalid Excel file: No sheets found.");
+                event.target.value = '';
+                return;
+            }
+
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            const validationResult = validateExcelFormat(jsonData);
+            if (!validationResult.isValid) {
+                alert(`Invalid Excel format: ${validationResult.message}`);
+                event.target.value = '';
+                return;
+            }
+
+            const formattedData = convertToKeyValuePairs(jsonData);
+            JsonData = formattedData;
+            GetImportFile();
+        } catch (error) {
+            alert("Error reading the Excel file. Ensure it is a valid Excel format.");
+            console.error(error);
+            event.target.value = '';
+        }
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+function validateExcelFormat(data) {
+    if (data.length < 1) {
+        return { isValid: false, message: "The Excel file is empty." };
+    }
+    const headers = data[0].map(header => header.replace(/[\s.]+/g, ''));
+    const requiredColumns = ['PicklistNo', 'ItemLineNo', 'ItemCode', 'Description', 'InvoiceNo', 'OrderNo'];
+    const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+
+    if (missingColumns.length > 0) {
+        return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
+    }
+
+    return { isValid: true, message: "Excel format is valid." };
+}
+function SaveImportFile() {
+    const VendorName = $("#txtImportVendorName").val();
+    const VehicleNo = $("#txtImportVehicleNo").val();
+    const ImportWarehouse = $("#txtImportWarehouse").val();
+    if (VendorName == '') {
+        toastr.error("Please enter vendor name !");
+        $("#txtImportVendorName").focus();
+        return;
+    } else if (ImportWarehouse == '') {
+        toastr.error("Please enter Warehouse !");
+        $("#txtImportWarehouse").focus();
+        return;
+    } else if (VehicleNo == '') {
+        toastr.error("Please enter Vehicle No !");
+        $("#txtImportVehicleNo").focus();
+        return;
+    } else if (JsonData.length == 0) {
+        toastr.error("Please select xlx file !");
+        $("#txtExcelFile").focus();
+        return;
+    }
+    const requestData = {
+        JsonData: JsonData,
+        VendorName: VendorName,
+        WarehouseName: ImportWarehouse,
+        VehicleNo: VehicleNo,
+        UserMaster_Code: UserMaster_Code
+    };
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ImportMRNMaster`,
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(requestData),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Auth-Key", authKeyData);
+        },
+        success: function (response) {
+            if (response.Status === "Y") {
+                toastr.success(response.Msg);
+                ShowMRNMasterlist();
+                BackImport();
+            } else if (response.Status === "N") {
+                toastr.error(response.Msg);
+            } else {
+                toastr.error(response.Msg);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", xhr.responseText);
+            toastr.error("An error occurred while saving the data.");
+        },
+    });
+}

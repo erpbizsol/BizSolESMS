@@ -18,11 +18,55 @@ $(document).ready(function () {
     });
     $('#txtPANNo').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#tdsAddressCode1").focus();
+        }
+    });
+    $('#tdsAddressCode1').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsAddressLine1").focus();
+        }
+    });
+    $('#tdsAddressLine1').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsAddressLine2").focus();
+        }
+    });
+    $('#tdsAddressLine2').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsCitysList").focus();
+        }
+    });
+    $('#tdsCitysList').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsGSTIN").focus();
+        }
+    });
+    $('#tdsGSTIN').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsContactPerson").focus();
+        }
+    });
+    $('#tdsContactPerson').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsPhone").focus();
+        }
+    });
+    $('#tdsPhone').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsMobile").focus();
+        }
+    });
+    $('#tdsMobile').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsEmail").focus();
+        }
+    });
+    $('#tdsEmail').on('keydown', function (e) {
+        if (e.key === "Enter") {
             let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
             firstInput.focus();
         }
     });
-  
     ShowAccountMasterlist();
     GetGroupMasterList();
     GetCountryMasterList();
@@ -155,7 +199,28 @@ async function CreateItemMaster() {
     $("#Orderdata").empty();
     addNewRow();
     $("#txtsave").prop("disabled", false);
+    $("#txtNationby").prop("disabled", false);
+    $("#txtStateby").prop("disabled", false);
+    $("#tdsAddressCode1").prop("disabled", false);
+    $("#tdsAddressLine1").prop("disabled", false);
+    $("#tdsAddressLine2").prop("disabled", false);
+    $("#tdsCitysList").prop("disabled", false);
+    //$("#tdsStatelist").prop("disabled", false);
+    //$("#tdsNationlist").prop("disabled", false);
+    //$("#tdsPIN").prop("disabled", false);
+    $("#tdsGSTIN").prop("disabled", false);
+    $("#tdsContactPerson").prop("disabled", false);
+    $("#tdsPhone").prop("disabled", false);
+    $("#tdsMobile").prop("disabled", false);
+    $("#tdsEmail").prop("disabled", false);
+    $("#txtAccounCode").prop("disabled", false);
+    $("#txtAccountName").prop("disabled", false);
+    $("#txtDisplayName").prop("disabled", false);
+    $("#txtPANNo").prop("disabled", false);
+    $("#txtIsClient").prop("disabled", false);
+    $("#txtIsVendor").prop("disabled", false);
     disableFields(false);
+    $("#txtheaderdiv").show();
 }
 function BackMaster() {
     $("#txtListpage").show();
@@ -164,8 +229,33 @@ function BackMaster() {
     ClearData1();
     $("#txtsave").prop("disabled", false);
     disableFields(false);
+    $("#txtheaderdiv").hide();
+    $("#txtsave").prop("disabled", false);
+    $("#txtNationby").prop("disabled", false);
+    $("#txtStateby").prop("disabled", false);
+    $("#tdsAddressCode1").prop("disabled", false);
+    $("#tdsAddressLine1").prop("disabled", false);
+    $("#tdsAddressLine2").prop("disabled", false);
+    $("#tdsCitysList").prop("disabled", false);
+    //$("#tdsStatelist").prop("disabled", false);
+    //$("#tdsNationlist").prop("disabled", false);
+    //$("#tdsPIN").prop("disabled", false);
+    $("#tdsGSTIN").prop("disabled", false);
+    $("#tdsContactPerson").prop("disabled", false);
+    $("#tdsPhone").prop("disabled", false);
+    $("#tdsMobile").prop("disabled", false);
+    $("#tdsEmail").prop("disabled", false);
+    $("#txtAccounCode").prop("disabled", false);
+    $("#txtAccountName").prop("disabled", false);
+    $("#txtDisplayName").prop("disabled", false);
+    $("#txtPANNo").prop("disabled", false);
+    $("#txtIsClient").prop("disabled", false);
+    $("#txtIsVendor").prop("disabled", false);
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -174,7 +264,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMasterByCode?Code=` + code,
         type: 'GET',
@@ -186,11 +276,25 @@ async function Edit(code) {
                 if (response.AccountMaster && response.AccountMaster.length > 0) {
                     const accountMaster = response.AccountMaster[0];
                     $("#hfCode").val(accountMaster.Code || "");
+                    $("#txtAccounCode").val(accountMaster.AccountCode || "");
                     $("#txtAccountName").val(accountMaster.AccountName || "");
                     $("#txtDisplayName").val(accountMaster.DisplayName || "");
                     $("#txtPANNo").val(accountMaster.PANNo || "");
                     $("#txtIsMSME").val(accountMaster.IsMSME || "");
                     disableFields(false);
+                    $("#tdsAddressCode1").prop("disabled", false);
+                    $("#tdsAddressLine1").prop("disabled", false);
+                    $("#tdsAddressLine2").prop("disabled", false);
+                    $("#tdsCitysList").prop("disabled", false);
+                    //$("#tdsStatelist").prop("disabled", false);
+                    //$("#tdsNationlist").prop("disabled", false);
+                    //$("#tdsPIN").prop("disabled", false);
+                    $("#tdsGSTIN").prop("disabled", false);
+                    $("#tdsContactPerson").prop("disabled", false);
+                    $("#tdsPhone").prop("disabled", false);
+                    $("#tdsMobile").prop("disabled", false);
+                    $("#tdsEmail").prop("disabled", false);
+                    $("#tdsEmail").prop("disabled", false);
                     if (accountMaster.IsClient == 'N') {
                         $("#txtIsClient").prop("checked",false);
                     }
@@ -255,6 +359,9 @@ async function deleteItem(code, account) {
 
             }
         });
+    }
+    else {
+            $('table tr').removeClass('highlight');
     }
 }
 function updateDisplayName() {
@@ -350,8 +457,13 @@ function Save() {
     // Collect Account Master Data
     const AccountName = $("#txtAccountName").val();
     const DisplayName = $("#txtDisplayName").val();
-
-    if (!AccountName) {
+    const AccounCode = $("#txtAccounCode").val();
+    if (!AccounCode) {
+        toastr.error("Please enter  Account Code!");
+        $("#txtAccounCode").focus();
+        return;
+    }
+    else if (!AccountName) {
         toastr.error("Please enter an Account Name!");
         $("#txtAccountName").focus();
         return;
@@ -386,7 +498,8 @@ function Save() {
             row.find(".txtCity").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtState").val() == '') {
+        }
+        else if (row.find(".txtState").val() == '') {
             toastr.error("Please select State !");
             row.find(".txtState").focus();
             validationFailed = true;
@@ -406,7 +519,8 @@ function Save() {
             row.find(".txtPIN").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtMobile").val()=='') {
+        }
+        else if (row.find(".txtMobile").val() == '') {
             toastr.error("Please enter Mobile No!");
             row.find(".txtMobile").focus();
             validationFailed = true;
@@ -433,6 +547,7 @@ function Save() {
     }
     const accountPayload = [{
         Code: $("#hfCode").val(),
+        AccountCode: $("#txtAccounCode").val(),
         AccountName: AccountName,
         DisplayName: DisplayName,
         PANNo: $("#txtPANNo").val(),
@@ -823,6 +938,7 @@ function FillallItemfield1(inputElement) {
     if (item) {
         Nation.value = item.CountryName || "";
         State.value = item["State Name"] || "";
+        PIN.value = item["Pin Code"] || "";
         $("#txtCityby_0").val(inputValue);
         $("#txtNationby_0").val(item.CountryName);
         $("#txtStateby_0").val(item["State Name"]);
@@ -838,7 +954,6 @@ function FillallItemfield1(inputElement) {
     }
 
 }
-
 function FillValue(element) {
     const currentRow = element.closest('tr');
     const inputs = document.querySelectorAll('#Orderdata input');
@@ -919,7 +1034,6 @@ function getCheckedRows(element) {
         }
     });
 }
-
 function fillFields(inputid, row, value) {
     if (inputid === "tdsAddressCode1") {
         let txtAddressCode = row.querySelector('.txtAddressCode');
@@ -981,7 +1095,6 @@ function fillFields(inputid, row, value) {
         if (txtEmail) txtEmail.value = value;
     }
 }
-
 function ClearData1() {
     $("#tdsAddressCode1").val(""),
     $("#tdsAddressLine1").val(""),
@@ -996,8 +1109,10 @@ function ClearData1() {
     $("#tdsMobile").val(""),
     $("#tdsEmail").val("")
 }
-
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -1006,6 +1121,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMasterByCode?Code=` + code,
         type: 'GET',
@@ -1018,6 +1134,7 @@ async function View(code) {
                     disableFields(true);
                     const accountMaster = response.AccountMaster[0];
                     $("#hfCode").val(accountMaster.Code || "").prop("disabled", true);
+                    $("#txtAccounCode").val(accountMaster.AccounCode || "").prop("disabled", true);
                     $("#txtAccountName").val(accountMaster.AccountName || "").prop("disabled", true);
                     $("#txtDisplayName").val(accountMaster.DisplayName || "").prop("disabled", true);
                     $("#txtPANNo").val(accountMaster.PANNo || "").prop("disabled", true);
@@ -1025,6 +1142,20 @@ async function View(code) {
                     $("#txtIsClient").prop("disabled", true);
                     $("#txtIsVendor").prop("disabled", true);
                     $("#txtsave").prop("disabled", true);
+                    $("#tdsAddressCode1").prop("disabled", true);
+                    $("#tdsAddressLine1").prop("disabled", true);
+                    $("#tdsAddressLine2").prop("disabled", true);
+                    $("#tdsCitysList").prop("disabled", true);
+                    $("#tdsStatelist").prop("disabled", true);
+                    $("#tdsNationlist").prop("disabled", true);
+                    $("#tdsPIN").prop("disabled", true);
+                    $("#tdsGSTIN").prop("disabled", true);
+                    $("#tdsContactPerson").prop("disabled", true);
+                    $("#tdsPhone").prop("disabled", true);
+                    $("#tdsMobile").prop("disabled", true);
+                    $("#tdsEmail").prop("disabled", true);
+                    $("#tdsEmail").prop("disabled", true);
+                    disableFields(true);
 
                 } else {
                     toastr.warning("Account master data is missing.");
@@ -1039,7 +1170,6 @@ async function View(code) {
                 } else {
                     toastr.info("No addresses available for this account.");
                 }
-                disableFields(true);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -1051,8 +1181,40 @@ async function View(code) {
     });
    
 }
-
-// Function to disable or enable form fields
 function disableFields(disable) {
-    $("input, select, button").not("#btnBack").prop("disabled", disable);
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+}
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowAccountMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    const columnsToRemove = ["Code"];
+    if (!Array.isArray(columnsToRemove)) {
+        console.error("columnsToRemove should be an array");
+        return;
+    }
+    const filteredData = jsonData.map(row =>
+        Object.fromEntries(Object.entries(row).filter(([key]) => !columnsToRemove.includes(key)))
+    );
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "Client/VendorMaster.xlsx");
 }

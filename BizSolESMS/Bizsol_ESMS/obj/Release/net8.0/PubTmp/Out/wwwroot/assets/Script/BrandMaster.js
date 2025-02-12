@@ -95,6 +95,9 @@ function Save() {
     }
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -103,6 +106,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowBrandMasterByCode?Code=${code}`,
         type: 'GET',
@@ -115,6 +119,7 @@ async function Edit(code) {
                     $("#hftextCode").val(item.Code),
                     $("#txtBrandName").val(item.BrandName);
                     $("#txtbtnSave").prop("disabled", false);
+                    disableFields(false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -163,6 +168,10 @@ async function deleteBrand(code, brand) {
             }
         });
     }
+    else {
+            $('table tr').removeClass('highlight');
+         
+    }
 }
 function ClearData() {
     $("#hftextCode").val("0");
@@ -180,7 +189,9 @@ async function CreateBrandMaster() {
     $("#txtCreatepage").show();
     $("#hftextCode").prop("disabled", false);
     $("#txtBrandName").prop("disabled", false);
-    $("#txtbtnSave").prop("disabled", false)
+    $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").show();
+    disableFields(false);
 
 }
 function BackMaster() {
@@ -189,7 +200,9 @@ function BackMaster() {
     ClearData();
     $("#hftextCode").prop("disabled", false);
     $("#txtBrandName").prop("disabled", false);
-    $("#txtbtnSave").prop("disabled", false)
+    $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").hide();
+    disableFields(false);
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
@@ -199,6 +212,9 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -207,6 +223,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowBrandMasterByCode?Code=${code}`,
         type: 'GET',
@@ -217,8 +234,10 @@ async function View(code) {
             if (item.length > 0) {
                 item.forEach(function (item) {
                     $("#hftextCode").val(item.Code).prop("disabled", true),
-                    $("#txtBrandName").val(item.BrandName).prop("disabled", true),
-                    $("#txtbtnSave").prop("disabled", true)
+                        $("#txtBrandName").val(item.BrandName).prop("disabled", true),
+                        $("#txtbtnSave").prop("disabled", true),
+                        disableFields(true);
+
 
                 });
             } else {
@@ -230,4 +249,33 @@ async function View(code) {
         }
     });
     
+}
+function disableFields(disable) {
+    $("#txtCreatepage,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+}
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowBrandMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "BrandMaster.xlsx");
 }

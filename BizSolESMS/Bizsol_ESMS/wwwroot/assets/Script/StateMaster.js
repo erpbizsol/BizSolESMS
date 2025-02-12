@@ -173,8 +173,14 @@ async function deleteItem(code,state) {
             }
         });
     }
+    else {
+         $('table tr').removeClass('highlight');
+    }
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -195,7 +201,9 @@ async function Edit(code) {
                 $("#txtStateCode").val(item.StateCode),
                 $("#txtStateName").val(item.StateName),
                 $("#txtCountryName").val(item.CountryName),
-                $("#txtsave").prop("disabled", false)
+                $("#txtsave").prop("disabled", false),
+                $("#txtheaderdiv").show();
+                disableFields(false);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -247,12 +255,14 @@ async function CreateStateMaster() {
     $("#tab1").text("NEW");
     ClearData();
     $("#txtListpage").hide();
+    $("#txtheaderdiv").show();
     $("#txtCreatepage").show();
     $("#hfCode").val(item.Code).prop("disabled", false),
     $("#txtStateCode").val(item.StateCode).prop("disabled", false),
     $("#txtStateName").val(item.StateName).prop("disabled", false),
     $("#txtCountryName").val(item.CountryName).prop("disabled", false),
-    $("#txtsave").prop("disabled", false)
+    $("#txtsave").prop("disabled", false);
+    disableFields(false);
     
   
 }
@@ -264,7 +274,9 @@ function BackMaster() {
     $("#txtStateCode").val(item.StateCode).prop("disabled", false),
     $("#txtStateName").val(item.StateName).prop("disabled", false),
     $("#txtCountryName").val(item.CountryName).prop("disabled", false),
-    $("#txtsave").prop("disabled", false)
+    $("#txtsave").prop("disabled", false);
+    $("#txtheaderdiv").hide();
+    disableFields(false);
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
@@ -274,6 +286,9 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -291,10 +306,12 @@ async function View(code) {
         success: function (item) {
             if (item) {
                 $("#hfCode").val(item.Code).prop("disabled", true),
-                $("#txtStateCode").val(item.StateCode).prop("disabled", true),
-                $("#txtStateName").val(item.StateName).prop("disabled", true),
-                $("#txtCountryName").val(item.CountryName).prop("disabled", true),
-                $("#txtsave").prop("disabled", true)
+                    $("#txtStateCode").val(item.StateCode).prop("disabled", true),
+                    $("#txtStateName").val(item.StateName).prop("disabled", true),
+                    $("#txtCountryName").val(item.CountryName).prop("disabled", true),
+                    $("#txtsave").prop("disabled", true),
+                    $("#txtheaderdiv").show();
+                    disableFields(true);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -303,4 +320,41 @@ async function View(code) {
             console.error("Error:", error);
         }
     });
+}
+function disableFields(disable) {
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+}
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowStateMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    const columnsToRemove = ["Code"];
+    if (!Array.isArray(columnsToRemove)) {
+        console.error("columnsToRemove should be an array");
+        return;
+    }
+    const filteredData = jsonData.map(row =>
+        Object.fromEntries(Object.entries(row).filter(([key]) => !columnsToRemove.includes(key)))
+    );
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "StateMaster.xlsx");
 }

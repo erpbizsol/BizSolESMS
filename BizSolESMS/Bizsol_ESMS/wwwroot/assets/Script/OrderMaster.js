@@ -4,9 +4,10 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
+let JsonData = [];
 let AccountList = [];
 let ItemDetail = [];
+
 $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("Order Entry");
@@ -25,7 +26,6 @@ $(document).ready(function () {
             $("#txtBuyerPONo").focus();
         }
     });
-
     $('#txtBuyerPONo').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtBuyerPODate").focus();
@@ -40,7 +40,6 @@ $(document).ready(function () {
     GetAccountMasterList();
     GetItemDetails();
     ShowOrderMasterlist();
-
     $("#btnAddNewRow").click(function () {
         addNewRow();
     });
@@ -65,17 +64,18 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
-
-    //$("#txtClientName").on("focusout", function () {
-    //    let value = $(this).val();
-    //    if (value) {
-    //        ClientRate(value);
-    //    } else {
-    //        $(".txtRate").val("");
-    //    }
-    //});
-
-
+    $("#txtExcelFile").on("change", function (e) {
+        Import(e);
+    });
+    $("#txtClientType").on("change", function () {
+        var value = $(this).val();
+        if (value == 'S') {
+            $("#txtImportClientName").prop("disabled", false);
+        } else {
+            $("#txtImportClientName").val("");
+            $("#txtImportClientName").prop("disabled", true);
+        }
+    });
 });
 function ShowOrderMasterlist() {
     $.ajax({
@@ -463,7 +463,7 @@ function addNewRowEdit(index, address) {
         $("#txtQtyBox_" + rowCount).prop("disabled", isDisabled);
         $("#txtOrderQty_" + rowCount).val(address.OrderQty || "");
         $("#txtRate_" + rowCount).val(address.Rate || "");
-        $("#txtAmount_" + rowCount).val(address.Amount || isDisabled);
+        $("#txtAmount_" + rowCount).val(address.Amount);
         $("#txtRemarks_" + rowCount).val(address.Remarks || "");
     }
 }
@@ -505,10 +505,6 @@ function BizSolhandleEnterKey(event) {
         event.preventDefault();
     }
 }
-//function isRowComplete(row) {
-//    const inputs = row.querySelectorAll("input.mandatory");
-//    return Array.from(inputs).every(input => input.value.trim() !== "");
-//}
 function addNewRow() {
     let rowCount = 0;
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
@@ -803,26 +799,6 @@ function GetRate(VendorName, ItemName) {
         });
     });
 }
-
-//$(document).on('keydown', '#tblorderbooking input', function (e) {
-//    if (e.key === 'Enter') {
-//        e.preventDefault();
-//        let currentInput = $(this);
-//        let lastRow = $('#tblorderbooking #Orderdata tr').last();
-//        if (lastRow && currentInput.hasClass('txtRemarks')) {
-//            currentInput.hasClass('txtRemarks')
-//            let parentRow = currentInput.closest('tr');
-//            if (parentRow.is(lastRow)) {
-//                addNewRow();
-//            }
-//        }
-//        let inputs = $('#tblorderbooking').find('input:not([disabled])');
-//        let currentIndex = inputs.index(currentInput);
-//        if (currentIndex + 1 < inputs.length) {
-//            inputs.eq(currentIndex + 1).focus();
-//        }
-//    }
-//});
 function isRowComplete(row) {
     const inputs = row.querySelectorAll("input.mandatory");
     for (const input of inputs) {
@@ -879,7 +855,6 @@ function SetvalueBillQtyBox(inputElement) {
         CalculateAmount(inputElement);
     }
 }
-
 async function View(code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -938,6 +913,323 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
+    $("input, select, button,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
+function ClearDataImport() {
+    $("#txtImportClientName").val("");
+    $("#txtClientType").val("");
+    $("#txtExcelFile").val("");
+    $("#Orderdata").empty();
+    GetCurrentDate();
+    GetAccountMasterList();
+}
+function validateExcelFormat(data) {
+    if (data.length < 1) {
+        return { isValid: false, message: "The Excel file is empty." };
+    }
+    const headers = data[0].map(header => header.replace(/[\s.]+/g, ''));
+    const requiredColumns = ['PicklistNo', 'ItemLineNo', 'ItemCode', 'Description', 'InvoiceNo', 'OrderNo'];
+    const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+
+    if (missingColumns.length > 0) {
+        return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
+    }
+
+    return { isValid: true, message: "Excel format is valid." };
+}
+function SaveImportFile() {
+    const ClientType = $("#txtClientType").val();
+    const ClientName = $("#txtImportClientName").val();
+    if (ClientType == '') {
+        toastr.error("Please select client type !");
+        $("#txtClientType").focus();
+        return;
+    } else if (ClientName == '' && ClientType == 'S') {
+        toastr.error("Please select client name !");
+        $("#txtImportClientName").focus();
+        return;
+    } else if (JsonData.length == 0) {
+        toastr.error("Please select xlx file !");
+        $("#txtExcelFile").focus();
+        return;
+    }
+    const requestData = {
+        JsonData: JsonData,
+        ClientType: ClientType,
+        ClientName: ClientName,
+        UserMaster_Code: UserMaster_Code
+    };
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ImportOrderForTemp`,
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(requestData),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Auth-Key", authKeyData);
+        },
+        success: function (response) {
+            if (response.length >0) {
+                createTable(response)
+            } else if (response.Status === "N") {
+                toastr.error(response.Msg);
+            } else {
+                toastr.error(response.Msg);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", xhr.responseText);
+            toastr.error("An error occurred while saving the data.");
+        },
+    });
+}
+async function ImportExcel() {
+    $("#txtListpage").hide();
+    $("#txtCreatepage").hide();
+    $("#txtImportPage").show();
+    $("#txtheaderdiv2").show();
+}
+function BackImport() {
+    $("#txtListpage").show();
+    $("#txtCreatepage").hide();
+    $("#txtImportPage").hide();
+    $("#ImportTable").hide();
+    $("#txtheaderdiv2").hide();
+    ClearDataImport();
+}
+function convertDateFormat1(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${day}-${monthAbbreviation}-${year}`;
+}
+function convertDateFormat2(dateString) {
+    const [month, day, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${day}-${monthAbbreviation}-20${year}`;
+}
+function Import(event) {
+    JsonData = [];
+    const file = event.target.files[0];
+    if (!file) {
+        alert("Please select a file.");
+        $("#ImportTable").hide();
+        JsonData = [];
+        return;
+    }
+
+    const allowedExtensions = ['xlsx', 'xls', 'csv'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+        alert("Invalid file type. Please upload an Excel or CSV file (.xlsx, .xls, .csv).");
+        event.target.value = '';
+        $("#ImportTable").hide();
+        JsonData = [];
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            if (fileExtension === 'csv') {
+                validateCSV(event, function (isValidCSV) {
+                    if (!isValidCSV) {
+                        event.target.value = ''; 
+                        $("#ImportTable").hide();
+                        JsonData = [];
+                        return false;
+                    }
+                    SaveImportFile();
+                });
+                JsonData = parseCSV(e.target.result);
+            } else {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                if (workbook.SheetNames.length === 0) {
+                    alert("Invalid Excel file: No sheets found.");
+                    event.target.value = '';
+                    $("#ImportTable").hide();
+                    JsonData = [];
+                    return;
+                }
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, cellDates: true });
+
+                JsonData = convertToKeyValuePairs(jsonData);
+                const validationResult = validateExcelFormat(jsonData);
+                if (!validationResult.isValid) {
+                    alert(`Invalid Excel format: ${validationResult.message}`);
+                    event.target.value = '';
+                    $("#ImportTable").hide();
+                    JsonData = [];
+                    return;
+                }
+                SaveImportFile();
+            }
+            
+            
+        } catch (error) {
+            alert("Error reading the file. Ensure it is a valid format.");
+            event.target.value = '';
+            $("#ImportTable").hide();
+            JsonData = [];
+        }
+    };
+
+    if (fileExtension === 'csv') {
+        reader.readAsText(file);
+    } else {
+        reader.readAsArrayBuffer(file);
+    }
+}
+function parseCSV(csvData) {
+    const rows = csvData.split(/\r?\n/).filter(row => row.trim() !== ""); // Ignore empty rows
+    if (rows.length === 0) return [];
+
+    const headers = rows[0].split(/\t/).map(header => cleanHeader(header)); // Clean headers
+
+    const data = rows.slice(1).map(row => {
+        const values = row.split(/\t/).map(val => cleanValue(val));
+
+        return headers.reduce((obj, header, index) => {
+            let value = values[index] || "";   
+            if (header.toLowerCase().includes("date") && value) {
+                value = value.split(/\s+/)[0];
+                value = convertDateFormat1(value);
+            }
+
+            obj[header] = value;
+            return obj;
+        }, {});
+    });
+
+    return data;
+}
+function convertToKeyValuePairs(data) {
+    if (!Array.isArray(data) || data.length === 0) return [];
+
+    const headers = data[0].map(header => cleanHeader(header));
+
+    return data.slice(1).map(row => {
+        return headers.reduce((obj, header, index) => {
+            let value = row[index] ? cleanValue(row[index].toString()) : "";
+
+            if ($("#txtClientType").val() == 'S') {
+                if (header.toLowerCase().includes("parentorderdate") && value) {
+                    value = convertDateFormat2(value.split(/\s+/)[0]);
+                }
+            } else {
+                if (header.toLowerCase().includes("date") && value) {
+                    value = convertDateFormat2(value.split(/\s+/)[0]);
+                }
+            }
+            obj[header] = value;
+            return obj;
+        }, {});
+    });
+}
+function cleanHeader(header) {
+    return header.replace(/[^a-zA-Z0-9]/g, ''); 
+}
+function cleanValue(value) {
+    return value.replace(/^"|"$/g, '').trim();
+}
+function createTable(response) {
+    if (response.length > 0) {
+        $("#ImportTable").show();
+        const StringFilterColumn = [];
+        const NumericFilterColumn = [];
+        const DateFilterColumn = [];
+        const Button = false;
+        const showButtons = [];
+        const StringdoubleFilterColumn = [];
+        const hiddenColumns = [];
+        const ColumnAlignment = {};
+
+        BizsolCustomFilterGrid.CreateDataTable(
+            "table-header1",
+            "table-body1",
+            response,
+            Button,
+            showButtons,
+            StringFilterColumn,
+            NumericFilterColumn,
+            DateFilterColumn,
+            StringdoubleFilterColumn,
+            hiddenColumns,
+            ColumnAlignment,
+            true
+        );
+    } else {
+        $("#ImportTable").hide();
+        toastr.error("Record not found...!");
+    }
+}
+function validateExcelFormat(data) {
+    var ClientType = $("#txtClientType").val();
+    if (data.length < 1) {
+        return { isValid: false, message: "The Excel file is empty." };
+    }
+    const headers = data[0].map(header => header.replace(/[\s.]+/g, ''));
+    if (ClientType === 'S'){
+        const requiredColumns = ['Part#', 'OrderQty', 'PartDescription'];
+        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+
+        if (missingColumns.length > 0) {
+            return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
+        }
+    }
+    else {
+        const requiredColumns = ['Order', 'Part', 'PartDescription', 'Date','AccountName'];
+        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+
+        if (missingColumns.length > 0) {
+            return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
+        }
+    }
+    
+
+    return { isValid: true, message: "Excel format is valid." };
+}
+function cleanHeader(header) {
+    return header.replace(/[^a-zA-Z0-9]/g, "").trim(); 
+}
+function validateCSV(event, callback) {
+    const file = event.target.files[0];
+    if (!file) {
+        alert("Please select a file.");
+        callback(false);
+        return;
+    }
+
+    let expectedHeaders = [];
+    if ($("#txtClientType").val() == 'S') {
+        expectedHeaders = ["Part", "OrderQty", "PartDescription"];
+    } else {
+        expectedHeaders = ["Order", "Part", "Date", "PartDescription", "AccountName", "Code", "OrderQuantity", "ReservedQty", "Status", "ContactLastName", "CashCustomerName"];
+    }
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const csvData = e.target.result;
+        const rows = csvData.split(/\r?\n/);
+        const headers = rows[0].split(/\t|,/).map(h => cleanHeader(h));
+
+        if (JSON.stringify(headers) === JSON.stringify(expectedHeaders)) {
+            console.log("CSV Headers Matched ✅");
+            callback(true);
+        } else {
+            alert("Invalid file. Headers do not match!");
+            console.log("Expected:", expectedHeaders);
+            console.log("Found:", headers);
+            callback(false);
+        }
+    };
+
+    reader.readAsText(file);
+}
+
+
+
+
 

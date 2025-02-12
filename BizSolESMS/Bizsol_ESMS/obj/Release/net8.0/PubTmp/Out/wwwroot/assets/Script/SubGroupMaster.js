@@ -132,6 +132,8 @@ async function CreateSubgroupMaster() {
     $("#txtSubGroupName").prop("disabled", false);
     $("#txtGroupName").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").show();
+    disableFields(false);
 
 }
 function BackMaster() {
@@ -142,6 +144,8 @@ function BackMaster() {
     $("#txtSubGroupName").prop("disabled", false);
     $("#txtGroupName").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
+    $("#txtheaderdiv").hide();
+    disableFields(false);
 }
 async function deleteSubGroupMaster(code, subGroupName) {
     $('table').on('click', 'tr', function () {
@@ -180,8 +184,15 @@ async function deleteSubGroupMaster(code, subGroupName) {
             }
         });
     }
+    else {
+           $('table tr').removeClass('highlight');
+    }
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+     
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -190,6 +201,7 @@ async function Edit(code) {
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowSubGroupMasterByCode?Code=` + code,
         type: 'GET',
@@ -203,6 +215,7 @@ async function Edit(code) {
                     $("#txtSubGroupName").val(item.SubGroupName);
                     $("#txtGroupName").val(item.GroupName);
                     $("#txtbtnSave").prop("disabled", false);
+                    disableFields(false);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -250,6 +263,9 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -258,6 +274,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowSubGroupMasterByCode?Code=` + code,
         type: 'GET',
@@ -271,6 +288,7 @@ async function View(code) {
                     $("#txtSubGroupName").val(item.SubGroupName).prop("disabled", true);
                     $("#txtGroupName").val(item.GroupName).prop("disabled", true);
                     $("#txtbtnSave").prop("disabled", true);
+                    disableFields(true);
                 });
             } else {
                 toastr.error("Record not found...!");
@@ -280,4 +298,34 @@ async function View(code) {
             console.error("Error:", error);
         }
     });
+}
+function disableFields(disable) {
+    $("#txtCreatepage,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+}
+
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowSubGroupMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "SubGroupMaster.xlsx");
 }

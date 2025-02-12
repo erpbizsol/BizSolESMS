@@ -28,6 +28,11 @@ $(document).ready(function () {
     });
     $('#txtChallanDate').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#txtPickListNo").focus();
+        }
+    });
+    $('#txtPickListNo').on('keydown', function (e) {
+        if (e.key === "Enter") {
             $("#txtVehicleNo").focus();
         }
     });
@@ -141,12 +146,12 @@ function ShowMRNMasterlist() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
     var ToDate = convertDateFormat2($("#txtToDate").val());
     if (FromDate == '') {
-        toastr.error("Please select MRN Date !");
-        $("#txtMRNDate").focus();
+        toastr.error("Please select from date !");
+        $("#txtFromDate").focus();
         return;
     } else if (ToDate == '') {
-        toastr.error("Please enter vendor name !");
-        $("#txtVendorName").focus();
+        toastr.error("Please enter to date !");
+        $("#txtToDate").focus();
         return;
     }
     $.ajax({
@@ -168,13 +173,13 @@ function ShowMRNMasterlist() {
                 const ColumnAlignment = {
                 };
                 const updatedResponse = response.map(item => ({
-                    ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}')"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-                
+                ChangecolorTr();
             } else {
                 $("#MRNTable").hide();
                 toastr.error("Record not found...!");
@@ -196,41 +201,54 @@ async function Create() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
+    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function ImportExcel() {
     $("#txtListpage").hide();
     $("#txtCreatepage").hide();
     $("#txtImportPage").show();
+    $("#txtheaderdiv2").show();
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
+    $("#txtheaderdiv").hide();
+
     ClearData();
     disableFields(false);
+    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
+
 }
 function BackImport() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
     $("#ImportTable").hide();
+    $("#txtheaderdiv2").hide();
     ClearDataImport();
 }
-async function Edit(code) {
+async function Edit(code, Status) {
+    if (Status !== 'UNLOADING PENDING') {
+        toastr.error("Un-Loading start you can`t edit !.");
+        return;
+    }
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
+    
     $("#tab1").text("EDIT");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
@@ -246,9 +264,11 @@ async function Edit(code) {
                     $("#txtMRNDate").val(MRNMaster.MRNDate || "");
                     $("#txtChallanNo").val(MRNMaster.Bill_ChallanNo || "");
                     $("#txtVehicleNo").val(MRNMaster.VehicleNo || "");
+                    $("#txtPickListNo").val(MRNMaster.PickListNo || "");
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
                     $("#txtVendorName").val(MRNMaster.AccountName || "");
                     $("#txtAddress").val(MRNMaster.Address || "");
+                    $("#txtMRNNo").prop("disabled", true);
                     $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
@@ -283,7 +303,11 @@ async function Edit(code) {
         }
     });
 }
-async function DeleteItem(code, Challan) {
+async function DeleteItem(code, Challan, status) {
+    if (status !== 'UNLOADING PENDING') {
+        toastr.error("Un-Loading start you can`t delete !.");
+        return;
+    }
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
         $(this).addClass('highlight');
@@ -293,6 +317,7 @@ async function DeleteItem(code, Challan) {
         toastr.error(msg);
         return;
     }
+    
     const { Status, msg1 } = await CheckRelatedRecord(code, 'mrnmaster');
     if (Status == true) {
         toastr.error(msg1);
@@ -431,6 +456,7 @@ function ClearData() {
     $("#txtAddress").val("");
     $("#txtVehicleNo").val("");
     $("#txtChallanNo").val("");
+    $("#txtPickListNo").val("");
     $("#Orderdata").empty();
     GetCurrentDate();
     GetAccountMasterList();
@@ -442,6 +468,7 @@ function Save() {
     const VehicleNo = $("#txtVehicleNo").val();
     const MRNDate = convertDateFormat($("#txtMRNDate").val());
     const ChallanNo = $("#txtChallanNo").val();
+    const PickListNo = $("#txtPickListNo").val();
     const ChallanDate = convertDateFormat($("#txtChallanDate").val());
 
     if (MRNDate == '') {
@@ -459,6 +486,10 @@ function Save() {
     } else if (ChallanDate == '') {
         toastr.error("Please select challan date !");
         $("#txtChallanDate").focus();
+        return;
+    } else if (PickListNo == '') {
+        toastr.error("Please enter PickList No !");
+        $("#txtPickListNo").focus();
         return;
     }
     let validationFailed = false;
@@ -527,14 +558,15 @@ function Save() {
         vendorName: VendorName,
         challanNo: ChallanNo,
         challanDate: ChallanDate,
-        vehicleNo: VehicleNo
+        vehicleNo: VehicleNo,
+        PickListNo: PickListNo
     }];
     const Data = [];
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
         if (row.find(".txtItemName").val() != '') {
             const RowData = {
-                itemName: row.find(".txtItemName").val(),
+                itemName: row.find(".txtItemCode").val(),
                 billQtyBox: row.find(".txtBillQtyBox").val() || 0,
                 receivedQtyBox: row.find(".txtReceivedQtyBox").val() || 0,
                 billQty: row.find(".txtBillQty").val(),
@@ -741,6 +773,12 @@ function addNewRow() {
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
       `;
         table.appendChild(newRow);
+        updateTotalBillQty();
+        updateTotalRate();
+        updateTotalAmount();
+        updateTotalBillQtyBox();
+        updateTotalReceivedQtyBox();
+        updateTotalReceivedQty();
     }
 }
 $(document).on("click", ".deleteRow", function () {
@@ -1543,8 +1581,6 @@ function convertDateFormat2(dateString) {
     const monthAbbreviation = monthNames[parseInt(month) - 1];
     return `${day}/${monthAbbreviation}/${year}`;
 }
-
-
 async function View(code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -1554,6 +1590,7 @@ async function View(code) {
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + code,
         type: 'GET',
@@ -1570,6 +1607,7 @@ async function View(code) {
                     $("#txtMRNDate").val(MRNMaster.MRNDate || "").prop("disabled", true);
                     $("#txtChallanNo").val(MRNMaster.Bill_ChallanNo || "").prop("disabled", true);
                     $("#txtVehicleNo").val(MRNMaster.VehicleNo || "").prop("disabled", true);
+                    $("#txtPickListNo").val(MRNMaster.PickListNo || "").prop("disabled", true);
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
                     $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
                     $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);
@@ -1610,10 +1648,79 @@ async function View(code) {
     });
 
 }
-
-//function disableFields(disable) {
-//    $("input, select, button").not("#btnBack").prop("disabled", disable);
-//}
 function disableFields(disable) {
-    $("input, select, button, a").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
+    $("input, select, button").not("#btnBack").prop("disabled", disable);
 }
+function DataExport() {
+    var FromDate = convertDateFormat2($("#txtFromDate").val());
+    var ToDate = convertDateFormat2($("#txtToDate").val());
+    if (FromDate == '') {
+        toastr.error("Please select from date !");
+        $("#txtFromDate").focus();
+        return;
+    } else if (ToDate == '') {
+        toastr.error("Please enter to date !");
+        $("#txtToDate").focus();
+        return;
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ExportMRNMaster?FromDate=${FromDate}&ToDate=${ToDate}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "MRNMaster.xlsx");
+}
+function ExportExcel() {
+    DataExport();
+}
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#table-body tr');
+
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const targetTd = tds[9]; 
+        const targetTd1 = tds[10]; 
+
+        if (targetTd) { 
+            const columnValue = targetTd.textContent.trim();
+            const columnValue1 = targetTd1.textContent.trim();
+            
+            if (columnValue === 'UNLOADED') {
+                targetTd.style.backgroundColor = '#009358';
+            } else if (columnValue === "PARTIAL UNLOADED") {
+                targetTd.style.backgroundColor = '#9ef3a5';
+            } else {
+                targetTd.style.backgroundColor = '#d5d5f5';
+            }
+            if (columnValue1 === 'VALIDATED') {
+                targetTd1.style.backgroundColor = '#009358';
+            } else if (columnValue1 === "PARTIAL VALIDATE") {
+                targetTd1.style.backgroundColor = '#9ef3a5';
+            } else {
+                targetTd1.style.backgroundColor = '#d5d5f5';
+            }
+            targetTd.style.fontWeight = 'bold';
+            targetTd1.style.fontWeight = 'bold';
+        }
+    });
+}
+
+setInterval(ChangecolorTr, 100);

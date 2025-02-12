@@ -33,6 +33,7 @@ async function Save() {
         toastr.error(msg);
         return;
     }
+    $("#txtheaderdiv").show();
     if ($("#txtPageSizeOption").val() === '') {
         toastr.error('Please enter Page Size with comma separated value !');
         $("#txtPageSizeOption").focus();
@@ -72,6 +73,7 @@ async function Save() {
 }
 async function Edit() {
     $("#tab1").text("NEW");
+    $("#txtheaderdiv").show();
     $.ajax({
         url: `${appBaseURL}/api/Configuration/GetPerPageSizeList`,
         type: 'GET',
