@@ -174,7 +174,7 @@ function ShowMRNMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
@@ -303,15 +303,14 @@ async function Edit(code, Status) {
         }
     });
 }
-async function DeleteItem(code, Challan, status) {
+async function DeleteItem(code, Challan, status, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
     if (status !== 'UNLOADING PENDING') {
         toastr.error("Un-Loading start you can`t delete !.");
         return;
     }
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+  
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -344,6 +343,9 @@ async function DeleteItem(code, Challan, status) {
 
             }
         });
+    }
+    else {
+            $('tr').removeClass('highlight')
     }
 }
 function GetAccountMasterList() {

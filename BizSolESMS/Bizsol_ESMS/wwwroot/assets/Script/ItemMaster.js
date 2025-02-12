@@ -333,7 +333,7 @@ function ShowItemMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
@@ -521,11 +521,9 @@ function BackMaster() {
     $("#txtheaderdiv").hide();
     disableFields(false);
 }
-async function deleteItem(code, ItemName) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+async function deleteItem(code, ItemName, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -559,13 +557,11 @@ async function deleteItem(code, ItemName) {
         });
     }
     else {
-        $('table tr').removeClass('highlight');
+        $('tr').removeClass('highlight');
     }
 }
 async function Edit(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -849,9 +845,7 @@ function ChangecolorTr() {
     });
 }
 async function View(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);

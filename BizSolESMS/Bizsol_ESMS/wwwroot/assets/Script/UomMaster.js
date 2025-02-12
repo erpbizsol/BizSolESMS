@@ -135,9 +135,7 @@ function BackMaster() {
     disableFields(false);
 }
 async function Edit(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+  
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -190,10 +188,9 @@ function GetModuleMasterCode() {
     }
 }
 async function deleteItem(code, uomName, button) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
+   
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (!hasPermission) {
         toastr.error(msg);
@@ -229,13 +226,11 @@ async function deleteItem(code, uomName, button) {
         return;
     }
     else {
-        $('table tr').removeClass('highlight');
+        $('tr').removeClass('highlight');
     }
 }
 async function View(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+ 
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
