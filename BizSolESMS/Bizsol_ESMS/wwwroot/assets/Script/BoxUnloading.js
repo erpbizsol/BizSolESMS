@@ -130,6 +130,7 @@ function MRNDetail() {
 }
 function StartUnloading(PickListNo, VehicleNo,Code) {
     $("#UnloadingForm").show();
+    $("#txtheaderdiv").show();
     $("#UnloadingTable1").hide();
     $("#txtPickListNo").val(PickListNo);
     $("#txtVehicleNo").val(VehicleNo);
@@ -143,4 +144,5 @@ function Back() {
     $("#txtVehicleNo").val("");
     $("#txtCode").val("0");
     $("#txtBoxNo").val("");
+    $("#txtheaderdiv").hide();
 }

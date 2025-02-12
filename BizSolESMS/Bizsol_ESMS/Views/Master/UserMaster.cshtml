@@ -4,6 +4,29 @@
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="~/assets/script/UserMaster.js"></script>
 <style>
+    .form-group {
+        margin-bottom: 8px;
+    }
+
+    #imgUserForShow {
+        /* margin-left: 29px;
+                margin-top: 20px; */
+        border: 1px solid black;
+        height: 200px;
+        width: 180px;
+        border-radius: 2px;
+    }
+
+    #imgSelfie {
+        height: 196px;
+        width: 176px;
+        padding: 2px;
+    }
+
+    img {
+        border-radius: 0px;
+    }
+
 .tabs {
         width: 100%;
         max-width: 2000px;
@@ -208,15 +231,12 @@
         </div>
     </div>
 </div>
+
 <div id="FrmUserMaster" style="display:None">
     <form>
         <div class="card shadow-sm" style="background-color:#e9e9ef">
-
             <div class="tabs">
-              @*   <div class="tab-header">
-                    <div id="tab1" class="tab active" style="color:white"></div>
-                </div> *@
-                <div class="row p-2">
+                <div class="row p-1">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-9">
@@ -248,7 +268,6 @@
                                         <label for="txtEmailId" class="col-form-label-sm fw-bold">Email Id<span class="text-danger">*</span></label>
                                         <input type="text" id="txtEmailId" class="box_border form-control form-control-sm" placeholder="Enter Email Id" autocomplete="off" maxlength="50">
                                     </div>
-
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4 col-sm-6">
@@ -290,8 +309,6 @@
                                             <label for="chkIsBizSolUser">BizSol User</label>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -308,7 +325,6 @@
                                         <button type="button" style="width: 181px;" id="btnBrowse" class="btn btn-primary btn-height">BROWSE</button>
                                     </div>
                                 </center>
-
                             </div>
                             <div class="row">
                                 <div class="col-md-2">
@@ -339,16 +355,10 @@
                         </div>
                     </div>
                 </div>
-                @* <div class="row m-2">
-
-                    <div class="col-md-12" style="margin-top: 30px !important;">
-                        <button type="button" id="btnSave" class="btn btn-primary btn-height waves-effect" title="Save">Save</button>
-                        <button type="button" id="btnBack" class="btn btn-danger btn-height waves-effect" title="Back">Back</button>
-                    </div>
-                </div> *@
             </div>
         </div>
     </form>
 </div>
+
 </div>
 <script src="~/assets/js/filter.js"></script>

@@ -9,40 +9,31 @@
     .tabs {
         width: 100%;
         max-width: 2000px;
-        /* background: #fff;  */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         border-radius: 8px;
         overflow: hidden;
         padding: 0.7rem;
     }
 
-    .tab-header {
-        display: flex;
-        /* background: #e3e7ed; */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    .tabSec {
+        color: white;
+        width: 117px;
         height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        margin-top: -8px;
+        background: #1d4b7d;
     }
 
-        .tab-header div {
-            flex: 0.1;
-            text-align: center;
-            padding: 7px 16px;
-            cursor: pointer;
-            /* color: #fffffff5; */
-            transition: background 0.3s ease;
-            border-bottom-right-radius: 40px;
-            border-top-left-radius: 40px;
-            font-weight: bold;
-        }
 
-            .tab-header div:hover {
-                background: #586e87;
-                color: white;
-            }
-
-        .tab-header .active {
-            background: #1d4b7d;
-        }
+    /*  .tab-header {
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                } */
 
     .tab-content {
         display: none;
@@ -60,35 +51,137 @@
         opacity: 0.9;
     }
 
-    .highlight {
-        background-color: #f5c0bfc4;
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
     }
 
-    .mt-3 {
-        margin-top: 1.9rem !important;
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
+
+
+    .fixed-height-table {
+        height: auto;
     }
 
     .container-fluid {
-        overflow: auto;
-        height: 81vh;
+        padding-right: 0;
+        padding-left: 0;
+        /*  overflow: hidden;
+                            height: auto; */
+    }
+
+    .datepicker table tfoot {
+        display: none;
+    }
+
+    .fixed-height-table {
+        height: auto;
     }
 
     .page-content {
         display: block;
     }
 
-    .textCreatepage .tabs .new-header {
+    .textCreatepage .tabs .fix-header {
         position: sticky;
         top: 0;
         background-color: #dddde4;
         z-index: 1000;
+        padding: 8px 0 8px 9px;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+
+    .shadow-sm {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+        margin-top: 15px;
+        border-top: 1px solid #c9cae7;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 50%;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 20px;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-danger {
+        background-color: #ab1624;
+    }
+
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
+
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
+        /*  overflow: hidden;
+                            height: auto; */
+    }
+
+    .container {
+        overflow: auto;
+        height: 81vh;
+        /* overflow: hidden; */
+    }
+
+    .breadcrumbs1 {
+        background: #dddde4;
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        /* border-top-right-radius: 5px;
+                            border-top-left-radius: 5px; */
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        /* height: 36px; */
+        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
+    }
+
+    .page-content {
+        padding: 3px 0;
     }
 </style>
-<div class="sm-table" id="txtListpage">
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="Save()" id="txtbtnSave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="sm-table mt-3" id="txtListpage">
     <div class="row">
         <div class="col-sm-12 text-end">
             <label></label>
-            <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" id="exportExcel">DOWNLOAD</button>
+             <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" onclick="DataExport()">DOWNLOAD</button>
             <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateWarehouseMaster()">CREATE NEW</button>
         </div>
     </div>
@@ -109,10 +202,7 @@
 <div id="txtCreatepage" style="display:none;">
     <div class="card shadow-sm" style="background-color:#e9e9ef">
         <div class="tabs">
-            <div class="tab-header">
-                <div id="tab1" class="tab active" style="color:white"></div>
-            </div>
-            <div class="row pt-4">
+            <div class="row p-1">
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-3">
@@ -161,14 +251,15 @@
                     </div>
                 </div>
             </div>
-            <div class="row m-2">
+          @*   <div class="row m-2">
                 <div class="col-md-12" style="margin-top: 30px !important;">
                     <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtbtnSave">Save</button>
                     <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
                 </div>
-            </div>
+            </div> *@
         </div>
     </div>
+</div>
 </div>
 <script src="~/assets/js/filter.js"></script>
 

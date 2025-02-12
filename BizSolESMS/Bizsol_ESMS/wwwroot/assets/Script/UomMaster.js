@@ -45,12 +45,11 @@ function ShowUomMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}', '${item[`UOM Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-danger icon-height mb-1"  title="Delete" onclick="deleteItem('${item.Code}', '${item[`UOM Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1" title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-               
                 
             } else {
                 $("#txtUomTable").hide();
@@ -136,6 +135,9 @@ function BackMaster() {
     disableFields(false);
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -205,7 +207,7 @@ async function deleteItem(code, uomName, button) {
     }
 
     if (confirm(`Are you sure you want to delete this Uom ${uomName}?`)) {
-
+      
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteUOM?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
@@ -226,8 +228,14 @@ async function deleteItem(code, uomName, button) {
         });
         return;
     }
+    else {
+        $('table tr').removeClass('highlight');
+    }
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -269,5 +277,40 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+    $("#txtCreatepage,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowUOM`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    const columnsToRemove = ["Code"];
+    if (!Array.isArray(columnsToRemove)) {
+        console.error("columnsToRemove should be an array");
+        return;
+    }
+    const filteredData = jsonData.map(row =>
+        Object.fromEntries(Object.entries(row).filter(([key]) => !columnsToRemove.includes(key)))
+    );
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "UOMMaster.xlsx");
+}
+

@@ -158,8 +158,14 @@ async function deleteGroup(code, group) {
             }
         });
     }
+    else {
+          $('table tr').removeClass('highlight');
+    }
 }
 async function Edit(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -195,27 +201,6 @@ function ClearData() {
     $("#txtGroupName").val("");
 
 }
-function exportTableToExcel() {
-    var table = document.getElementById("table");
-    var workbook = XLSX.utils.book_new();
-    var worksheet = XLSX.utils.table_to_sheet(table);
-    var hiddenColumns = ["Action"];
-    for (var row in worksheet) {
-        if (row.startsWith('!')) continue;
-        var cellIndex = parseInt(row.match(/\d+/));
-        if (!isNaN(cellIndex)) {
-            hiddenColumns.forEach(colIdx => {
-                var colLetter = XLSX.utils.encode_col(colIdx);
-                delete worksheet[colLetter + cellIndex];
-            });
-        }
-    }
-    var range = XLSX.utils.decode_range(worksheet['!ref']);
-    range.e.c -= hiddenColumns.length; // Adjust end column
-    worksheet['!ref'] = XLSX.utils.encode_range(range);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "UOMMaster.xlsx");
-}
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Group  Master");
@@ -224,6 +209,9 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -258,5 +246,39 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+    $("#txtCreatepage,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+}
+function DataExport() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowGroupMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Export(jsonData) {
+    const columnsToRemove = ["Code"];
+    if (!Array.isArray(columnsToRemove)) {
+        console.error("columnsToRemove should be an array");
+        return;
+    }
+    const filteredData = jsonData.map(row =>
+        Object.fromEntries(Object.entries(row).filter(([key]) => !columnsToRemove.includes(key)))
+    );
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "GroupMaster.xlsx");
 }

@@ -9,6 +9,7 @@ using System.Web;
 using Bizsol_ESMS.Models;
 using MySql.Data.MySqlClient;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Xml.Linq;
 
 namespace Bizsol_ESMS.Controllers
 {
@@ -63,7 +64,8 @@ namespace Bizsol_ESMS.Controllers
                                 HttpContext.Session.SetString("ConnectionString", connectionMYSqlString);
                                 CookieOptions options = new CookieOptions
                                 {
-                                    Expires = DateTime.UtcNow.AddMinutes(30),
+                                    
+                                    Expires = DateTime.UtcNow.AddMinutes(60 * 60 * 1000),
                                     HttpOnly = false,
                                     Secure = true,
                                     SameSite = SameSiteMode.Strict
