@@ -28,6 +28,11 @@ $(document).ready(function () {
     });
     $('#txtChallanDate').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#txtPickListNo").focus();
+        }
+    });
+    $('#txtPickListNo').on('keydown', function (e) {
+        if (e.key === "Enter") {
             $("#txtVehicleNo").focus();
         }
     });
@@ -259,6 +264,7 @@ async function Edit(code, Status) {
                     $("#txtMRNDate").val(MRNMaster.MRNDate || "");
                     $("#txtChallanNo").val(MRNMaster.Bill_ChallanNo || "");
                     $("#txtVehicleNo").val(MRNMaster.VehicleNo || "");
+                    $("#txtPickListNo").val(MRNMaster.PickListNo || "");
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
                     $("#txtVendorName").val(MRNMaster.AccountName || "");
                     $("#txtAddress").val(MRNMaster.Address || "");
@@ -450,6 +456,7 @@ function ClearData() {
     $("#txtAddress").val("");
     $("#txtVehicleNo").val("");
     $("#txtChallanNo").val("");
+    $("#txtPickListNo").val("");
     $("#Orderdata").empty();
     GetCurrentDate();
     GetAccountMasterList();
@@ -461,6 +468,7 @@ function Save() {
     const VehicleNo = $("#txtVehicleNo").val();
     const MRNDate = convertDateFormat($("#txtMRNDate").val());
     const ChallanNo = $("#txtChallanNo").val();
+    const PickListNo = $("#txtPickListNo").val();
     const ChallanDate = convertDateFormat($("#txtChallanDate").val());
 
     if (MRNDate == '') {
@@ -478,6 +486,10 @@ function Save() {
     } else if (ChallanDate == '') {
         toastr.error("Please select challan date !");
         $("#txtChallanDate").focus();
+        return;
+    } else if (PickListNo == '') {
+        toastr.error("Please enter PickList No !");
+        $("#txtPickListNo").focus();
         return;
     }
     let validationFailed = false;
@@ -546,14 +558,15 @@ function Save() {
         vendorName: VendorName,
         challanNo: ChallanNo,
         challanDate: ChallanDate,
-        vehicleNo: VehicleNo
+        vehicleNo: VehicleNo,
+        PickListNo: PickListNo
     }];
     const Data = [];
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
         if (row.find(".txtItemName").val() != '') {
             const RowData = {
-                itemName: row.find(".txtItemName").val(),
+                itemName: row.find(".txtItemCode").val(),
                 billQtyBox: row.find(".txtBillQtyBox").val() || 0,
                 receivedQtyBox: row.find(".txtReceivedQtyBox").val() || 0,
                 billQty: row.find(".txtBillQty").val(),
@@ -1594,6 +1607,7 @@ async function View(code) {
                     $("#txtMRNDate").val(MRNMaster.MRNDate || "").prop("disabled", true);
                     $("#txtChallanNo").val(MRNMaster.Bill_ChallanNo || "").prop("disabled", true);
                     $("#txtVehicleNo").val(MRNMaster.VehicleNo || "").prop("disabled", true);
+                    $("#txtPickListNo").val(MRNMaster.PickListNo || "").prop("disabled", true);
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
                     $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
                     $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);

@@ -208,7 +208,6 @@ function ClearData() {
     $("#txtGroupName").val("");
     $("#hfCode").val("0");
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "User Group Master");
@@ -248,6 +247,6 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button,#btnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto").css("opacity", disable ? "0.5" : "1");
+    $("input, select, button,#btnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
 
