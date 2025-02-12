@@ -174,8 +174,8 @@ function ShowMRNMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item,
-                    "Unloading Status": `<a onclick=ShowCaseNoData(${item.Code})>${item["Unloading Status"]}</a>`,
-                    "Validation Status": `<a onclick=ShowCaseNoDataQty(${item.Code})>${item["Validation Status"]}</a>`
+                    "Unloading Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code})>${item["Unloading Status"]}</a>`,
+                    "Validation Status": `<a style="cursor:pointer;" onclick=ShowCaseNoDataQty(${item.Code})>${item["Validation Status"]}</a>`
                     ,Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}')"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
