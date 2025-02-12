@@ -4,7 +4,6 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let imageBase64Data = [];
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
-
 $(document).ready(function () {
     $("#ERPHeading").text("User Master");
     UserGroupList();

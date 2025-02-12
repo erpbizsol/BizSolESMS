@@ -4,6 +4,7 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+
 $(document).ready(function () {
     $('#ERPHeading').text('Category Master');
     $('#txtCategoryName').on('keydown', function (e) {
