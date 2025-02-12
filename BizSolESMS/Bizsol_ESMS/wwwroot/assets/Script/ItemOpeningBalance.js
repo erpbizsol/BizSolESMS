@@ -102,6 +102,7 @@ $(document).ready(function () {
             $("#txtbtnSave").focus();
         }
     });
+    $("#txtheaderdiv").show();
 });
 function ShowItemOpeningBalancelist() {
     $.ajax({
