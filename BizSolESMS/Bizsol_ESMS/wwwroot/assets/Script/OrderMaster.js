@@ -1014,6 +1014,8 @@ function Import(event) {
     const file = event.target.files[0];
     if (!file) {
         alert("Please select a file.");
+        $("#ImportTable").hide();
+        JsonData = [];
         return;
     }
 
@@ -1022,6 +1024,8 @@ function Import(event) {
     if (!allowedExtensions.includes(fileExtension)) {
         alert("Invalid file type. Please upload an Excel or CSV file (.xlsx, .xls, .csv).");
         event.target.value = '';
+        $("#ImportTable").hide();
+        JsonData = [];
         return;
     }
 
@@ -1031,9 +1035,12 @@ function Import(event) {
             if (fileExtension === 'csv') {
                 validateCSV(event, function (isValidCSV) {
                     if (!isValidCSV) {
-                        event.target.value = ''; // Clear file input
+                        event.target.value = ''; 
+                        $("#ImportTable").hide();
+                        JsonData = [];
                         return false;
                     }
+                    SaveImportFile();
                 });
                 JsonData = parseCSV(e.target.result);
             } else {
@@ -1042,6 +1049,8 @@ function Import(event) {
                 if (workbook.SheetNames.length === 0) {
                     alert("Invalid Excel file: No sheets found.");
                     event.target.value = '';
+                    $("#ImportTable").hide();
+                    JsonData = [];
                     return;
                 }
                 const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -1052,15 +1061,19 @@ function Import(event) {
                 if (!validationResult.isValid) {
                     alert(`Invalid Excel format: ${validationResult.message}`);
                     event.target.value = '';
+                    $("#ImportTable").hide();
+                    JsonData = [];
                     return;
                 }
+                SaveImportFile();
             }
             
-            SaveImportFile();
+            
         } catch (error) {
             alert("Error reading the file. Ensure it is a valid format.");
-            console.error(error);
             event.target.value = '';
+            $("#ImportTable").hide();
+            JsonData = [];
         }
     };
 
