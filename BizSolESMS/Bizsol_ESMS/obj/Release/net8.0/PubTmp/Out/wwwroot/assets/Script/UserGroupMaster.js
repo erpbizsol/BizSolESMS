@@ -74,6 +74,9 @@ async function Create() {
     $("#txtheaderdiv").show();
     disableFields(false);
     $("#btnSave").prop("disabled", false);
+    $("#ddlGroupType").prop("disabled", false);
+    $("#txtGroupName").prop("disabled", false);
+    $("#hfCode").prop("disabled", false);
 }
 function Back() {
     $("#FrmUserMaster").hide();
@@ -82,6 +85,9 @@ function Back() {
     ClearData();
     disableFields(false);
     $("#btnSave").prop("disabled", false);
+    $("#ddlGroupType").prop("disabled", false);
+    $("#txtGroupName").prop("disabled", false);
+    $("#hfCode").prop("disabled", false);
 }
 async function Delete(code, userGroup) {
     $('table').on('click', 'tr', function () {
@@ -120,8 +126,14 @@ async function Delete(code, userGroup) {
             }
         });
     }
+    else {
+     $('table tr').removeClass('highlight');
+    }
 }
 async function Edit(Code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -134,6 +146,9 @@ async function Edit(Code) {
     UserGroupMasterByCode(Code);
     disableFields(false);
     $("#btnSave").prop("disabled", false);
+    $("#ddlGroupType").prop("disabled", false);
+    $("#txtGroupName").prop("disabled", false);
+    $("#hfCode").prop("disabled", false);
 }
 function UserGroupMasterByCode(Code) {
     $.ajax({
@@ -216,6 +231,9 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -233,10 +251,11 @@ async function View(code) {
         },
         success: function (response) {
             if (response) {
+
+                $("#ddlGroupType").val(response.GroupType).prop("disabled", true);
+                $("#txtGroupName").val(response.GroupName).prop("disabled", true);
+                $("#hfCode").val(response.Code).prop("disabled", true);
                 disableFields(true);
-                $("#ddlGroupType").val(response.GroupType);
-                $("#txtGroupName").val(response.GroupName);
-                $("#hfCode").val(response.Code);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -247,6 +266,6 @@ async function View(code) {
     });
 }
 function disableFields(disable) {
-    $("input, select, button,#btnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+    $("#FrmUserMaster,#btnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
 

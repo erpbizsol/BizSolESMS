@@ -36,7 +36,7 @@ function LocationList() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteLocation('${item.Code}','${item[`Location Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteLocation('${item.Code}','${item[`Location Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
@@ -113,11 +113,9 @@ function BackMaster() {
     $("#txtLocationName").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
 }
-async function deleteLocation(code, location) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+async function deleteLocation(code, location, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -151,13 +149,11 @@ async function deleteLocation(code, location) {
         });
     }
     else {
-        $('table tr').removeClass('highlight');
+        $('tr').removeClass('highlight');
     }
 }
 async function Edit(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+    
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -208,9 +204,7 @@ function ClearData() {
     $("#txtLocationName").val("");
 }
 async function View(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);

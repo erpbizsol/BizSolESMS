@@ -333,10 +333,12 @@ function StartValidation(PickListNo, VehicleNo, Code) {
     $("#txtPickListNo").val(PickListNo);
     $("#txtVehicleNo").val(VehicleNo);
     $("#txtCode").val(Code);
+    $("#txtheaderdiv").show();
 }
 function Back() {
     $("#UnloadingTable1").show();
     $("#UnloadingTable").hide();
+    $("#txtheaderdiv").hide();
     $("#ValidateFrom").hide();
     $("#txtPickListNo").val("");
     $("#txtVehicleNo").val("");

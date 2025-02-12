@@ -18,11 +18,55 @@ $(document).ready(function () {
     });
     $('#txtPANNo').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#tdsAddressCode1").focus();
+        }
+    });
+    $('#tdsAddressCode1').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsAddressLine1").focus();
+        }
+    });
+    $('#tdsAddressLine1').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsAddressLine2").focus();
+        }
+    });
+    $('#tdsAddressLine2').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsCitysList").focus();
+        }
+    });
+    $('#tdsCitysList').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsGSTIN").focus();
+        }
+    });
+    $('#tdsGSTIN').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsContactPerson").focus();
+        }
+    });
+    $('#tdsContactPerson').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsPhone").focus();
+        }
+    });
+    $('#tdsPhone').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsMobile").focus();
+        }
+    });
+    $('#tdsMobile').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#tdsEmail").focus();
+        }
+    });
+    $('#tdsEmail').on('keydown', function (e) {
+        if (e.key === "Enter") {
             let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
             firstInput.focus();
         }
     });
-  
     ShowAccountMasterlist();
     GetGroupMasterList();
     GetCountryMasterList();
@@ -125,7 +169,7 @@ function ShowAccountMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Account Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Account Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
@@ -161,9 +205,9 @@ async function CreateItemMaster() {
     $("#tdsAddressLine1").prop("disabled", false);
     $("#tdsAddressLine2").prop("disabled", false);
     $("#tdsCitysList").prop("disabled", false);
-    $("#tdsStatelist").prop("disabled", false);
-    $("#tdsNationlist").prop("disabled", false);
-    $("#tdsPIN").prop("disabled", false);
+    //$("#tdsStatelist").prop("disabled", false);
+    //$("#tdsNationlist").prop("disabled", false);
+    //$("#tdsPIN").prop("disabled", false);
     $("#tdsGSTIN").prop("disabled", false);
     $("#tdsContactPerson").prop("disabled", false);
     $("#tdsPhone").prop("disabled", false);
@@ -193,9 +237,9 @@ function BackMaster() {
     $("#tdsAddressLine1").prop("disabled", false);
     $("#tdsAddressLine2").prop("disabled", false);
     $("#tdsCitysList").prop("disabled", false);
-    $("#tdsStatelist").prop("disabled", false);
-    $("#tdsNationlist").prop("disabled", false);
-    $("#tdsPIN").prop("disabled", false);
+    //$("#tdsStatelist").prop("disabled", false);
+    //$("#tdsNationlist").prop("disabled", false);
+    //$("#tdsPIN").prop("disabled", false);
     $("#tdsGSTIN").prop("disabled", false);
     $("#tdsContactPerson").prop("disabled", false);
     $("#tdsPhone").prop("disabled", false);
@@ -209,9 +253,7 @@ function BackMaster() {
     $("#txtIsVendor").prop("disabled", false);
 }
 async function Edit(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+   
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -242,9 +284,9 @@ async function Edit(code) {
                     $("#tdsAddressLine1").prop("disabled", false);
                     $("#tdsAddressLine2").prop("disabled", false);
                     $("#tdsCitysList").prop("disabled", false);
-                    $("#tdsStatelist").prop("disabled", false);
-                    $("#tdsNationlist").prop("disabled", false);
-                    $("#tdsPIN").prop("disabled", false);
+                    //$("#tdsStatelist").prop("disabled", false);
+                    //$("#tdsNationlist").prop("disabled", false);
+                    //$("#tdsPIN").prop("disabled", false);
                     $("#tdsGSTIN").prop("disabled", false);
                     $("#tdsContactPerson").prop("disabled", false);
                     $("#tdsPhone").prop("disabled", false);
@@ -279,11 +321,9 @@ async function Edit(code) {
         }
     });
 }
-async function deleteItem(code, account) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+async function deleteItem(code, account, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -317,7 +357,7 @@ async function deleteItem(code, account) {
         });
     }
     else {
-            $('table tr').removeClass('highlight');
+        $('tr').removeClass('highlight');
     }
 }
 function updateDisplayName() {
@@ -454,7 +494,8 @@ function Save() {
             row.find(".txtCity").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtState").val() == '') {
+        }
+        else if (row.find(".txtState").val() == '') {
             toastr.error("Please select State !");
             row.find(".txtState").focus();
             validationFailed = true;
@@ -474,7 +515,8 @@ function Save() {
             row.find(".txtPIN").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtMobile").val()=='') {
+        }
+        else if (row.find(".txtMobile").val() == '') {
             toastr.error("Please enter Mobile No!");
             row.find(".txtMobile").focus();
             validationFailed = true;
@@ -892,6 +934,7 @@ function FillallItemfield1(inputElement) {
     if (item) {
         Nation.value = item.CountryName || "";
         State.value = item["State Name"] || "";
+        PIN.value = item["Pin Code"] || "";
         $("#txtCityby_0").val(inputValue);
         $("#txtNationby_0").val(item.CountryName);
         $("#txtStateby_0").val(item["State Name"]);
@@ -1063,9 +1106,7 @@ function ClearData1() {
     $("#tdsEmail").val("")
 }
 async function View(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+   
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);

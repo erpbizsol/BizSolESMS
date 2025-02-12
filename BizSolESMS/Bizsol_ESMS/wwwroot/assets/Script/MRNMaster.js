@@ -306,15 +306,14 @@ async function Edit(code, Status) {
         }
     });
 }
-async function DeleteItem(code, Challan, status) {
+async function DeleteItem(code, Challan, status, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
     if (status !== 'UNLOADING PENDING') {
         toastr.error("Un-Loading start you can`t delete !.");
         return;
     }
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+  
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -347,6 +346,9 @@ async function DeleteItem(code, Challan, status) {
 
             }
         });
+    }
+    else {
+            $('tr').removeClass('highlight')
     }
 }
 function GetAccountMasterList() {
@@ -1652,7 +1654,7 @@ async function View(code) {
 
 }
 function disableFields(disable) {
-    $("input, select, button").not("#btnBack").prop("disabled", disable);
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
 function DataExport() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
