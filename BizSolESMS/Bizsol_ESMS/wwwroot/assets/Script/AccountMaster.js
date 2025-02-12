@@ -415,8 +415,9 @@ function Save() {
     const DisplayName = $("#txtDisplayName").val();
     const AccounCode = $("#txtAccounCode").val();
     if (!AccounCode) {
-        toastr.error("Please enter an Accoun Code!");
+        toastr.error("Please enter  Account Code!");
         $("#txtAccounCode").focus();
+        return;
     }
     else if (!AccountName) {
         toastr.error("Please enter an Account Name!");

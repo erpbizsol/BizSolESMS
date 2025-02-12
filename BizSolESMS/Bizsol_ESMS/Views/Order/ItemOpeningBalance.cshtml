@@ -8,6 +8,158 @@
 <script src="~/assets/script/ItemOpeningBalance.js"></script>
 
 <style>
+        .tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+    .tabSec {
+        color: white;
+        width: 117px;
+        height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        margin-top: -8px;
+        background: #1d4b7d;
+    }
+
+
+    /*  .tab-header {
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                    } */
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
+    }
+
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
+
+
+    .datepicker table tfoot {
+        display: none;
+    }
+
+    .fixed-height-table {
+        height: auto;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .fix-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0 8px 9px;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+
+    .shadow-sm {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+        margin-top: 15px;
+        border-top: 1px solid #c9cae7;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 50%;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 20px;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-danger {
+        background-color: #ab1624;
+    }
+
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
+
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
+        /*  overflow: hidden;
+                                height: auto; */
+    }
+
+    .container {
+        overflow: auto;
+        height: 81vh;
+        /* overflow: hidden; */
+    }
+    /* .breadcrumbs .container-fluid .fix-header {
+                            position: sticky;
+                            top: 0;
+                            background-color: #dddde4;
+                            z-index: 1000;
+                            padding: 8px 0 8px 9px;
+                            border-top-right-radius: 5px;
+                            border-top-left-radius: 5px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                            height: 36px;
+                        } */
+
+    .breadcrumbs1 {
+        background: #dddde4;
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        /* border-top-right-radius: 5px;
+                                border-top-left-radius: 5px; */
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        /* height: 36px; */
+        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
+    }
+
+    .page-content {
+        padding: 3px 0;
+    }
     .table th {
         width: 100px;
     }
@@ -92,116 +244,135 @@
 
 </style>
  
-<div id="txtCreatepage">
-    <div class="card shadow-sm" style="background-color:#e9e9ef">
-        <div class="tabs">
-            <div class="tab-header">
-                <div id="tab1" class="tab active" style="color:white">New</div>
-            </div>
-            <div class="row pt-4">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6">
-                            <label for="txtWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
-                            <datalist id="txtWarehouseList"></datalist>
-                            <input list="txtWarehouseList" id="txtWarehouse" onfocusout="CheckWarehouse(this);" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Warehouse..">
-                        </div>
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        @*  <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a> *@
                     </div>
                 </div>
-            </div>
-            <div class="row pt-4" id="divOrderBooking mb-2">
-                <div class="accordion accordion-flush" id="accordionFlushOrder">
-
-                    <div class="accordion-item tab active">
-                        <h2 class="accordion-header tab-header .active" id="flush-headingOne">
-                            <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
-                                Item Opening Balance
-                            </button>
-                        </h2>
-                        <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
-                            <div class="accordion-body-sec">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="table-wrapper" style="overflow: auto;">
-                                            <table id="table" class="table">
-                                                <thead role="rowgroup" id="table-header">
-                                                    @* <tr role="row">
-                                                    <th class="lead-Date width_cust" role="columnheader">Category<span class="text-danger">*</span></th>
-                                                    <th class="lead-Date width_cust" role="columnheader">Group<span class="text-danger">*</span></th>
-                                                    <th class="lead-Date width_cust" role="columnheader">Sub Group<span class="text-danger">*</span></th>
-                                                    <th class="lead-Date width_cust" role="columnheader">Brand<span class="text-danger">*</span></th>
-                                                    <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Warehouse<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Opening Balance<span class="text-danger">*</span></th>
-                                                    <th class="lead-text width_cust" role="columnheader">Delete</th>
-                                                    </tr> *@
-
-                                                </thead>
-                                                <tbody role="rowgroup" id="table-body"></tbody>
-                                                @* <tfoot>
-                                                <tr role="row" id="trAddBtn">
-                                                <td style="text-align: left;">
-                                                <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
-                                                </td>
-                                                </tr>
-                                                </tfoot> *@
-                                            </table>
-                                        </div>
-                                        <div class="paginator" id="paginator-table">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
                 </div>
             </div>
         </div>
-        <!-- Modal -->
-        <div class="modal position-absolute" id="staticBackdrop" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header tab-header" style="background-color:#e9e9ef">
-                        <div id="tab1" class="tab active" style="color:white">New</div>
-                        <button type="button" class="close modal-close" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+    </div>
+</section>
+<div class="container">
+    <div id="txtCreatepage">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                @*   <div class="tab-header">
+                <div id="tab1" class="tab active" style="color:white">New</div>
+                </div> *@
+                <div class="row pt-4">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
+                                <datalist id="txtWarehouseList"></datalist>
+                                <input list="txtWarehouseList" id="txtWarehouse" onfocusout="CheckWarehouse(this);" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Warehouse..">
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <div class="row pt-4">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-3 col-sm-6">
-                                        <label for="txtItemBarCode" class="col-form-label-sm fw-bold">Item Bar Code</label><span class="text-danger">*</span>
-                                        <datalist id="txtItemBarCodelist"></datalist>
-                                        <input list="txtItemBarCodelist" id="txtItemBarCode" onchange="FillallItemfield(this);" class=" box_border form-control form-control-sm" autocomplete="off" placeholder="Item Bar Code..">
+                </div>
+                <div class="row p-2" id="divOrderBooking mb-2">
+                    <div class="accordion accordion-flush" id="accordionFlushOrder">
+
+                        <div class="accordion-item tab active">
+                            <h2 class="accordion-header tab-header .active" id="flush-headingOne">
+                                <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
+                                    Item Opening Balance
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
+                                <div class="accordion-body-sec">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-wrapper" style="overflow: auto;">
+                                                <table id="table" class="table">
+                                                    <thead role="rowgroup" id="table-header">
+                                                        @* <tr role="row">
+                                                        <th class="lead-Date width_cust" role="columnheader">Category<span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Group<span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Sub Group<span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Brand<span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Warehouse<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Opening Balance<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Delete</th>
+                                                        </tr> *@
+
+                                                    </thead>
+                                                    <tbody role="rowgroup" id="table-body"></tbody>
+                                                    @* <tfoot>
+                                                    <tr role="row" id="trAddBtn">
+                                                    <td style="text-align: left;">
+                                                    <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
+                                                    </td>
+                                                    </tr>
+                                                    </tfoot> *@
+                                                </table>
+                                            </div>
+                                            <div class="paginator" id="paginator-table">
+                                            </div>
+                                        </div>
                                     </div>
-
-
-                                    <div class="col-md-3 col-sm-6">
-                                        <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code</label><span class="text-danger">*</span>
-                                        <datalist id="txtItemCodelist"></datalist>
-                                        <input list="txtItemCodelist" id="txtItemCode" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Code..">
-                                    </div>
-
-
-                                    <div class="col-md-3 col-sm-6">
-                                        <label for="txtItemName" class="col-form-label-sm fw-bold">Item Name</label><span class="text-danger">*</span>
-                                        <datalist id="txtItemNamelist"></datalist>
-                                        <input list="txtItemNamelist" id="txtItemName" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Name..">
-                                    </div>
-
-
-                                    <div class="col-md-3 col-sm-6">
-                                        <label for="txtOpeningBalance" class="col-form-label-sm fw-bold ">Opening Balance</label><span class="text-danger">*</span>
-                                        <input type="text" id="txtOpeningBalance" onkeypress="return OnChangeNumericTextBox(event,this);" class="box_border form-control form-control-sm text-right" autocomplete="off" placeholder="Opening Balance..">
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-success btn-height" id="txtbtnSave" onclick="confirmSave()">Save</button>
-                            <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal position-absolute" id="staticBackdrop" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header tab-header" style="background-color:#e9e9ef">
+                            <div id="tab1" class="tab active" style="color:white">New</div>
+                            <button type="button" class="close modal-close" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row pt-4">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtItemBarCode" class="col-form-label-sm fw-bold">Item Bar Code</label><span class="text-danger">*</span>
+                                            <datalist id="txtItemBarCodelist"></datalist>
+                                            <input list="txtItemBarCodelist" id="txtItemBarCode" onchange="FillallItemfield(this);" class=" box_border form-control form-control-sm" autocomplete="off" placeholder="Item Bar Code..">
+                                        </div>
+
+
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code</label><span class="text-danger">*</span>
+                                            <datalist id="txtItemCodelist"></datalist>
+                                            <input list="txtItemCodelist" id="txtItemCode" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Code..">
+                                        </div>
+
+
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtItemName" class="col-form-label-sm fw-bold">Item Name</label><span class="text-danger">*</span>
+                                            <datalist id="txtItemNamelist"></datalist>
+                                            <input list="txtItemNamelist" id="txtItemName" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Name..">
+                                        </div>
+
+
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtOpeningBalance" class="col-form-label-sm fw-bold ">Opening Balance</label><span class="text-danger">*</span>
+                                            <input type="text" id="txtOpeningBalance" onkeypress="return OnChangeNumericTextBox(event,this);" class="box_border form-control form-control-sm text-right" autocomplete="off" placeholder="Opening Balance..">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success btn-height" id="txtbtnSave" onclick="confirmSave()">Save</button>
+                                <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                            </div>
                         </div>
                     </div>
                 </div>

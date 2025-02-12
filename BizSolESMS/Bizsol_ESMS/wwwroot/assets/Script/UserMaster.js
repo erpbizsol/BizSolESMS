@@ -247,7 +247,6 @@ async function Create() {
     $("#txtConfirmPassword").prop('disabled', false);
     $("#txtEmailId").prop('disabled', false);
     $("#ddlGroupName").prop('disabled', false);
-    $("#ddlDefaultCompany").prop('disabled', false);
     $("#ddlDesignation").prop('disabled', false);
     $("#txtAddress").prop('disabled', false);
     $("#txtSystemName").prop('disabled', false);
@@ -267,7 +266,6 @@ function Back() {
     $("#txtConfirmPassword").prop('disabled', false);
     $("#txtEmailId").prop('disabled', false);
     $("#ddlGroupName").prop('disabled', false);
-    $("#ddlDefaultCompany").prop('disabled', false);
     $("#ddlDesignation").prop('disabled', false);
     $("#txtAddress").prop('disabled', false);
     $("#txtSystemName").prop('disabled', false);
@@ -337,7 +335,6 @@ async function Edit(Code) {
     $("#txtConfirmPassword").prop('disable', false);
     $("#txtEmailId").prop('disable', false);
     $("#ddlGroupName").prop('disable', false);
-    $("#ddlDefaultCompany").prop('disable', false);
     $("#ddlDesignation").prop('disable', false);
     $("#txtAddress").prop('disable', false);
     $("#txtSystemName").prop('disable', false);
@@ -665,7 +662,6 @@ async function View(code) {
                 $("#txtConfirmPassword").val('').prop('disabled', true);
                 $("#txtEmailId").val(response.EmailID).prop('disabled', true);
                 $("#ddlGroupName").val(response.GroupMaster_Code).prop('disabled', true);
-                $("#ddlDefaultCompany").val(response.FixedParameter_Code).prop('disabled', true);
                 $("#ddlDesignation").val(response.DesignationMaster_Code).prop('disabled', true);
                 $("#txtAddress").val(response.UserLocation).prop('disabled', true);
                 $("#txtSystemName").val(response.LoginAllowFromSystem).prop('disabled', true);
