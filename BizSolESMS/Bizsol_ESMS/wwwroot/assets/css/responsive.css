@@ -50,5 +50,21 @@
 
 }
 
-@media (min-width: 320px) and (max-width:  480px)   {
+@media (min-width: 320px) and (max-width:  480px) {
 }
+
+
+
+/* Overlay styles */
+
+@media (max-width: 991.98px) {
+    .sidebar-overlay-b {
+        display: block !important;
+    }
+
+    .sidebar-overlay-n {
+        display: none;
+    }
+}
+
+/* End Overlay styles */
