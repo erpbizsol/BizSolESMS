@@ -10,7 +10,6 @@ $(document).ready(function () {
     $('#txtBoxNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             BoxValidationDetail();
-            $("#txtScanProduct").focus();
         }
     });
     $('#txtScanProduct').on('keydown', function (e) {
@@ -47,6 +46,8 @@ function BoxValidationDetail() {
             if (response.length > 0) {
                 Data = response;
                 if (response[0].Status == 'Y') {
+                    $("#txtScanProduct").focus();
+                    $("#txtScanProduct").prop("disabled",false);
                     $("#UnloadingTable").show();
                     const StringFilterColumn = [];
                     const NumericFilterColumn = ["Qty"];
@@ -68,19 +69,28 @@ function BoxValidationDetail() {
                         <input type="text" id="txtReceivedQty_${item.Code}" value="${item["Received Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Received Qty..">`
                     }));
                     BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+                    
                 } else {
                     $("#txtBoxNo").focus();
+                    $("#txtBoxNo").val("");
+                    $("#txtScanProduct").prop("disabled", true);
                     showToast(response[0].Msg);
                     $("#UnloadingTable").hide();
                 }
             } else {
                 $("#txtBoxNo").focus();
+                $("#txtBoxNo").val("");
+                $("#txtScanProduct").prop("disabled", true);
                 $("#UnloadingTable").hide();
                 toastr.error("Record not found...!");
             }
         },
         error: function (xhr, status, error) {
-            console.error("Error:", error);
+            $("#txtBoxNo").focus();
+            $("#txtBoxNo").val("");
+            $("#txtScanProduct").prop("disabled", true);
+            showToast("INVALID BOX NO !");
+            $("#UnloadingTable").hide();
         }
     });
 
@@ -245,15 +255,21 @@ function SaveScanValidationDetail() {
             if (response[0].Status == 'Y') {
                 BoxValidationDetail();
                 $("#txtScanProduct").focus();
+                $("#txtScanProduct").val("");
             } else if (response[0].Status == 'N') {
-                toastr.error(response[0].Msg);
+                showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
+                $("#txtScanProduct").val("");
             } else {
-                toastr.error("No Data found");
+                showToast(response[0].Msg);
+                $("#txtScanProduct").focus();
+                $("#txtScanProduct").val("");
             }
         },
         error: function (xhr, status, error) {
-            toastr.error("Error:", error);
+            showToast("INVALID SCAN NO !");
+            $("#txtScanProduct").focus();
+            $("#txtScanProduct").val("");
         }
     });
 

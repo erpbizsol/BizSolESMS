@@ -63,7 +63,8 @@ function BoxUnloading() {
             }
         },
         error: function (xhr, status, error) {
-            console.error("Error:", error);
+            showToast("INVALID BOX NO !");
+            $("#UnloadingTable").hide();
         }
     });
 
