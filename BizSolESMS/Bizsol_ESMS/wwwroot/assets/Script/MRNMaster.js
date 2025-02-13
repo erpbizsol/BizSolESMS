@@ -200,6 +200,13 @@ async function Create() {
         toastr.error(msg);
         return;
     }
+    $("#txtMRNDate").prop("disabled", false);
+    $("#txtChallanNo").prop("disabled", false);
+    $("#txtVehicleNo").prop("disabled", false);
+    $("#txtPickListNo").prop("disabled", false);
+    $("#txtChallanDate").prop("disabled", false);
+    $("#txtVendorName").prop("disabled", false);
+    $("#txtAddress").prop("disabled", false);
     ClearData();
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
@@ -208,7 +215,6 @@ async function Create() {
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
-    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function ImportExcel() {
@@ -222,10 +228,15 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
     $("#txtheaderdiv").hide();
-
+    $("#txtMRNDate").prop("disabled", false);
+    $("#txtChallanNo").prop("disabled", false);
+    $("#txtVehicleNo").prop("disabled", false);
+    $("#txtPickListNo").prop("disabled", false);
+    $("#txtChallanDate").prop("disabled", false);
+    $("#txtVendorName").prop("disabled", false);
+    $("#txtAddress").prop("disabled", false);
     ClearData();
     disableFields(false);
-    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 
 }
@@ -271,7 +282,7 @@ async function Edit(code, Status) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
                     $("#txtVendorName").val(MRNMaster.AccountName || "");
                     $("#txtAddress").val(MRNMaster.Address || "");
-                    $("#txtMRNNo").prop("disabled", true);
+                    disableFields(false);
                     $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
@@ -1616,7 +1627,6 @@ async function View(code) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
                     $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
                     $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);
-                    
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
@@ -1629,6 +1639,7 @@ async function View(code) {
                 $("#Orderdata").empty();
                 if (response.MRNDetails && response.MRNDetails.length > 0) {
                     response.MRNDetails.forEach(function (Data, index) {
+                     
                         addNewRowEdit(index, Data);
                     });
                     updateTotalBillQty();
@@ -1653,8 +1664,9 @@ async function View(code) {
     });
 
 }
-function disableFields(disable) {
-    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+
+function disableFields(disabled) {
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
 }
 function DataExport() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());

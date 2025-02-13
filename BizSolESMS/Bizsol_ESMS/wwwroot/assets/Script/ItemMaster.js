@@ -490,7 +490,7 @@ async function CreateItemMaster() {
     $("#txtReorderQty").prop("disabled", false);
     $("#txtItemLocation").prop("disabled", false);
     $("#txtBoxPacking").prop("disabled", false);
-    $("#txtQtyinBox").prop("disabled", false);
+    //$("#txtQtyinBox").prop("disabled", false);
     $("#txtMaintainExpiry").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     disableFields(false);
@@ -515,7 +515,7 @@ function BackMaster() {
     $("#txtReorderQty").prop("disabled", false);
     $("#txtItemLocation").prop("disabled", false);
     $("#txtBoxPacking").prop("disabled", false);
-    $("#txtQtyinBox").prop("disabled", false);
+   /* $("#txtQtyinBox").prop("disabled", false);*/
     $("#txtMaintainExpiry").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     $("#txtheaderdiv").hide();
@@ -881,7 +881,7 @@ async function View(code) {
                 $("#txtReorderQty").val(item.ReorderQty).prop("disabled", true);
                 $("#txtItemLocation").val(item.locationName).prop("disabled", true);
                 $("#txtBoxPacking").val(item.BoxPacking).prop("disabled", true);
-                $("#txtQtyinBox").val(item.QtyInBox).prop("disabled", true);
+              /*  $("#txtQtyinBox").val(item.QtyInBox).prop("disabled", true);*/
                 $("#txtMaintainExpiry").val(item.MaintainExpiry).prop("disabled", true);
                 $("#txtsave").prop("disabled", true);
                 disableFields(true);
