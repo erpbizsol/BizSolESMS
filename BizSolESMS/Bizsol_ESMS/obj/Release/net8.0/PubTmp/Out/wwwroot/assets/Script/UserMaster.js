@@ -4,7 +4,6 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let imageBase64Data = [];
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
-
 $(document).ready(function () {
     $("#ERPHeading").text("User Master");
     UserGroupList();
@@ -209,7 +208,7 @@ function UserMasterList() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="Delete('${item.Code}','${item[`User Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="Delete('${item.Code}','${item[`User Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
@@ -247,7 +246,6 @@ async function Create() {
     $("#txtConfirmPassword").prop('disabled', false);
     $("#txtEmailId").prop('disabled', false);
     $("#ddlGroupName").prop('disabled', false);
-    $("#ddlDefaultCompany").prop('disabled', false);
     $("#ddlDesignation").prop('disabled', false);
     $("#txtAddress").prop('disabled', false);
     $("#txtSystemName").prop('disabled', false);
@@ -267,16 +265,13 @@ function Back() {
     $("#txtConfirmPassword").prop('disabled', false);
     $("#txtEmailId").prop('disabled', false);
     $("#ddlGroupName").prop('disabled', false);
-    $("#ddlDefaultCompany").prop('disabled', false);
     $("#ddlDesignation").prop('disabled', false);
     $("#txtAddress").prop('disabled', false);
     $("#txtSystemName").prop('disabled', false);
 }
-async function Delete(code,username) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+async function Delete(code, username, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -310,13 +305,11 @@ async function Delete(code,username) {
         });
     }
     else {
-        $('table tr').removeClass('highlight');
+        $('tr').removeClass('highlight');
     }
 }
 async function Edit(Code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+   
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -337,7 +330,6 @@ async function Edit(Code) {
     $("#txtConfirmPassword").prop('disable', false);
     $("#txtEmailId").prop('disable', false);
     $("#ddlGroupName").prop('disable', false);
-    $("#ddlDefaultCompany").prop('disable', false);
     $("#ddlDesignation").prop('disable', false);
     $("#txtAddress").prop('disable', false);
     $("#txtSystemName").prop('disable', false);
@@ -637,9 +629,7 @@ function GetModuleMasterCode() {
 }
 
 async function View(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+ 
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -665,7 +655,6 @@ async function View(code) {
                 $("#txtConfirmPassword").val('').prop('disabled', true);
                 $("#txtEmailId").val(response.EmailID).prop('disabled', true);
                 $("#ddlGroupName").val(response.GroupMaster_Code).prop('disabled', true);
-                $("#ddlDefaultCompany").val(response.FixedParameter_Code).prop('disabled', true);
                 $("#ddlDesignation").val(response.DesignationMaster_Code).prop('disabled', true);
                 $("#txtAddress").val(response.UserLocation).prop('disabled', true);
                 $("#txtSystemName").val(response.LoginAllowFromSystem).prop('disabled', true);

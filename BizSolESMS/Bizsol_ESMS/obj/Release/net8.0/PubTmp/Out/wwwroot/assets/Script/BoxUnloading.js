@@ -26,7 +26,6 @@ function BoxUnloading() {
         BoxNo: $("#txtBoxNo").val(),
         Code: Code
     }
-    alert($("#txtBoxNo").val());
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/BoxUnloading`,
         type: 'POST',

@@ -1015,8 +1015,11 @@ function SaveImportFile() {
             xhr.setRequestHeader("Auth-Key", authKeyData);
         },
         success: function (response) {
-            if (response.length > 0) {
-                createTable(response)
+            if (response.Status === "Y") {
+                toastr.success(response.Msg);
+                ShowOrderMasterlist();
+                BackMaster();
+                BackImport();
             } else if (response.Status === "N") {
                 toastr.error(response.Msg);
             } else {

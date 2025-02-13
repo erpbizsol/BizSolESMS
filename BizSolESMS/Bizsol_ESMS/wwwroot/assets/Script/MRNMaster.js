@@ -1773,7 +1773,6 @@ function ChangecolorTr1() {
     rows.forEach((row) => {
         const tds = row.querySelectorAll('td');
         const columnValue = tds[9]?.textContent.trim();
-        console.log(columnValue);
         if (columnValue === 'Y') {
             row.style.backgroundColor = '#9ef3a5';
         } else {
@@ -1830,7 +1829,6 @@ function ChangecolorTrQty() {
         const tds = row.querySelectorAll('td');
         const BillQty = tds[3]?.textContent.trim();
         const RecQty = tds[4]?.textContent.trim();
-        console.log(RecQty);
         if (parseInt(RecQty) === parseInt(BillQty)) {
             row.style.backgroundColor = '#009358';
         } else if (parseInt(RecQty) < parseInt(BillQty) && parseInt(RecQty) > 0) {
