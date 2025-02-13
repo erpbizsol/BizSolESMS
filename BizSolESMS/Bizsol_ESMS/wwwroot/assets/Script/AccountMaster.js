@@ -1212,3 +1212,17 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "Client/VendorMaster.xlsx");
 }
+
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#table-body tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = tds[5]?.textContent.trim();
+        if (columnValue === 'Y') {
+            row.style.backgroundColor = '#f5c0bf';
+        } else {
+            row.style.backgroundColor = '';
+        }
+    });
+}
+setInterval(ChangecolorTr, 100);

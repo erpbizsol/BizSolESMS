@@ -102,6 +102,7 @@ $(document).ready(function () {
             $("#txtbtnSave").focus();
         }
     });
+    $("#txtheaderdiv").show();
 });
 function ShowItemOpeningBalancelist() {
     $.ajax({
@@ -124,7 +125,7 @@ function ShowItemOpeningBalancelist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `
-                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Code`]}')"><i class="fa-regular fa-circle-xmark"></i></button>`
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Code`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
                 addNewRow();
@@ -258,21 +259,19 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
-async function deleteItem(Code, ItemCode) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
-    //const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
-    //if (hasPermission == false) {
-    //    toastr.error(msg);
-    //    return;
-    //}
-    //const { Status, msg1 } = await CheckRelatedRecord(code, 'ItemOpeningBalance');
-    //if (Status == true) {
-    //    toastr.error(msg1);
-    //    return;
-    //}
+async function deleteItem(Code, ItemCode, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    const { Status, msg1 } = await CheckRelatedRecord(Code, 'ItemOpeningBalance');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
     if (confirm(`Are you sure you want to delete this  ${ItemCode}.?`)) {
         $.ajax({
             url: `${appBaseURL}/api/OrderMaster/DeleteOpeningBalance?Code=${Code}&UserMaster_Code=${UserMaster_Code}`,
@@ -294,6 +293,9 @@ async function deleteItem(Code, ItemCode) {
 
             }
         });
+    }
+    else {
+        $('tr').removeClass('highlight');
     }
 }
 function addNewRow() {
@@ -581,12 +583,14 @@ function ShowItemMasterlist() {
 
 //}
 function openSavePopup(button) {
+    $('table').on('click', 'tr', function () {
+        $('table tr').removeClass('highlight');
+    });
     window.currentSaveButton = button;
     var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
     saveModal.show();
     ClearData();
 }
-
 function confirmSave() {
 
     var ItemBarCode = $("#txtItemName").val();
@@ -643,14 +647,12 @@ function confirmSave() {
         });
     }
 }
-
 function ClearData() {
     $("#txtOpeningBalance").val("");
     $("#txtItemName").val("");
     $("#txtItemCode").val("");
     $("#txtItemBarCode").val("");
 }
-
 function FillallItemfield(inputElement) {
     var inputValue = $(inputElement).val();
     const item = ItemList.find(entry => entry["Item Bar Code"] == inputValue);

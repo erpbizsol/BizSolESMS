@@ -591,7 +591,6 @@ function openSavePopup(button) {
     saveModal.show();
     ClearData();
 }
-
 function confirmSave() {
 
     var ItemBarCode = $("#txtItemName").val();
@@ -648,14 +647,12 @@ function confirmSave() {
         });
     }
 }
-
 function ClearData() {
     $("#txtOpeningBalance").val("");
     $("#txtItemName").val("");
     $("#txtItemCode").val("");
     $("#txtItemBarCode").val("");
 }
-
 function FillallItemfield(inputElement) {
     var inputValue = $(inputElement).val();
     const item = ItemList.find(entry => entry["Item Bar Code"] == inputValue);
