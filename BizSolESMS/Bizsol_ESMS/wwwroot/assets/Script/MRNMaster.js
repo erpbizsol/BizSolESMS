@@ -206,7 +206,6 @@ async function Create() {
     $("#txtPickListNo").prop("disabled", false);
     $("#txtChallanDate").prop("disabled", false);
     $("#txtVendorName").prop("disabled", false);
-    $("#txtAddress").prop("disabled", false);
     ClearData();
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
@@ -234,7 +233,6 @@ function BackMaster() {
     $("#txtPickListNo").prop("disabled", false);
     $("#txtChallanDate").prop("disabled", false);
     $("#txtVendorName").prop("disabled", false);
-    $("#txtAddress").prop("disabled", false);
     ClearData();
     disableFields(false);
     $("#txtsave").prop("disabled", false);
@@ -1626,7 +1624,7 @@ async function View(code) {
                     $("#txtPickListNo").val(MRNMaster.PickListNo || "").prop("disabled", true);
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
                     $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
-                    $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);
+                    $("#txtAddress").val(MRNMaster.Address || "");
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
