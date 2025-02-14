@@ -7,7 +7,6 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let JsonData = [];
 let AccountList = [];
 let ItemDetail = [];
-
 $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("Order Entry");
@@ -46,6 +45,9 @@ $(document).ready(function () {
     GetModuleMasterCode();
     $("#txtClientName").on("focus", function () {
         $("#txtClientName").val("");
+    });
+    $("#txtImportClientName").on("focus", function () {
+        $("#txtImportClientName").val("");
     });
     $("#txtClientName").on("change", function () {
 
@@ -1015,8 +1017,11 @@ function SaveImportFile() {
             xhr.setRequestHeader("Auth-Key", authKeyData);
         },
         success: function (response) {
-            if (response.length > 0) {
-                createTable(response)
+            if (response.Status === "Y") {
+                toastr.success(response.Msg);
+                ShowOrderMasterlist();
+                BackMaster();
+                BackImport();
             } else if (response.Status === "N") {
                 toastr.error(response.Msg);
             } else {

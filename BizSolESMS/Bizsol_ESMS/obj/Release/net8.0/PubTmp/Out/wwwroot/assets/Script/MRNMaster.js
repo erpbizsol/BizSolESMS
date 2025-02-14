@@ -173,7 +173,10 @@ function ShowMRNMasterlist() {
                 const ColumnAlignment = {
                 };
                 const updatedResponse = response.map(item => ({
-                    ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
+                    ...item,
+                    "Unloading Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code})>${item["Unloading Status"]}</a>`,
+                    "Validation Status": `<a style="cursor:pointer;" onclick=ShowCaseNoDataQty(${item.Code})>${item["Validation Status"]}</a>`
+                    ,Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}')"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
@@ -197,6 +200,13 @@ async function Create() {
         toastr.error(msg);
         return;
     }
+    $("#txtMRNDate").prop("disabled", false);
+    $("#txtChallanNo").prop("disabled", false);
+    $("#txtVehicleNo").prop("disabled", false);
+    $("#txtPickListNo").prop("disabled", false);
+    $("#txtChallanDate").prop("disabled", false);
+    $("#txtVendorName").prop("disabled", false);
+    $("#txtAddress").prop("disabled", false);
     ClearData();
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
@@ -205,7 +215,6 @@ async function Create() {
     $("#Orderdata").empty();
     addNewRow();
     disableFields(false);
-    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 }
 async function ImportExcel() {
@@ -219,10 +228,15 @@ function BackMaster() {
     $("#txtCreatepage").hide();
     $("#txtImportPage").hide();
     $("#txtheaderdiv").hide();
-
+    $("#txtMRNDate").prop("disabled", false);
+    $("#txtChallanNo").prop("disabled", false);
+    $("#txtVehicleNo").prop("disabled", false);
+    $("#txtPickListNo").prop("disabled", false);
+    $("#txtChallanDate").prop("disabled", false);
+    $("#txtVendorName").prop("disabled", false);
+    $("#txtAddress").prop("disabled", false);
     ClearData();
     disableFields(false);
-    $("#txtMRNNo").prop("disabled", true);
     $("#txtsave").prop("disabled", false);
 
 }
@@ -268,7 +282,7 @@ async function Edit(code, Status) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "");
                     $("#txtVendorName").val(MRNMaster.AccountName || "");
                     $("#txtAddress").val(MRNMaster.Address || "");
-                    $("#txtMRNNo").prop("disabled", true);
+                    disableFields(false);
                     $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
@@ -303,15 +317,14 @@ async function Edit(code, Status) {
         }
     });
 }
-async function DeleteItem(code, Challan, status) {
+async function DeleteItem(code, Challan, status, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
     if (status !== 'UNLOADING PENDING') {
         toastr.error("Un-Loading start you can`t delete !.");
         return;
     }
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+  
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -344,6 +357,9 @@ async function DeleteItem(code, Challan, status) {
 
             }
         });
+    }
+    else {
+            $('tr').removeClass('highlight')
     }
 }
 function GetAccountMasterList() {
@@ -566,7 +582,7 @@ function Save() {
         const row = $(this);
         if (row.find(".txtItemName").val() != '') {
             const RowData = {
-                itemName: row.find(".txtItemCode").val(),
+                itemCode: row.find(".txtItemCode").val(),
                 billQtyBox: row.find(".txtBillQtyBox").val() || 0,
                 receivedQtyBox: row.find(".txtReceivedQtyBox").val() || 0,
                 billQty: row.find(".txtBillQty").val(),
@@ -1611,7 +1627,6 @@ async function View(code) {
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
                     $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
                     $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);
-                    
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
@@ -1624,6 +1639,7 @@ async function View(code) {
                 $("#Orderdata").empty();
                 if (response.MRNDetails && response.MRNDetails.length > 0) {
                     response.MRNDetails.forEach(function (Data, index) {
+                     
                         addNewRowEdit(index, Data);
                     });
                     updateTotalBillQty();
@@ -1648,8 +1664,9 @@ async function View(code) {
     });
 
 }
-function disableFields(disable) {
-    $("input, select, button").not("#btnBack").prop("disabled", disable);
+
+function disableFields(disabled) {
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
 }
 function DataExport() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
@@ -1705,6 +1722,7 @@ function ChangecolorTr() {
             
             if (columnValue === 'UNLOADED') {
                 targetTd.style.backgroundColor = '#009358';
+                targetTd.style.color = '#fff';
             } else if (columnValue === "PARTIAL UNLOADED") {
                 targetTd.style.backgroundColor = '#9ef3a5';
             } else {
@@ -1712,6 +1730,7 @@ function ChangecolorTr() {
             }
             if (columnValue1 === 'VALIDATED') {
                 targetTd1.style.backgroundColor = '#009358';
+                targetTd1.style.color = '#fff';
             } else if (columnValue1 === "PARTIAL VALIDATE") {
                 targetTd1.style.backgroundColor = '#9ef3a5';
             } else {
@@ -1724,3 +1743,113 @@ function ChangecolorTr() {
 }
 
 setInterval(ChangecolorTr, 100);
+function ShowCaseNoData(Code) {
+    openSavePopup();
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + Code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.MRNDetails && response.MRNDetails.length > 0) {
+                        $("#MRNTable").show();
+                        const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
+                        const NumericFilterColumn = [];
+                        const DateFilterColumn = [];
+                        const Button = false;
+                        const showButtons = [];
+                        const StringdoubleFilterColumn = [];
+                        const hiddenColumns = ["Code", "BillQtyBox","Status", "ReceivedQtyBox", "BillQty", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName","LocationName","WarehouseName"];
+                        const ColumnAlignment = {
+                        };
+                    BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", response.MRNDetails, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment,false);
+                } else {
+                    toastr.error("Record not found...!");
+                } 
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    }); 
+}
+function openSavePopup() {
+    var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
+    saveModal.show();
+}
+function ChangecolorTr1() {
+    const rows = document.querySelectorAll('#ModalTable-body tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = tds[9]?.textContent.trim();
+        if (columnValue === 'Y') {
+            row.style.backgroundColor = '#9ef3a5';
+        } else {
+            row.style.backgroundColor = '#f5c0bf';
+        }
+    });
+}
+
+setInterval(ChangecolorTr1, 100);
+function ShowCaseNoDataQty(Code) {
+    openSavePopupQty();
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + Code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.MRNDetails && response.MRNDetails.length > 0) {
+                    $("#MRNTable").show();
+                    const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
+                    const NumericFilterColumn = ["BillQty", "ReceivedQty"];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = [];
+                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox","ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
+                    const ColumnAlignment = {
+                        BillQty:"right",
+                        ReceivedQty:"right"
+                    };
+                    BizsolCustomFilterGrid.CreateDataTable("ModalTable-headerQty", "ModalTable-bodyQty", response.MRNDetails, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+                } else {
+                    toastr.error("Record not found...!");
+                }
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
+}
+function openSavePopupQty() {
+    var saveModal = new bootstrap.Modal(document.getElementById("staticBackdropQty"));
+    saveModal.show();
+}
+function ChangecolorTrQty() {
+    const rows = document.querySelectorAll('#ModalTable-bodyQty tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const BillQty = tds[3]?.textContent.trim();
+        const RecQty = tds[4]?.textContent.trim();
+        if (parseInt(RecQty) === parseInt(BillQty)) {
+            row.style.backgroundColor = '#009358';
+        } else if (parseInt(RecQty) < parseInt(BillQty) && parseInt(RecQty) > 0) {
+            row.style.backgroundColor = '#9ef3a5';
+        } else {
+            row.style.backgroundColor = '#f3d4d4';
+        }
+    });
+}
+setInterval(ChangecolorTrQty, 100);

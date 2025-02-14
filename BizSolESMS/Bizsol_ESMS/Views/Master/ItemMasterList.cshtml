@@ -7,7 +7,6 @@
 <script src="~/assets/script/itemmaster.js"></script>
 <style>
     th, .filter-table-heading {
-        /* width: 50px !important; */
         text-overflow: ellipsis;
         white-space: nowrap;
     }
@@ -20,12 +19,10 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-
     .table-filter-arrow {
         position: relative;
         display: inline-block;
     }
-
     .tabs {
         width: 100%;
         max-width: 2000px;
@@ -34,7 +31,6 @@
         overflow: hidden;
         padding: 0.7rem;
     }
-
     .tabSec {
         color: white;
         width: 117px;
@@ -49,46 +45,32 @@
         margin-top: -8px;
         background: #1d4b7d;
     }
-
-
-    /*  .tab-header {
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-                } */
-
     .tab-content {
         display: none;
         padding: 16px;
         border: 1px solid lightgray;
         border-radius: 5px;
     }
-
-        .tab-content.active {
-            display: block;
-        }
-
+    .tab-content.active {
+        display: block;
+    }
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
-
     .datepicker td, .datepicker th {
         border-radius: 20px !important;
     }
-
     .datepicker table tr td, .datepicker table tr td {
         padding: 8px 9px !important;
         height: 16px !important;
     }
-
-
     .datepicker table tfoot {
         display: none;
     }
-
     .page-content {
         display: block;
     }
-
     .textCreatepage .tabs .fix-header {
         position: sticky;
         top: 0;
@@ -99,8 +81,6 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
         height: 36px;
     }
-
-
     .shadow-sm {
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
@@ -136,27 +116,12 @@
     .container-fluid {
         padding-right: 0;
         padding-left: 0;
-        /*  overflow: hidden;
-                            height: auto; */
     }
 
     .container {
         overflow: auto;
         height: 81vh;
-        /* overflow: hidden; */
     }
-    /* .breadcrumbs .container-fluid .fix-header {
-                        position: sticky;
-                        top: 0;
-                        background-color: #dddde4;
-                        z-index: 1000;
-                        padding: 8px 0 8px 9px;
-                        border-top-right-radius: 5px;
-                        border-top-left-radius: 5px;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-                        height: 36px;
-                    } */
-
     .breadcrumbs1 {
         background: #dddde4;
         position: sticky;
@@ -164,13 +129,9 @@
         background-color: #dddde4;
         z-index: 1000;
         padding: 8px 0px 0px 9px;
-        /* border-top-right-radius: 5px;
-                            border-top-left-radius: 5px; */
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
-        /* height: 36px; */
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
     }
-
     .page-content {
         padding: 3px 0;
     }
@@ -194,134 +155,127 @@
 </section>
 <div class="container">
     <div class=" mt-3" id="txtListpage" style="display:block;">
-    <div class="row">
-        <div class="col-sm-12 text-end">
-            <label></label>
-            <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" onclick="DataExport()">DOWNLOAD</button>
-            <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateItemMaster()">CREATE NEW</button>
+        <div class="row">
+            <div class="col-sm-12 text-end">
+                <label></label>
+                <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" onclick="DataExport()">DOWNLOAD</button>
+                <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateItemMaster()">CREATE NEW</button>
+            </div>
+        </div>
+        <div class="card-body mt-3" id="txtitemtable">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginator -->
+            <div class="paginator" id="paginator-table">
+            </div>
         </div>
     </div>
-    <div class="card-body mt-3" id="txtitemtable">
-        <div class="table-wrapper fixed-height-table">
-            <table id="table" class="fixed-width-table table">
-                <thead id="table-header">
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
-        </div>
-        <!-- Paginator -->
-        <div class="paginator" id="paginator-table">
-        </div>
-    </div>
-</div>
-<div id="txtCreatepage" style="display:none;">
-    <div class="card shadow-sm" style="background-color:#e9e9ef">
-        <div class="tabs">
-            <div class="row p-1">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code </label><span class="text-danger">*</span>
-                                    <input type="text" id="txtItemCode" class="box_border form-control form-control-sm" oninput="convertToUppercase(this)" autocomplete="off" maxlength="16" placeholder="Item Code">
+    <div id="txtCreatepage" style="display:none;">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code </label><span class="text-danger">*</span>
+                                        <input type="text" id="txtItemCode" class="box_border form-control form-control-sm" oninput="convertToUppercase(this)" autocomplete="off" maxlength="16" placeholder="Item Code">
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtItemNamelab" class="col-form-label-sm fw-bold" id="txtItemNamelab">Item Name </label><span class="text-danger">*</span>
+                                        <input type="hidden" id="hfCode" value="0">
+                                        <input type="text" id="txtItemName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Item Name">
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><span class="text-danger">*</span>
+                                        <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtItembarcodelab" class="col-form-label-sm fw-bold" id="txtItembarcodelab">Item Bar Code</label>
+                                        <input type="text" id="txtItembarcode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" placeholder="Item Bar Code">
+                                    </div>
                                 </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtItemNamelab" class="col-form-label-sm fw-bold" id="txtItemNamelab">Item Name </label><span class="text-danger">*</span>
-                                    <input type="hidden" id="hfCode" value="0">
-                                    <input type="text" id="txtItemName" oninput="updateDisplayName()" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Item Name">
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtUOM" class="col-form-label-sm fw-bold">UOM</label><span class="text-danger">*</span>
+                                        <datalist id="txtUOMList"></datalist>
+                                        <input list="txtUOMList" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name">
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtHSNCode" class="col-form-label-sm fw-bold">HSN Code</label>
+                                        <input type="text" id="txtHSNCode" name="txtHSNCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="8" placeholder="HSN Code" />
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtCategory" class="col-form-label-sm fw-bold">Category</label><span class="text-danger">*</span>
+                                        <datalist id="txtCategoryList"></datalist>
+                                        <input list="txtCategoryList" id="txtCategory" name="txtCategory" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Category Name">
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="GroupItemHeaderlab" class="col-form-label-sm fw-bold" id="GroupItemHeaderlab">Group Item</label><span class="text-danger">*</span>
+                                        <datalist id="txtGroupItemList"></datalist>
+                                        <input list="txtGroupItemList" id="txtGroupItem" name="txtGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Group Item">
+                                    </div>
                                 </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtDisplayName" class="col-form-label-sm fw-bold">Display Name</label><span class="text-danger">*</span>
-                                    <input type="text" id="txtDisplayName" class="box_border form-control form-control-sm" autocomplete="off" maxlength="128" placeholder="Display Name">
-                                </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtItembarcodelab" class="col-form-label-sm fw-bold" id="txtItembarcodelab">Item Bar Code</label>
-                                    <input type="text" id="txtItembarcode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" placeholder="Item Bar Code">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtUOM" class="col-form-label-sm fw-bold">UOM</label><span class="text-danger">*</span>
-                                    <datalist id="txtUOMList"></datalist>
-                                    <input list="txtUOMList" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name">
-                                </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtHSNCode" class="col-form-label-sm fw-bold">HSN Code</label>
-                                    <input type="text" id="txtHSNCode" name="txtHSNCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="8" placeholder="HSN Code" />
-                                </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtCategory" class="col-form-label-sm fw-bold">Category</label><span class="text-danger">*</span>
-                                    <datalist id="txtCategoryList"></datalist>
-                                    <input list="txtCategoryList" id="txtCategory" name="txtCategory" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Category Name">
-                                </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="GroupItemHeaderlab" class="col-form-label-sm fw-bold" id="GroupItemHeaderlab">Group Item</label><span class="text-danger">*</span>
-                                    <datalist id="txtGroupItemList"></datalist>
-                                    <input list="txtGroupItemList" id="txtGroupItem" name="txtGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Group Item">
-                                </div>
-                            </div>
-                            <div class="row">
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="SubGroupItemHeaderlab" class="col-form-label-sm fw-bold" id="SubGroupItemHeaderlab">Sub Group Item</label><span class="text-danger">*</span>
+                                        <datalist id="txtSubGroupItemList"></datalist>
+                                        <input list="txtSubGroupItemList" id="txtSubGroupItem" name="txtSubGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Sub Group Item">
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtBrand" class="col-form-label-sm fw-bold">Brand</label><span class="text-danger">*</span>
+                                        <datalist id="txtBrandList"></datalist>
+                                        <input list="txtBrandList" id="txtBrand" name="txtBrand" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Brand Name">
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="txtReorderLevel" class="col-form-label-sm fw-bold">Reorder Level </label>
+                                        <input type="text" id="txtReorderLevel" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Level" value="0">
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 d-none">
+                                        <label for="txtReorderQty" class="col-form-label-sm fw-bold">Reorder Qty </label>
+                                        <input type="text" id="txtReorderQty" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Qty" value="0">
+                                    </div>
 
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="SubGroupItemHeaderlab" class="col-form-label-sm fw-bold" id="SubGroupItemHeaderlab">Sub Group Item</label><span class="text-danger">*</span>
-                                    <datalist id="txtSubGroupItemList"></datalist>
-                                    <input list="txtSubGroupItemList" id="txtSubGroupItem" name="txtSubGroupItem" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Sub Group Item">
-                                </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtBrand" class="col-form-label-sm fw-bold">Brand</label><span class="text-danger">*</span>
-                                    <datalist id="txtBrandList"></datalist>
-                                    <input list="txtBrandList" id="txtBrand" name="txtBrand" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Brand Name">
-                                </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="txtReorderLevel" class="col-form-label-sm fw-bold">Reorder Level </label>
-                                    <input type="text" id="txtReorderLevel" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Level" value="0">
-                                </div>
-                                <div class="col-md-3 col-sm-6 d-none">
-                                    <label for="txtReorderQty" class="col-form-label-sm fw-bold">Reorder Qty </label>
-                                    <input type="text" id="txtReorderQty" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Reorder Qty" value="0">
-                                </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <label for="SubLocationItemHeaderlab" class="col-form-label-sm fw-bold" id="SubLocationItemHeaderlab">Location Item</label><span class="text-danger">*</span>
+                                        <datalist id="txtItemLocationList"></datalist>
+                                        <input list="txtItemLocationList" id="txtItemLocation" name="txtItemLocation" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Item Location">
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        <label for="txtBoxPacking"></label>
+                                        <input type="checkbox" id="txtBoxPacking" name="txtBoxPacking" class="box_border" onchange="updateQtyBox(this.value)" />
+                                        <label for="txtBoxPacking">Box Packing</label>
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                        <label for="txtQtyinBox" class="col-form-label-sm fw-bold">Qtyin Box </label>
+                                        <input type="text" id="txtQtyinBox" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Qtyin Box" value="0" disabled>
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                        <label for="txtBatchApplicable"></label>
+                                        <input type="checkbox" id="txtBatchApplicable" name="txtBatchApplicable" class="box_border" checked />
+                                        <label for="txtBatchApplicable">Batch Applicable</label>
+                                    </div>
+                                    <div class="col-md-2 mt-3">
+                                        <label for="txtMaintainExpiry"></label>
+                                        <input type="checkbox" id="txtMaintainExpiry" name="txtMaintainExpiry" class="box_border" checked />
+                                        <label for="txtMaintainExpiry">Maintain Expiry</label>
+                                    </div>
 
-                                <div class="col-md-3 col-sm-6">
-                                    <label for="SubLocationItemHeaderlab" class="col-form-label-sm fw-bold" id="SubLocationItemHeaderlab">Location Item</label><span class="text-danger">*</span>
-                                    <datalist id="txtItemLocationList"></datalist>
-                                    <input list="txtItemLocationList" id="txtItemLocation" name="txtItemLocation" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Item Location">
                                 </div>
-                                <div class="col-md-1 mt-3">
-                                    <label for="txtBoxPacking"></label>
-                                    <input type="checkbox" id="txtBoxPacking" name="txtBoxPacking" class="box_border" onchange="updateQtyBox(this.value)" />
-                                    <label for="txtBoxPacking">Box Packing</label>
-                                </div>
-                                <div class="col-md-2 col-sm-6">
-                                    <label for="txtQtyinBox" class="col-form-label-sm fw-bold">Qtyin Box </label>
-                                    <input type="text" id="txtQtyinBox" class="Number box_border form-control form-control-sm" autocomplete="off" maxlength="10" placeholder="Qtyin Box" value="0" disabled>
-                                </div>
-                                <div class="col-md-2 mt-3">
-                                    <label for="txtBatchApplicable"></label>
-                                    <input type="checkbox" id="txtBatchApplicable" name="txtBatchApplicable" class="box_border" checked />
-                                    <label for="txtBatchApplicable">Batch Applicable</label>
-                                </div>
-                                <div class="col-md-2 mt-3">
-                                    <label for="txtMaintainExpiry"></label>
-                                    <input type="checkbox" id="txtMaintainExpiry" name="txtMaintainExpiry" class="box_border" checked />
-                                    <label for="txtMaintainExpiry">Maintain Expiry</label>
-                                </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            @* <div class="row m-2">
-                <div class="col-md-12" style="margin-top: 30px !important;">
-                    <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtsave">Save</button>
-                    <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
-                </div>
-            </div> *@
         </div>
     </div>
-</div>
 </div>
 <script src="~/assets/js/filter.js"></script>
 

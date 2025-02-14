@@ -4,6 +4,7 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+
 $(document).ready(function () {
     $("#ERPHeading").text("Brand Master");
     $('#txtBrandName').on('keydown', function (e) {
@@ -37,7 +38,7 @@ function ShowBrandMasterlist() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteBrand('${item.Code}','${item[`Brand Name`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteBrand('${item.Code}','${item[`Brand Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
@@ -95,9 +96,7 @@ function Save() {
     }
 }
 async function Edit(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+  
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -131,11 +130,9 @@ async function Edit(code) {
     });
 
 }
-async function deleteBrand(code, brand) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-        $(this).addClass('highlight');
-    });
+async function deleteBrand(code, brand, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -169,7 +166,7 @@ async function deleteBrand(code, brand) {
         });
     }
     else {
-            $('table tr').removeClass('highlight');
+            $('tr').removeClass('highlight');
          
     }
 }
@@ -212,9 +209,7 @@ function GetModuleMasterCode() {
     }
 }
 async function View(code) {
-    $('table').on('click', 'tr', function () {
-        $('table tr').removeClass('highlight');
-    });
+   
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -274,8 +269,16 @@ function DataExport() {
 
 }
 function Export(jsonData) {
-    var ws = XLSX.utils.json_to_sheet(jsonData);
-    var wb = XLSX.utils.book_new();
+    const columnsToRemove = ["Code"];
+    if (!Array.isArray(columnsToRemove)) {
+        console.error("columnsToRemove should be an array");
+        return;
+    }
+    const filteredData = jsonData.map(row =>
+        Object.fromEntries(Object.entries(row).filter(([key]) => !columnsToRemove.includes(key)))
+    );
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "BrandMaster.xlsx");
 }
