@@ -4,7 +4,6 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
@@ -885,7 +884,6 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "DispatchOrder.xlsx");
 }
-
 function GetDispatchOrderLists() {
     let clientName = $('#txtClientName').val();
     $.ajax({

@@ -7,7 +7,6 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let JsonData = [];
 let AccountList = [];
 let ItemDetail = [];
-
 $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("Order Entry");
