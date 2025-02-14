@@ -6,14 +6,29 @@
  
     <title>Login ESMS</title>
     <style>
+        body {
+       /*  background-color: #191010 !important; */
+       /*  background-image: url('../assets/images/loginBg.jpg');
+        background-image: url("https://cdn.pixabay.com/photo/2019/09/24/16/05/storm-4501645_1280.jpg"); 
+        background-repeat: no-repeat, repeat;
+        background-position: center; 
+        background-size: cover; */
+        }
+
         .login-containers {
             padding: 20px 30px;
             border-radius: 10px;
-            box-shadow: 0 0 11px 1px #ccc;
+            box-shadow: 0 0 11px 1px #999999;
             max-width: 370px;
             margin: 0 auto;
             margin-top: 5rem;
             font-size:12px;
+
+
+       /*  background: #1a11117a;
+       
+        color: white;
+        box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75); */
         }
 
         #btnValidateCompany, #btnProceed {
@@ -52,20 +67,20 @@
        
         <form>
         <div class="mt-2">
-                <label for="txtCompanyCode" class="form-label">Company Code</label>
-                <input id="txtCompanyCode" name="CompanyCode" class="form-control" placeholder="Enter Company Code" type="text" required autocomplete="off">
+                <label for="txtCompanyCode" class="form-label login-form-text">Company Code</label>
+            <input id="txtCompanyCode" name="CompanyCode" class="form-control login-form-text" placeholder="Enter Company Code" type="text" required autocomplete="off">
             </div>
-            <input type="button" class="btn btn-primary mt-3" id="btnValidateCompany" value="Proceed" />
+        <input type="button" class="btn btn-primary login-form-text mt-3" id="btnValidateCompany" value="Proceed" />
             <div id="userCredentials" style="display: none;">
                 <div class="mt-2"id="txtU">
-                    <label for="txtUserID" class="form-label">UserID</label>
-                    <input id="txtUserID" name="UserID" class="form-control" placeholder="Enter User ID" type="text" required autocomplete="off">
+                <label for="txtUserID" class="form-label login-form-text">User ID</label>
+                <input id="txtUserID" name="UserID" class="form-control login-form-text" placeholder="Enter User ID" type="text" required autocomplete="off">
                 </div>
                 <div class="mt-2" id="txtP">
-                    <label for="txtPassword" class="form-label">Password</label>
-                    <input id="txtPassword" name="Password" class="form-control" placeholder="Enter Password" autocomplete="off" type="password" required>
+                <label for="txtPassword" class="form-label login-form-text">Password</label>
+                <input id="txtPassword" name="Password" class="form-control login-form-text" placeholder="Enter Password" autocomplete="off" type="password" required>
                 </div>
-                <input type="button" class="btn btn-primary mt-3" id="btnProceed" value="Login" />
+            <input type="button" class="btn btn-primary login-form-text mt-3" id="btnProceed" value="Login" />
             </div>
         </form>
     </div>
