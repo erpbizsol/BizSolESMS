@@ -1664,7 +1664,6 @@ async function View(code) {
     });
 
 }
-
 function disableFields(disabled) {
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
 }
