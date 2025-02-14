@@ -6,16 +6,11 @@
 body {
     /*letter-spacing: .5px;*/
     background-color: #f8f8f8;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-size: 1rem;
-    font-weight: 400 !important;
+    font-weight: 400 !important;*/
 }
 
-.login-form-text {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-size: 1rem !important;
-    font-weight: 400 !important;
-}
 /* width */
 ::-webkit-scrollbar {
     width: 4px;
@@ -6083,7 +6078,8 @@ legend {
 
 :is(.form-control, .form-control-sm) {
     /*border: var(--bs-border-width) solid #b5bfc3 !important;*/
-    border: 1px solid #ced4da;
+    /* border: 1px solid #ced4da;*/
+    border: var(--bs-border-width) solid #275481 !important;
     color: #000;
     font-size: 12px;
 }
