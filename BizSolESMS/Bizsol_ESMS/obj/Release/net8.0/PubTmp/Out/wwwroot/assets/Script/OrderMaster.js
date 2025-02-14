@@ -47,6 +47,9 @@ $(document).ready(function () {
     $("#txtClientName").on("focus", function () {
         $("#txtClientName").val("");
     });
+    $("#txtImportClientName").on("focus", function () {
+        $("#txtImportClientName").val("");
+    });
     $("#txtClientName").on("change", function () {
 
         let value = $(this).val();
@@ -1015,8 +1018,11 @@ function SaveImportFile() {
             xhr.setRequestHeader("Auth-Key", authKeyData);
         },
         success: function (response) {
-            if (response.length > 0) {
-                createTable(response)
+            if (response.Status === "Y") {
+                toastr.success(response.Msg);
+                ShowOrderMasterlist();
+                BackMaster();
+                BackImport();
             } else if (response.Status === "N") {
                 toastr.error(response.Msg);
             } else {

@@ -582,7 +582,7 @@ function Save() {
         const row = $(this);
         if (row.find(".txtItemName").val() != '') {
             const RowData = {
-                itemName: row.find(".txtItemCode").val(),
+                itemCode: row.find(".txtItemCode").val(),
                 billQtyBox: row.find(".txtBillQtyBox").val() || 0,
                 receivedQtyBox: row.find(".txtReceivedQtyBox").val() || 0,
                 billQty: row.find(".txtBillQty").val(),
@@ -1664,7 +1664,6 @@ async function View(code) {
     });
 
 }
-
 function disableFields(disabled) {
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
 }
@@ -1722,6 +1721,7 @@ function ChangecolorTr() {
             
             if (columnValue === 'UNLOADED') {
                 targetTd.style.backgroundColor = '#009358';
+                targetTd.style.color = '#fff';
             } else if (columnValue === "PARTIAL UNLOADED") {
                 targetTd.style.backgroundColor = '#9ef3a5';
             } else {
@@ -1729,6 +1729,7 @@ function ChangecolorTr() {
             }
             if (columnValue1 === 'VALIDATED') {
                 targetTd1.style.backgroundColor = '#009358';
+                targetTd1.style.color = '#fff';
             } else if (columnValue1 === "PARTIAL VALIDATE") {
                 targetTd1.style.backgroundColor = '#9ef3a5';
             } else {
@@ -1846,7 +1847,7 @@ function ChangecolorTrQty() {
         } else if (parseInt(RecQty) < parseInt(BillQty) && parseInt(RecQty) > 0) {
             row.style.backgroundColor = '#9ef3a5';
         } else {
-            row.style.backgroundColor = '#f5c0bf';
+            row.style.backgroundColor = '#f3d4d4';
         }
     });
 }

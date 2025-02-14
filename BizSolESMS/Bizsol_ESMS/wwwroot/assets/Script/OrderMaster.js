@@ -46,6 +46,9 @@ $(document).ready(function () {
     $("#txtClientName").on("focus", function () {
         $("#txtClientName").val("");
     });
+    $("#txtImportClientName").on("focus", function () {
+        $("#txtImportClientName").val("");
+    });
     $("#txtClientName").on("change", function () {
 
         let value = $(this).val();
