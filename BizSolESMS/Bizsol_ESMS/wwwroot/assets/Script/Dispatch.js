@@ -27,7 +27,7 @@ $(document).ready(function () {
         }
     });
     GetAccountMasterList();
-    GetDispatchOrderList();
+    /*GetDispatchOrderList();*/
     $("#btnAddNewRow").click(function () {
         addNewRow();
     });
@@ -54,6 +54,7 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
+  
 });
 function GetDispatchOrderList() {
     $.ajax({
@@ -884,3 +885,43 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "DispatchOrder.xlsx");
 }
+
+function GetDispatchOrderLists() {
+    let clientName = $('#txtClientName').val();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?ClientName=${clientName}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No"];
+                const NumericFilterColumn = [];
+                const DateFilterColumn = ["Challan Date"];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = ["Code"];
+                const ColumnAlignment = {
+                    "Reorder Level": 'right',
+                    "Reorder Qty": 'right',
+                    "Qty In Box": 'right',
+                };
+                const updatedResponse = response.map(item => ({
+                    ...item
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Create()"><i class="fa-solid fa-pencil"></i></button>`
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+
