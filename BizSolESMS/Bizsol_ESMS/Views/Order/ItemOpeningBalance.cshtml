@@ -8,7 +8,7 @@
 <script src="~/assets/script/ItemOpeningBalance.js"></script>
 
 <style>
-        .tabs {
+    .tabs {
         width: 100%;
         max-width: 2000px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -16,7 +16,6 @@
         overflow: hidden;
         padding: 0.7rem;
     }
-
     .tabSec {
         color: white;
         width: 117px;
@@ -31,46 +30,32 @@
         margin-top: -8px;
         background: #1d4b7d;
     }
-
-
-    /*  .tab-header {
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-                    } */
-
     .tab-content {
         display: none;
         padding: 16px;
         border: 1px solid lightgray;
         border-radius: 5px;
     }
-
-        .tab-content.active {
-            display: block;
-        }
-
+    .tab-content.active {
+        display: block;
+    }
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
-
     .datepicker td, .datepicker th {
         border-radius: 20px !important;
     }
-
     .datepicker table tr td, .datepicker table tr td {
         padding: 8px 9px !important;
         height: 16px !important;
     }
-
-
     .datepicker table tfoot {
         display: none;
     }
-
     .page-content {
         display: block;
     }
-
     .textCreatepage .tabs .fix-header {
         position: sticky;
         top: 0;
@@ -81,8 +66,6 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
         height: 36px;
     }
-
-
     .shadow-sm {
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
@@ -90,7 +73,6 @@
         margin-top: 15px;
         border-top: 1px solid #c9cae7;
     }
-
     .btn-icon {
         font-size: 14px;
         border-radius: 50%;
@@ -98,7 +80,6 @@
         color: #fff;
         padding: 6px;
     }
-
     .btn-icon {
         font-size: 14px;
         border-radius: 20px;
@@ -106,28 +87,20 @@
         color: #fff;
         padding: 6px;
     }
-
     .btn-danger {
         background-color: #ab1624;
     }
-
     .highlight {
         background-color: #f5c0bfc4;
     }
-
     .container-fluid {
         padding-right: 0;
         padding-left: 0;
-        /*  overflow: hidden;
-                                height: auto; */
     }
-
     .container {
         overflow: auto;
         height: 81vh;
-        /* overflow: hidden; */
     }
-
     .breadcrumbs1 {
         background: #dddde4;
         position: sticky;
@@ -135,13 +108,9 @@
         background-color: #dddde4;
         z-index: 1000;
         padding: 8px 0px 0px 9px;
-        /* border-top-right-radius: 5px;
-                                border-top-left-radius: 5px; */
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
-        /* height: 36px; */
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
     }
-
     .page-content {
         padding: 3px 0;
     }
@@ -156,77 +125,62 @@
     .table-wrapper {
         height: 350px !important;
     }
-
     .tabs {
         width: 100%;
         max-width: 2000px;
-        /* background: #fff;  */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         border-radius: 8px;
         overflow: hidden;
         padding: 0.7rem;
     }
-
     .tab-header {
         display: flex;
-        /* background: #e3e7ed; */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
         height: 36px;
     }
-
-        .tab-header div {
-            flex: 0.1;
-            text-align: center;
-            padding: 7px 16px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            border-bottom-right-radius: 40px;
-            border-top-left-radius: 40px;
-            font-weight: bold;
-        }
-
-            .tab-header div:hover {
-                background: #586e87;
-                color: white;
-            }
-
-        .tab-header .active {
-            background: #1d4b7d;
-        }
-
+    .tab-header div {
+        flex: 0.1;
+        text-align: center;
+        padding: 7px 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        border-bottom-right-radius: 40px;
+        border-top-left-radius: 40px;
+        font-weight: bold;
+    }
+    .tab-header div:hover {
+    background: #586e87;
+    color: white;
+    }
+    .tab-header .active {
+    background: #1d4b7d;
+    }
     .tab-content {
         display: none;
         padding: 16px;
         border: 1px solid lightgray;
         border-radius: 5px;
     }
-
-        .tab-content.active {
-            display: block;
-        }
-
+    .tab-content.active {
+        display: block;
+    }
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
-
     .datepicker td, .datepicker th {
         border-radius: 20px !important;
     }
-
     .datepicker table tr td, .datepicker table tr td {
         padding: 8px 9px !important;
         height: 16px !important;
     }
-
     .datepicker table tfoot {
         display: none;
     }
-
     .highlight {
         background-color: #f5c0bfc4;
     }
-
 </style>
  
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
@@ -253,7 +207,7 @@
                 @*   <div class="tab-header">
                 <div id="tab1" class="tab active" style="color:white">New</div>
                 </div> *@
-                <div class="row pt-4">
+                <div class="row p-1">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-3 col-sm-6">
