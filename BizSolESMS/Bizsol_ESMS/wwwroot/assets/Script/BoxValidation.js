@@ -229,7 +229,7 @@ function SaveScanValidationDetail() {
         toastr.error("Please enter a Box No !");
         $("#txtBoxNo").focus();
         return;
-    } if ($("#txtScanProduct").val() == '') {
+    }else if ($("#txtScanProduct").val() == '') {
         toastr.error("Please scan product !");
         $("#txtScanProduct").focus();
         return;

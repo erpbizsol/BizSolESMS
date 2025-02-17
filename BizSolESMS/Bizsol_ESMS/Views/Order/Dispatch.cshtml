@@ -114,6 +114,38 @@
     .page-content {
         padding: 3px 0;
     }
+    .table{
+        margin:0;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d35950;
+        color: white;
+        padding: 35px 55px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10000;
+        font-size: 18px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -259,7 +291,7 @@
                             <input list="txtClientNameList" id="txtClientName" name="txtClientName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name" value="All">
                         </div>
                         <div class="col-md-3  col-sm-6 " style="margin-top: 33px !important;">
-                            <button class="btn btn-primary btn-height" title="Show" id="txtShow" onclick="GetDispatchOrderLists()">Show</button>
+                            <button class="btn btn-primary btn-height" title="Show" id="txtShow">Show</button>
                         </div>
                     </div>
                 </div>
@@ -280,6 +312,78 @@
         </div>
     </div>
     <div id="txtCreatepage" style="display:none;">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtOrderNo" class="col-form-label-sm fw-bold">Order No<span class="text-danger">*</span></label>
+                                <input type="text" id="txtOrderNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled>
+                                <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtChallanNo" class="col-form-label-sm fw-bold">Challan No<span class="text-danger">*</span></label>
+                                <input type="text" id="txtChallanNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Challan No.." disabled>
+                            </div>
+                            @* <div class="col-md-3 col-sm-6">
+                                <label for="txtChallanDate" class="col-form-label-sm fw-bold">Challan Date</label><sub style="color:red">*</sub>
+                                <input type="hidden" id="hfCode" value="0">
+                                <input type="text" id="txtChallanDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Challan Date">
+                            </div> *@
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtClientName" class="col-form-label-sm fw-bold">Client Name</label><span class="text-danger">*</span>
+                                <input type="text" id="txtClientDispatchName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name.." disabled>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product<span class="text-danger">*</span></label>
+                                <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product..">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="divOrderBooking mb-2">
+                    <div class="accordion accordion-flush" id="accordionFlushOrder">
+                        <div class="accordion-item tab active ssm-table" >
+                            <h2 class="accordion-header tab-header .active" id="flush-headingOne">
+                                <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
+                                    Dispatch Details
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
+                                <div class="accordion-body-sec">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-wrapper" style="overflow: auto;">
+                                                <table id="tblDispatchTable" class="table">
+                                                    <thead id="DispatchTable-Header">
+                                                        
+                                                    </thead>
+                                                    <tbody id="DispatchTable-Body"></tbody>
+                                                    <tfoot>
+                                                       
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                            <div class="paginator" id="paginator-tblDispatchTable">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <datalist id="txtOrderNo"></datalist>
+                <datalist id="txtClientNameList"></datalist>
+                <datalist id="txtItemBarCode"></datalist>
+                <datalist id="txtItemCode"></datalist>
+                <datalist id="txtItemName"></datalist>
+                <datalist id="txtItemAddress"></datalist>
+            </div>
+        </div>
+    </div>
+    @* <div id="txtCreatepage1" style="display:none;">
         <div class="card shadow-sm" style="background-color:#e9e9ef">
             <div class="tabs">
                 <div class="row p-1">
@@ -367,7 +471,9 @@
                 <datalist id="txtItemAddress"></datalist>
             </div>
         </div>
-    </div>
+    </div> *@
+    <div id="overlay" class="overlay"></div>
+    <div id="toast" class="toast-container"></div>
 </div>
 <script src="~/assets/js/filter.js"></script>
 
