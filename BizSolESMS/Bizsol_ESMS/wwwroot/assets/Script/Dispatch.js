@@ -5,7 +5,6 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 let Data = [];
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {

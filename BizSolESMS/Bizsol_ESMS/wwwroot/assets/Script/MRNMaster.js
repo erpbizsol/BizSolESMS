@@ -206,7 +206,6 @@ async function Create() {
     $("#txtPickListNo").prop("disabled", false);
     $("#txtChallanDate").prop("disabled", false);
     $("#txtVendorName").prop("disabled", false);
-    $("#txtAddress").prop("disabled", false);
     ClearData();
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
@@ -234,7 +233,6 @@ function BackMaster() {
     $("#txtPickListNo").prop("disabled", false);
     $("#txtChallanDate").prop("disabled", false);
     $("#txtVendorName").prop("disabled", false);
-    $("#txtAddress").prop("disabled", false);
     ClearData();
     disableFields(false);
     $("#txtsave").prop("disabled", false);
@@ -643,7 +641,7 @@ function addNewRowEdit(index, Data) {
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
     `;
 
     table.appendChild(newRow);
@@ -766,7 +764,7 @@ function addNewRow() {
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
       `;
             table.appendChild(newRow);
         }
@@ -786,7 +784,7 @@ function addNewRow() {
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
       `;
         table.appendChild(newRow);
         updateTotalBillQty();
@@ -1626,7 +1624,7 @@ async function View(code) {
                     $("#txtPickListNo").val(MRNMaster.PickListNo || "").prop("disabled", true);
                     $("#txtChallanDate").val(MRNMaster.Bill_ChallanDate || "").prop("disabled", true);
                     $("#txtVendorName").val(MRNMaster.AccountName || "").prop("disabled", true);
-                    $("#txtAddress").val(MRNMaster.Address || "").prop("disabled", true);
+                    $("#txtAddress").val(MRNMaster.Address || "");
                     const item = AccountList.find(entry => entry.AccountName == MRNMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: MRNMaster.AccountName, Address: MRNMaster.Address }
