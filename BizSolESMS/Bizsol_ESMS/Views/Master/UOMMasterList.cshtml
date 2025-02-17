@@ -6,7 +6,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="~/assets/script/uommaster.js"></script>
 <style>
-.tabs {
+    .tabs {
         width: 100%;
         max-width: 2000px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -14,7 +14,6 @@
         overflow: hidden;
         padding: 0.7rem;
     }
-
     .tabSec {
         color: white;
         width: 117px;
@@ -29,40 +28,32 @@
         margin-top: -8px;
         background: #1d4b7d;
     }
-
     .tab-content {
         display: none;
         padding: 16px;
         border: 1px solid lightgray;
         border-radius: 5px;
     }
-
     .tab-content.active {
         display: block;
     }
-
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
-
     .datepicker td, .datepicker th {
         border-radius: 20px !important;
     }
-
     .datepicker table tr td, .datepicker table tr td {
         padding: 8px 9px !important;
         height: 16px !important;
     }
-
-
     .datepicker table tfoot {
         display: none;
     }
     .page-content {
         display: block;
     }
-
     .textCreatepage .tabs .fix-header {
         position: sticky;
         top: 0;
@@ -73,8 +64,6 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
         height: 36px;
     }
-
-
     .shadow-sm {
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
@@ -82,7 +71,6 @@
         margin-top: 15px;
         border-top: 1px solid #c9cae7;
     }
-
     .btn-icon {
         font-size: 14px;
         border-radius: 50%;
@@ -90,7 +78,6 @@
         color: #fff;
         padding: 6px;
     }
-
     .btn-icon {
         font-size: 14px;
         border-radius: 20px;
@@ -98,28 +85,20 @@
         color: #fff;
         padding: 6px;
     }
-
     .btn-danger {
         background-color: #ab1624;
     }
-
     .highlight {
         background-color: #f5c0bfc4;
     }
-
     .container-fluid {
         padding-right: 0;
         padding-left: 0;
-        /*  overflow: hidden;
-                        height: auto; */
     }
-
     .container {
         overflow: auto;
         height: 81vh;
-        /* overflow: hidden; */
     }
-
     .breadcrumbs1 {
         background: #dddde4;
         position: sticky;
@@ -127,13 +106,9 @@
         background-color: #dddde4;
         z-index: 1000;
         padding: 8px 0px 0px 9px;
-        /* border-top-right-radius: 5px;
-                        border-top-left-radius: 5px; */
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
-        /* height: 36px; */
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
     }
-
     .page-content {
         padding: 3px 0;
     }
@@ -157,62 +132,53 @@
 </section>
 <div class="container">
     <div class="sm-table  mt-3" id="txtListpage">
-    <div class="row">
-        <div class="col-sm-12 text-end">
-            <label></label>
+        <div class="row">
+            <div class="col-sm-12 text-end">
+                <label></label>
                 <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" id="exportExcel" onclick="DataExport()">DOWNLOAD</button>
-            <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="Create()">CREATE NEW</button>
+                <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="Create()">CREATE NEW</button>
+            </div>
+        </div>
+        <div class="card-body mt-2" id="txtUomTable">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginator -->
+            <div class="paginator" id="paginator-table">
+            </div>
         </div>
     </div>
-    <div class="card-body mt-2" id="txtUomTable">
-        <div class="table-wrapper fixed-height-table">
-            <table id="table" class="fixed-width-table table">
-                <thead id="table-header">
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
-        </div>
-        <!-- Paginator -->
-        <div class="paginator" id="paginator-table">
-        </div>
-    </div>
-</div>
-<div id="txtCreatepage" style="display:none;">
-    <div class="card shadow-sm" style="background-color:#e9e9ef">
-        <div class="tabs">
+    <div id="txtCreatepage" style="display:none;">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3  col-sm-6">
+                                <label for="txtUOM" class="col-form-label-sm fw-bold">
+                                    <input type="hidden" id="hftxtCode" value="0" />
+                                    UOM <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name" maxlength="10">
 
-            <div class="row p-1">
-                <div class="col-md-12">
-                    <div class="row">
-
-                        <div class="col-md-3  col-sm-6">
-                            <label for="txtUOM" class="col-form-label-sm fw-bold">
-                                <input type="hidden" id="hftxtCode" value="0" />
-                                UOM <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" id="txtUOM" name="txtUOM" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UOM Name" maxlength="10">
-
+                            </div>
+                            <div class="col-md-3  col-sm-6">
+                                <label for="txtDigitAfterDecimal" class="col-form-label-sm fw-bold">
+                                    Digit After Decimal<span class="text-danger">*</span>
+                                </label>
+                                <input type="Number" id="txtDigitAfterDecimal" name="txtDigitAfterDecimal" autocomplete="off" class="Number form-control form-control-sm box_border" placeholder="Digit After Decimal" value="0">
+                            </div>
                         </div>
-
-                        <div class="col-md-3  col-sm-6">
-                            <label for="txtDigitAfterDecimal" class="col-form-label-sm fw-bold">
-                                Digit After Decimal<span class="text-danger">*</span>
-                            </label>
-                            <input type="Number" id="txtDigitAfterDecimal" name="txtDigitAfterDecimal" autocomplete="off" class="Number form-control form-control-sm box_border" placeholder="Digit After Decimal" value="0">
-                        </div>
-                       @*  <div class="col-md-3  col-sm-6 tex-end" style="margin-top: 30px !important;">
-                            <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtbtnSave">Save</button>
-                            <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>
-                        </div> *@
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
-</div>
 </div>
 <script src="~/assets/js/filter.js"></script>
 
