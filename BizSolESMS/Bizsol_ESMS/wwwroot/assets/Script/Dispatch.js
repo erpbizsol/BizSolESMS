@@ -3,11 +3,13 @@ var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
+let Data = [];
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
     DatePicker();
+    GetDispatchOrderLists("All");
     $("#ERPHeading").text("Dispatch Entry");
     $('#txtChallanDate').on('keydown', function (e) {
         if (e.key === "Enter") {
@@ -27,23 +29,37 @@ $(document).ready(function () {
     });
     GetAccountMasterList();
     /*GetDispatchOrderList();*/
-    $("#btnAddNewRow").click(function () {
-        addNewRow();
-    });
+    //$("#btnAddNewRow").click(function () {
+    //    addNewRow();
+    //});
     GetModuleMasterCode();
     $("#txtClientName").on("focus", function () {
         $("#txtClientName").val("");
     });
+    //$("#txtClientName").on("change", function () {
+    //    $("#Orderdata").empty();
+    //    let value = $(this).val();
+    //    let isValid = false;
+    //    GetOrderNoList(value);
+    //    addNewRow();
+    //    $("#txtClientNameList option").each(function () {
+    //        if ($(this).val() === value) {
+    //            const item = AccountList.find(entry => entry.AccountName == value);
+    //            $("#txtAddress").val(item.Address)
+    //            isValid = true;
+    //            return false;
+    //        }
+    //    });
+    //    if (!isValid) {
+    //        $(this).val("");
+    //        $("#txtAddress").val("")
+    //    }
+    //});
     $("#txtClientName").on("change", function () {
-        $("#Orderdata").empty();
         let value = $(this).val();
         let isValid = false;
-        GetOrderNoList(value);
-        addNewRow();
         $("#txtClientNameList option").each(function () {
             if ($(this).val() === value) {
-                const item = AccountList.find(entry => entry.AccountName == value);
-                $("#txtAddress").val(item.Address)
                 isValid = true;
                 return false;
             }
@@ -53,7 +69,14 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
-  
+    $("#txtShow").click(function () {
+        GetDispatchOrderLists($("#txtClientName").val());
+    });
+    $('#txtScanProduct').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            SaveScanQty();
+        }
+    });
 });
 function GetDispatchOrderList() {
     $.ajax({
@@ -126,6 +149,7 @@ function GetAccountMasterList() {
                 AccountList = response;
                 $('#txtClientNameList').empty();
                 let options = '';
+                options += '<option value="All" text="0"></option>';
                 response.forEach(item => {
                     options += '<option value="' + item.AccountName + '" text="' + item.Code + '"></option>';
                 });
@@ -207,7 +231,6 @@ function GetItemDetails(element) {
 function ClearData() {
     $("#hfCode").val("0");
     $("#txtChallanNo").val("");
-    $("#txtClientName").val("");
     $("#txtAddress").val("");
     $("#txtVehicleNo").val("");
     $("#Orderdata").empty();
@@ -884,8 +907,7 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "DispatchOrder.xlsx");
 }
-function GetDispatchOrderLists() {
-    let clientName = $('#txtClientName').val();
+function GetDispatchOrderLists(clientName) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?ClientName=${clientName}`,
         type: 'GET',
@@ -895,7 +917,7 @@ function GetDispatchOrderLists() {
         success: function (response) {
             if (response.length > 0) {
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No"];
-                const NumericFilterColumn = [];
+                const NumericFilterColumn = ["Order Qty"];
                 const DateFilterColumn = ["Challan Date"];
                 const Button = false;
                 const showButtons = [];
@@ -908,7 +930,7 @@ function GetDispatchOrderLists() {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Create()"><i class="fa-solid fa-pencil"></i></button>`
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatch('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -922,4 +944,310 @@ function GetDispatchOrderLists() {
     });
 
 }
+async function StartDispatch(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    ClearData();
+    $("#tab1").text("NEW");
 
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || "");
+                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
+                    $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+                    
+                }
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    var Response = response.OrderDetial;
+                     Data = response.OrderDetial;
+                    const StringFilterColumn = [];
+                    const NumericFilterColumn = ["Order Quantity"];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    const hiddenColumns = ["Code"];
+                    const ColumnAlignment = {
+                        "Order Quantity": "right"
+                    };
+                    const updatedResponse = Response.map(item => ({
+                        ...item,
+                        "Scan Qty": `
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        "Manual Qty": `
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        "Dispatch Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                   }));
+                    BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+                }
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Record not found...!");
+        }
+    });
+}
+function ScanItemForDispatch() {
+    if ($("#txtScanProduct").val() == '') {
+        toastr.error("Please scan product !");
+        $("#txtScanProduct").focus();
+        return;
+    }
+    const payload = {
+        Code: $("#hfCode").val(),
+        ScanNo: $("#txtScanProduct").val(),
+        UserMaster_Code: UserMaster_Code
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                StartDispatch($("#hfCode").val())
+                $("#txtScanProduct").focus();
+                $("#txtScanProduct").val("");
+            } else if (response[0].Status == 'N') {
+                showToast(response[0].Msg);
+                $("#txtScanProduct").focus();
+                $("#txtScanProduct").val("");
+            } else {
+                showToast(response[0].Msg);
+                $("#txtScanProduct").focus();
+                $("#txtScanProduct").val("");
+            }
+        },
+        error: function (xhr, status, error) {
+            showToast("INVALID SCAN NO !");
+            $("#txtScanProduct").focus();
+            $("#txtScanProduct").val("");
+        }
+    });
+
+}
+function showToast(Msg) {
+    let toast = document.getElementById("toast");
+    let overlay = document.getElementById("overlay");
+
+    toast.innerText = Msg;
+    overlay.style.display = "block";
+    toast.style.display = "block";
+    let alertSound = new Audio("https://www.fesliyanstudios.com/play-mp3/4387");
+    alertSound.play().catch(error => console.log("Audio playback failed:", error));
+    setTimeout(() => toast.style.opacity = "1", 10);
+    let blinkInterval = setInterval(() => {
+        toast.style.visibility = (toast.style.visibility === "hidden") ? "visible" : "hidden";
+    }, 300);
+    setTimeout(() => {
+        clearInterval(blinkInterval);
+        toast.style.visibility = "visible";
+        toast.style.opacity = "0";
+        setTimeout(() => {
+            toast.style.display = "none";
+            overlay.style.display = "none";
+        }, 300);
+    }, 3000);
+}
+function checkValidateqty(element, Code) {
+    var manualQty = parseInt($(element).val());
+    var scanQty = parseInt($("#txtScanQty_" + Code).val());
+
+    const item = Data.find(entry => entry.Code == Code);
+    var total = scanQty + manualQty;
+
+    if (total > parseInt(item["Order Quantity"])) {
+        toastr.error("Invalid Dispatch Qty!");
+        $("#txtManualQty_" + Code).focus();
+        StartDispatch($("#hfCode").val());
+    } else {
+        $("#txtDispatchQty_" + Code).val(total);
+        if (manualQty > 0) {
+            SaveManualQty(Code, scanQty, manualQty, total);
+        }
+        var currentRow = $(element).closest("tr");
+        var nextRow = currentRow.next("tr");
+
+        if (nextRow.length > 0) {
+            var nextInput = nextRow.find(".txtManualQty").first();
+            if (nextInput.length > 0) {
+                nextInput.focus();
+            }
+        }
+    }
+}
+function checkValidateqty1(element, Code) {
+    var manualQty = parseInt($(element).val());
+    var scanQty = parseInt($("#txtScanQty_" + Code).val());
+
+    const item = Data.find(entry => entry.Code == Code);
+    var total = scanQty + manualQty;
+
+    if (total > parseInt(item["Order Quantity"])) {
+        toastr.error("Invalid Dispatch Qty!");
+        StartDispatch($("#hfCode").val());
+    } else {
+        $("#txtDispatchQty_" + Code).val(total);
+        if (manualQty > 0) {
+            SaveManualQty(Code, scanQty, manualQty, total);
+        }
+    }
+}
+function OnChangeNumericTextBox(event, element) {
+    if (event.charCode == 13 || event.charCode == 46 || event.charCode == 8 || (event.charCode >= 48 && event.charCode <= 57)) {
+        element.setCustomValidity("");
+        element.reportValidity();
+        BizSolhandleEnterKey(event);
+        return true;
+    }
+    else {
+        element.setCustomValidity("Only allowed Float Numbers");
+        element.reportValidity();
+        return false;
+    }
+}
+function BizSolhandleEnterKey(event) {
+    if (event.key === "Enter") {
+        const inputs = $('.BizSolFormControl')
+        const index = [...inputs].indexOf(event.target);
+        if ((index + 1) == inputs.length) {
+            inputs[0].focus();
+        } else {
+            inputs[index + 1].focus();
+        }
+
+        event.preventDefault();
+    }
+}
+function SaveManualQty(Code, ScanQty, ManualQty, DispatchQty) {
+    const payload = {
+        Code: Code,
+        ScanNo: "",
+        ScanQty: ScanQty,
+        ManualQty: ManualQty,
+        DispatchQty: DispatchQty,
+        UserMaster_Code: UserMaster_Code
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                StartDispatch($("#hfCode").val());
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function AutoUpdateReceivedQty() {
+    if ($("#txtBoxNo").val() == '') {
+        toastr.error("Please enter a Box No !");
+        $("#txtBoxNo").focus();
+        return;
+    }
+    const payload = {
+        BoxNo: $("#txtBoxNo").val(),
+        Code: 0,
+        ScanNo: ""
+    }
+    if (confirm("Are you sure you want to auto update received qty ?")) {
+        $.ajax({
+            url: `${appBaseURL}/api/MRNMaster/AutoUpdateReceivedQty`,
+            type: 'POST',
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response[0].Status == 'Y') {
+                    BoxValidationDetail();
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+}
+function SaveScanQty() {
+    if ($("#txtScanProduct").val() == '') {
+        toastr.error("Please scan product !");
+        $("#txtScanProduct").focus();
+        return;
+    }
+    const payload = {
+        Code: $("#hfCode").val(),
+        ScanNo: $("#txtScanProduct").val(),
+        ScanQty: 0,
+        ManualQty: 0,
+        DispatchQty: 0,
+        UserMaster_Code: UserMaster_Code
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                StartDispatch($("#hfCode").val());
+                $("#txtScanProduct").focus();
+                //$("#txtScanProduct").val("");
+            } else if (response[0].Status == 'N') {
+                showToast(response[0].Msg);
+                $("#txtScanProduct").focus();
+                //$("#txtScanProduct").val("");
+            } else {
+                showToast(response[0].Msg);
+                $("#txtScanProduct").focus();
+                //$("#txtScanProduct").val("");
+            }
+        },
+        error: function (xhr, status, error) {
+            showToast("INVALID SCAN NO !");
+            $("#txtScanProduct").focus();
+            //$("#txtScanProduct").val("");
+        }
+    });
+
+}

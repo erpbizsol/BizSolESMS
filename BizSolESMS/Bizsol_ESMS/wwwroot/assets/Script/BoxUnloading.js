@@ -95,6 +95,7 @@ function BoxUnloading() {
                 if (response[0].Status == 'Y') {
                     GetDataByPicklist();
                     CaseNo = response[0].CaseNo;
+                    goToRow(CaseNo);
                    $("#txtBoxNo").focus();
                 } else {
                     CaseNo = 0;
@@ -271,3 +272,5 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
+
+
