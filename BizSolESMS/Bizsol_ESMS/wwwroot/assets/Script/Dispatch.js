@@ -7,9 +7,11 @@ let Data = [];
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let AccountList = [];
 let ItemDetail = [];
+let G_OrderList = [];
 $(document).ready(function () {
     DatePicker();
-    GetDispatchOrderLists("All");
+    GetDispatchOrderLists('GETCLIENT');
+    GetOrderNoList1();
     $("#ERPHeading").text("Dispatch Entry");
     $('#txtChallanDate').on('keydown', function (e) {
         if (e.key === "Enter") {
@@ -28,33 +30,10 @@ $(document).ready(function () {
         }
     });
     GetAccountMasterList();
-    /*GetDispatchOrderList();*/
-    //$("#btnAddNewRow").click(function () {
-    //    addNewRow();
-    //});
     GetModuleMasterCode();
     $("#txtClientName").on("focus", function () {
         $("#txtClientName").val("");
     });
-    //$("#txtClientName").on("change", function () {
-    //    $("#Orderdata").empty();
-    //    let value = $(this).val();
-    //    let isValid = false;
-    //    GetOrderNoList(value);
-    //    addNewRow();
-    //    $("#txtClientNameList option").each(function () {
-    //        if ($(this).val() === value) {
-    //            const item = AccountList.find(entry => entry.AccountName == value);
-    //            $("#txtAddress").val(item.Address)
-    //            isValid = true;
-    //            return false;
-    //        }
-    //    });
-    //    if (!isValid) {
-    //        $(this).val("");
-    //        $("#txtAddress").val("")
-    //    }
-    //});
     $("#txtClientName").on("change", function () {
         let value = $(this).val();
         let isValid = false;
@@ -69,14 +48,37 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
-    $("#txtShow").click(function () {
-        GetDispatchOrderLists($("#txtClientName").val());
+   
+    $(".pendingOrder").click(function () {
+        GetDispatchOrderLists('GETCLIENT');
+    });
+
+    $(".despatchTransit").click(function () {
+        
+        GetDespatchTransitOrderList('DespatchTransit');
+    });
+
+    $(".completedDespatch").click(function () {
+
+        GetCompletedDespatchOrderList('CompletedDespatch');
     });
     $('#txtScanProduct').on('keydown', function (e) {
         if (e.key === "Enter") {
             SaveScanQty();
         }
     });
+   
+    $("#txtOrderNo").on("change", function () {
+        var inputValue = $(this).val();
+        const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == inputValue);
+        if (item.Code != undefined) {
+            CreateOrderNo(item.Code)
+        }
+    });
+    $("#txtOrderNo").on("focus", function () {
+        $("#txtOrderNo").val("");
+    });
+
 });
 function GetDispatchOrderList() {
     $.ajax({
@@ -130,12 +132,16 @@ async function Create() {
     $("#txtheaderdiv").show();
     $("#Orderdata").empty();
     addNewRow();
+    disableFields(false);
+    $("#txtOrderNo").prop("disabled", true);
 }
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtheaderdiv").hide();
     ClearData();
+    disableFields(false);
+    $("#txtOrderNo").prop("disabled", true);
 }
 function GetAccountMasterList() {
     $.ajax({
@@ -268,7 +274,7 @@ function Save() {
                 row.find(".txtOrderNo").focus();
                 validationFailed = true;
                 return;
-            }else if (row.find(".txtItemBarCode").val() == '') {
+            } else if (row.find(".txtItemBarCode").val() == '') {
                 toastr.error("Please select Item Bar Code !");
                 row.find(".txtItemBarCode").focus();
                 validationFailed = true;
@@ -339,9 +345,9 @@ function Save() {
         },
         success: function (response) {
             if (response.Status === "Y") {
-                    toastr.success(response.Msg);
-                    GetDispatchOrderList();
-                    BackMaster();
+                toastr.success(response.Msg);
+                GetDispatchOrderList();
+                BackMaster();
             } else {
                 toastr.error(response.Msg);
             }
@@ -612,10 +618,10 @@ function FillallItemfield(inputElement, value) {
                 }
             });
         }
-        
+
         let lastRow = $('#tblorderbooking #Orderdata tr').length;
         if (lastRow > 1) {
-            var Check = checkDuplicateEntries(inputElement,itemCode, itemName, itemOrderNo);
+            var Check = checkDuplicateEntries(inputElement, itemCode, itemName, itemOrderNo);
             if (Check) {
                 alert('Duplicate entry not allowed for Order No and Same Item Name!');
                 itemBarCode.value = "";
@@ -627,7 +633,7 @@ function FillallItemfield(inputElement, value) {
                 BalanceOrderQty.value = "";
                 QtyBox.value = '';
                 OrderQty.value = '';
-            } 
+            }
         }
     }
 }
@@ -657,7 +663,7 @@ function CalculateAmount(inputElement) {
             BillQty.value = '';
         }
 
-        
+
     }
 }
 function GetRate(VendorName, ItemName) {
@@ -716,9 +722,9 @@ $(document).on('keydown', '#tblorderbooking input', function (e) {
 });
 function checkDuplicateEntries(inputElement, itemCode, itemName, OrderNo) {
     let isDuplicate = false;
-    const currentRow = inputElement.closest('tr'); 
+    const currentRow = inputElement.closest('tr');
     document.querySelectorAll('#tblorderbooking tbody tr').forEach(row => {
-        if (row === currentRow) return; 
+        if (row === currentRow) return;
 
         const existingItemCode = row.querySelector('.txtItemCode')?.value || '';
         const existingItemName = row.querySelector('.txtItemName')?.value || '';
@@ -907,18 +913,19 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "DispatchOrder.xlsx");
 }
-function GetDispatchOrderLists(clientName) {
+function GetDispatchOrderLists(Mode) {
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?ClientName=${clientName}`,
+        url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No"];
-                const NumericFilterColumn = ["Order Qty"];
-                const DateFilterColumn = ["Challan Date"];
+                $("#DataTable").show();
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No","BuyerPO No"];
+                const NumericFilterColumn = ["Order Qty","Balance Qty"];
+                const DateFilterColumn = ["Order Date"];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
@@ -930,11 +937,11 @@ function GetDispatchOrderLists(clientName) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatch('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Create Despatch" onclick="StartDispatch('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-
             } else {
+                $("#DataTable").hide();
                 toastr.error("Record not found...!");
             }
         },
@@ -944,7 +951,90 @@ function GetDispatchOrderLists(clientName) {
     });
 
 }
-async function StartDispatch(Code) {
+function GetDespatchTransitOrderList(Mode) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $("#DataTable").show();
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No","BuyerPO No"];
+                const NumericFilterColumn = ["Order Qty", "Dispatch Qty"];
+                const DateFilterColumn = ["Despatch Date"];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = ["Code","D_Code"];
+                const ColumnAlignment = {
+                    "Reorder Level": 'right',
+                    "Reorder Qty": 'right',
+                    "Qty In Box": 'right',
+                };
+                const updatedResponse = response.map(item => ({
+                    ...item
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatch('${item.Code}'),'DDETAILS'"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
+                    `
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+            } else {
+                $("#DataTable").hide();
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function GetCompletedDespatchOrderList(Mode) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $("#DataTable").show();
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No","BuyerPO No"];
+                const NumericFilterColumn = ["Order Qty","Dispatch Qty"];
+                const DateFilterColumn = ["Despatch Date"];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = ["Code","D_Code"];
+                const ColumnAlignment = {
+                    "Reorder Level": 'right',
+                    "Reorder Qty": 'right',
+                    "Qty In Box": 'right',
+                };
+                const updatedResponse = response.map(item => ({
+                    ...item
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatch('${item.Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+            } else {
+                $("#DataTable").hide();
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+async function StartDispatch(Code,Mode) {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -952,12 +1042,13 @@ async function StartDispatch(Code) {
     }
     ClearData();
     $("#tab1").text("NEW");
-
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
+    $("#txtOrderNo").prop("disabled", true);
+    disableFields(false);
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}`,
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}`,
         type: 'GET',
         contentType: "application/json",
         dataType: "json",
@@ -972,11 +1063,11 @@ async function StartDispatch(Code) {
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-                    
+
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     var Response = response.OrderDetial;
-                     Data = response.OrderDetial;
+                    Data = response.OrderDetial;
                     const StringFilterColumn = [];
                     const NumericFilterColumn = ["Order Quantity"];
                     const DateFilterColumn = [];
@@ -995,7 +1086,7 @@ async function StartDispatch(Code) {
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
                         "Dispatch Qty": `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
-                   }));
+                    }));
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
                 }
@@ -1007,6 +1098,240 @@ async function StartDispatch(Code) {
             toastr.error("Record not found...!");
         }
     });
+}
+async function StartDispatchOrderNo(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    ClearData();
+    $("#tab1").text("NEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
+    $("#txtOrderNo").prop("disabled", false);
+    $("#txtScanProduct").prop("disabled", false);
+    disableFields(false);
+}
+function CreateOrderNo(Code) {
+    $("#txtOrderNo").prop("disabled", false);
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=ORDERDETAILS`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || "");
+                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
+                    $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+
+                }
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    var Response = response.OrderDetial;
+                    Data = response.OrderDetial;
+                    const StringFilterColumn = [];
+                    const NumericFilterColumn = ["Order Quantity"];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    const hiddenColumns = ["Code"];
+                    const ColumnAlignment = {
+                        "Order Quantity": "right"
+                    };
+                    const updatedResponse = Response.map(item => ({
+                        ...item,
+                        "Scan Qty": `
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        "Manual Qty": `
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        "Dispatch Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                    }));
+                    BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+                }
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Record not found...!");
+        }
+    });
+}
+function GetOrderNoList1() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetOrderNoList`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            G_OrderList = response;
+            if (response.length > 0) {
+               
+                $('#txtOrderNoList').empty();
+                let options = '';
+                response.forEach(item => {
+               
+                    options += '<option value="' + item.OrderNoWithPrefix + '" text="' + item.OrderNoWithPrefix + '"></option>';
+                });
+                //firstCode = response[0].Code;
+                //alert(firstCode);
+                //if (firstCode) {
+                //    CreateOrderNo(firstCode);
+                //}
+                $('#txtOrderNoList').html(options);
+            } else {
+                $('#txtOrderNoList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtOrderNoList').empty();
+        }
+    });
+
+}
+async function ViewDespatchTransit(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    ClearData();
+    $("#tab1").text("NEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    disableFields(true);
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || "");
+                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
+                    $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+                    $("#txtScanProduct").val(OrderMaster.ChallanNo || "").prop("disabled", true);
+
+                    
+                }
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    var Response = response.OrderDetial;
+                    Data = response.OrderDetial;
+                    const StringFilterColumn = [];
+                    const NumericFilterColumn = ["Order Quantity"];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    const hiddenColumns = ["Code"];
+                    const ColumnAlignment = {
+                        "Order Quantity": "right"
+                    };
+                    const updatedResponse = Response.map(item => ({
+                        ...item,
+                        "Scan Qty": `
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        "Manual Qty": `
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        "Dispatch Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                    }));
+                    BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+                }
+              
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Record not found...!");
+        }
+    });
+}
+async function deleteItem(code, Order, button) {
+    let tr = button.closest("tr");
+    tr.classList.add("highlight");
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    const { Status, msg1 } = await CheckRelatedRecord(code, 'DispatchMaster');
+    if (Status == true) {
+        toastr.error(msg1);
+        return;
+    }
+    if (confirm(`Are you sure you want to delete this Despatch ${Order} .?`)) {
+        $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/DeleteDispatchOrder?Code=${code}`,
+            type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response.Status === 'Y') {
+                    toastr.success(response.Msg);
+                    GetDespatchTransitOrderList();
+                } else {
+                    toastr.error("Unexpected response format.");
+                }
+
+            },
+            error: function (xhr, status, error) {
+                toastr.error("Error deleting item:", Msg);
+
+            }
+        });
+    }
+    else {
+        $('tr').removeClass('highlight');
+    }
+}
+function MarkasCompete(code) {
+        $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/GetMarkasCompeteByOrderNo?Code=${code}`,
+            type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response.Status === 'Y') {
+                    toastr.success(response.Msg);
+                    GetDespatchTransitOrderList();
+                } else {
+                    toastr.error("Unexpected response format.");
+                }
+
+            },
+            error: function (xhr, status, error) {
+                toastr.error("Error deleting item:");
+
+            }
+        });
+}
+function disableFields(disable) {
+    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
 function ScanItemForDispatch() {
     if ($("#txtScanProduct").val() == '') {
