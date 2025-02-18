@@ -1,4 +1,5 @@
-﻿var PerPageSize = JSON.parse(sessionStorage.getItem('PerPageSize'));
+﻿
+var PerPageSize = JSON.parse(sessionStorage.getItem('PerPageSize'));
 let data = [];
 //let filteredData = [];
 //let currentPage = 1;

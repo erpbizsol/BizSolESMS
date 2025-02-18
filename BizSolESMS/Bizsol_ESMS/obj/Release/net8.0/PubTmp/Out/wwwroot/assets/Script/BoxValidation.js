@@ -21,6 +21,24 @@ $(document).ready(function () {
         AutoUpdateReceivedQty();
     });
     MRNDetail();
+    $('#txtBoxNo').on('focus', function (e) {
+        var inputElement = this;
+        setTimeout(function () {
+            inputElement.setAttribute('inputmode', 'none');
+        }, 2);
+    });
+    $('#txtBoxNo').on('blur', function () {
+        $(this).attr('inputmode', '');
+    });
+    $('#txtScanProduct').on('focus', function (e) {
+        var inputElement = this;
+        setTimeout(function () {
+            inputElement.setAttribute('inputmode', 'none');
+        }, 2);
+    });
+    $('#txtScanProduct').on('blur', function () {
+        $(this).attr('inputmode', '');
+    });
 });
 function BoxValidationDetail() {
     if ($("#txtBoxNo").val() == '') {
@@ -229,7 +247,7 @@ function SaveScanValidationDetail() {
         toastr.error("Please enter a Box No !");
         $("#txtBoxNo").focus();
         return;
-    } if ($("#txtScanProduct").val() == '') {
+    }else if ($("#txtScanProduct").val() == '') {
         toastr.error("Please scan product !");
         $("#txtScanProduct").focus();
         return;
@@ -343,13 +361,19 @@ function MRNDetail() {
     });
 
 }
-function StartValidation(PickListNo, VehicleNo, Code) {
+async function StartValidation(PickListNo, VehicleNo, Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     $("#ValidateFrom").show();
     $("#UnloadingTable1").hide();
     $("#txtPickListNo").val(PickListNo);
     $("#txtVehicleNo").val(VehicleNo);
     $("#txtCode").val(Code);
     $("#txtheaderdiv").show();
+    $('#txtBoxNo').focus();
 }
 function Back() {
     $("#UnloadingTable1").show();
@@ -360,4 +384,11 @@ function Back() {
     $("#txtVehicleNo").val("");
     $("#txtCode").val("0");
     $("#txtBoxNo").val("");
+}
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Box Validation");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }
