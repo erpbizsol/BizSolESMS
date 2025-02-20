@@ -13,16 +13,19 @@ $(document).ready(function () {
             $("#txtBoxNo").focus();
         }
     });
-    MRNDetail();
     $('#txtBoxNo').on('focus', function (e) {
         var inputElement = this;
+
+        if ($("#chkScan").is(":checked")) {
             setTimeout(function () {
                 inputElement.setAttribute('inputmode', 'none');
             }, 2);
+        }
     });
     $('#txtBoxNo').on('blur', function () {
         $(this).attr('inputmode', '');
     });
+    MRNDetail();
 });
 //function BoxUnloading() {
 //    if ($("#txtBoxNo").val() == '') {
@@ -104,7 +107,7 @@ function BoxUnloading() {
                     GetDataByPicklist();
                     CaseNo = response[0].CaseNo;
                     goToRow(CaseNo);
-                   $("#txtBoxNo").focus();
+                    $("#txtBoxNo").focus();
                 } else {
                     CaseNo = 0;
                     $("#txtBoxNo").focus();
@@ -157,15 +160,15 @@ function MRNDetail() {
         },
         success: function (response) {
             if (response.length > 0) {
-                    $("#UnloadingTable1").show();
-                    const StringFilterColumn = ["PickList No", "Vehicle No"];
-                    const NumericFilterColumn = [];
-                    const DateFilterColumn = [];
-                    const Button = false;
-                    const showButtons = [];
-                    const StringdoubleFilterColumn = [];
-                    const hiddenColumns = ["Code","Status"];
-                    const ColumnAlignment = {
+                $("#UnloadingTable1").show();
+                const StringFilterColumn = ["PickList No", "Vehicle No"];
+                const NumericFilterColumn = [];
+                const DateFilterColumn = [];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = ["Code", "Status"];
+                const ColumnAlignment = {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-success icon-height mb-1"  title="Start Un-Loading" onclick="StartUnloading('${item["PickList No"]}','${item["Vehicle No"]}','${item.Code}')"><i class="fa fa-hourglass-start"></i></button>
@@ -173,7 +176,7 @@ function MRNDetail() {
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header1", "table-body1", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
-               $("#UnloadingTable1").hide();
+                $("#UnloadingTable1").hide();
                 toastr.error("Record not found...!");
             }
         },
@@ -195,7 +198,7 @@ async function StartUnloading(PickListNo, VehicleNo, Code) {
     $("#txtPickListNo").val(PickListNo);
     $("#txtVehicleNo").val(VehicleNo);
     $("#txtCode").val(Code);
-    $('#txtBoxNo').focus();
+    //$('#txtBoxNo').focus();
     GetDataByPicklist();
 }
 function Back() {
@@ -279,10 +282,6 @@ function GetModuleMasterCode() {
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
-<<<<<<< HEAD
-}
-=======
 }
 
 
->>>>>>> 9c86ffd37c28954a706a36cae228c754ce7950fd

@@ -33,7 +33,6 @@ $(document).ready(function () {
     }
 
 });
-
 function getCookie(name) {
     let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
     return match ? decodeURIComponent(match[2]) : null;
@@ -65,7 +64,6 @@ function CheckCompany() {
         }
     });
 }
-
 function Login() {
     let formData = {
         CompanyCode: $('#txtCompanyCode').val(),

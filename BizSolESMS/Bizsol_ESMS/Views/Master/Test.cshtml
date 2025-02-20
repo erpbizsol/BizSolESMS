@@ -4,14 +4,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-<script src="~/assets/script/BoxValidation.js"></script>
+
+<script src="~/assets/script/Test.js"></script>
 <style>
     .tabs {
         width: 100%;
         max-width: 2000px;
-        /* background: #fff;  */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         border-radius: 8px;
         overflow: hidden;
@@ -86,41 +84,6 @@
         transition: opacity 0.3s ease-in-out;
     }
 
-    .toggle-handle {
-        position: relative;
-        margin: 0 auto;
-        padding-top: 0;
-        padding-bottom: 0;
-        height: 100%;
-        width: 0;
-        border-width: 0 1px;
-        background-color: #fff !important;
-    }
-
-    .toggle.btn {
-        min-width: 59px;
-        min-height: 28px !important;
-    }
-
-    .fixed-height {
-        min-height: 10px !important;
-    }
-
-    .toggle-off {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 44%;
-        right: 0;
-        margin: 0;
-        border: 0;
-        border-radius: 0;
-    }
-
-    .col-md-2{
-        width:120px !important;
-    }
-
     .tabs {
         width: 100%;
         max-width: 2000px;
@@ -145,11 +108,6 @@
         background: #1d4b7d;
     }
 
-
-    /*  .tab-header {
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-                } */
-
     .tab-content {
         display: none;
         padding: 16px;
@@ -157,9 +115,9 @@
         border-radius: 5px;
     }
 
-        .tab-content.active {
-            display: block;
-        }
+    .tab-content.active {
+        display: block;
+    }
 
     .tab[disabled] {
         cursor: not-allowed;
@@ -174,12 +132,9 @@
         padding: 8px 9px !important;
         height: 16px !important;
     }
-
-
     .datepicker table tfoot {
         display: none;
     }
-
     .page-content {
         display: block;
     }
@@ -231,27 +186,12 @@
     .container-fluid {
         padding-right: 0;
         padding-left: 0;
-        /*  overflow: hidden;
-                            height: auto; */
     }
 
     .container {
-        overflow: auto;
+        /* overflow: auto; */
         height: 81vh;
-        /* overflow: hidden; */
     }
-    /* .breadcrumbs .container-fluid .fix-header {
-                        position: sticky;
-                        top: 0;
-                        background-color: #dddde4;
-                        z-index: 1000;
-                        padding: 8px 0 8px 9px;
-                        border-top-right-radius: 5px;
-                        border-top-left-radius: 5px;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-                        height: 36px;
-                    } */
-
     .breadcrumbs1 {
         background: #dddde4;
         position: sticky;
@@ -259,16 +199,34 @@
         background-color: #dddde4;
         z-index: 1000;
         padding: 8px 0px 0px 9px;
-        /* border-top-right-radius: 5px;
-                            border-top-left-radius: 5px; */
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
-        /* height: 36px; */
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
     }
-
     .page-content {
         padding: 3px 0;
     }
+
+    .input-like-div {
+        width: 300px;
+        height: 30px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        line-height: 24px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+        .input-like-div:empty:before {
+            content: attr(aria-placeholder);
+            color: #999;
+        }
+
+        .input-like-div:focus {
+            border-color: #66afe9;
+            box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+        }
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -280,74 +238,73 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-6">
-                    <div id="tab1" class="tabSec tab active">VALIDATION</div>
+                    <div id="tab1" class="tabSec tab active">UNLOADING</div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 <div class="container">
-<div class="row m-3 " sstyle="display:none" id="UnloadingTable1">
-    <div class="card-body mt-2">
-        <div class="table-wrapper fixed-height-table">
-            <table id="table1" class="fixed-width-table table ssm-table">
-                <thead id="table-header1">
-                </thead>
-                <tbody id="table-body1">
-                </tbody>
-            </table>
-        </div>
-        <div class="paginator" id="paginator-table1">
+    <div class="row m-3" sstyle="display:none" id="UnloadingTable1">
+        <div class="card-body mt-2">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table1" class="fixed-width-table table ssm-table">
+                    <thead id="table-header1">
+                    </thead>
+                    <tbody id="table-body1">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-table1">
+            </div>
         </div>
     </div>
-</div>
-    <div class="card shadow-sm textCreatepage" id="ValidateFrom" style="background-color:#e9e9ef;display:none;">
-    <div class="tabs">
-       
-        <div class="row p-1">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-3 col-sm-6">
-                        <label for="txtPickListNo" class="col-form-label-sm fw-bold">PickList No</label>
-                        <input type="text" id="txtPickListNo" disabled class="box_border form-control form-control-sm" autocomplete="off">
-                        <input type="text" id="txtCode" class="box_border form-control form-control-sm d-none" autocomplete="off">
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
-                        <input type="text" id="txtVehicleNo" disabled class="box_border form-control form-control-sm" autocomplete="off">
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No</label><span class="text-danger">*</span>
-                        <input type="text" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No.." onfocus="this.select()">
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product</label><span class="text-danger">*</span>
-                        <input type="text" id="txtScanProduct" disabled class="box_border form-control form-control-sm" autocomplete="off" placeholder="Scan Product.." onfocus="this.select()">
-                    </div>
-                  @*   <div class="col-md-3 col-sm-6" style="margin-top:20px !important;">
-                        <button class="btn btn-danger btn-height" onclick="Back()">Back</button>
-                    </div> *@
+    <div class="card shadow-sm textCreatepage" id="UnloadingForm" style="background-color:#e9e9ef;display:none">
+        <div class="tabs">
+            @*   <div class="tab-header">
+            <div id="tab1" class="tab active" style="color:white">UNLOADING</div>
+            </div> *@
+            <div class="row p-1">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtPickListNo" class="col-form-label-sm fw-bold">PickList No</label>
+                            <input type="text" id="txtPickListNo" disabled class="box_border form-control form-control-sm" autocomplete="off">
+                            <input type="text" id="txtCode" class="box_border form-control form-control-sm d-none" autocomplete="off">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
+                            <input type="text" id="txtVehicleNo" disabled class="box_border form-control form-control-sm" autocomplete="off">
+                        </div>
+                        <div class="col-md-1 col-sm-6">
+                            <label for="chkScan" class="col-form-label-sm fw-bold">Scan</label><span class="text-danger">*</span><br />
+                            <input type="checkbox" id="chkScan" autocomplete="off" placeholder="Box No..">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No</label><span class="text-danger">*</span>
+                            <input type="text" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No..">
+                        </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row m-2" style="display:none" id="UnloadingTable">
-    <div class="card-body mt-2 ">
-        <div class="table-wrapper fixed-height-table">
-            <div class="text-end btnAuto p-1"><button class="btn btn-primary btn-height" title="AUTO UPDATE RECEIVED QTY" id="btnAutoUpdate">ACCEPT ALL</button></div>
-            <table id="table" class="fixed-width-table table ssm-table">
-                <thead id="table-header">
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
-        </div>
-        <div class="paginator" id="paginator-table">
+    <div class="row m-3" sstyle="display:none" id="UnloadingTable">
+        <div class="card-body mt-2">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table ssm-table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-table">
+            </div>
         </div>
     </div>
-</div>
-<div id="overlay" class="overlay"></div>
-<div id="toast" class="toast-container"></div>
+    <div id="overlay" class="overlay"></div>
+    <div id="toast" class="toast-container"></div>
 </div>
 <script src="~/assets/js/filter.js"></script>
+
+

@@ -14,7 +14,15 @@ $(document).ready(function () {
         }
     });
     MRNDetail();
-    
+    $('#txtBoxNo').on('focus', function (e) {
+        var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', 'none');
+            }, 2);
+    });
+    $('#txtBoxNo').on('blur', function () {
+        $(this).attr('inputmode', '');
+    });
 });
 //function BoxUnloading() {
 //    if ($("#txtBoxNo").val() == '') {

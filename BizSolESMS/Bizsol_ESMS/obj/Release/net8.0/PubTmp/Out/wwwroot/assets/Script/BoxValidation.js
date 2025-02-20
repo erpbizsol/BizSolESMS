@@ -21,6 +21,24 @@ $(document).ready(function () {
         AutoUpdateReceivedQty();
     });
     MRNDetail();
+    $('#txtBoxNo').on('focus', function (e) {
+        var inputElement = this;
+        setTimeout(function () {
+            inputElement.setAttribute('inputmode', 'none');
+        }, 2);
+    });
+    $('#txtBoxNo').on('blur', function () {
+        $(this).attr('inputmode', '');
+    });
+    $('#txtScanProduct').on('focus', function (e) {
+        var inputElement = this;
+        setTimeout(function () {
+            inputElement.setAttribute('inputmode', 'none');
+        }, 2);
+    });
+    $('#txtScanProduct').on('blur', function () {
+        $(this).attr('inputmode', '');
+    });
 });
 function BoxValidationDetail() {
     if ($("#txtBoxNo").val() == '') {
@@ -229,7 +247,7 @@ function SaveScanValidationDetail() {
         toastr.error("Please enter a Box No !");
         $("#txtBoxNo").focus();
         return;
-    } if ($("#txtScanProduct").val() == '') {
+    }else if ($("#txtScanProduct").val() == '') {
         toastr.error("Please scan product !");
         $("#txtScanProduct").focus();
         return;
