@@ -6,6 +6,11 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let CityList = [];
 $(document).ready(function () {
     $("#ERPHeading").text("Client/Vendor Master");
+    $('#txtAccounCode').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtAccountName").focus();
+        }
+    });
     $('#txtAccountName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtDisplayName").focus();
@@ -621,7 +626,7 @@ function addNewRowEdit(index, address) {
         <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}" autocomplete="off" maxlength="15" /></td>
         <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off"maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}" autocomplete="off" /></td>
-        <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+        <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
     `;
 
     table.appendChild(newRow);
@@ -745,7 +750,7 @@ function addNewRow() {
         <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off" maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
             
-        <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+        <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
 
     `;
             table.appendChild(newRow);
@@ -766,7 +771,7 @@ function addNewRow() {
         <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}"autocomplete="off" maxlength="15" /></td>
         <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off" maxlength="100" /></td>
         <td><input type="checkbox" checked class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
-        <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+        <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
     `;
         table.appendChild(newRow);
     }

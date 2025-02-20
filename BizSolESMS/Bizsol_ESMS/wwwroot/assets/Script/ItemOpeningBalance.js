@@ -320,7 +320,7 @@ function addNewRow() {
             <td id="txtItemUOM"></td>
             <td id="txtItemUOM"></td>
             <td id="txtItemUOM"></td>
-            <td><button id="btnSave" onclick="openSavePopup(this)" class="btn btn-success icon-height mb-1 Save" title="Save"><i class="fas fa-save"></i></button></td>
+            <td><button id="btnSave" onclick="openSavePopup(this)" class="btn btn-success icon-height mb-1 Save" title="New-Entry"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
 
       `;
             table.appendChild(newRow);

@@ -138,5 +138,10 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion  PrefixConfiguration 
+
+        public IActionResult Test()
+        {
+            return View();
+        }
     }
 }

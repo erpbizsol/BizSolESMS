@@ -54,7 +54,7 @@ function ShowStateMasterlist() {
         },
         success: function (response) {
             if (response.length > 0) {
-                $("#txtstatetable").show();
+                $("#txtstate").show();
               
                 const StringFilterColumn = ["State Name","Countery Name"];
                 const NumericFilterColumn = ["Reorder Level", "Reorder Qty", "Qty In Box"];
@@ -77,7 +77,7 @@ function ShowStateMasterlist() {
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
-                $("#txtstatetable").hide();
+                $("#txtstate").hide();
                 toastr.error("Record not found...!");
             }
         },
@@ -121,8 +121,9 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    BackMaster();
                     ShowStateMasterlist();
+                    BackMaster();
+                   
                 }
                 else {
                     toastr.error(response.Msg);
