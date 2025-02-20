@@ -174,13 +174,19 @@ function MRNDetail() {
     });
 
 }
-function StartUnloading(PickListNo, VehicleNo,Code) {
+async function StartUnloading(PickListNo, VehicleNo, Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     $("#UnloadingForm").show();
     $("#txtheaderdiv").show();
     $("#UnloadingTable1").hide();
     $("#txtPickListNo").val(PickListNo);
     $("#txtVehicleNo").val(VehicleNo);
     $("#txtCode").val(Code);
+    $('#txtBoxNo').focus();
     GetDataByPicklist();
 }
 function Back() {
@@ -258,3 +264,10 @@ function ChangecolorTr1() {
 }
 
 setInterval(ChangecolorTr1, 100);
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Box Unloading");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
+}

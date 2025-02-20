@@ -343,13 +343,19 @@ function MRNDetail() {
     });
 
 }
-function StartValidation(PickListNo, VehicleNo, Code) {
+async function StartValidation(PickListNo, VehicleNo, Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     $("#ValidateFrom").show();
     $("#UnloadingTable1").hide();
     $("#txtPickListNo").val(PickListNo);
     $("#txtVehicleNo").val(VehicleNo);
     $("#txtCode").val(Code);
     $("#txtheaderdiv").show();
+    $('#txtBoxNo').focus();
 }
 function Back() {
     $("#UnloadingTable1").show();
@@ -360,4 +366,11 @@ function Back() {
     $("#txtVehicleNo").val("");
     $("#txtCode").val("0");
     $("#txtBoxNo").val("");
+}
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Box Validation");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
+    }
 }
