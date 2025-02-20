@@ -276,17 +276,14 @@ function SaveScanValidationDetail() {
             } else if (response[0].Status == 'N') {
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
-                $("#txtScanProduct").val("");
             } else {
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
-                $("#txtScanProduct").val("");
             }
         },
         error: function (xhr, status, error) {
             showToast("INVALID SCAN NO !");
             $("#txtScanProduct").focus();
-            $("#txtScanProduct").val("");
         }
     });
 
