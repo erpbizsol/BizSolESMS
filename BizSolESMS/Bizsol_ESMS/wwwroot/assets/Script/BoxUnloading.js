@@ -219,7 +219,6 @@ function GetDataByPicklist() {
         },
         success: function (response) {
             if (response) {
-                if (response.MRNDetails && response.MRNDetails.length > 0) {
                     $("#UnloadingTable").show();
                     const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
                     const NumericFilterColumn = [];
@@ -230,11 +229,7 @@ function GetDataByPicklist() {
                     const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "BillQty", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
                     const ColumnAlignment = {
                     };
-                    BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response.MRNDetails, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
-                } else {
-                    toastr.error("Record not found...!");
-                    $("#UnloadingTable").hide();
-                }
+                    BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
             } else {
                 toastr.error("Record not found...!");
                 $("#UnloadingTable").hide();
@@ -249,8 +244,8 @@ function GetDataByPicklist() {
 function ChangecolorTr1() {
     const rows = $('#table-body tr');
     rows.each(function () {
-        const columnValue = $(this).find('td').eq(9).text().trim();
-        const columnValue1 = $(this).find('td').eq(8).text().trim();
+        const columnValue = $(this).find('td').eq(2).text().trim();
+        const columnValue1 = $(this).find('td').eq(1).text().trim();
         if (parseInt(columnValue1) !== parseInt(CaseNo)) {
             if (columnValue === 'Y') {
                 $(this).css('background-color', '#c3f1c7');
