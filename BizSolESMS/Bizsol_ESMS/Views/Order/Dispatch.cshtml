@@ -254,7 +254,7 @@
                                 <label for="txtOrderNo" class="col-form-label-sm fw-bold">Order No<span class="text-danger">*</span></label>
                                 <input type="text" id="txtOrderNo" list="txtOrderNoList" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled>
                                 <datalist id="txtOrderNoList"></datalist>
-                                <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled>
+                                <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled  value="0">
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtChallanNo" class="col-form-label-sm fw-bold">Challan No<span class="text-danger">*</span></label>
@@ -270,7 +270,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product<span class="text-danger">*</span></label>
-                                <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product..">
+                                <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product.." onfocus="this.select()">
                             </div>
                         </div>
                     </div>
@@ -285,7 +285,7 @@
                             </h2>
                             <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
                                 <div class="accordion-body-sec">
-                                    <div class="row">
+                                    <div class="row" id="tblDispatchData" style="display:none;">
                                         <div class="col-md-12">
                                             <div class="table-wrapper" style="overflow: auto;">
                                                 <table id="tblDispatchTable" class="table">

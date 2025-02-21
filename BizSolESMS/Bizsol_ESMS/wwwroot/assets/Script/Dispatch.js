@@ -8,6 +8,8 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let AccountList = [];
 let ItemDetail = [];
 let G_OrderList = [];
+let G_DispatchMaster_Code = 0;
+let G_Tab = 1;
 $(document).ready(function () {
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
@@ -69,72 +71,29 @@ $(document).ready(function () {
     });
    
     $("#txtOrderNo").on("change", function () {
-        var inputValue = $(this).val();
-        const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == inputValue);
-        if (item.Code != undefined) {
-            CreateOrderNo(item.Code)
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtOrderNoList option").each(function () {
+            if ($(this).val() === value) {
+                const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == value);
+                if (item.Code != undefined) {
+                    CreateOrderNo(item.Code)
+                }
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
         }
     });
+
     $("#txtOrderNo").on("focus", function () {
         $("#txtOrderNo").val("");
     });
 
 });
-function GetDispatchOrderList() {
-    $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetDispatchOrderList`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response.length > 0) {
-                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No"];
-                const NumericFilterColumn = [];
-                const DateFilterColumn = ["Challan Date"];
-                const Button = false;
-                const showButtons = [];
-                const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code"];
-                const ColumnAlignment = {
-                    "Reorder Level": 'right',
-                    "Reorder Qty": 'right',
-                    "Qty In Box": 'right',
-                };
-                const updatedResponse = response.map(item => ({
-                    ...item
-                    //, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    //<button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}')"><i class="fa-regular fa-circle-xmark"></i></button>`
-                }));
-                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
-            } else {
-                toastr.error("Record not found...!");
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-        }
-    });
-
-}
-async function Create() {
-    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
-    if (hasPermission == false) {
-        toastr.error(msg);
-        return;
-    }
-    ClearData();
-    $("#tab1").text("NEW");
-
-    $("#txtListpage").hide();
-    $("#txtCreatepage").show();
-    $("#txtheaderdiv").show();
-    $("#Orderdata").empty();
-    addNewRow();
-    disableFields(false);
-    $("#txtOrderNo").prop("disabled", true);
-}
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
@@ -170,194 +129,18 @@ function GetAccountMasterList() {
         }
     });
 }
-function GetOrderNoList(ClientName) {
-    if (ClientName != '') {
-        $.ajax({
-            url: `${appBaseURL}/api/OrderMaster/GetClientWiseOrderNo?ClientName=${ClientName}`,
-            type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.length > 0) {
-                    $('#txtOrderNo').empty();
-                    let options = '';
-                    response.forEach(item => {
-                        options += '<option value="' + item.OrderNoWithPrefix + '" text="' + item.OrderNoWithPrefix + '"></option>';
-                    });
-                    $('#txtOrderNo').html(options);
-                } else {
-                    $('#txtOrderNo').empty();
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-                $('#txtClientNameList').empty();
-            }
-        });
-    }
-}
-function GetItemDetails(element) {
-    var OrderNo = $(element).val();
-    $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetItemDetailByOrderNo?OrderNo=${OrderNo}`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response.length > 0) {
-                ItemDetail = response;
-                $('#txtItemBarCode').empty();
-                $('#txtItemCode').empty();
-                $('#txtItemName').empty();
-                let options1 = '';
-                let options2 = '';
-                let options3 = '';
-                response.forEach(item => {
-                    options1 += '<option value="' + item.ItemBarCode + '" text="' + item.Code + '"></option>';
-                    options2 += '<option value="' + item.ItemCode + '" text="' + item.Code + '"></option>';
-                    options3 += '<option value="' + item.ItemName + '" text="' + item.Code + '"></option>';
-                });
-                $('#txtItemBarCode').html(options1);
-                $('#txtItemCode').html(options2);
-                $('#txtItemName').html(options3);
-            } else {
-                $('#txtItemBarCode').empty();
-                $('#txtItemCode').empty();
-                $('#txtItemName').empty();
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-            $('#txtCountryNameList').empty();
-        }
-    });
-}
+
+
 function ClearData() {
+    G_DispatchMaster_Code = 0;
     $("#hfCode").val("0");
     $("#txtChallanNo").val("");
-    $("#txtAddress").val("");
-    $("#txtVehicleNo").val("");
-    $("#Orderdata").empty();
-
+    $("#txtOrderNo").val("");
+    $("#txtScanProduct").val("");
+    $("#txtClientDispatchName").val("");
+    $("#tblDispatchData").hide();
 }
-function Save() {
-    var ChallanNo = $("#txtChallanNo").val();
-    var ChallanDate = $("#txtChallanDate").val();
-    var ClientName = $("#txtClientName").val();
-    var VehicleNo = $("#txtVehicleNo").val();
 
-    if (!ChallanDate) {
-        toastr.error("Please Select an Challan Date!");
-        $("#txtChallanDate").focus();
-        return;
-    } else if (!ClientName) {
-        toastr.error("Please enter a Client Name!");
-        $("#txtClientName").focus();
-        return;
-    }
-    let validationFailed = false;
-    let CheckItemName = false;
-    let lastRow = $('#tblorderbooking #Orderdata tr').length;
-    $("#tblorderbooking tbody tr").each(function () {
-        const row = $(this);
-        if (lastRow > 1) {
-            CheckItemName = row.find(".txtItemName").val() !== '';
-        }
-        else if (lastRow === 1) {
-            CheckItemName = true;
-        }
-        if (CheckItemName) {
-            if (row.find(".txtOrderNo").val() == '') {
-                toastr.error("Please select Order No !");
-                row.find(".txtOrderNo").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtItemBarCode").val() == '') {
-                toastr.error("Please select Item Bar Code !");
-                row.find(".txtItemBarCode").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtItemCode").val() == '') {
-                toastr.error("Please select Item Code !");
-                row.find(".txtItemCode").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtItemAddress").val() == '') {
-                toastr.error("Please select Item Address !");
-                row.find(".txtItemAddress").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtOrderQty").val() == '') {
-                toastr.error("Please enter Order Qty !");
-                row.find(".txtOrderQty").focus();
-                validationFailed = true;
-                return;
-            } else if (row.find(".txtRate").val() == '') {
-                toastr.error("Please enter Rate !");
-                row.find(".txtRate").focus();
-                validationFailed = true;
-                return;
-            }
-        }
-    });
-    if (validationFailed) {
-        return;
-    }
-    const Payload = [{
-        Code: $("#hfCode").val(),
-        ChallanNo: $("#txtChallanNo").val(),
-        ChallanDate: convertDateFormat($("#txtChallanDate").val()),
-        ClientName: $("#txtClientName").val(),
-        VehicleNo: $("#txtVehicleNo").val()
-    }];
-    const Data = [];
-    $("#tblorderbooking tbody tr").each(function () {
-        const row = $(this);
-        if (row.find(".txtItemName").val() != '') {
-            const addressRow = {
-                OrderNo: row.find(".txtOrderNo").val(),
-                ItemName: row.find(".txtItemName").val(),
-                QtyBox: row.find(".txtQtyBox").val() || 0,
-                DispatchQty: row.find(".txtDispatchQty").val(),
-                Rate: row.find(".txtRate").val(),
-                Amount: row.find(".txtAmount").val(),
-                Remarks: row.find(".txtRemarks").val(),
-            };
-            Data.push(addressRow);
-        }
-    });
-
-    const payload = {
-        DispatchMaster: Payload,
-        DispatchDetails: Data,
-    };
-
-    $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/SaveDispatchOrderEntry?UserMaster_Code=${UserMaster_Code}`,
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify(payload),
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Auth-Key", authKeyData);
-        },
-        success: function (response) {
-            if (response.Status === "Y") {
-                toastr.success(response.Msg);
-                GetDispatchOrderList();
-                BackMaster();
-            } else {
-                toastr.error(response.Msg);
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", xhr.responseText);
-            toastr.error("An error occurred while saving the data.");
-        },
-    });
-}
 function OnChangeNumericTextBox(element) {
 
     element.value = element.value.replace(/[^0-9]/g, "");
@@ -396,62 +179,8 @@ function BizSolhandleEnterKey(event) {
         event.preventDefault();
     }
 }
-function addNewRow() {
-    let rowCount = 0;
-    const table = document.getElementById("tblorderbooking").querySelector("tbody");
-    const rows = table.querySelectorAll("tr");
-    const lastRow = rows[rows.length - 1];
-    if (rows.length > 0) {
-        if (!isRowComplete(lastRow)) {
-            alert("Please fill in all mandatory fields in the current row before adding a new row.");
-        } else {
-            rowCount = rows.length;
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                    <td><input type="text" list="txtOrderNo" onfocus="focusblank(this);" onfocusout="CheckOrderNo(this);" onchange="GetItemDetails(this);" class="txtOrderNo box_border form-control form-control-sm mandatory" id="txtOrderNo_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-                    <td><input type="text" list="txtItemBarCode" onfocus="focusblank(this);" onfocusout="CheckItemBarCode(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-                    <td><input type="text" list="txtItemCode" onfocus="focusblank(this);" onfocusout="CheckItemCode(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-                    <td><input type="text" list="txtItemName" onfocus="focusblank(this);" onfocusout="CheckItemName(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
-                    <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
-                    <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-                    <td><input type="text" disabled class="txtBalanceOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBalanceOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-                    <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-                    <td><input type="text" class="txtDispatchQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtDispatchQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-                    <td><input type="text" disabled class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-                    <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-                    <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-                    <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
-      `;
-            table.appendChild(newRow);
-        }
-    } else {
-        const newRow = document.createElement("tr");
-        newRow.innerHTML = `
-            <td><input type="text" list="txtOrderNo" onfocus="focusblank(this);" onfocusout="CheckOrderNo(this);" onchange="GetItemDetails(this);" class="txtOrderNo box_border form-control form-control-sm mandatory" id="txtOrderNo_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemBarCode" onfocus="focusblank(this);" onfocusout="CheckItemBarCode(this);" class="txtItemBarCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'BarCode');" id="txtItemBarCode_${rowCount}" autocomplete="off" required maxlength="20" /></td>
-            <td><input type="text" list="txtItemCode" onfocus="focusblank(this);" onfocusout="CheckItemCode(this);" class="txtItemCode box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemCode');" id="txttxtItemCode_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><input type="text" list="txtItemName" onfocus="focusblank(this);" onfocusout="CheckItemName(this);" class="txtItemName box_border form-control form-control-sm mandatory" onchange="FillallItemfield(this,'ItemName');" id="txtItemName_${rowCount}" autocomplete="off" maxlength="200"/></td>
-            <td><input type="text" class="txtItemAddress box_border form-control form-control-sm mandatory" id="txtItemAddress_${rowCount}" autocomplete="off" disabled /></td>
-            <td><input type="text" class="txtUOM box_border form-control form-control-sm mandatory" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
-            <td><input type="text" disabled class="txtBalanceOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtBalanceOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" oninput="SetvalueBillQtyBox(this);" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
-            <td><input type="text" class="txtDispatchQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtDispatchQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" disabled class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
-            <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
-      `;
-        table.appendChild(newRow);
-    }
-}
-$(document).on("click", ".deleteRow", function () {
-    const table = document.getElementById("tblorderbooking").querySelector("tbody");
-    if (table.querySelectorAll("tr").length > 1) {
-        $(this).closest("tr").remove();
-    } else {
-        alert("At least one row is required.");
-    }
-});
+
+
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Dispatch");
@@ -526,356 +255,8 @@ function DatePicker() {
         }
     });
 }
-function FillallItemfield(inputElement, value) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const inputValue = inputElement.value;
-        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
-        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
-        const itemCode = currentRow.querySelector('.txtItemCode');
-        const itemName = currentRow.querySelector('.txtItemName');
-        const itemAddress = currentRow.querySelector('.txtItemAddress');
-        const itemUOM = currentRow.querySelector('.txtUOM');
-        const itemRate = currentRow.querySelector('.txtRate');
-        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
-        const QtyBox = currentRow.querySelector(".txtQtyBox");
-
-        if (value == 'BarCode') {
-            $("#txtItemBarCode option").each(function () {
-                if ($(this).val() === inputValue) {
-                    const item = ItemDetail.find(entry => entry.ItemBarCode == inputValue);
-                    itemBarCode.value = item.ItemBarCode;
-                    itemCode.value = item.ItemCode;
-                    itemName.value = item.ItemName;
-                    itemAddress.value = item.locationName;
-                    itemUOM.value = item.UomName;
-                    BalanceOrderQty.value = item.OrderQty;
-                    itemRate.value = item.Rate;
-                    const isDisabled = item.QtyInBox === 0;
-                    QtyBox.value = '';
-                    QtyBox.disabled = isDisabled;
-                    isValid = true;
-                    return false;
-                } else {
-                    itemBarCode.value = "";
-                    itemCode.value = "";
-                    itemName.value = "";
-                    itemAddress.value = "";
-                    itemUOM.value = "";
-                    BalanceOrderQty.value = "";
-                }
-            });
-        }
-        if (value == 'ItemCode') {
-            $("#txtItemCode option").each(function () {
-                if ($(this).val() === inputValue) {
-                    const item = ItemDetail.find(entry => entry.ItemCode == inputValue);
-                    itemBarCode.value = item.ItemBarCode;
-                    itemCode.value = item.ItemCode;
-                    itemName.value = item.ItemName;
-                    itemAddress.value = item.locationName;
-                    itemUOM.value = item.UomName;
-                    BalanceOrderQty.value = item.OrderQty;
-                    itemRate.value = item.Rate;
-                    const isDisabled = item.QtyInBox === 0;
-                    QtyBox.value = '';
-                    QtyBox.disabled = isDisabled;
-                    isValid = true;
-                    return false;
-                } else {
-                    itemBarCode.value = "";
-                    itemCode.value = "";
-                    itemName.value = "";
-                    itemAddress.value = "";
-                    itemUOM.value = "";
-                    BalanceOrderQty.value = "";
-                }
-            });
-        }
-        if (value == 'ItemName') {
-            $("#txtItemName option").each(function () {
-                if ($(this).val() === inputValue) {
-                    const item = ItemDetail.find(entry => entry.ItemName == inputValue);
-                    itemBarCode.value = item.ItemBarCode;
-                    itemCode.value = item.ItemCode;
-                    itemName.value = item.ItemName;
-                    itemAddress.value = item.locationName;
-                    itemUOM.value = item.UomName;
-                    BalanceOrderQty.value = item.OrderQty;
-                    itemRate.value = item.Rate;
-                    const isDisabled = item.QtyInBox === 0;
-                    QtyBox.value = '';
-                    QtyBox.disabled = isDisabled;
-                    isValid = true;
-                    return false;
-                } else {
-                    itemBarCode.value = "";
-                    itemCode.value = "";
-                    itemName.value = "";
-                    itemAddress.value = "";
-                    itemUOM.value = "";
-                    BalanceOrderQty.value = "";
-                }
-            });
-        }
-
-        let lastRow = $('#tblorderbooking #Orderdata tr').length;
-        if (lastRow > 1) {
-            var Check = checkDuplicateEntries(inputElement, itemCode, itemName, itemOrderNo);
-            if (Check) {
-                alert('Duplicate entry not allowed for Order No and Same Item Name!');
-                itemBarCode.value = "";
-                itemCode.value = "";
-                itemName.value = "";
-                itemAddress.value = "";
-                itemUOM.value = "";
-                itemRate.value = "";
-                BalanceOrderQty.value = "";
-                QtyBox.value = '';
-                OrderQty.value = '';
-            }
-        }
-    }
-}
-function CalculateAmount(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
-        const BillQty = currentRow.querySelector('.txtDispatchQty');
-        const Rate = currentRow.querySelector('.txtRate');
-        const Amount = currentRow.querySelector('.txtAmount');
-        const billQtyValue = parseFloat(BillQty?.value) || 0;
-        const rateValue = parseFloat(Rate?.value) || 0;
-        if (BalanceOrderQty.value > 0) {
-            if (parseFloat(BalanceOrderQty.value) >= parseFloat(BillQty.value)) {
-                const billQtyValue = parseFloat(BillQty.value) || 0;
-                const rateValue = parseFloat(Rate.value) || 0;
-                const calculatedAmount = billQtyValue * rateValue;
-                if (Amount) {
-                    Amount.value = calculatedAmount.toFixed(2);
-                }
-            } else {
-                toastr.error("Please enter a valid quantity!");
-                BillQty.value = '';
-            }
-        } else {
-            toastr.error("Balance Qty 0: You have not dispatched this time!");
-            BillQty.value = '';
-        }
 
 
-    }
-}
-function GetRate(VendorName, ItemName) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: `${appBaseURL}/api/OrderMaster/ClientWiseRate?ClientName=${VendorName}&ItemName=${ItemName}`,
-            type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response.length > 0) {
-                    resolve(response);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-                reject(error);
-            }
-        });
-    });
-}
-function isRowComplete(row) {
-    const inputs = row.querySelectorAll("input.mandatory");
-    for (const input of inputs) {
-        if (input.value.trim() === "") {
-            input.focus();
-            return false;
-        }
-    }
-    return true;
-}
-$(document).on('keydown', '#tblorderbooking input', function (e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        let currentInput = $(this);
-        let currentRow = currentInput.closest('tr')[0];
-
-        let lastRow = $('#tblorderbooking #Orderdata tr').last();
-        if (lastRow && currentInput.hasClass('txtRemarks')) {
-            currentInput.hasClass('txtRemarks')
-            let parentRow = currentInput.closest('tr');
-            if (parentRow.is(lastRow)) {
-                addNewRow();
-                if (!isRowComplete(currentRow)) {
-                    return;
-                }
-            }
-        }
-        let inputs = $('#tblorderbooking').find('input:not([disabled])');
-        let currentIndex = inputs.index(currentInput);
-        if (currentIndex + 1 < inputs.length) {
-            inputs.eq(currentIndex + 1).focus();
-        }
-    }
-});
-function checkDuplicateEntries(inputElement, itemCode, itemName, OrderNo) {
-    let isDuplicate = false;
-    const currentRow = inputElement.closest('tr');
-    document.querySelectorAll('#tblorderbooking tbody tr').forEach(row => {
-        if (row === currentRow) return;
-
-        const existingItemCode = row.querySelector('.txtItemCode')?.value || '';
-        const existingItemName = row.querySelector('.txtItemName')?.value || '';
-        const existingtxtOrderNo = row.querySelector('.txtOrderNo')?.value || '';
-
-        if (existingItemCode === itemCode.value && existingItemName === itemName.value && existingtxtOrderNo === OrderNo.value) {
-            isDuplicate = true;
-        }
-    });
-
-    return isDuplicate;
-}
-function CheckItemName(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const value = inputElement.value;
-        let isValid = false;
-        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
-        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
-        const itemCode = currentRow.querySelector('.txtItemCode');
-        const itemName = currentRow.querySelector('.txtItemName');
-        const itemAddress = currentRow.querySelector('.txtItemAddress');
-        const itemUOM = currentRow.querySelector('.txtUOM');
-        const itemRate = currentRow.querySelector('.txtRate');
-        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
-        $("#txtItemName option").each(function () {
-            if ($(this).val() === value) {
-                isValid = true;
-                return false;
-            }
-        });
-        if (!isValid) {
-            itemBarCode.value = "";
-            itemCode.value = "";
-            itemName.value = "";
-            itemAddress.value = "";
-            itemUOM.value = "";
-            itemRate.value = "";
-            BalanceOrderQty.value = "";
-        }
-    }
-}
-function CheckItemCode(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const value = inputElement.value;
-        let isValid = false;
-        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
-        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
-        const itemCode = currentRow.querySelector('.txtItemCode');
-        const itemName = currentRow.querySelector('.txtItemName');
-        const itemAddress = currentRow.querySelector('.txtItemAddress');
-        const itemUOM = currentRow.querySelector('.txtUOM');
-        const itemRate = currentRow.querySelector('.txtRate');
-        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
-        $("#txtItemCode option").each(function () {
-            if ($(this).val() === value) {
-                isValid = true;
-                return false;
-            }
-        });
-        if (!isValid) {
-            itemBarCode.value = "";
-            itemCode.value = "";
-            itemName.value = "";
-            itemAddress.value = "";
-            itemUOM.value = "";
-            itemRate.value = "";
-            BalanceOrderQty.value = "";
-        }
-    }
-}
-function CheckItemBarCode(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const value = inputElement.value;
-        let isValid = false;
-        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
-        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
-        const itemCode = currentRow.querySelector('.txtItemCode');
-        const itemName = currentRow.querySelector('.txtItemName');
-        const itemAddress = currentRow.querySelector('.txtItemAddress');
-        const itemUOM = currentRow.querySelector('.txtUOM');
-        const itemRate = currentRow.querySelector('.txtRate');
-        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
-        $("#txtItemBarCode option").each(function () {
-            if ($(this).val() === value) {
-                isValid = true;
-                return false;
-            }
-        });
-        if (!isValid) {
-            itemBarCode.value = "";
-            itemCode.value = "";
-            itemName.value = "";
-            itemAddress.value = "";
-            itemUOM.value = "";
-            itemRate.value = "";
-            BalanceOrderQty.value = "";
-        }
-    }
-}
-function CheckOrderNo(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const value = inputElement.value;
-        let isValid = false;
-        const itemOrderNo = currentRow.querySelector('.txtOrderNo');
-        const itemBarCode = currentRow.querySelector('.txtItemBarCode');
-        const itemCode = currentRow.querySelector('.txtItemCode');
-        const itemName = currentRow.querySelector('.txtItemName');
-        const itemAddress = currentRow.querySelector('.txtItemAddress');
-        const itemUOM = currentRow.querySelector('.txtUOM');
-        const itemRate = currentRow.querySelector('.txtRate');
-        const BalanceOrderQty = currentRow.querySelector('.txtBalanceOrderQty');
-        $("#txtOrderNo option").each(function () {
-            if ($(this).val() === value) {
-                isValid = true;
-                return false;
-            }
-        });
-        if (!isValid) {
-            itemOrderNo.value = "";
-            itemBarCode.value = "";
-            itemCode.value = "";
-            itemName.value = "";
-            itemAddress.value = "";
-            itemUOM.value = "";
-            itemRate.value = "";
-            BalanceOrderQty.value = "";
-            GetItemDetails('');
-        }
-    }
-}
-function focusblank(element) {
-    $(element).val("");
-}
-function SetvalueBillQtyBox(inputElement) {
-    const currentRow = inputElement.closest('tr');
-    if (currentRow) {
-        const inputValue = inputElement.value;
-        const ItemName = currentRow.querySelector(".txtItemName");
-        const QtyBox = currentRow.querySelector(".txtQtyBox");
-        const OrderQty = currentRow.querySelector(".txtDispatchQty");
-        const Rate = currentRow.querySelector(".txtRate");
-        const Amount = currentRow.querySelector(".txtAmount");
-        const item = ItemDetail.find(entry => entry.ItemName == ItemName.value);
-        OrderQty.value = item.QtyInBox * QtyBox.value;
-        CalculateAmount(inputElement);
-    }
-}
 function convertToUppercase(element) {
     element.value = element.value.toUpperCase();
 }
@@ -979,6 +360,113 @@ function showToast(Msg) {
         }, 300);
     }, 3000);
 }
+function GetDispatchOrderLists(Mode) {
+    G_Tab = 1;
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $("#DataTable").show();
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+                const NumericFilterColumn = ["Order Qty", "Balance Qty"];
+                const DateFilterColumn = ["Order Date"];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = ["Code"];
+                const ColumnAlignment = {
+                    "Reorder Level": 'right',
+                    "Reorder Qty": 'right',
+                    "Qty In Box": 'right',
+                };
+                const updatedResponse = response.map(item => ({
+                    ...item
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Create Dispatch" onclick="StartDispatchPanding('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+            } else {
+                $("#DataTable").hide();
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+async function StartDispatchPanding(Code, Mode) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("NEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || "");
+                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
+                    $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+
+                }
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    $("#tblDispatchData").show();
+                    var Response = response.OrderDetial;
+                    Data = response.OrderDetial;
+                    const StringFilterColumn = [];
+                    const NumericFilterColumn = ["Order Quantity", "Balance Quantity"];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    const hiddenColumns = ["Code"];
+                    const ColumnAlignment = {
+                        "Order Quantity": "right",
+                        "Balance Quantity": "right"
+                    };
+                    const updatedResponse = Response.map(item => ({
+                        ...item,
+                        "Scan Qty": `
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        "Manual Qty": `
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        "Dispatch Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                    }));
+                    BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+                } else {
+                    $("#tblDispatchData").hide();
+                }
+            } else {
+                toastr.error("Record not found...!");
+                $("#tblDispatchData").hide();
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Record not found...!");
+            $("#tblDispatchData").hide();
+        }
+    });
+}
 function checkValidateqty(element, Code) {
     var manualQty = parseInt($(element).val());
     var scanQty = parseInt($("#txtScanQty_" + Code).val());
@@ -986,15 +474,11 @@ function checkValidateqty(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
+        StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
         $("#txtManualQty_" + Code).focus();
-        StartDispatch($("#hfCode").val());
     } else {
-        $("#txtDispatchQty_" + Code).val(total);
-        if (manualQty > 0) {
-            SaveManualQty(Code, scanQty, manualQty, total);
-        }
         var currentRow = $(element).closest("tr");
         var nextRow = currentRow.next("tr");
 
@@ -1013,16 +497,19 @@ function checkValidateqty1(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatch($("#hfCode").val());
+        StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
     } else {
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
-            SaveManualQty(Code, scanQty, manualQty, total);
+            SaveNewManualQty(Code, scanQty, manualQty, total);
         }
     }
 }
+
+
+
 function OnChangeNumericTextBox(event, element) {
     if (event.charCode == 13 || event.charCode == 46 || event.charCode == 8 || (event.charCode >= 48 && event.charCode <= 57)) {
         element.setCustomValidity("");
@@ -1049,9 +536,10 @@ function BizSolhandleEnterKey(event) {
         event.preventDefault();
     }
 }
-function SaveManualQty(Code, ScanQty, ManualQty, DispatchQty) {
+function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
     const payload = {
         Code: Code,
+        DispatchMaster_Code: G_DispatchMaster_Code,
         ScanNo: "",
         ScanQty: ScanQty,
         ManualQty: ManualQty,
@@ -1059,7 +547,7 @@ function SaveManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         UserMaster_Code: UserMaster_Code
     }
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch`,
+        url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch?Mode=Edit`,
         type: 'POST',
         contentType: "application/json",
         dataType: "json",
@@ -1069,7 +557,12 @@ function SaveManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         },
         success: function (response) {
             if (response[0].Status == 'Y') {
-                StartDispatch($("#hfCode").val());
+                if (G_Tab == 2) {
+                    StartDispatchTransit(G_DispatchMaster_Code, "DDETAILS");
+                } else if (G_Tab == 3){
+                    StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+                }
+                
             }
         },
         error: function (xhr, status, error) {
@@ -1078,37 +571,36 @@ function SaveManualQty(Code, ScanQty, ManualQty, DispatchQty) {
     });
 
 }
-function AutoUpdateReceivedQty() {
-    if ($("#txtBoxNo").val() == '') {
-        toastr.error("Please enter a Box No !");
-        $("#txtBoxNo").focus();
-        return;
-    }
+function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
     const payload = {
-        BoxNo: $("#txtBoxNo").val(),
-        Code: 0,
-        ScanNo: ""
+        Code: Code,
+        DispatchMaster_Code:G_DispatchMaster_Code,
+        ScanNo: "",
+        ScanQty: ScanQty,
+        ManualQty: ManualQty,
+        DispatchQty: DispatchQty,
+        UserMaster_Code: UserMaster_Code
     }
-    if (confirm("Are you sure you want to auto update received qty ?")) {
-        $.ajax({
-            url: `${appBaseURL}/api/MRNMaster/AutoUpdateReceivedQty`,
-            type: 'POST',
-            contentType: "application/json",
-            dataType: "json",
-            data: JSON.stringify(payload),
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
-            },
-            success: function (response) {
-                if (response[0].Status == 'Y') {
-                    BoxValidationDetail();
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch?Mode=New`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                G_DispatchMaster_Code = response[0].DispatchMaster_Code;
+                StartDispatchPanding($("#hfCode").val(),"ORDERDETAILS");
             }
-        });
-    }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
 }
 function SaveScanQty() {
     if ($("#txtScanProduct").val() == '') {
@@ -1122,10 +614,11 @@ function SaveScanQty() {
         ScanQty: 0,
         ManualQty: 0,
         DispatchQty: 0,
+        DispatchMaster_Code: G_DispatchMaster_Code,
         UserMaster_Code: UserMaster_Code
     }
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch`,
+        url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch?Mode=Scan`,
         type: 'POST',
         contentType: "application/json",
         dataType: "json",
@@ -1135,17 +628,22 @@ function SaveScanQty() {
         },
         success: function (response) {
             if (response[0].Status == 'Y') {
-                StartDispatch($("#hfCode").val());
+                G_DispatchMaster_Code = response[0].DispatchMaster_Code;
+                if (G_Tab == 1) {
+                    StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+                }
+                else if (G_Tab == 2) {
+                    StartDispatchTransit($("#hfCode").val(), "DDETAILS");
+                } else if (G_Tab == 3) {
+                    StartDispatchCompleteTransit($("#hfCode").val(), "CDETAILS");
+                }
                 $("#txtScanProduct").focus();
-                //$("#txtScanProduct").val("");
             } else if (response[0].Status == 'N') {
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
-                //$("#txtScanProduct").val("");
             } else {
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
-                //$("#txtScanProduct").val("");
             }
         },
         error: function (xhr, status, error) {
@@ -1156,45 +654,120 @@ function SaveScanQty() {
     });
 
 }
-function GetDispatchOrderLists(Mode) {
+
+
+async function StartDispatchTransit(Code, Mode) {
+    G_DispatchMaster_Code = Code;
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#tab1").text("NEW");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
-            if (response.length > 0) {
-                $("#DataTable").show();
-                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Balance Qty"];
-                const DateFilterColumn = ["Order Date"];
-                const Button = false;
-                const showButtons = [];
-                const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code"];
-                const ColumnAlignment = {
-                    "Reorder Level": 'right',
-                    "Reorder Qty": 'right',
-                    "Qty In Box": 'right',
-                };
-                const updatedResponse = response.map(item => ({
-                    ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Create Despatch" onclick="StartDispatch('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`
-                }));
-                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+            if (response) {
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || "");
+                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
+                    $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+                    $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
+
+                }
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    $("#tblDispatchData").show();
+                    var Response = response.OrderDetial;
+                    Data = response.OrderDetial;
+                    const StringFilterColumn = [];
+                    const NumericFilterColumn = ["Order Quantity", "Balance Quantity"];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    const hiddenColumns = ["Code"];
+                    const ColumnAlignment = {
+                        "Order Quantity": "right",
+                        "Balance Quantity": "right"
+                    };
+                    const updatedResponse = Response.map(item => ({
+                        ...item,
+                        "Scan Qty": `
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        "Manual Qty": `
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        "Dispatch Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                    }));
+                    BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+                } else {
+                    $("#tblDispatchData").hide();
+                }
             } else {
-                $("#DataTable").hide();
                 toastr.error("Record not found...!");
+                $("#tblDispatchData").hide();
             }
         },
         error: function (xhr, status, error) {
-            console.error("Error:", error);
+            toastr.error("Record not found...!");
+            $("#tblDispatchData").hide();
         }
     });
+}
+function checkValidateqtyTransit(element, Code) {
+    var manualQty = parseInt($(element).val());
+    var scanQty = parseInt($("#txtScanQty_" + Code).val());
 
+    const item = Data.find(entry => entry.Code == Code);
+    var total = scanQty + manualQty;
+
+    if (total > parseInt(item["Order Quantity"])) {
+        toastr.error("Invalid Dispatch Qty!");
+        StartDispatchTransit($("#hfCode").val(), "ORDERDETAILS");
+        $("#txtManualQty_" + Code).focus();
+    } else {
+        var currentRow = $(element).closest("tr");
+        var nextRow = currentRow.next("tr");
+
+        if (nextRow.length > 0) {
+            var nextInput = nextRow.find(".txtManualQty").first();
+            if (nextInput.length > 0) {
+                nextInput.focus();
+            }
+        }
+    }
+}
+function checkValidateqtyTransit1(element, Code) {
+    var manualQty = parseInt($(element).val());
+    var scanQty = parseInt($("#txtScanQty_" + Code).val());
+
+    const item = Data.find(entry => entry.Code == Code);
+    var total = scanQty + manualQty;
+
+    if (total > parseInt(item["Order Quantity"])) {
+        toastr.error("Invalid Dispatch Qty!");
+        StartDispatchTransit($("#hfCode").val(), "ORDERDETAILS");
+    } else {
+        $("#txtDispatchQty_" + Code).val(total);
+        if (manualQty > 0) {
+            SaveEditManualQty(Code, scanQty, manualQty, total);
+        }
+    }
 }
 function GetDespatchTransitOrderList(Mode) {
+    G_Tab = 2;
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -1218,9 +791,9 @@ function GetDespatchTransitOrderList(Mode) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatch('${item.Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
-                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
                     `
                 }));
@@ -1236,7 +809,9 @@ function GetDespatchTransitOrderList(Mode) {
     });
 
 }
+
 function GetCompletedDespatchOrderList(Mode) {
+    G_Tab = 3;
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -1260,9 +835,9 @@ function GetCompletedDespatchOrderList(Mode) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatch('${item.Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.Code}'),'CDETAILS'"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}'),'CDETAILS'"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -1277,21 +852,19 @@ function GetCompletedDespatchOrderList(Mode) {
     });
 
 }
-async function StartDispatch(Code, Mode) {
+async function StartDispatchCompleteTransit(Code, Mode) {
+    G_DispatchMaster_Code = Code;
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
-    ClearData();
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
-    $("#txtOrderNo").prop("disabled", true);
-    disableFields(false);
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}`,
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
         contentType: "application/json",
         dataType: "json",
@@ -1309,40 +882,88 @@ async function StartDispatch(Code, Mode) {
 
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    $("#tblDispatchData").show();
                     var Response = response.OrderDetial;
                     Data = response.OrderDetial;
                     const StringFilterColumn = [];
-                    const NumericFilterColumn = ["Order Quantity"];
+                    const NumericFilterColumn = ["Order Quantity", "Balance Quantity"];
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
                     const hiddenColumns = ["Code"];
                     const ColumnAlignment = {
-                        "Order Quantity": "right"
+                        "Order Quantity": "right",
+                        "Balance Quantity": "right"
                     };
                     const updatedResponse = Response.map(item => ({
                         ...item,
                         "Scan Qty": `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                         "Manual Qty": `
-                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyCompleteTransit(this,${item.Code});" onfocusout="checkValidateqtyCompleteTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
                         "Dispatch Qty": `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
                     }));
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
+                } else {
+                    $("#tblDispatchData").hide();
                 }
             } else {
                 toastr.error("Record not found...!");
+                $("#tblDispatchData").hide();
             }
         },
         error: function (xhr, status, error) {
             toastr.error("Record not found...!");
+            $("#tblDispatchData").hide();
         }
     });
 }
-async function StartDispatchOrderNo(Code) {
+function checkValidateqtyCompleteTransit(element, Code) {
+    var manualQty = parseInt($(element).val());
+    var scanQty = parseInt($("#txtScanQty_" + Code).val());
+
+    const item = Data.find(entry => entry.Code == Code);
+    var total = scanQty + manualQty;
+
+    if (total > parseInt(item["Order Quantity"])) {
+        toastr.error("Invalid Dispatch Qty!");
+        StartDispatchCompleteTransit($("#hfCode").val(), "CDETAILS");
+        $("#txtManualQty_" + Code).focus();
+    } else {
+        var currentRow = $(element).closest("tr");
+        var nextRow = currentRow.next("tr");
+
+        if (nextRow.length > 0) {
+            var nextInput = nextRow.find(".txtManualQty").first();
+            if (nextInput.length > 0) {
+                nextInput.focus();
+            }
+        }
+    }
+}
+function checkValidateqtyCompleteTransit1(element, Code) {
+    var manualQty = parseInt($(element).val());
+    var scanQty = parseInt($("#txtScanQty_" + Code).val());
+
+    const item = Data.find(entry => entry.Code == Code);
+    var total = scanQty + manualQty;
+
+    if (total > parseInt(item["Order Quantity"])) {
+        toastr.error("Invalid Dispatch Qty!");
+        StartDispatchCompleteTransit($("#hfCode").val(), "CDETAILS");
+    } else {
+        $("#txtDispatchQty_" + Code).val(total);
+        if (manualQty > 0) {
+            SaveEditManualQty(Code, scanQty, manualQty, total);
+        }
+    }
+}
+
+
+async function StartDispatchOrderNo() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -1355,62 +976,11 @@ async function StartDispatchOrderNo(Code) {
     $("#txtheaderdiv").show();
     $("#txtOrderNo").prop("disabled", false);
     $("#txtScanProduct").prop("disabled", false);
+    
     disableFields(false);
 }
 function CreateOrderNo(Code) {
-    
-    $("#txtOrderNo").prop("disabled", false);
-    $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=ORDERDETAILS`,
-        type: 'GET',
-        contentType: "application/json",
-        dataType: "json",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response) {
-                if (response.OrderMaster && response.OrderMaster.length > 0) {
-                    const OrderMaster = response.OrderMaster[0];
-                    $("#hfCode").val(OrderMaster.Code || "");
-                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
-                    $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
-                    $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-
-                }
-                if (response.OrderDetial && response.OrderDetial.length > 0) {
-                    var Response = response.OrderDetial;
-                    Data = response.OrderDetial;
-                    const StringFilterColumn = [];
-                    const NumericFilterColumn = ["Order Quantity"];
-                    const DateFilterColumn = [];
-                    const Button = false;
-                    const showButtons = [];
-                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
-                    const hiddenColumns = ["Code"];
-                    const ColumnAlignment = {
-                        "Order Quantity": "right"
-                    };
-                    const updatedResponse = Response.map(item => ({
-                        ...item,
-                        "Scan Qty": `
-                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                        "Manual Qty": `
-                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Dispatch Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
-                    }));
-                    BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-
-                }
-            } else {
-                toastr.error("Record not found...!");
-            }
-        },
-        error: function (xhr, status, error) {
-            toastr.error("Record not found...!");
-        }
-    });
+    StartDispatchPanding(Code, "ORDERDETAILS")
 }
 function GetOrderNoList1() {
     $.ajax({
