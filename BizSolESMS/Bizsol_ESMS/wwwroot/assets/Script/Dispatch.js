@@ -1221,7 +1221,7 @@ function GetDespatchTransitOrderList(Mode) {
                     ...item
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatch('${item.Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
                     `
                 }));
@@ -1263,7 +1263,7 @@ function GetCompletedDespatchOrderList(Mode) {
                     ...item
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatch('${item.Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.Code}'),'CDETAILS'"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -1360,6 +1360,7 @@ async function StartDispatchOrderNo(Code) {
     disableFields(false);
 }
 function CreateOrderNo(Code) {
+    
     $("#txtOrderNo").prop("disabled", false);
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=ORDERDETAILS`,
@@ -1447,7 +1448,7 @@ function GetOrderNoList1() {
     });
 
 }
-async function ViewDespatchTransit(Code) {
+async function ViewDespatchTransit(Code,Mode) {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -1459,7 +1460,7 @@ async function ViewDespatchTransit(Code) {
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}`,
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}`,
         type: 'GET',
         contentType: "application/json",
         dataType: "json",
@@ -1480,6 +1481,7 @@ async function ViewDespatchTransit(Code) {
 
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    disableFields(true);
                     var Response = response.OrderDetial;
                     Data = response.OrderDetial;
                     const StringFilterColumn = [];
@@ -1576,5 +1578,5 @@ function MarkasCompete(code) {
     });
 }
 function disableFields(disable) {
-    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+    $("#txtCreatepage").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
