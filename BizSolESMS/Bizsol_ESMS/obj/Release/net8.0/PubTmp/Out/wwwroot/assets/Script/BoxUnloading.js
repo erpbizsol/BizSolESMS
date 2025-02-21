@@ -279,6 +279,10 @@ function GetModuleMasterCode() {
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+<<<<<<< HEAD
+}
+=======
 }
 
 
+>>>>>>> 9c86ffd37c28954a706a36cae228c754ce7950fd
