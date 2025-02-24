@@ -93,7 +93,6 @@ $(document).ready(function () {
     });
 
 });
-
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
@@ -129,10 +128,9 @@ function GetAccountMasterList() {
         }
     });
 }
-
-
 function ClearData() {
     G_DispatchMaster_Code = 0;
+    G_Tab = 1;
     $("#hfCode").val("0");
     $("#txtChallanNo").val("");
     $("#txtOrderNo").val("");
@@ -140,7 +138,6 @@ function ClearData() {
     $("#txtClientDispatchName").val("");
     $("#tblDispatchData").hide();
 }
-
 function OnChangeNumericTextBox(element) {
 
     element.value = element.value.replace(/[^0-9]/g, "");
@@ -179,8 +176,6 @@ function BizSolhandleEnterKey(event) {
         event.preventDefault();
     }
 }
-
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Dispatch");
@@ -255,8 +250,6 @@ function DatePicker() {
         }
     });
 }
-
-
 function convertToUppercase(element) {
     element.value = element.value.toUpperCase();
 }
@@ -507,9 +500,6 @@ function checkValidateqty1(element, Code) {
         }
     }
 }
-
-
-
 function OnChangeNumericTextBox(event, element) {
     if (event.charCode == 13 || event.charCode == 46 || event.charCode == 8 || (event.charCode >= 48 && event.charCode <= 57)) {
         element.setCustomValidity("");
@@ -654,8 +644,6 @@ function SaveScanQty() {
     });
 
 }
-
-
 async function StartDispatchTransit(Code, Mode) {
     G_DispatchMaster_Code = Code;
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
@@ -809,7 +797,6 @@ function GetDespatchTransitOrderList(Mode) {
     });
 
 }
-
 function GetCompletedDespatchOrderList(Mode) {
     G_Tab = 3;
     $.ajax({
@@ -961,8 +948,6 @@ function checkValidateqtyCompleteTransit1(element, Code) {
         }
     }
 }
-
-
 async function StartDispatchOrderNo() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
