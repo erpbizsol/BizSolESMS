@@ -837,7 +837,7 @@ function GetCompletedDespatchOrderList(Mode) {
                     ...item
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}'),'CDETAILS'"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -1016,19 +1016,19 @@ function GetOrderNoList1() {
     });
 
 }
-async function ViewDespatchTransit(Code,Mode) {
+async function ViewDespatchTransit(Code, Mode) {
+    G_DispatchMaster_Code = Code;
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
-    ClearData();
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}`,
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
         contentType: "application/json",
         dataType: "json",
@@ -1038,49 +1038,52 @@ async function ViewDespatchTransit(Code,Mode) {
         success: function (response) {
             if (response) {
                 if (response.OrderMaster && response.OrderMaster.length > 0) {
-                    disableFields(true);
                     const OrderMaster = response.OrderMaster[0];
                     $("#hfCode").val(OrderMaster.Code || "");
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-                    $("#txtScanProduct").val(OrderMaster.ChallanNo || "").prop("disabled", true);
-
-
+                    $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
+                    $("#txtScanProduct").prop("disabled", true);
+                    disableFields(true);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
-                    disableFields(true);
+                    $("#tblDispatchData").show();
                     var Response = response.OrderDetial;
                     Data = response.OrderDetial;
                     const StringFilterColumn = [];
-                    const NumericFilterColumn = ["Order Quantity"];
+                    const NumericFilterColumn = ["Order Quantity", "Balance Quantity"];
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
                     const hiddenColumns = ["Code"];
                     const ColumnAlignment = {
-                        "Order Quantity": "right"
+                        "Order Quantity": "right",
+                        "Balance Quantity": "right"
                     };
                     const updatedResponse = Response.map(item => ({
                         ...item,
                         "Scan Qty": `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                         "Manual Qty": `
-                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code},'T');" onfocusout="checkValidateqty1(this,${item.Code},'T');" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
                         "Dispatch Qty": `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
                     }));
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
+                } else {
+                    $("#tblDispatchData").hide();
                 }
-
             } else {
                 toastr.error("Record not found...!");
+                $("#tblDispatchData").hide();
             }
         },
         error: function (xhr, status, error) {
             toastr.error("Record not found...!");
+            $("#tblDispatchData").hide();
         }
     });
 }
