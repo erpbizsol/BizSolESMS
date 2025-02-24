@@ -10,6 +10,7 @@ let ItemDetail = [];
 let G_OrderList = [];
 let G_DispatchMaster_Code = 0;
 let G_Tab = 1;
+let All = 0;
 $(document).ready(function () {
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
@@ -91,6 +92,10 @@ $(document).ready(function () {
     $("#txtOrderNo").on("focus", function () {
         $("#txtOrderNo").val("");
     });
+    $("#ShowAll").click(function () {
+        All = 1;
+        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
+    });
 
 });
 function BackMaster() {
@@ -131,6 +136,7 @@ function GetAccountMasterList() {
 function ClearData() {
     G_DispatchMaster_Code = 0;
     G_Tab = 1;
+    All = 0;
     $("#hfCode").val("0");
     $("#txtChallanNo").val("");
     $("#txtOrderNo").val("");
@@ -393,6 +399,8 @@ function GetDispatchOrderLists(Mode) {
 
 }
 async function StartDispatchPanding(Code, Mode) {
+    G_Tab = 1;
+    $("#btnShowAll").hide();
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -548,7 +556,11 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         success: function (response) {
             if (response[0].Status == 'Y') {
                 if (G_Tab == 2) {
-                    StartDispatchTransit(G_DispatchMaster_Code, "DDETAILS");
+                    if (All == 0) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+                    } else if (All == 1) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+                    }
                 } else if (G_Tab == 3){
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
                 }
@@ -623,9 +635,13 @@ function SaveScanQty() {
                     StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                 }
                 else if (G_Tab == 2) {
-                    StartDispatchTransit($("#hfCode").val(), "DDETAILS");
+                    if (All == 0) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+                    } else if (All == 1) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+                    }
                 } else if (G_Tab == 3) {
-                    StartDispatchCompleteTransit($("#hfCode").val(), "CDETAILS");
+                    StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
                 }
                 $("#txtScanProduct").focus();
             } else if (response[0].Status == 'N') {
@@ -644,8 +660,12 @@ function SaveScanQty() {
     });
 
 }
-async function StartDispatchTransit(Code, Mode) {
-    G_DispatchMaster_Code = Code;
+async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
+    G_DispatchMaster_Code = DispatchMaster_Code;
+    G_Tab = 2;
+    $("#hfCode").val(Code);
+    var Code1 = Code;
+    $("#btnShowAll").show();
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -656,7 +676,7 @@ async function StartDispatchTransit(Code, Mode) {
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code1}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
         contentType: "application/json",
         dataType: "json",
@@ -723,7 +743,7 @@ function checkValidateqtyTransit(element, Code) {
 
     if (total > parseInt(item["Order Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatchTransit($("#hfCode").val(), "ORDERDETAILS");
+        StartDispatchTransit($("#hfCode").val(),G_DispatchMaster_Code, "ORDERDETAILS");
         $("#txtManualQty_" + Code).focus();
     } else {
         var currentRow = $(element).closest("tr");
@@ -746,7 +766,7 @@ function checkValidateqtyTransit1(element, Code) {
 
     if (total > parseInt(item["Order Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatchTransit($("#hfCode").val(), "ORDERDETAILS");
+        StartDispatchTransit($("#hfCode").val(),G_DispatchMaster_Code, "ORDERDETAILS");
     } else {
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
@@ -779,7 +799,7 @@ function GetDespatchTransitOrderList(Mode) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
@@ -823,7 +843,7 @@ function GetCompletedDespatchOrderList(Mode) {
                 const updatedResponse = response.map(item => ({
                     ...item
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
-                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
@@ -841,6 +861,8 @@ function GetCompletedDespatchOrderList(Mode) {
 }
 async function StartDispatchCompleteTransit(Code, Mode) {
     G_DispatchMaster_Code = Code;
+    G_Tab = 3;
+    $("#btnShowAll").hide();
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -917,7 +939,7 @@ function checkValidateqtyCompleteTransit(element, Code) {
 
     if (total > parseInt(item["Order Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatchCompleteTransit($("#hfCode").val(), "CDETAILS");
+        StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
         $("#txtManualQty_" + Code).focus();
     } else {
         var currentRow = $(element).closest("tr");
@@ -940,7 +962,7 @@ function checkValidateqtyCompleteTransit1(element, Code) {
 
     if (total > parseInt(item["Order Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatchCompleteTransit($("#hfCode").val(), "CDETAILS");
+        StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
     } else {
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
@@ -1072,7 +1094,7 @@ async function ViewDespatchTransit(Code, Mode) {
         }
     });
 }
-async function deleteItem(code, Order, button) {
+async function DeleteItem(code, Order, button) {
     let tr = button.closest("tr");
     tr.classList.add("highlight");
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
@@ -1095,7 +1117,11 @@ async function deleteItem(code, Order, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    GetDespatchTransitOrderList();
+                    if (G_Tab == 2) {
+                        GetDespatchTransitOrderList('DespatchTransit');
+                    } else if (G_Tab == 3) {
+                        GetCompletedDespatchOrderList('CompletedDespatch');
+                    }
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -1121,7 +1147,7 @@ function MarkasCompete(code) {
         success: function (response) {
             if (response.Status === 'Y') {
                 toastr.success(response.Msg);
-                GetDespatchTransitOrderList();
+                GetDespatchTransitOrderList('DespatchTransit');
             } else {
                 toastr.error("Unexpected response format.");
             }
