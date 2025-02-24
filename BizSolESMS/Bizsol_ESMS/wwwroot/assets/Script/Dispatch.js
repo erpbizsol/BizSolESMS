@@ -684,6 +684,8 @@ async function StartDispatchTransit(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
+                    $("#txtScanProduct").prop("disabled", false);
+                    disableFields(false);
 
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -879,7 +881,8 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-
+                    $("#txtScanProduct").prop("disabled", false);
+                    disableFields(false);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     $("#tblDispatchData").show();
