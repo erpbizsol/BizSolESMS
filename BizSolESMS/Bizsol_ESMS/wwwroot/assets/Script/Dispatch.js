@@ -1129,6 +1129,7 @@ async function deleteItem(code, Order, button) {
         $('tr').removeClass('highlight');
     }
 }
+
 function MarkasCompete(code) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetMarkasCompeteByOrderNo?Code=${code}`,
