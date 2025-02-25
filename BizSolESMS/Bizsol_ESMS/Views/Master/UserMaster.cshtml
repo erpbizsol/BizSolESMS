@@ -4,6 +4,27 @@
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="~/assets/script/UserMaster.js"></script>
 <style>
+    /* table filter header text in one line  */
+    th, .filter-table-heading {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .filter-table-heading {
+        overflow: hidden;
+    }
+
+    .table th {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .table-filter-arrow {
+        position: relative;
+        display: inline-block;
+    }
+    /* End table filter header text in one line  */
+
     .form-group {
         margin-bottom: 8px;
     }
