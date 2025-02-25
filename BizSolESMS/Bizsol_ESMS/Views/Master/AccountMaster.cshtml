@@ -6,6 +6,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="~/assets/script/accountmaster.js"></script>
 <style>
+    th, .filter-table-heading {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .filter-table-heading {
+        overflow: hidden;
+    }
+
+    .table th {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .table-filter-arrow {
+        position: relative;
+        display: inline-block;
+    }
+
     .tabs {
         width: 100%;
         max-width: 2000px;
@@ -14,6 +33,7 @@
         overflow: hidden;
         padding: 0.7rem;
     }
+
     .tabSec {
         color: white;
         width: 117px;
@@ -28,32 +48,40 @@
         margin-top: -8px;
         background: #1d4b7d;
     }
+
     .tab-content {
         display: none;
         padding: 16px;
         border: 1px solid lightgray;
         border-radius: 5px;
     }
-    .tab-content.active {
-        display: block;
-    }
+
+        .tab-content.active {
+            display: block;
+        }
+
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
+
     .datepicker td, .datepicker th {
         border-radius: 20px !important;
     }
+
     .datepicker table tr td, .datepicker table tr td {
         padding: 8px 9px !important;
         height: 16px !important;
     }
+
     .datepicker table tfoot {
         display: none;
     }
+
     .page-content {
         display: block;
     }
+
     .textCreatepage .tabs .fix-header {
         position: sticky;
         top: 0;
@@ -64,6 +92,7 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
         height: 36px;
     }
+
     .shadow-sm {
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
@@ -71,6 +100,7 @@
         margin-top: 15px;
         border-top: 1px solid #c9cae7;
     }
+
     .btn-icon {
         font-size: 14px;
         border-radius: 50%;
@@ -78,6 +108,7 @@
         color: #fff;
         padding: 6px;
     }
+
     .btn-icon {
         font-size: 14px;
         border-radius: 20px;
@@ -85,19 +116,25 @@
         color: #fff;
         padding: 6px;
     }
+
     .btn-danger {
         background-color: #ab1624;
     }
+
     .highlight {
         background-color: #f5c0bfc4;
     }
+
     .container-fluid {
         padding-right: 0;
         padding-left: 0;
     }
+
     .container {
+        overflow: auto;
         height: 81vh;
     }
+
     .breadcrumbs1 {
         background: #dddde4;
         position: sticky;
@@ -108,6 +145,7 @@
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
     }
+
     .page-content {
         padding: 3px 0;
     }

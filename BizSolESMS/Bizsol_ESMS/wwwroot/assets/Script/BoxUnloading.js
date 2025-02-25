@@ -101,7 +101,7 @@ function BoxUnloading() {
         success: function (response) {
             if (response.length > 0) {
                 if (response[0].Status == 'Y') {
-                    GetDataByPicklist();
+                    GetDataByPicklist('Res');
                     CaseNo = response[0].CaseNo;
                     goToRow(CaseNo);
                    $("#txtBoxNo").focus();
@@ -196,7 +196,7 @@ async function StartUnloading(PickListNo, VehicleNo, Code) {
     $("#txtVehicleNo").val(VehicleNo);
     $("#txtCode").val(Code);
     $('#txtBoxNo').focus();
-    GetDataByPicklist();
+    GetDataByPicklist('Load');
 }
 function Back() {
     $("#UnloadingTable1").show();
@@ -209,7 +209,7 @@ function Back() {
     $("#txtheaderdiv").hide();
     CaseNo = 0;
 }
-function GetDataByPicklist() {
+function GetDataByPicklist(Orderby) {
     var Code = $("#txtCode").val();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/MRNDetailsByCode?Code=` + Code,
@@ -226,10 +226,28 @@ function GetDataByPicklist() {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = [];
-                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "BillQty", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
+                const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "BillQty", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName","SNo"];
                     const ColumnAlignment = {
+                };
+                var value = [];
+                if (Orderby == 'Load') {
+                    var response1 = {
+                        desc: true,
+                        field: "CaseNo",
+                        data: response
                     };
-                    BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+                     value = response1.data.sort((a, b) => {
+                        return response1.asc
+                            ? b[response1.field] - a[response1.field]  // Descending order
+                            : a[response1.field] - b[response1.field]; // Ascending order
+                    });
+                } else {
+                    value = response;
+                }
+                
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", value, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+               
+                
             } else {
                 toastr.error("Record not found...!");
                 $("#UnloadingTable").hide();
