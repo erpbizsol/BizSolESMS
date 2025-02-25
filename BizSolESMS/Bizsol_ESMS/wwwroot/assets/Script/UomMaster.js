@@ -19,10 +19,10 @@ $(document).ready(function () {
                 $("#txtbtnSave").focus();
             }
         });
-    ShowUomMasterlist();
+    ShowUomMasterlist('Load');
     GetModuleMasterCode();
 });
-function ShowUomMasterlist() {
+function ShowUomMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowUOM`,
         type: 'GET',
@@ -53,7 +53,9 @@ function ShowUomMasterlist() {
                 
             } else {
                 $("#txtUomTable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -92,7 +94,7 @@ function Save() {
                 if (response.Status === "Y") {
                     setTimeout(() => {
                         toastr.success(response.Msg);
-                        ShowUomMasterlist();
+                        ShowUomMasterlist('Get');
                         BackMaster();
                     }, 1000);
                 } else {
@@ -214,7 +216,7 @@ async function deleteItem(code, uomName, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowUomMasterlist();
+                    ShowUomMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
