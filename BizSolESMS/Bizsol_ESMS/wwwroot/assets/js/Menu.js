@@ -138,7 +138,7 @@ function setActiveMenu() {
 }
 async function GetPerPageSize() {
     $.ajax({
-        url: `${appBaseURL}/api/Configuration/GetPerPageSizeList`,
+        url: `${baseUrl1}/api/Configuration/GetPerPageSizeList`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -158,7 +158,7 @@ async function GetPerPageSize() {
 }
 async function WarehouseNameForDefault() {
     $.ajax({
-        url: `${appBaseURL}/api/Master/WarehouseNameForDefault`,
+        url: `${baseUrl1}/api/Master/WarehouseNameForDefault`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
