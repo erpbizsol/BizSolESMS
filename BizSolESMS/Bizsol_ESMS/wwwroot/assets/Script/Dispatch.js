@@ -96,6 +96,12 @@ $(document).ready(function () {
         All = 1;
         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
     });
+    $('#txtScanProduct').on('focus', function (e) {
+        var inputElement = this;
+        setTimeout(function () {
+            inputElement.setAttribute('inputmode', 'none');
+        }, 2);
+    });
 
 });
 function BackMaster() {
@@ -743,9 +749,13 @@ function checkValidateqtyTransit(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatchTransit($("#hfCode").val(),G_DispatchMaster_Code, "ORDERDETAILS");
+        if (All == 0) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+        } else if (All == 1) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+        }
         $("#txtManualQty_" + Code).focus();
     } else {
         var currentRow = $(element).closest("tr");
@@ -766,9 +776,13 @@ function checkValidateqtyTransit1(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatchTransit($("#hfCode").val(),G_DispatchMaster_Code, "ORDERDETAILS");
+        if (All == 0) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+        } else if (All == 1) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+        }
     } else {
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
@@ -940,7 +954,7 @@ function checkValidateqtyCompleteTransit(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
         StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
         $("#txtManualQty_" + Code).focus();
@@ -963,7 +977,7 @@ function checkValidateqtyCompleteTransit1(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
         StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
     } else {
@@ -1140,7 +1154,6 @@ async function DeleteItem(code, Order, button) {
         $('tr').removeClass('highlight');
     }
 }
-
 function MarkasCompete(code) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetMarkasCompeteByOrderNo?Code=${code}`,
