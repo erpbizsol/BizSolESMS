@@ -27,11 +27,13 @@ $(document).ready(function () {
             setTimeout(function () {
                 inputElement.setAttribute('inputmode', '');
             }, 2);
+            ShowBoxNumberList($("#txtPickListNo").val());
         } else {
             var inputElement = this;
             setTimeout(function () {
                 inputElement.setAttribute('inputmode', 'none');
             }, 2);
+            $('#txtBoxNoList').empty();
         }
     });
     $('#txtBoxNo').on('blur', function () {
@@ -394,4 +396,29 @@ function GetModuleMasterCode() {
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+function ShowBoxNumberList(PickListNo) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ShowBoxNumber?PickListNo=${PickListNo}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#txtBoxNoList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.BoxNo + '" text="' + item.BoxNo + '"></option>';
+                });
+                $('#txtBoxNoList').html(options);
+            } else {
+                $('#txtBoxNoList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtBoxNoList').empty();
+        }
+    });
 }
