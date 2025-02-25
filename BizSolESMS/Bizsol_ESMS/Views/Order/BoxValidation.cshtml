@@ -323,7 +323,8 @@
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No</label><span class="text-danger">*</span>
-                        <input type="text" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No.." onfocus="this.select()">
+                           <datalist id="txtBoxNoList"></datalist>
+                           <input list="txtBoxNoList"id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No.." onfocus="this.select()">
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product</label><span class="text-danger">*</span>

@@ -23,6 +23,21 @@ $(document).ready(function () {
     $('#txtBoxNo').on('blur', function () {
         $(this).attr('inputmode', '');
     });
+    $('#txtBoxNo').on('focus', function (e) {
+        if ($("#txtIsManual").is(':checked')) {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', '');
+            }, 2);
+            ShowBoxNumberList($("#txtPickListNo").val());
+        } else {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', 'none');
+            }, 2);
+            $("#txtBoxNoList").empty();
+        }
+    });
 });
 //function BoxUnloading() {
 //    if ($("#txtBoxNo").val() == '') {
@@ -273,15 +288,8 @@ function ChangecolorTr1() {
         }
     });
     if (parseInt(CaseNo) > 0) {
-        var td = rows.find('td').filter(function () {
-            return $(this).text().trim() === String(CaseNo);
-        });
-        if (td.length > 0) {
-            var tr = td.closest("tr");
-            tr.css('background-color', '#2be399');
-        } else {
-            console.log('No matching row found for CaseNo:', CaseNo);
-        }
+            const firstTr = document.querySelector("#table-body > tr");
+            firstTr.style.backgroundColor = "#2be399";
     }
 }
 
@@ -292,6 +300,31 @@ function GetModuleMasterCode() {
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+function ShowBoxNumberList(PickListNo) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ShowBoxNumber?PickListNo=${PickListNo}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#txtBoxNoList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.BoxNo + '" text="' + item.BoxNo + '"></option>';
+                });
+                $('#txtBoxNoList').html(options);
+            } else {
+                $('#txtBoxNoList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtBoxNoList').empty();
+        }
+    });
 }
 
 

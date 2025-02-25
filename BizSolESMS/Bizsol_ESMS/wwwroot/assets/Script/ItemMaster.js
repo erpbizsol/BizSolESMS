@@ -110,7 +110,7 @@ $(document).ready(function () {
         }
     });
   
-    ShowItemMasterlist();
+    ShowItemMasterlist('Load');
     GetGroupMasterList();
     GetUOMDropDownList();
     GetCategoryDropDownList();
@@ -308,7 +308,7 @@ function UpdateLabelforItemMaster() {
         }
     });
 }
-function ShowItemMasterlist() {
+function ShowItemMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemMaster`,
         type: 'GET',
@@ -341,7 +341,10 @@ function ShowItemMasterlist() {
                 ChangecolorTr();
             } else {
                 $("#txtitemtable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
+                
             }
         },
         error: function (xhr, status, error) {
@@ -448,8 +451,9 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    ShowItemMasterlist('Get');
                     BackMaster();
-                    ShowItemMasterlist();
+                   
                 }
                 else {
                     toastr.error(response.Msg);
@@ -544,7 +548,7 @@ async function deleteItem(code, ItemName, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowItemMasterlist();
+                    ShowItemMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }

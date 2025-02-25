@@ -10,10 +10,10 @@ $(document).ready(function () {
             $("#txtsave").focus();
         }
     });
-    LocationList();
+    LocationList('Load');
     GetModuleMasterCode()
 });
-function LocationList() {
+function LocationList(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowLocationMaster`,
         type: 'GET',
@@ -43,7 +43,9 @@ function LocationList() {
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
                 $("#txtlocationtable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -74,8 +76,9 @@ function Save() {
                 success: function (response) {
                     if (response.Status === 'Y') {
                         toastr.success(response.Msg);
+                        LocationList('Get');
                         BackMaster();
-                        LocationList();
+                       
                     }
                     else {
                         toastr.error(response.Msg);
@@ -136,7 +139,7 @@ async function deleteLocation(code, location, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    LocationList();
+                    LocationList('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }

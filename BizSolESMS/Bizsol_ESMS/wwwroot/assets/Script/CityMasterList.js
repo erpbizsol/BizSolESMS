@@ -24,7 +24,7 @@ $(document).ready(function () {
             $("#txtsave").focus();
         }
     });
-    ShowCityMasterlist();
+    ShowCityMasterlist('Load');
     GetGroupMasterList();
     $("#txtStateName").on("change", function () {
         let value = $(this).val();
@@ -43,7 +43,7 @@ $(document).ready(function () {
     });
     GetModuleMasterCode();
 });
-function ShowCityMasterlist() {
+function ShowCityMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowCityMaster`,
         type: 'GET',
@@ -75,7 +75,9 @@ function ShowCityMasterlist() {
 
             } else {
                 $("#txtCityTable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -119,8 +121,8 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    ShowCityMasterlist('Get');
                     BackMaster();
-                    ShowCityMasterlist();
                 }
                 else {
                     toastr.error(response.Msg);
@@ -188,7 +190,7 @@ async function deleteItem(code, city, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowCityMasterlist();
+                    ShowCityMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }

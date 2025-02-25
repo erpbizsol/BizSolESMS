@@ -16,7 +16,7 @@ $(document).ready(function () {
             $("#txtbtnSave").focus();
         }
     });
-    ShowSubGroupMasterlist();
+    ShowSubGroupMasterlist('Load');
     GetMainLocationList();
     $("#txtGroupName").on("change", function () {
         let value = $(this).val();
@@ -64,8 +64,9 @@ function Save() {
                 success: function (response) {
                     if (response.Status === 'Y') {
                         toastr.success(response.Msg);
+                        ShowSubGroupMasterlist('Get');
                         BackMaster();
-                        ShowSubGroupMasterlist();
+                        
                     }
                     else {
                         toastr.error(response.Msg);
@@ -78,7 +79,7 @@ function Save() {
             });
         }
 }
-function ShowSubGroupMasterlist() {
+function ShowSubGroupMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowSubGroupMaster`,
         type: 'GET',
@@ -109,7 +110,9 @@ function ShowSubGroupMasterlist() {
 
             } else {
                 $("#txtsubgrouptable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -170,7 +173,7 @@ async function deleteSubGroupMaster(code, subGroupName, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowSubGroupMasterlist();
+                    ShowSubGroupMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }

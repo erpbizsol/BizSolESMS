@@ -38,7 +38,7 @@ $(document).ready(function () {
     });
     GetAccountMasterList();
     GetItemDetails();
-    ShowOrderMasterlist();
+    ShowOrderMasterlist('Load');
     $("#btnAddNewRow").click(function () {
         addNewRow();
     });
@@ -79,7 +79,7 @@ $(document).ready(function () {
         }
     });
 });
-function ShowOrderMasterlist() {
+function ShowOrderMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowOrderMaster`,
         type: 'GET',
@@ -111,7 +111,9 @@ function ShowOrderMasterlist() {
 
             } else {
                 $("#txtordertable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -234,7 +236,7 @@ async function deleteItem(code, Order) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowOrderMasterlist();
+                    ShowOrderMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -426,7 +428,7 @@ function Save() {
             if (response.Status === "Y") {
                 setTimeout(() => {
                     toastr.success(response.Msg);
-                    ShowOrderMasterlist();
+                    ShowOrderMasterlist('Get');
                     BackMaster();
                 }, 1000);
             } else {
@@ -1023,7 +1025,7 @@ function SaveImportFile() {
         success: function (response) {
             if (response.Status === "Y") {
                 toastr.success(response.Msg);
-                ShowOrderMasterlist();
+                ShowOrderMasterlist('Get');
                 BackMaster();
                 BackImport();
             } else if (response.Status === "N") {

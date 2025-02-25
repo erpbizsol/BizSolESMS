@@ -11,6 +11,7 @@ let G_OrderList = [];
 let G_DispatchMaster_Code = 0;
 let G_Tab = 1;
 let All = 0;
+let G_IDFORTRCOLOR = '';
 $(document).ready(function () {
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
@@ -57,12 +58,10 @@ $(document).ready(function () {
     });
 
     $(".despatchTransit").click(function () {
-        
         GetDespatchTransitOrderList('DespatchTransit');
     });
 
     $(".completedDespatch").click(function () {
-
         GetCompletedDespatchOrderList('CompletedDespatch');
     });
     $('#txtScanProduct').on('keydown', function (e) {
@@ -96,15 +95,31 @@ $(document).ready(function () {
         All = 1;
         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
     });
+    $('#txtScanProduct').on('focus', function (e) {
+        var inputElement = this;
+        setTimeout(function () {
+            inputElement.setAttribute('inputmode', 'none');
+        }, 2);
+    });
 
 });
 function BackMaster() {
+    G_IDFORTRCOLOR = '';
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     $("#txtheaderdiv").hide();
     ClearData();
     disableFields(false);
     $("#txtOrderNo").prop("disabled", true);
+    if (G_Tab == 3) {
+        GetCompletedDespatchOrderList('CompletedDespatch');
+    }
+    if (G_Tab == 2) {
+        GetDespatchTransitOrderList('DespatchTransit');
+    }
+    if (G_Tab == 1) {
+        GetDispatchOrderLists('GETCLIENT');
+    }
 }
 function GetAccountMasterList() {
     $.ajax({
@@ -135,7 +150,6 @@ function GetAccountMasterList() {
 }
 function ClearData() {
     G_DispatchMaster_Code = 0;
-    G_Tab = 1;
     All = 0;
     $("#hfCode").val("0");
     $("#txtChallanNo").val("");
@@ -504,6 +518,7 @@ function checkValidateqty1(element, Code) {
     } else {
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
+            G_IDFORTRCOLOR = "txtDispatchQty_" + Code;
             SaveNewManualQty(Code, scanQty, manualQty, total);
         }
     }
@@ -564,7 +579,7 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
                 } else if (G_Tab == 3){
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
                 }
-                
+                G_IDFORTRCOLOR = 'GET';
             }
         },
         error: function (xhr, status, error) {
@@ -595,7 +610,8 @@ function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         success: function (response) {
             if (response[0].Status == 'Y') {
                 G_DispatchMaster_Code = response[0].DispatchMaster_Code;
-                StartDispatchPanding($("#hfCode").val(),"ORDERDETAILS");
+                StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+                G_IDFORTRCOLOR = 'GET';
             }
         },
         error: function (xhr, status, error) {
@@ -643,11 +659,14 @@ function SaveScanQty() {
                 } else if (G_Tab == 3) {
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
                 }
+                G_IDFORTRCOLOR = 'GET';
                 $("#txtScanProduct").focus();
             } else if (response[0].Status == 'N') {
+                G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
             } else {
+                G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
             }
@@ -743,9 +762,13 @@ function checkValidateqtyTransit(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatchTransit($("#hfCode").val(),G_DispatchMaster_Code, "ORDERDETAILS");
+        if (All == 0) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+        } else if (All == 1) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+        }
         $("#txtManualQty_" + Code).focus();
     } else {
         var currentRow = $(element).closest("tr");
@@ -766,9 +789,13 @@ function checkValidateqtyTransit1(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
-        StartDispatchTransit($("#hfCode").val(),G_DispatchMaster_Code, "ORDERDETAILS");
+        if (All == 0) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+        } else if (All == 1) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+        }
     } else {
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
@@ -940,7 +967,7 @@ function checkValidateqtyCompleteTransit(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
         StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
         $("#txtManualQty_" + Code).focus();
@@ -963,7 +990,7 @@ function checkValidateqtyCompleteTransit1(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Order Quantity"])) {
+    if (total > parseInt(item["Balance Quantity"])) {
         toastr.error("Invalid Dispatch Qty!");
         StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
     } else {
@@ -1140,7 +1167,6 @@ async function DeleteItem(code, Order, button) {
         $('tr').removeClass('highlight');
     }
 }
-
 function MarkasCompete(code) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetMarkasCompeteByOrderNo?Code=${code}`,
@@ -1166,3 +1192,10 @@ function MarkasCompete(code) {
 function disableFields(disable) {
     $("#txtCreatepage").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
+function ChangecolorTr() {
+    if (G_IDFORTRCOLOR != '') {
+        const firstTr = document.querySelector("#DispatchTable-Body > tr");
+        firstTr.style.backgroundColor = "#2be399";
+    }
+}
+setInterval(ChangecolorTr, 100);

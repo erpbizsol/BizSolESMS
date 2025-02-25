@@ -5,6 +5,7 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let Data = [];
+let G_IDFORTRCOLOR = '';
 $(document).ready(function () {
     $("#ERPHeading").text("Box-Validation");
     $('#txtBoxNo').on('keydown', function (e) {
@@ -27,11 +28,13 @@ $(document).ready(function () {
             setTimeout(function () {
                 inputElement.setAttribute('inputmode', '');
             }, 2);
+            ShowBoxNumberList($("#txtPickListNo").val());
         } else {
             var inputElement = this;
             setTimeout(function () {
                 inputElement.setAttribute('inputmode', 'none');
             }, 2);
+            $('#txtBoxNoList').empty();
         }
     });
     $('#txtBoxNo').on('blur', function () {
@@ -241,6 +244,7 @@ function SaveManualValidationDetail(Code,ScanQty,ManualQty,ReceivedQty) {
         success: function (response) {
             if (response[0].Status=='Y') {
                 BoxValidationDetail();
+                G_IDFORTRCOLOR = 'GET';
             }
         },
         error: function (xhr, status, error) {
@@ -280,12 +284,15 @@ function SaveScanValidationDetail() {
             if (response[0].Status == 'Y') {
                 BoxValidationDetail();
                 $("#txtScanProduct").focus();
+                G_IDFORTRCOLOR = 'GET';
             } else if (response[0].Status == 'N') {
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
+                G_IDFORTRCOLOR = '';
             } else {
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
+                G_IDFORTRCOLOR = '';
             }
         },
         error: function (xhr, status, error) {
@@ -387,6 +394,7 @@ function Back() {
     $("#txtVehicleNo").val("");
     $("#txtCode").val("0");
     $("#txtBoxNo").val("");
+    G_IDFORTRCOLOR = '';
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
@@ -395,3 +403,35 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
+function ShowBoxNumberList(PickListNo) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ShowBoxNumber?PickListNo=${PickListNo}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#txtBoxNoList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.BoxNo + '" text="' + item.BoxNo + '"></option>';
+                });
+                $('#txtBoxNoList').html(options);
+            } else {
+                $('#txtBoxNoList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtBoxNoList').empty();
+        }
+    });
+}
+function ChangecolorTr() {
+    if (G_IDFORTRCOLOR != '') {
+        const firstTr = document.querySelector("#table-body > tr");
+        firstTr.style.backgroundColor = "#2be399";
+    }
+}
+setInterval(ChangecolorTr, 100);

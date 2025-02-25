@@ -8,7 +8,7 @@ $(document).ready(function () {
     $("#ERPHeading").text("User Master");
     UserGroupList();
     DesignationList();
-    UserMasterList();
+    UserMasterList('Load');
     $('#btnBrowse').on('click', function (e) {
         $("#txtUserImg").click();
     });
@@ -180,7 +180,7 @@ function DesignationList() {
         }
     });
 }
-function UserMasterList() {
+function UserMasterList(Type) {
     $.ajax({
         url: `${appBaseURL}/api/UserMaster/GetUserMasterList?UserMaster_Code=${UserMaster_Code}`,
         type: 'GET',
@@ -216,7 +216,10 @@ function UserMasterList() {
 
             } else {
                 $("#txtUsertable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
+               
             }
         },
         error: function (xhr, status, error) {
@@ -292,7 +295,7 @@ async function Delete(code, username, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    UserMasterList();
+                    UserMasterList('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -556,7 +559,7 @@ function SaveUserMaster(){
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
                     Back();
-                    UserMasterList();
+                    UserMasterList('Get');
                 } else if (response.Status === 'N') {
                     toastr.error(response.Msg);
                 }
