@@ -15,7 +15,7 @@ $(document).ready(function () {
     $('#exportExcel').click(function () {
         exportTableToExcel();
     });
-    ShowCategoryMasterlist();
+    ShowCategoryMasterlist('Load');
     GetModuleMasterCode();
 });
 function Save() {
@@ -40,8 +40,9 @@ function Save() {
                 success: function (response) {
                     if (response.Status === 'Y') {
                         toastr.success(response.Msg);
+                        ShowCategoryMasterlist('Get');
                         BackMaster();
-                        ShowCategoryMasterlist();
+                       
                     }
                     else {
                         toastr.error(response.Msg);
@@ -55,7 +56,7 @@ function Save() {
         }
     
 }
-function ShowCategoryMasterlist() {
+function ShowCategoryMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowCategoryMaster`,
         type: 'GET',
@@ -86,7 +87,10 @@ function ShowCategoryMasterlist() {
 
             } else {
                 $("#txtcategorytable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
+               
             }
         },
         error: function (xhr, status, error) {
@@ -146,7 +150,7 @@ async function deleteCatagery(code, category, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowCategoryMasterlist();
+                    ShowCategoryMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }

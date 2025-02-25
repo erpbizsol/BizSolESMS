@@ -45,7 +45,7 @@ $(document).ready(function () {
         }
     });
     GetCityDropDownList();
-    ShowWarehouseMaster();
+    ShowWarehouseMaster('Load');
     $("#txtCity").on("change", function () {
         let value = $(this).val();
         let isValid = false;
@@ -102,8 +102,9 @@ function Save() {
         success: function (response) {
             if (response.Status === 'Y') {
                 toastr.success(response.Msg);
+                ShowWarehouseMaster('Get');
                 BackMaster();
-                ShowWarehouseMaster();
+                
             } else {
                 toastr.error(response.Msg);
             }
@@ -125,7 +126,7 @@ function Save() {
         }
     });
 }
-function ShowWarehouseMaster() {
+function ShowWarehouseMaster(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowWarehouseMaster`,
         type: 'GET',
@@ -156,7 +157,9 @@ function ShowWarehouseMaster() {
 
             } else {
                 $("#txtwarehousetable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -227,7 +230,7 @@ async function deleteWarehouse(code, warehouse,button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowWarehouseMaster();
+                    ShowWarehouseMaster('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
