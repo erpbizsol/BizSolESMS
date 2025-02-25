@@ -22,10 +22,17 @@ $(document).ready(function () {
     });
     MRNDetail();
     $('#txtBoxNo').on('focus', function (e) {
-        var inputElement = this;
-        setTimeout(function () {
-            inputElement.setAttribute('inputmode', 'none');
-        }, 2);
+        if ($("#txtIsManual").is(':checked')) {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', '');
+            }, 2);
+        } else {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', 'none');
+            }, 2);
+        }
     });
     $('#txtBoxNo').on('blur', function () {
         $(this).attr('inputmode', '');

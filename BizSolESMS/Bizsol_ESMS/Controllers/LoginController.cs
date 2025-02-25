@@ -57,7 +57,6 @@ namespace Bizsol_ESMS.Controllers
                             {
                                 connectionMYSqlString = connectionMYSqlString.Replace("IPMySql", dr["sqladdress"].ToString());
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlPort", "65448");
-
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlDatabase", dr["LoginDatabase"].ToString());
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlUser", dr["userid"].ToString());
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlPassword", dr["pwd"].ToString());
@@ -101,7 +100,7 @@ namespace Bizsol_ESMS.Controllers
                 string query = "SELECT * FROM usermaster WHERE UserID=@UserID And Status='Y'";
                 using (var command = new MySqlCommand(query, connections))
                 {
-                    command.Parameters.AddWithValue("@UserID", model.UserID);
+                    command.Parameters.AddWithValue("@UserID", model.UserID.Trim());
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.HasRows)
