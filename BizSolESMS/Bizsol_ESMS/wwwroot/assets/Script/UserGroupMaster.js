@@ -5,7 +5,7 @@ let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
     $("#ERPHeading").text("User Group Master");
-    UserGroupMasterList();
+    UserGroupMasterList('Load');
     $("#btnSave").click(function () {
         SaveUserGroupMaster();
     })
@@ -24,7 +24,7 @@ $(document).ready(function () {
     });
     GetModuleMasterCode();
 });
-function UserGroupMasterList() {
+function UserGroupMasterList(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetUserGroupMasterList`,
         type: 'GET',
@@ -53,7 +53,9 @@ function UserGroupMasterList() {
 
             } else {
                 $("#txtUserGroupMaster").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -112,7 +114,7 @@ async function Delete(code, userGroup,button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    UserGroupMasterList();
+                    UserGroupMasterList('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -198,7 +200,7 @@ function SaveUserGroupMaster() {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
                     Back();
-                    UserGroupMasterList();
+                    UserGroupMasterList('Get');
                 } else if (response.Status === 'N') {
                     toastr.error(response.Msg);
                 }

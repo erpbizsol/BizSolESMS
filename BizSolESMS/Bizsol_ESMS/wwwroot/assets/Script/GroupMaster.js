@@ -14,7 +14,7 @@ $(document).ready(function () {
             $("#txtbtnSave").focus();
         }
     });
-    ShowMasterlist();
+    ShowMasterlist('Load');
     $('#exportExcel').click(function () {
         exportTableToExcel();
     });
@@ -41,8 +41,9 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    ShowMasterlist('Get');
                     BackMaster();
-                    ShowMasterlist();
+                  
                 }
                 else {
                     toastr.error(response.Msg);
@@ -56,7 +57,7 @@ function Save() {
     }
 
 }
-function ShowMasterlist() {
+function ShowMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowGroupMaster`,
         type: 'GET',
@@ -87,7 +88,10 @@ function ShowMasterlist() {
 
             } else {
                 $("#txtgrouptable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
+                
             }
         },
         error: function (xhr, status, error) {
@@ -145,7 +149,7 @@ async function deleteGroup(code, group, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowMasterlist();
+                    ShowMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }

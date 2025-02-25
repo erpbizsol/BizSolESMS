@@ -12,10 +12,10 @@ $(document).ready(function () {
             $("#txtbtnSave").focus();
         }
     });
-    ShowBrandMasterlist();
+    ShowBrandMasterlist('Load');
     GetModuleMasterCode();
 });
-function ShowBrandMasterlist() {
+function ShowBrandMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowBrandMaster`,
         type: 'GET',
@@ -46,7 +46,9 @@ function ShowBrandMasterlist() {
 
             } else {
                 $("#txtbrandtable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -79,10 +81,8 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
+                    ShowBrandMasterlist('Get');
                     BackMaster();
-                    ShowBrandMasterlist();
-
-
                 }
                 else {
                     toastr.error(response.Msg);
@@ -153,7 +153,7 @@ async function deleteBrand(code, brand, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowBrandMasterlist();
+                    ShowBrandMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
