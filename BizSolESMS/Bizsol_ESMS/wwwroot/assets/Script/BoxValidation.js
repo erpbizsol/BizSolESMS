@@ -5,6 +5,7 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let Data = [];
+let G_IDFORTRCOLOR = '';
 $(document).ready(function () {
     $("#ERPHeading").text("Box-Validation");
     $('#txtBoxNo').on('keydown', function (e) {
@@ -243,6 +244,7 @@ function SaveManualValidationDetail(Code,ScanQty,ManualQty,ReceivedQty) {
         success: function (response) {
             if (response[0].Status=='Y') {
                 BoxValidationDetail();
+                G_IDFORTRCOLOR = 'GET';
             }
         },
         error: function (xhr, status, error) {
@@ -282,12 +284,15 @@ function SaveScanValidationDetail() {
             if (response[0].Status == 'Y') {
                 BoxValidationDetail();
                 $("#txtScanProduct").focus();
+                G_IDFORTRCOLOR = 'GET';
             } else if (response[0].Status == 'N') {
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
+                G_IDFORTRCOLOR = '';
             } else {
                 showToast(response[0].Msg);
                 $("#txtScanProduct").focus();
+                G_IDFORTRCOLOR = '';
             }
         },
         error: function (xhr, status, error) {
@@ -389,6 +394,7 @@ function Back() {
     $("#txtVehicleNo").val("");
     $("#txtCode").val("0");
     $("#txtBoxNo").val("");
+    G_IDFORTRCOLOR = '';
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
@@ -422,3 +428,10 @@ function ShowBoxNumberList(PickListNo) {
         }
     });
 }
+function ChangecolorTr() {
+    if (G_IDFORTRCOLOR != '') {
+        const firstTr = document.querySelector("#table-body > tr");
+        firstTr.style.backgroundColor = "#2be399";
+    }
+}
+setInterval(ChangecolorTr, 100);

@@ -35,7 +35,7 @@ $(document).ready(function () {
             setTimeout(function () {
                 inputElement.setAttribute('inputmode', 'none');
             }, 2);
-            $("#txtPickListNo").empty();
+            $("#txtBoxNoList").empty();
         }
     });
 });
@@ -288,15 +288,8 @@ function ChangecolorTr1() {
         }
     });
     if (parseInt(CaseNo) > 0) {
-        var td = rows.find('td').filter(function () {
-            return $(this).text().trim() === String(CaseNo);
-        });
-        if (td.length > 0) {
-            var tr = td.closest("tr");
-            tr.css('background-color', '#2be399');
-        } else {
-            console.log('No matching row found for CaseNo:', CaseNo);
-        }
+            const firstTr = document.querySelector("#table-body > tr");
+            firstTr.style.backgroundColor = "#2be399";
     }
 }
 
