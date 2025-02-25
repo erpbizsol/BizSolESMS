@@ -5912,8 +5912,8 @@ table, th, tr, td {
 
 table > thead, th {
     position: sticky;
-    top: 0px;
-    /*top: -1px;*/
+/*    top: 0px;*/
+    top: -1px;
     border-collapse: collapse;
     z-index: 1;
 }
@@ -6299,7 +6299,6 @@ a.icon-height {
 }
 
 /* Overlay styles */
-
 #sidebar-overlay {
     background-color: rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -6314,3 +6313,24 @@ a.icon-height {
 /* END Overlay styles */
 
 /*tabs */
+
+/* table heading(th) in one row */
+th, .filter-table-heading {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.filter-table-heading {
+    overflow: hidden;
+}
+
+.table th {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-filter-arrow {
+    position: relative;
+    display: inline-block;
+}
+/* End table heading(th) in one row */
