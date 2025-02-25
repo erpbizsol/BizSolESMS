@@ -397,7 +397,7 @@ function Save() {
         const row = $(this);
         if (row.find(".txtItemName").val() != '') {
             const addressRow = {
-                ItemName: row.find(".txtItemName").val(),
+                ItemCode: row.find(".txtItemCode").val(),
                 QtyBox: row.find(".txtQtyBox").val() || 0,
                 OrderQty: row.find(".txtOrderQty").val(),
                 Rate: row.find(".txtRate").val(),

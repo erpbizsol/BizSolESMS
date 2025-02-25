@@ -166,7 +166,7 @@ function ShowAccountMasterlist() {
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code"];
+                const hiddenColumns = ["Code","DataImported"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',
