@@ -102,6 +102,8 @@ function BoxUnloading() {
     var Code = parseInt($("#txtCode").val())
     const payload = {
         BoxNo: $("#txtBoxNo").val(),
+        PickListNo: $("#txtPickListNo").val(),
+        IsManual: $("#txtIsManual").is(":checked") ? 'Y' :'N',
         Code: Code
     }
     $.ajax({
@@ -235,7 +237,7 @@ function GetDataByPicklist(Orderby) {
         success: function (response) {
             if (response) {
                     $("#UnloadingTable").show();
-                    const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
+                    const StringFilterColumn = ["CaseNo"];
                     const NumericFilterColumn = [];
                     const DateFilterColumn = [];
                     const Button = false;
@@ -260,7 +262,7 @@ function GetDataByPicklist(Orderby) {
                     value = response;
                 }
                 
-                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", value, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", value, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, true);
                
                 
             } else {

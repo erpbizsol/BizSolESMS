@@ -135,14 +135,14 @@ $(document).ready(function () {
     });
     $('#txtShow').on('keydown', function (e) {
         if (e.key === "Enter") {
-            ShowMRNMasterlist();
+            ShowMRNMasterlist('Get');
         }
     });
     $('#txtShow').on('click', function (e) {
-            ShowMRNMasterlist();
+            ShowMRNMasterlist('Get');
     });
 });
-function ShowMRNMasterlist() {
+function ShowMRNMasterlist(Type) {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
     var ToDate = convertDateFormat2($("#txtToDate").val());
     if (FromDate == '') {
@@ -185,7 +185,9 @@ function ShowMRNMasterlist() {
                 ChangecolorTr();
             } else {
                 $("#MRNTable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -344,7 +346,7 @@ async function DeleteItem(code, Challan, status, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowMRNMasterlist();
+                    ShowMRNMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -611,7 +613,7 @@ function Save() {
         success: function (response) {
             if (response.Status === "Y") {
                 toastr.success(response.Msg);
-                ShowMRNMasterlist();
+                ShowMRNMasterlist('Get');
                 BackMaster();
             } else {
                 toastr.error(response.Msg);
@@ -1212,7 +1214,7 @@ function SaveImportFile() {
         success: function (response) {
             if (response.Status === "Y") {
                 toastr.success(response.Msg);
-                ShowMRNMasterlist();
+                ShowMRNMasterlist('Get');
                 BackImport();
             } else if (response.Status === "N") {
                 toastr.error(response.Msg);
@@ -1583,7 +1585,7 @@ function FromDatePicker(dateStr) {
         ('0' + (firstDateOfMonth.getMonth() + 1)).slice(-2) + '/' +
         firstDateOfMonth.getFullYear();
     $('#txtFromDate').val(formattedDate);
-    ShowMRNMasterlist();
+    ShowMRNMasterlist('Load');
     $('#txtFromDate').datepicker({
         format: 'dd/mm/yyyy',
         autoclose: true,

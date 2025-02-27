@@ -72,7 +72,7 @@ $(document).ready(function () {
             firstInput.focus();
         }
     });
-    ShowAccountMasterlist();
+    ShowAccountMasterlist('Load');
     GetGroupMasterList();
     GetCountryMasterList();
     GetCityDropDownList();
@@ -150,7 +150,7 @@ $(document).ready(function () {
     GetModuleMasterCode();
     ShowCityMasterlist();
 });
-function ShowAccountMasterlist() {
+function ShowAccountMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMaster`,
         type: 'GET',
@@ -182,7 +182,9 @@ function ShowAccountMasterlist() {
 
             } else {
                 $("#txtAccounttable").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -349,7 +351,7 @@ async function deleteItem(code, account, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowAccountMasterlist();
+                    ShowAccountMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -595,7 +597,7 @@ function Save() {
             if (response.Status === "Y") {
                 setTimeout(() => {
                     toastr.success(response.Msg);
-                    ShowAccountMasterlist();
+                    ShowAccountMasterlist('Get');
                     BackMaster();
                 }, 1000);
             } else {

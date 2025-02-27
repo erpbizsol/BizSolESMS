@@ -4,41 +4,43 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <script src="~/assets/script/BoxUnloading.js"></script>
 <style>
     .tabs {
         width: 100%;
         max-width: 2000px;
+        /* background: #fff;  */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         border-radius: 8px;
         overflow: hidden;
         padding: 0.7rem;
     }
+
     .tab-header {
         display: flex;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
         height: 36px;
     }
-    .tab-header div {
-        flex: 0.1;
-        text-align: center;
-        padding: 7px 16px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        border-bottom-right-radius: 40px;
-        border-top-left-radius: 40px;
-        font-weight:bold;
-    }
 
-    .tab-header div:hover {
-        background: #586e87;
-        color: white;
-    }
+        .tab-header div {
+            flex: 0.1;
+            text-align: center;
+            padding: 7px 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border-bottom-right-radius: 40px;
+            border-top-left-radius: 40px;
+            font-weight: bold;
+        }
 
-    .tab-header .active {
-        background: #1d4b7d;
-    }
+            .tab-header div:hover {
+                background: #586e87;
+                color: white;
+            }
+
+        .tab-header .active {
+            background: #1d4b7d;
+        }
 
     .tab-content {
         display: none;
@@ -47,9 +49,9 @@
         border-radius: 5px;
     }
 
-    .tab-content.active {
-        display: block;
-    }
+        .tab-content.active {
+            display: block;
+        }
 
     .tab[disabled] {
         cursor: not-allowed;
@@ -66,6 +68,7 @@
         z-index: 9999;
         display: none;
     }
+
     .toast-container {
         position: fixed;
         top: 45%;
@@ -82,6 +85,41 @@
         text-align: center;
         opacity: 0;
         transition: opacity 0.3s ease-in-out;
+    }
+
+    .toggle-handle {
+        position: relative;
+        margin: 0 auto;
+        padding-top: 0;
+        padding-bottom: 0;
+        height: 100%;
+        width: 0;
+        border-width: 0 1px;
+        background-color: #fff !important;
+    }
+
+    .toggle.btn {
+        min-width: 59px;
+        min-height: 28px !important;
+    }
+
+    .fixed-height {
+        min-height: 10px !important;
+    }
+
+    .toggle-off {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 44%;
+        right: 0;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .col-md-2 {
+        width: 120px !important;
     }
 
     .tabs {
@@ -108,6 +146,11 @@
         background: #1d4b7d;
     }
 
+
+    /*  .tab-header {
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                    } */
+
     .tab-content {
         display: none;
         padding: 16px;
@@ -115,9 +158,9 @@
         border-radius: 5px;
     }
 
-    .tab-content.active {
-        display: block;
-    }
+        .tab-content.active {
+            display: block;
+        }
 
     .tab[disabled] {
         cursor: not-allowed;
@@ -132,9 +175,12 @@
         padding: 8px 9px !important;
         height: 16px !important;
     }
+
+
     .datepicker table tfoot {
         display: none;
     }
+
     .page-content {
         display: block;
     }
@@ -186,12 +232,27 @@
     .container-fluid {
         padding-right: 0;
         padding-left: 0;
+        /*  overflow: hidden;
+                                height: auto; */
     }
 
     .container {
-        /* overflow: auto; */
+        overflow: auto;
         height: 81vh;
+        /* overflow: hidden; */
     }
+    /* .breadcrumbs .container-fluid .fix-header {
+                            position: sticky;
+                            top: 0;
+                            background-color: #dddde4;
+                            z-index: 1000;
+                            padding: 8px 0 8px 9px;
+                            border-top-right-radius: 5px;
+                            border-top-left-radius: 5px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                            height: 36px;
+                        } */
+
     .breadcrumbs1 {
         background: #dddde4;
         position: sticky;
@@ -199,13 +260,16 @@
         background-color: #dddde4;
         z-index: 1000;
         padding: 8px 0px 0px 9px;
+        /* border-top-right-radius: 5px;
+                                border-top-left-radius: 5px; */
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        /* height: 36px; */
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
     }
+
     .page-content {
         padding: 3px 0;
     }
-
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -273,8 +337,9 @@
             </div>
         </div>
     </div>
-    <div class="row m-3" sstyle="display:none" id="UnloadingTable">
-        <div class="card-body mt-2">
+    <div>
+    <div class="row ps-4" sstyle="display:none" id="UnloadingTable">
+        <div class="card-body">
             <div class="table-wrapper fixed-height-table">
             <table id="table" class="fixed-width-table table ssm-table">
                     <thead id="table-header">
@@ -287,7 +352,9 @@
             </div>
         </div>
     </div>
+    </div>
+
+</div>
 <div id="overlay" class="overlay"></div>
 <div id="toast" class="toast-container"></div>
-</div>
 <script src="~/assets/js/filter.js"></script>

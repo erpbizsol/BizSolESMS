@@ -157,6 +157,7 @@ function ClearData() {
     $("#txtScanProduct").val("");
     $("#txtClientDispatchName").val("");
     $("#tblDispatchData").hide();
+    $("#txtScanProduct").attr('inputmode', '');
 }
 function OnChangeNumericTextBox(element) {
 
