@@ -8,6 +8,9 @@ const WarehouseDefultName = sessionStorage.getItem('DefaultWarehouse');
 let ItemDetail = [];
 let ItemList = [];
 $(document).ready(function () {
+    $(".Number").keyup(function (e) {
+        if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
+    });
     $("#ERPHeading").text("Item Opening Balance");
     $("#txtWarehouse").val(WarehouseDefultName);
     ShowItemOpeningBalancelist();
@@ -103,6 +106,12 @@ $(document).ready(function () {
         }
     });
     $("#txtheaderdiv").show();
+
+    $('#txtItemBarCode').on('focus', function (e) {
+
+        $('#txtItemBarCode').val("");
+
+    });
 });
 function ShowItemOpeningBalancelist() {
     $.ajax({
