@@ -1185,6 +1185,7 @@ async function View(code) {
 function disableFields(disable) {
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
+
 function DataExport() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMaster`,

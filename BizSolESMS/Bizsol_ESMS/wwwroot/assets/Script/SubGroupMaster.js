@@ -33,8 +33,13 @@ $(document).ready(function () {
             $("#txtGroupNameList").val("")
         }
     });
+
     GetModuleMasterCode();
-   
+    $('#txtGroupName').on('focus', function (e) {
+
+        $('#txtGroupName').val("");
+
+    });
 });
 function Save() {
         const SubGroupName = $("#txtSubGroupName").val();

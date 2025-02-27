@@ -95,11 +95,25 @@ $(document).ready(function () {
         All = 1;
         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
     });
+    //$('#txtScanProduct').on('focus', function (e) {
+    //    var inputElement = this;
+    //    setTimeout(function () {
+    //        inputElement.setAttribute('inputmode', 'none');
+    //    }, 2);
+    //});
     $('#txtScanProduct').on('focus', function (e) {
-        var inputElement = this;
-        setTimeout(function () {
-            inputElement.setAttribute('inputmode', 'none');
-        }, 2);
+        if ($("#txtIsManual").is(':checked')) {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', '');
+            }, 2);
+            
+        } else {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', 'none');
+            }, 2);
+        }
     });
 
 });
