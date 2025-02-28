@@ -113,9 +113,7 @@
     .page-content {
         padding: 3px 0;
     }
-    .table{
-        margin:0;
-    }
+    
     .overlay {
         position: fixed;
         top: 0;
@@ -165,10 +163,46 @@
         top: 0;
         background-color: #dddde4;
         z-index: 1000;
-        padding: 8px 0px 0px 9px;
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
         /* box-shadow: 0 1px 1px rgb(76 76 76 / 90%); */
     }
+
+    /* Active tab styles */
+    .tab-section {
+        display: flex;
+        padding: 5px 7px;
+        margin: 0;
+        border: none;
+    }
+    .nav-item-btn {
+        background: #fffbff;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+        text-transform: capitalize;
+        padding: 10px 10px;
+        margin: 3px 10px 3px 0;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        border-bottom: 2px solid #275481;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+    }
+
+    .nav-item-btn.active {
+        background-color: #1c4e80;
+        color: white;
+        border: none;
+    }
+
+    .nav-item-btn:hover {
+        background-color: #e6e9ff;
+        color: #081a2c;
+    }
+
+    /* End Active tab styles */
+
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -198,7 +232,7 @@
         <section class="breadcrumbs2 mt-3">
             <div class="container-fluid" style="">
                 <div class="fix-header">
-                    <div class="row">
+                    @* <div class="row">
                         <div class="col-md-2">
                             <div id="tab" class="pendingOrder tabSec1 tab active"><b>Pending Order</b></div>
                         </div>
@@ -207,6 +241,23 @@
                         </div>
                         <div class="col-md-2">
                             <div id="tab2" class="completedDespatch tabSec1 tab active"><b>Completed Despatch</b></div>
+                        </div>
+                    </div> *@
+                    <div class="tab-section">
+                        <div class="nav-item ">
+                            <button class="nav-item-btn active">
+                                <div id="tab" class="pendingOrder tab ">Pending Order</div>
+                            </button>
+                        </div>
+                        <div class="nav-item">
+                            <button class="nav-item-btn">
+                                <div id="tab1" class="despatchTransit tab">Despatch in Transit</div>
+                            </button>
+                        </div>
+                        <div class="nav-item">
+                            <button class="nav-item-btn">
+                                <div id="tab2" class="completedDespatch tab">Completed Despatch</div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -301,3 +352,19 @@
 </div>
 <script src="~/assets/js/filter.js"></script>
 
+<script>
+        // Get all the tabs
+    const tabs = document.querySelectorAll('.nav-item-btn');
+
+    // Loop through each tab and add an event listener
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove the 'active' class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+
+            // Add 'active' class to the clicked tab
+            tab.classList.add('active');
+        });
+    });
+
+</script>
