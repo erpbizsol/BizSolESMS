@@ -23,6 +23,21 @@ $(document).ready(function () {
     $('#txtBoxNo').on('blur', function () {
         $(this).attr('inputmode', '');
     });
+    $('#txtBoxNo').on('focus', function (e) {
+        if ($("#txtIsManual").is(':checked')) {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', '');
+            }, 2);
+            ShowBoxNumberList($("#txtPickListNo").val());
+        } else {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', 'none');
+            }, 2);
+            $("#txtBoxNoList").empty();
+        }
+    });
 });
 //function BoxUnloading() {
 //    if ($("#txtBoxNo").val() == '') {
@@ -101,7 +116,7 @@ function BoxUnloading() {
         success: function (response) {
             if (response.length > 0) {
                 if (response[0].Status == 'Y') {
-                    GetDataByPicklist();
+                    GetDataByPicklist('Res');
                     CaseNo = response[0].CaseNo;
                     goToRow(CaseNo);
                    $("#txtBoxNo").focus();
@@ -196,7 +211,7 @@ async function StartUnloading(PickListNo, VehicleNo, Code) {
     $("#txtVehicleNo").val(VehicleNo);
     $("#txtCode").val(Code);
     $('#txtBoxNo').focus();
-    GetDataByPicklist();
+    GetDataByPicklist('Load');
 }
 function Back() {
     $("#UnloadingTable1").show();
@@ -209,7 +224,7 @@ function Back() {
     $("#txtheaderdiv").hide();
     CaseNo = 0;
 }
-function GetDataByPicklist() {
+function GetDataByPicklist(Orderby) {
     var Code = $("#txtCode").val();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/MRNDetailsByCode?Code=` + Code,
@@ -226,10 +241,28 @@ function GetDataByPicklist() {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = [];
-                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "BillQty", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
+                const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "BillQty", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName","SNo"];
                     const ColumnAlignment = {
+                };
+                var value = [];
+                if (Orderby == 'Load') {
+                    var response1 = {
+                        desc: true,
+                        field: "CaseNo",
+                        data: response
                     };
-                    BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+                     value = response1.data.sort((a, b) => {
+                        return response1.asc
+                            ? b[response1.field] - a[response1.field]  // Descending order
+                            : a[response1.field] - b[response1.field]; // Ascending order
+                    });
+                } else {
+                    value = response;
+                }
+                
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", value, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+               
+                
             } else {
                 toastr.error("Record not found...!");
                 $("#UnloadingTable").hide();
@@ -255,15 +288,8 @@ function ChangecolorTr1() {
         }
     });
     if (parseInt(CaseNo) > 0) {
-        var td = rows.find('td').filter(function () {
-            return $(this).text().trim() === String(CaseNo);
-        });
-        if (td.length > 0) {
-            var tr = td.closest("tr");
-            tr.css('background-color', '#2be399');
-        } else {
-            console.log('No matching row found for CaseNo:', CaseNo);
-        }
+            const firstTr = document.querySelector("#table-body > tr");
+            firstTr.style.backgroundColor = "#2be399";
     }
 }
 
@@ -274,6 +300,31 @@ function GetModuleMasterCode() {
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
+}
+function ShowBoxNumberList(PickListNo) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ShowBoxNumber?PickListNo=${PickListNo}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#txtBoxNoList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.BoxNo + '" text="' + item.BoxNo + '"></option>';
+                });
+                $('#txtBoxNoList').html(options);
+            } else {
+                $('#txtBoxNoList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtBoxNoList').empty();
+        }
+    });
 }
 
 

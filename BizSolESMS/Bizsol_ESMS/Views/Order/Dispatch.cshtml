@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <script src="~/assets/script/Dispatch.js"></script>
 <style>
-.tabs {
+    .tabs {
         width: 100%;
         max-width: 2000px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -15,6 +15,7 @@
         overflow: hidden;
         padding: 0.7rem;
     }
+
     .tabSec {
         color: white;
         width: 117px;
@@ -28,32 +29,40 @@
         margin-top: -8px;
         background: #1d4b7d;
     }
+
     .tab-content {
         display: none;
         padding: 16px;
         border: 1px solid lightgray;
         border-radius: 5px;
     }
-    .tab-content.active {
-        display: block;
-    }
+
+        .tab-content.active {
+            display: block;
+        }
+
     .tab[disabled] {
         cursor: not-allowed;
         opacity: 0.9;
     }
+
     .datepicker td, .datepicker th {
         border-radius: 20px !important;
     }
+
     .datepicker table tr td, .datepicker table tr td {
         padding: 8px 9px !important;
         height: 16px !important;
     }
+
     .datepicker table tfoot {
         display: none;
     }
+
     .page-content {
         display: block;
     }
+
     .textCreatepage .tabs .fix-header {
         position: sticky;
         top: 0;
@@ -64,6 +73,7 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
         height: 36px;
     }
+
     .shadow-sm {
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
@@ -71,6 +81,7 @@
         margin-top: 15px;
         border-top: 1px solid #c9cae7;
     }
+
     .btn-icon {
         font-size: 14px;
         border-radius: 50%;
@@ -78,6 +89,7 @@
         color: #fff;
         padding: 6px;
     }
+
     .btn-icon {
         font-size: 14px;
         border-radius: 20px;
@@ -85,12 +97,15 @@
         color: #fff;
         padding: 6px;
     }
+
     .btn-danger {
         background-color: #ab1624;
     }
+
     .highlight {
         background-color: #f5c0bfc4;
     }
+
     .container-fluid {
         padding-right: 0;
         padding-left: 0;
@@ -100,6 +115,7 @@
         overflow: auto;
         height: 81vh;
     }
+
     .breadcrumbs1 {
         background: #dddde4;
         position: sticky;
@@ -110,10 +126,11 @@
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
     }
+
     .page-content {
         padding: 3px 0;
     }
-    
+
     .overlay {
         position: fixed;
         top: 0;
@@ -124,6 +141,7 @@
         z-index: 9999;
         display: none;
     }
+
     .toast-container {
         position: fixed;
         top: 45%;
@@ -163,46 +181,10 @@
         top: 0;
         background-color: #dddde4;
         z-index: 1000;
+        padding: 8px 0px 0px 9px;
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
         /* box-shadow: 0 1px 1px rgb(76 76 76 / 90%); */
     }
-
-    /* Active tab styles */
-    .tab-section {
-        display: flex;
-        padding: 5px 7px;
-        margin: 0;
-        border: none;
-    }
-    .nav-item-btn {
-        background: #fffbff;
-        font-size: 12px;
-        font-weight: 600;
-        text-align: center;
-        text-transform: capitalize;
-        padding: 10px 10px;
-        margin: 3px 10px 3px 0;
-        border: none;
-        border-radius: 8px 8px 0 0;
-        border-bottom: 2px solid #275481;
-        overflow: hidden;
-        position: relative;
-        z-index: 1;
-    }
-
-    .nav-item-btn.active {
-        background-color: #1c4e80;
-        color: white;
-        border: none;
-    }
-
-    .nav-item-btn:hover {
-        background-color: #e6e9ff;
-        color: #081a2c;
-    }
-
-    /* End Active tab styles */
-
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -228,11 +210,11 @@
                 <label></label>
                 <button type="button" class="btn btn-success btn-height" title="Create Despatch" onclick="StartDispatchOrderNo('0')">CREATE NEW</button>
             </div>
-          </div>
+        </div>
         <section class="breadcrumbs2 mt-3">
             <div class="container-fluid" style="">
                 <div class="fix-header">
-                    @* <div class="row">
+                    <div class="row">
                         <div class="col-md-2">
                             <div id="tab" class="pendingOrder tabSec1 tab active"><b>Pending Order</b></div>
                         </div>
@@ -242,43 +224,24 @@
                         <div class="col-md-2">
                             <div id="tab2" class="completedDespatch tabSec1 tab active"><b>Completed Despatch</b></div>
                         </div>
-                    </div> *@
-                    <div class="tab-section">
-                        <div class="nav-item ">
-                            <button class="nav-item-btn active">
-                                <div id="tab" class="pendingOrder tab ">Pending Order</div>
-                            </button>
-                        </div>
-                        <div class="nav-item">
-                            <button class="nav-item-btn">
-                                <div id="tab1" class="despatchTransit tab">Despatch in Transit</div>
-                            </button>
-                        </div>
-                        <div class="nav-item">
-                            <button class="nav-item-btn">
-                                <div id="tab2" class="completedDespatch tab">Completed Despatch</div>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
-          </section>
-          
-            <div class="card-body mt-2" id="DataTable">
-                <div class="table-wrapper fixed-height-table">
-                    <table id="table" class="fixed-width-table table">
-                        <thead id="table-header">
-                        </thead>
-                        <tbody id="table-body">
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Paginator -->
-                <div class="paginator" id="paginator-table">
-                </div>
+        </section>
+        <div class="card-body mt-2" id="DataTable">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
             </div>
+            <!-- Paginator -->
+            <div class="paginator" id="paginator-table">
+            </div>
+        </div>
     </div>
-
     <div id="txtCreatepage" style="display:none;">
         <div class="card shadow-sm" style="background-color:#e9e9ef">
             <div class="tabs">
@@ -289,7 +252,7 @@
                                 <label for="txtOrderNo" class="col-form-label-sm fw-bold">Order No<span class="text-danger">*</span></label>
                                 <input type="text" id="txtOrderNo" list="txtOrderNoList" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled>
                                 <datalist id="txtOrderNoList"></datalist>
-                                <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled  value="0">
+                                <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled value="0">
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtChallanNo" class="col-form-label-sm fw-bold">Challan No<span class="text-danger">*</span></label>
@@ -303,41 +266,20 @@
                                 <label for="txtClientName" class="col-form-label-sm fw-bold">Client Name</label><span class="text-danger">*</span>
                                 <input type="text" id="txtClientDispatchName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name.." disabled>
                             </div>
+                            <div class="col-md-2 without-label-field">
+                                <label for="txtIsManual"></label>
+                                <input type="checkbox" id="txtIsManual" name="txtIsManual" class="box_border" />
+                                <label for="txtIsManual"><nobr>Show Keyboard</nobr></label>
+                            </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product<span class="text-danger">*</span></label>
                                 <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product.." onfocus="this.select()">
                             </div>
+
                         </div>
                     </div>
                 </div>
-                <div class="text-end btnAuto p-1" id="btnShowAll" style="display:none"><button class="btn btn-primary btn-height" title="Show all item" id="ShowAll">SHOW ALL</button></div>
-                <div class="row" id="divOrderBooking mb-2">
-                    <div class="accordion accordion-flush" id="accordionFlushOrder">
-                        <div class="accordion-item tab active ssm-table" >
-                            <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
-                                <div class="accordion-body-sec">
-                                    <div class="row" id="tblDispatchData" style="display:none;">
-                                        <div class="col-md-12">
-                                            <div class="table-wrapper" style="overflow: auto;">
-                                                <table id="tblDispatchTable" class="table">
-                                                    <thead id="DispatchTable-Header">
-                                                        
-                                                    </thead>
-                                                    <tbody id="DispatchTable-Body"></tbody>
-                                                    <tfoot>
-                                                       
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                            <div class="paginator" id="paginator-tblDispatchTable">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
                 <datalist id="txtOrderNo"></datalist>
                 <datalist id="txtClientNameList"></datalist>
                 <datalist id="txtItemBarCode"></datalist>
@@ -346,25 +288,38 @@
                 <datalist id="txtItemAddress"></datalist>
             </div>
         </div>
+
+    </div>
+    <div class="row">
+        <div class="text-end btnAuto p-1" id="btnShowAll" style="display:none"><button class="btn btn-primary btn-height" title="Show all item" id="ShowAll">SHOW ALL</button></div>
+        <div class="row" id="divOrderBooking mb-2">
+            <div class="accordion accordion-flush" id="accordionFlushOrder">
+                <div class="accordion-item tab active">
+                    <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
+                        <div class="accordion-body-sec">
+                            <div class="row" id="tblDispatchData" style="display:none;">
+                                <div class="col-md-12">
+                                    <div class="table-wrapper fixed-height-table" style="overflow: auto;">
+                                        <table id="tblDispatchTable" class="fixed-width-table table">
+                                            <thead id="DispatchTable-Header">
+                                            </thead>
+                                            <tbody id="DispatchTable-Body"></tbody>
+                                            <tfoot>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="paginator" id="paginator-tblDispatchTable">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="overlay" class="overlay"></div>
     <div id="toast" class="toast-container"></div>
 </div>
 <script src="~/assets/js/filter.js"></script>
 
-<script>
-        // Get all the tabs
-    const tabs = document.querySelectorAll('.nav-item-btn');
-
-    // Loop through each tab and add an event listener
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove the 'active' class from all tabs
-            tabs.forEach(t => t.classList.remove('active'));
-
-            // Add 'active' class to the clicked tab
-            tab.classList.add('active');
-        });
-    });
-
-</script>

@@ -23,7 +23,7 @@ $(document).ready(function () {
             $("#txtsave").focus();
         }
     });
-    ShowStateMasterlist();
+    ShowStateMasterlist('Load');
     GetGroupMasterList();
     $('#exportExcel').click(function () {
         exportTableToExcel();
@@ -45,7 +45,7 @@ $(document).ready(function () {
     });
     GetModuleMasterCode();
 });
-function ShowStateMasterlist() {
+function ShowStateMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowStateMaster`,
         type: 'GET',
@@ -78,7 +78,9 @@ function ShowStateMasterlist() {
 
             } else {
                 $("#txtstate").hide();
-                toastr.error("Record not found...!");
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -121,7 +123,7 @@ function Save() {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowStateMasterlist();
+                    ShowStateMasterlist('Get');
                     BackMaster();
                    
                 }
@@ -160,7 +162,7 @@ async function deleteItem(code, state, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowStateMasterlist();
+                    ShowStateMasterlist('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }

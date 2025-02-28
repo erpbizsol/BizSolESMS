@@ -95,11 +95,25 @@ $(document).ready(function () {
         All = 1;
         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
     });
+    //$('#txtScanProduct').on('focus', function (e) {
+    //    var inputElement = this;
+    //    setTimeout(function () {
+    //        inputElement.setAttribute('inputmode', 'none');
+    //    }, 2);
+    //});
     $('#txtScanProduct').on('focus', function (e) {
-        var inputElement = this;
-        setTimeout(function () {
-            inputElement.setAttribute('inputmode', 'none');
-        }, 2);
+        if ($("#txtIsManual").is(':checked')) {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', '');
+            }, 2);
+            
+        } else {
+            var inputElement = this;
+            setTimeout(function () {
+                inputElement.setAttribute('inputmode', 'none');
+            }, 2);
+        }
     });
 
 });
@@ -157,6 +171,7 @@ function ClearData() {
     $("#txtScanProduct").val("");
     $("#txtClientDispatchName").val("");
     $("#tblDispatchData").hide();
+    $("#txtScanProduct").attr('inputmode', '');
 }
 function OnChangeNumericTextBox(element) {
 
@@ -385,7 +400,7 @@ function GetDispatchOrderLists(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Balance Qty"];
+                const NumericFilterColumn = ["Total Order Qty", "Total Balance Qty"];
                 const DateFilterColumn = ["Order Date"];
                 const Button = false;
                 const showButtons = [];
@@ -815,7 +830,7 @@ function GetDespatchTransitOrderList(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Dispatch Qty"];
+                const NumericFilterColumn = ["Order Qty", "Total Dispatch Qty"];
                 const DateFilterColumn = ["Despatch Date"];
                 const Button = false;
                 const showButtons = [];
@@ -858,7 +873,7 @@ function GetCompletedDespatchOrderList(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Dispatch Qty"];
+                const NumericFilterColumn = ["Order Qty", "Total Dispatch Qty"];
                 const DateFilterColumn = ["Despatch Date"];
                 const Button = false;
                 const showButtons = [];

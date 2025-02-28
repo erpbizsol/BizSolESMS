@@ -5912,7 +5912,7 @@ table, th, tr, td {
 
 table > thead, th {
     position: sticky;
-/*    top: 0px;*/
+    /*top: 0px;*/
     top: -1px;
     border-collapse: collapse;
     z-index: 1;
