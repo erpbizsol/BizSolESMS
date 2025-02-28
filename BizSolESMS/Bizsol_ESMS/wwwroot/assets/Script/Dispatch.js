@@ -400,7 +400,7 @@ function GetDispatchOrderLists(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Balance Qty"];
+                const NumericFilterColumn = ["Total Order Qty", "Total Balance Qty"];
                 const DateFilterColumn = ["Order Date"];
                 const Button = false;
                 const showButtons = [];
@@ -830,7 +830,7 @@ function GetDespatchTransitOrderList(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Dispatch Qty"];
+                const NumericFilterColumn = ["Order Qty", "Total Dispatch Qty"];
                 const DateFilterColumn = ["Despatch Date"];
                 const Button = false;
                 const showButtons = [];
@@ -873,7 +873,7 @@ function GetCompletedDespatchOrderList(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Dispatch Qty"];
+                const NumericFilterColumn = ["Order Qty", "Total Dispatch Qty"];
                 const DateFilterColumn = ["Despatch Date"];
                 const Button = false;
                 const showButtons = [];
