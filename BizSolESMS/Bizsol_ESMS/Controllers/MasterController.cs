@@ -139,9 +139,11 @@ namespace Bizsol_ESMS.Controllers
         }
         #endregion  PrefixConfiguration 
 
-        public IActionResult Test()
+        #region  EmployeeMaster
+        public IActionResult EmployeeMaster()
         {
             return View();
         }
+        #endregion  EmployeeMaster
     }
 }
