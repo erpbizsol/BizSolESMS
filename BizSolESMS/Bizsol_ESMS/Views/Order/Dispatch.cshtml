@@ -321,6 +321,11 @@
                                 <label for="txtClientName" class="col-form-label-sm fw-bold">Client Name</label><span class="text-danger">*</span>
                                 <input type="text" id="txtClientDispatchName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name.." disabled>
                             </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtPackedBy" class="col-form-label-sm fw-bold">Packed By</label><span class="text-danger">*</span>
+                                <datalist id="txtPackedByList"></datalist>
+                                <input list="txtPackedByList" id="txtPackedBy" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Packed By..">
+                            </div>
                             <div class="col-md-2 without-label-field">
                                 <label for="txtIsManual"></label>
                                 <input type="checkbox" id="txtIsManual" name="txtIsManual" class="box_border" />

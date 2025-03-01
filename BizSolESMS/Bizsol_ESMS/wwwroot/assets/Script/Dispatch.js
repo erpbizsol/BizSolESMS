@@ -12,7 +12,9 @@ let G_DispatchMaster_Code = 0;
 let G_Tab = 1;
 let All = 0;
 let G_IDFORTRCOLOR = '';
+const DefultEmp = authKeyData.UserID;
 $(document).ready(function () {
+    $("#txtPackedBy").val(DefultEmp);
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
     GetOrderNoList1();
@@ -116,6 +118,27 @@ $(document).ready(function () {
         }
     });
 
+    $("#txtPackedBy").on("change", function () {
+        let value = $(this).val();
+        let isValid = false;
+        $("#txtPackedByList option").each(function () {
+            if ($(this).val() === value) {
+
+                isValid = true;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $(this).val("");
+            $("#txtPackedByList").val("")
+        }
+    });
+    $('#txtPackedBy').on('focus', function (e) {
+
+        $('#txtPackedBy').val("");
+
+    });
+    GetUserNameList();
 });
 function BackMaster() {
     G_IDFORTRCOLOR = '';
@@ -124,15 +147,18 @@ function BackMaster() {
     $("#txtheaderdiv").hide();
     ClearData();
     disableFields(false);
+    $("#btnShowAll").hide();
     $("#txtOrderNo").prop("disabled", true);
     if (G_Tab == 3) {
         GetCompletedDespatchOrderList('CompletedDespatch');
     }
     if (G_Tab == 2) {
         GetDespatchTransitOrderList('DespatchTransit');
+
     }
     if (G_Tab == 1) {
         GetDispatchOrderLists('GETCLIENT');
+        
     }
 }
 function GetAccountMasterList() {
@@ -1214,3 +1240,28 @@ function ChangecolorTr() {
     }
 }
 setInterval(ChangecolorTr, 100);
+function GetUserNameList() {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetEmployeeList?UserMaster_Code=${UserMaster_Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#txtPackedByList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.EmployeeName + '" text="' + item.Code + '"></option>';
+                });
+                $('#txtPackedByList').html(options);
+            } else {
+                $('#txtPackedByList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtPackedByList').empty();
+        }
+    });
+}
