@@ -81,7 +81,7 @@ function ShowEmployeeMaster(Type) {
         success: function (response) {
             if (response.length > 0) {
                 $("#txtEmployeeTable").show();
-                const StringFilterColumn = ["UOM Name"];
+                const StringFilterColumn = ["Employee Code", "Employee Name", "	User Name","Designation Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
