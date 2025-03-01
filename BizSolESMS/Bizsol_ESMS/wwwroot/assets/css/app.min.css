@@ -6268,18 +6268,19 @@ a.icon-height {
     z-index: 1000; /*Ensure it appears above other content */
 }
 
-    .AutoSuggestion-list li {
-        padding: 8px;
-        cursor: pointer;
-    }
+.AutoSuggestion-list li {
+    padding: 8px;
+    cursor: pointer;
+}
 
-    .AutoSuggestion-list li:hover {
-        background-color: #f0f0f0;
-    }
+.AutoSuggestion-list li:hover {
+    background-color: #f0f0f0;
+}
 
 .AutoSuggestion-list-highlighted {
     background-color: #9aa0a5;
 }
+
 .text-right {
     text-align: right;
 }
