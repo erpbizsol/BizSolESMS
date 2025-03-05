@@ -12,9 +12,9 @@ let G_DispatchMaster_Code = 0;
 let G_Tab = 1;
 let All = 0;
 let G_IDFORTRCOLOR = '';
-const DefultEmp = authKeyData.UserID;
+
 $(document).ready(function () {
-    $("#txtPackedBy").val(DefultEmp);
+   
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
     GetOrderNoList1();
@@ -26,9 +26,10 @@ $(document).ready(function () {
     });
     $('#txtClientName').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtVehicleNo").focus();
+            $("#txtPackedBy").focus();
         }
     });
+    
     $('#txtVehicleNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
@@ -56,30 +57,40 @@ $(document).ready(function () {
     });
    
     $(".pendingOrder").click(function () {
+      
         GetDispatchOrderLists('GETCLIENT');
+   
     });
 
     $(".despatchTransit").click(function () {
+        
         GetDespatchTransitOrderList('DespatchTransit');
+       
     });
 
     $(".completedDespatch").click(function () {
+        
         GetCompletedDespatchOrderList('CompletedDespatch');
+      
     });
+
     $('#txtScanProduct').on('keydown', function (e) {
         if (e.key === "Enter") {
             SaveScanQty();
+          
         }
     });
    
     $("#txtOrderNo").on("change", function () {
         let value = $(this).val();
         let isValid = false;
+   
         $("#txtOrderNoList option").each(function () {
             if ($(this).val() === value) {
                 const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == value);
                 if (item.Code != undefined) {
-                    CreateOrderNo(item.Code)
+                    CreateOrderNo(item.Code);
+
                 }
                 isValid = true;
                 return false;
@@ -97,12 +108,7 @@ $(document).ready(function () {
         All = 1;
         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
     });
-    //$('#txtScanProduct').on('focus', function (e) {
-    //    var inputElement = this;
-    //    setTimeout(function () {
-    //        inputElement.setAttribute('inputmode', 'none');
-    //    }, 2);
-    //});
+  
     $('#txtScanProduct').on('focus', function (e) {
         if ($("#txtIsManual").is(':checked')) {
             var inputElement = this;
@@ -130,13 +136,12 @@ $(document).ready(function () {
         });
         if (!isValid) {
             $(this).val("");
-            $("#txtPackedByList").val("")
+            $("#txtPackedByList").val("");
         }
     });
+
     $('#txtPackedBy').on('focus', function (e) {
-
         $('#txtPackedBy').val("");
-
     });
     GetUserNameList();
 });
@@ -149,15 +154,19 @@ function BackMaster() {
     disableFields(false);
     $("#btnShowAll").hide();
     $("#txtOrderNo").prop("disabled", true);
+    $("#txtPackedBy").prop("disabled", false);
     if (G_Tab == 3) {
         GetCompletedDespatchOrderList('CompletedDespatch');
+        GetUserNameList();
     }
     if (G_Tab == 2) {
         GetDespatchTransitOrderList('DespatchTransit');
+        GetUserNameList();
 
     }
     if (G_Tab == 1) {
         GetDispatchOrderLists('GETCLIENT');
+        GetUserNameList();
         
     }
 }
@@ -198,6 +207,7 @@ function ClearData() {
     $("#txtClientDispatchName").val("");
     $("#tblDispatchData").hide();
     $("#txtScanProduct").attr('inputmode', '');
+    $("#txtPackedBy").val("");
 }
 function OnChangeNumericTextBox(element) {
 
@@ -481,7 +491,8 @@ async function StartDispatchPanding(Code, Mode) {
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-
+                    $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    GetUserNameList();
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     $("#tblDispatchData").show();
@@ -598,7 +609,8 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         ScanQty: ScanQty,
         ManualQty: ManualQty,
         DispatchQty: DispatchQty,
-        UserMaster_Code: UserMaster_Code
+        UserMaster_Code: UserMaster_Code,
+        PackedBy: $("#txtPackedBy").val()
     }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch?Mode=Edit`,
@@ -614,11 +626,14 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
                 if (G_Tab == 2) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+                        GetUserNameList();
                     } else if (All == 1) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+                        GetUserNameList();
                     }
                 } else if (G_Tab == 3){
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+                    GetUserNameList();
                 }
                 G_IDFORTRCOLOR = 'GET';
             }
@@ -637,7 +652,8 @@ function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         ScanQty: ScanQty,
         ManualQty: ManualQty,
         DispatchQty: DispatchQty,
-        UserMaster_Code: UserMaster_Code
+        UserMaster_Code: UserMaster_Code,
+        PackedBy: $("#txtPackedBy").val()
     }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch?Mode=New`,
@@ -653,6 +669,7 @@ function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
                 G_DispatchMaster_Code = response[0].DispatchMaster_Code;
                 StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                 G_IDFORTRCOLOR = 'GET';
+                GetUserNameList();
             }
         },
         error: function (xhr, status, error) {
@@ -674,7 +691,8 @@ function SaveScanQty() {
         ManualQty: 0,
         DispatchQty: 0,
         DispatchMaster_Code: G_DispatchMaster_Code,
-        UserMaster_Code: UserMaster_Code
+        UserMaster_Code: UserMaster_Code,
+        PackedBy: $("#txtPackedBy").val()
     }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch?Mode=Scan`,
@@ -694,11 +712,14 @@ function SaveScanQty() {
                 else if (G_Tab == 2) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+                        GetUserNameList();
                     } else if (All == 1) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+                        GetUserNameList();
                     }
                 } else if (G_Tab == 3) {
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+                    GetUserNameList();
                 }
                 G_IDFORTRCOLOR = 'GET';
                 $("#txtScanProduct").focus();
@@ -752,7 +773,9 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
+                    $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtScanProduct").prop("disabled", false);
+                    GetUserNameList();
                     disableFields(false);
 
                 }
@@ -958,7 +981,9 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+                    $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtScanProduct").prop("disabled", false);
+                    GetUserNameList();
                     disableFields(false);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -1054,11 +1079,13 @@ async function StartDispatchOrderNo() {
     $("#txtheaderdiv").show();
     $("#txtOrderNo").prop("disabled", false);
     $("#txtScanProduct").prop("disabled", false);
-    
+    $("#txtPackedBy").prop("disabled", false);
+    GetUserNameList();
     disableFields(false);
 }
 function CreateOrderNo(Code) {
-    StartDispatchPanding(Code, "ORDERDETAILS")
+    StartDispatchPanding(Code, "ORDERDETAILS");
+    GetUserNameList();
 }
 function GetOrderNoList1() {
     $.ajax({
@@ -1122,7 +1149,10 @@ async function ViewDespatchTransit(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
+                    $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", true);
+                    GetUserNameList();
                     disableFields(true);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -1255,6 +1285,7 @@ function GetUserNameList() {
                     options += '<option value="' + item.EmployeeName + '" text="' + item.Code + '"></option>';
                 });
                 $('#txtPackedByList').html(options);
+                $("#txtPackedBy").val(response.length > 0 ? response[0].EmployeeName : "");
             } else {
                 $('#txtPackedByList').empty();
             }
