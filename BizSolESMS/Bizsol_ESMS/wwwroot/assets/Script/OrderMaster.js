@@ -560,12 +560,21 @@ function addNewRow() {
     }
 }
 $(document).on("click", ".deleteRow", function () {
+    const row = $(this).closest("tr");
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
+
     if (table.querySelectorAll("tr").length > 1) {
-        $(this).closest("tr").remove();
+        ConfrmationMaltipal(row);
+
     } else {
         alert("At least one row is required.");
     }
+    //const table = document.getElementById("tblorderbooking").querySelector("tbody");
+    //if (table.querySelectorAll("tr").length > 1) {
+    //    $(this).closest("tr").remove();
+    //} else {
+    //    alert("At least one row is required.");
+    //}
 });
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));

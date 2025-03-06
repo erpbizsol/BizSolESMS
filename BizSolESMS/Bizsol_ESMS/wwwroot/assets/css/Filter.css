@@ -261,3 +261,52 @@ i:hover {
     .dropdown-item:hover {
         background-color: #f1f1f1;
     }
+
+.custom-swal-size {
+    width: 300px !important; 
+    height: 200px !important;
+}
+.swal-button-danger {
+    background-color: #ab1624 !important;
+    color: white !important;
+}
+
+.swal-button-success {
+    background-color: #17324d !important;
+    color: white !important;
+    font-size: 15px !important;
+}
+
+.swal-icon:first-child {
+    margin-top: 10px !important;
+}
+.swal-footer {
+    padding-top: 13px !important;
+    padding: 13px 16px !important;
+    border-radius: inherit !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+.swal-modal {
+    width: 400px;
+    opacity: 0;
+    pointer-events: none;
+    background-color: #fff;
+    text-align: center;
+    border-radius: 10px;
+    position: static;
+    margin: 90px auto;
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    z-index: 10001;
+    transition: opacity .2s, -webkit-transform .3s;
+    transition: transform .3s, opacity .2s;
+    transition: transform .3s, opacity .2s, -webkit-transform .3s;
+}
+.swal-button i {
+    font-size: 22px; /* Icon size */
+}

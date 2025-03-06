@@ -245,38 +245,82 @@ async function deleteItem(code, Employee, button) {
         toastr.error(msg);
         return;
     }
-
     const { Status, msg1 } = await CheckRelatedRecord(code, 'UomMaster');
     if (Status) {
         toastr.error(msg1);
         return;
     }
-
-    if (confirm(`Are you sure you want to delete this Employee ${Employee}?`)) {
-
-        $.ajax({
-            url: `${appBaseURL}/api/Master/DeleteEmployeeMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
-            type: 'POST',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Auth-Key', authKeyData);
+    swal({
+        text: `Are you sure you want to delete Employee ${Employee}?`,
+        icon: "warning",
+        buttons: {
+            cancel: {
+                text: "Cancel",
+                value: false,
+                visible: true,
+                closeModal: true,
+                className: "swal-button-danger"
             },
-            success: function (response) {
-                if (response.Status === 'Y') {
-                    toastr.success(response.Msg);
-                    ShowEmployeeMaster('Get');
-                } else {
-                    toastr.error("Unexpected response format.");
-                }
-            },
-            error: function (xhr, status, error) {
-                toastr.error("Error deleting item:");
+            confirm: {
+                text: "OK",
+                value: true,
+                visible: true,
+                closeModal: true,
+                className: "swal-button-success"
             }
-        });
-        return;
-    }
-    else {
-        $('tr').removeClass('highlight');
-    }
+        },
+        dangerMode: true
+    }).then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                url: `${appBaseURL}/api/Master/DeleteEmployeeMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Auth-Key', authKeyData);
+                },
+                success: function (response) {
+                    if (response.Status === 'Y') {
+                        toastr.success(response.Msg);
+                        ShowEmployeeMaster('Get');
+                    } else {
+                        toastr.error("Unexpected response format.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error deleting item:");
+                }
+            });
+            return;
+          
+        } else {
+            swal("Deletion Cancelled!");
+            $('tr').removeClass('highlight');
+        }
+    });
+    //if (confirm(`Are you sure you want to delete this Employee ${Employee}?`)) {
+    //    $.ajax({
+    //        url: `${appBaseURL}/api/Master/DeleteEmployeeMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
+    //        type: 'POST',
+    //        beforeSend: function (xhr) {
+    //            xhr.setRequestHeader('Auth-Key', authKeyData);
+    //        },
+    //        success: function (response) {
+    //            if (response.Status === 'Y') {
+    //                toastr.success(response.Msg);
+    //                ShowEmployeeMaster('Get');
+    //            } else {
+    //                toastr.error("Unexpected response format.");
+    //            }
+    //        },
+    //        error: function (xhr, status, error) {
+    //            toastr.error("Error deleting item:");
+    //        }
+    //    });
+    //    return;
+    //}
+    //else {
+    //    $('tr').removeClass('highlight');
+    //}
 }
 async function View(code) {
 
@@ -402,7 +446,5 @@ function GetUserNameList() {
         }
     });
 }
-
-
 
 

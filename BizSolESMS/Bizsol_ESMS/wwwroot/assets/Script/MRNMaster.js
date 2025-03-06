@@ -177,7 +177,7 @@ function ShowMRNMasterlist(Type) {
                     "Unloading Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code})>${item["Unloading Status"]}</a>`,
                     "Validation Status": `<a style="cursor:pointer;" onclick=ShowCaseNoDataQty(${item.Code})>${item["Validation Status"]}</a>`
                     ,Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
                 }));
@@ -798,13 +798,28 @@ function addNewRow() {
     }
 }
 $(document).on("click", ".deleteRow", function () {
+    const row = $(this).closest("tr"); 
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
+
     if (table.querySelectorAll("tr").length > 1) {
-        $(this).closest("tr").remove();
+        ConfrmationMaltipal(row);
+
     } else {
         alert("At least one row is required.");
     }
 });
+
+
+//$(document).on("click", ".deleteRow", function () {
+
+//    const table = document.getElementById("tblorderbooking").querySelector("tbody");
+//    if (table.querySelectorAll("tr").length > 1) {
+//        $(this).closest("tr").remove();
+//    } else {
+//        alert("At least one row is required.");
+//    }
+   
+//});
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Material Receipt Note");
@@ -1852,3 +1867,4 @@ function ChangecolorTrQty() {
     });
 }
 setInterval(ChangecolorTrQty, 100);
+
