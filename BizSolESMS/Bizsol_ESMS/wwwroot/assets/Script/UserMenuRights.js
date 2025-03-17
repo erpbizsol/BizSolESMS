@@ -91,8 +91,8 @@ function populateTable(response, Result) {
             <div class="filter-dropdown" id="filterDropdown-${Col.replace(/\s+/g, '')}">
                 <input type="text" id="filterInput-${Col.replace(/\s+/g, '')}" placeholder="Search..." class="filter-input form-control form-control-sm" data-column="${Col.replace(/\s+/g, '')}" />
                 <hr>
-                    <input type="button" class="btn btn-success btn-height" onclick="applyStringFilters1('${Col}','table-body')" data-column="${Col.replace(/\s+/g, '')}" value="apply"/>
-                    <input type="button" class="btn-success btn-height" onclick="ClearFilter('table-body')" value="Clear"/>
+                    <input type="button" class="btn btn-success btn-height" onclick="applyStringFilters1('${Col}','table-body')" data-column="${Col.replace(/\s+/g, '')}" value="Apply"/>
+                    <input type="button" class="btn btn-success btn-height" onclick="ClearFilter('table-body')" value="Clear"/>
             </div>
         </div>
         </th>`;
@@ -108,8 +108,8 @@ function populateTable(response, Result) {
             <div class="filter-dropdown" id="filterDropdown-${rowData["Group Name"].replace(/\s+/g, '')}">
                 <div class="checkbox-container" id="checkbox-container-${rowData["Group Name"].replace(/\s+/g, '')}"></div>
                 <hr>
-                    <input type="button" class="btn btn-success btn-height" onclick="applyStringFilters('${rowData["Group Name"]}','table-body')" data-column="${rowData["Group Name"].replace(/\s+/g, '')}" value="apply"/>
-                    <input type="button" class="btn-success btn-height" onclick="ClearFilter('table-body')" value="Clear"/>
+                    <input type="button" class="btn btn-success btn-height" onclick="applyStringFilters('${rowData["Group Name"]}','table-body')" data-column="${rowData["Group Name"].replace(/\s+/g, '')}" value="Apply"/>
+                    <input type="button" class="btn btn-success btn-height" onclick="ClearFilter('table-body')" value="Clear"/>
             </div>
         </div>
         </th >`; 
@@ -171,7 +171,7 @@ function createRow(rowData, response, paddingLeft, Result) {
         <tr class="${paddingLeft === 0 ? "parent-row" : `child-row child-row-${rowData.MasterModuleCode}`}" 
             data-code="${rowData.Code}" 
             style="${paddingLeft > 0 ? "display: none;" : ""}">
-            <td style="padding-left: ${paddingLeft}px !important;text-transform: uppercase;"  data-column="ModuleDescription">
+            <td style="padding-left: ${paddingLeft}px !important;text-transform: uppercase;"  data-column="MODULEDESCRIPTION">
                 ${rowData.MasterModuleCode === 0 || rowData.OptionDescriptions  ? `
                 <label style="cursor: pointer;">
                     <i class="fa fa-plus toggle-icon" data-code="${rowData.Code}"></i>
@@ -193,7 +193,7 @@ function createRow(rowData, response, paddingLeft, Result) {
             <tr class="child-of-child-row child-of-child-row-${rowData.Code}" 
                 style="display: none;" 
                 data-child-code="${rowData.Code}" >
-                <td style="padding-left: ${paddingLeft + 30}px !important;text-transform: uppercase;" data-column="ModuleDescription">${option}</td>`;
+                <td style="padding-left: ${paddingLeft + 30}px !important;text-transform: uppercase;" data-column="MODULEDESCRIPTION">${option}</td>`;
 
             response.forEach(response => {
                 row += `<td style="text-align: center !important;"><input type="checkbox" id="chk_${rowData.Code}_${response['Code']}_${option}" class="chk_${rowData.MasterModuleCode}_${response['Code']} chk_${rowData.Code}_${response['Code']} chk_${response['Group Name'].replace(/\s+/g, '')}" onclick="checkbox1(this)"/></td>`;

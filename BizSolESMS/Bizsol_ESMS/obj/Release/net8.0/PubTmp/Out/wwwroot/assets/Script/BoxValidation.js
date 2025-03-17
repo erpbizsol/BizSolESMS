@@ -59,6 +59,8 @@ function BoxValidationDetail() {
     const payload = {
         BoxNo: $("#txtBoxNo").val(),
         Code: $("#txtCode").val(),
+        PickListNo: $("#txtPickListNo").val(),
+        IsManual: $("#txtIsManual").is(":checked")?'Y':'N',
         ScanNo: $("#txtScanProduct").val()
     }
     $.ajax({
@@ -230,7 +232,9 @@ function SaveManualValidationDetail(Code,ScanQty,ManualQty,ReceivedQty) {
         ScanNo:"",
         ScanQty: ScanQty,
         ManualQty: ManualQty,
-        ReceivedQty: ReceivedQty
+        ReceivedQty: ReceivedQty,
+        PickListNo: $("#txtPickListNo").val(),
+        IsManual: $("#txtIsManual").is(":checked") ? 'Y' : 'N'
     }
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/SaveManualBoxValidateDetail`,
@@ -269,7 +273,9 @@ function SaveScanValidationDetail() {
         ScanNo: $("#txtScanProduct").val(),
         ScanQty: 0,
         ManualQty: 0,
-        ReceivedQty: 0
+        ReceivedQty: 0,
+        PickListNo: $("#txtPickListNo").val(),
+        IsManual: $("#txtIsManual").is(":checked") ? 'Y' : 'N'
     }
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/SaveScanBoxValidateDetail`,
@@ -311,7 +317,9 @@ function AutoUpdateReceivedQty() {
     const payload = {
         BoxNo: $("#txtBoxNo").val(),
         Code: 0,
-        ScanNo:""
+        ScanNo: "",
+        PickListNo: $("#txtPickListNo").val(),
+        IsManual: $("#txtIsManual").is(":checked") ? 'Y' : 'N'
     }
     if (confirm("Are you sure you want to auto update received qty ?")) {
         $.ajax({

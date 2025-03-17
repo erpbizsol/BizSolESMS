@@ -6268,18 +6268,19 @@ a.icon-height {
     z-index: 1000; /*Ensure it appears above other content */
 }
 
-    .AutoSuggestion-list li {
-        padding: 8px;
-        cursor: pointer;
-    }
+.AutoSuggestion-list li {
+    padding: 8px;
+    cursor: pointer;
+}
 
-    .AutoSuggestion-list li:hover {
-        background-color: #f0f0f0;
-    }
+.AutoSuggestion-list li:hover {
+    background-color: #f0f0f0;
+}
 
 .AutoSuggestion-list-highlighted {
     background-color: #9aa0a5;
 }
+
 .text-right {
     text-align: right;
 }
@@ -6299,7 +6300,6 @@ a.icon-height {
 }
 
 /* Overlay styles */
-
 #sidebar-overlay {
     background-color: rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -6314,3 +6314,26 @@ a.icon-height {
 /* END Overlay styles */
 
 /*tabs */
+
+/* table heading(th) in one row */
+th, .filter-table-heading {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.filter-table-heading {
+    overflow: hidden;
+}
+
+.table th {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-filter-arrow {
+    position: relative;
+    display: inline-block;
+}
+/* End table heading(th) in one row */
+
+

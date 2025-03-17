@@ -152,7 +152,7 @@ async function deleteItem(code, state, button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this state? ${state}`)) {
+    if (confirm(`Are you sure you want to delete this state ${state} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteStateMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',

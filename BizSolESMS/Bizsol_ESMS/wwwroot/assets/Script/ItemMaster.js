@@ -319,12 +319,12 @@ function ShowItemMasterlist(Type) {
             if (response.length > 0) {
                 $("#txtitemtable").show();
                
-                const StringFilterColumn = ["Item Code","Item Name", "Display Name", "Category Name", "Group Name", "Sub Group Name", "Brand Name", "Location Name"];
+                const StringFilterColumn = ["Item Code", "Display Name", "Category Name", "Group Name", "Sub Group Name", "Brand Name", "Location Name"];
                 const NumericFilterColumn = ["Reorder Level", "Reorder Qty", "Qty In Box"];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
-                const StringdoubleFilterColumn = [];
+                const StringdoubleFilterColumn = ["Item Name"];
                 const hiddenColumns = ["Code","DataImported"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',

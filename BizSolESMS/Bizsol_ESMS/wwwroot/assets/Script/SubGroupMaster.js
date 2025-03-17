@@ -168,7 +168,7 @@ async function deleteSubGroupMaster(code, subGroupName, button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this sub Group ? ${subGroupName}`)) {
+    if (confirm(`Are you sure you want to delete this sub Group ${subGroupName} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteSubGroupMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',

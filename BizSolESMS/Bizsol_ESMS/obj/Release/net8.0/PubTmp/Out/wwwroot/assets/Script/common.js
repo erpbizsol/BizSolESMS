@@ -37,3 +37,53 @@ $(".Weight").blur(function (e) {
     if ($.isNumeric(this.value))
         this.value = parseFloat(this.value).toFixed(3);
 });
+function ConfrmationMaltipal(row) {
+    swal({
+        text: "Are you sure you want to delete this item !..",
+        icon: "warning",
+        buttons: {
+            cancel: {
+                text: "Cancel",
+                value: false,
+                visible: true,
+                closeModal: true,
+                className: "swal-button-danger"
+            },
+            confirm: {
+                text: "OK",
+                value: true,
+                visible: true,
+                closeModal: true,
+                className: "swal-button-success"
+            }
+        },
+        dangerMode: true,
+        className: "custom-swal-size",
+        className: "swal-footer",
+        className: "swal-modal",
+
+    }).then((willDelete) => {
+        if (willDelete) {
+            row.remove();
+            swal("Item Deleted !..", {
+                icon: "success",
+            });
+        } else {
+            swal("Item Deleted Cancel !..");
+        }
+      
+    });
+   
+}
+document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        const cancelButton = document.querySelector(".swal-button--cancel");
+        if (cancelButton) {
+            cancelButton.focus();
+        }
+    }, 50);
+});
+
+
+window.ConfrmationMaltipal = ConfrmationMaltipal;
+window.Confirmation = Confirmation;

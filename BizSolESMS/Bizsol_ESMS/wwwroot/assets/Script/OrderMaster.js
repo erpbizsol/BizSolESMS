@@ -226,7 +226,7 @@ async function deleteItem(code, Order) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this Order ? ${Order}`)) {
+    if (confirm(`Are you sure you want to delete this Order ${Order} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/OrderMaster/DeleteOrderMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
