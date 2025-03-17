@@ -68,7 +68,7 @@ namespace Bizsol_ESMS.Controllers
                                     Expires = DateTime.UtcNow.AddMinutes(60 * 60 * 1000),
                                     HttpOnly = false,
                                     Secure = true,
-                                    SameSite = SameSiteMode.Strict
+                                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict
                                 };
                                 Response.Cookies.Append("CompanyCode", model.CompanyCode, options);
                                 ViewBag.CompanyLogin = true;

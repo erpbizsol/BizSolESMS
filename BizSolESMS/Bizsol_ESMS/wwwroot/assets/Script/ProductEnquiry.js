@@ -40,6 +40,7 @@ $(document).ready(function () {
         ShowProductlist();
     });
     Serch();
+  
 });
 function Serch() {
     $("#txSearch").on("input", function () {
@@ -164,3 +165,4 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "Location_information.xlsx");
 }
+

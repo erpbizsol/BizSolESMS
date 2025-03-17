@@ -952,3 +952,26 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "ItemMaster.xlsx");
 }
+
+function Report() {
+    $.ajax({
+        url: '/Home/ItemMaster',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ ReportType: "PDF", newConnectionString: authKeyData }),
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+
+            // Open the PDF in a new Chrome tab
+            window.open(url, '_blank');
+
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
+}
