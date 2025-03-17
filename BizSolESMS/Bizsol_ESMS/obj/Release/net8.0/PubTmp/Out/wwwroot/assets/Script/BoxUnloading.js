@@ -39,60 +39,7 @@ $(document).ready(function () {
         }
     });
 });
-//function BoxUnloading() {
-//    if ($("#txtBoxNo").val() == '') {
-//        toastr.error("Please enter a Box No !");
-//        $("#txtBoxNo").focus();
-//        return;
-//    }
-//    var Code =parseInt($("#txtCode").val())
-//    const payload = {
-//        BoxNo: $("#txtBoxNo").val(),
-//        Code: Code
-//    }
-//    $.ajax({
-//        url: `${appBaseURL}/api/MRNMaster/BoxUnloading`,
-//        type: 'POST',
-//        contentType: "application/json",
-//        dataType: "json",
-//        data: JSON.stringify(payload),
-//        beforeSend: function (xhr) {
-//            xhr.setRequestHeader('Auth-Key', authKeyData);
-//        },
-//        success: function (response) {
-//            if (response.length > 0) {
-//                if (response[0].Status == 'Y') {
-//                    $("#UnloadingTable").show();
-//                    const StringFilterColumn = [];
-//                    const NumericFilterColumn = ["Qty"];
-//                    const DateFilterColumn = [];
-//                    const Button = false;
-//                    const showButtons = [];
-//                    const StringdoubleFilterColumn = ["Item Name", "Item Code","Item Bar Code"];
-//                    const hiddenColumns = ["Msg","Status"];
-//                    const ColumnAlignment = {
-//                        Qty: "right"
-//                    };
-//                    BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-//                    $("#txtBoxNo").focus();
-//                } else {
-//                    $("#txtBoxNo").focus();
-//                    showToast(response[0].Msg);
-//                    $("#UnloadingTable").hide();
-//                }
-//            } else {
-//                $("#txtBoxNo").focus();
-//                $("#UnloadingTable").hide();
-//                toastr.error("Record not found...!");
-//            }
-//        },
-//        error: function (xhr, status, error) {
-//            showToast("INVALID BOX NO !");
-//            $("#UnloadingTable").hide();
-//        }
-//    });
 
-//}
 function BoxUnloading() {
     if ($("#txtBoxNo").val() == '') {
         toastr.error("Please enter a Box No !");
@@ -102,6 +49,8 @@ function BoxUnloading() {
     var Code = parseInt($("#txtCode").val())
     const payload = {
         BoxNo: $("#txtBoxNo").val(),
+        PickListNo: $("#txtPickListNo").val(),
+        IsManual: $("#txtIsManual").is(":checked") ? 'Y' :'N',
         Code: Code
     }
     $.ajax({
@@ -235,7 +184,7 @@ function GetDataByPicklist(Orderby) {
         success: function (response) {
             if (response) {
                     $("#UnloadingTable").show();
-                    const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
+                    const StringFilterColumn = ["CaseNo"];
                     const NumericFilterColumn = [];
                     const DateFilterColumn = [];
                     const Button = false;
@@ -260,7 +209,7 @@ function GetDataByPicklist(Orderby) {
                     value = response;
                 }
                 
-                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", value, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", value, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, true);
                
                 
             } else {

@@ -336,7 +336,7 @@ async function DeleteItem(code, Challan, status, button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this item ${Challan} ?.!`)) {
+    if (confirm(`Are you sure you want to delete this item ${Challan} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/MRNMaster/DeleteMRNMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',

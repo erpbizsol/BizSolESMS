@@ -180,7 +180,7 @@ async function deleteItem(code, city, button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this city? ${city}`)) {
+    if (confirm(`Are you sure you want to delete this city ${city} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteCityMaster?Code=${code}`,
             type: 'POST',

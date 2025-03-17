@@ -143,7 +143,7 @@ async function deleteBrand(code, brand, button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this item? ${brand}`)) {
+    if (confirm(`Are you sure you want to delete this item ${brand} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteBrandMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',

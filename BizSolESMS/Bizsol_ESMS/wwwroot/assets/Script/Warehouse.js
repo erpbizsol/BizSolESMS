@@ -220,7 +220,7 @@ async function deleteWarehouse(code, warehouse,button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this warehouse? ${warehouse}`)) {
+    if (confirm(`Are you sure you want to delete this warehouse ${warehouse} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteWarehouseMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
