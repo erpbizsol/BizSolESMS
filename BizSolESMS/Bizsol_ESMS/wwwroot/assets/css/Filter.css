@@ -261,7 +261,7 @@ i:hover {
     .dropdown-item:hover {
         background-color: #f1f1f1;
     }
-
+    /*-- Modal confirm --*/
 .custom-swal-size {
     width: 300px !important; 
     height: 200px !important;
@@ -274,7 +274,7 @@ i:hover {
 .swal-button-success {
     background-color: #17324d !important;
     color: white !important;
-    font-size: 15px !important;
+    font-size: 11px !important;
 }
 
 .swal-icon:first-child {
@@ -288,7 +288,7 @@ i:hover {
     border-top-right-radius: 0 !important;
 }
 .swal-modal {
-    width: 400px;
+    width: 300px;
     opacity: 0;
     pointer-events: none;
     background-color: #fff;
@@ -309,4 +309,58 @@ i:hover {
 }
 .swal-button i {
     font-size: 22px; /* Icon size */
+}
+.swal-icon--warning__body {
+    width: 3px;
+    height: 15px;
+    top: 5px;
+    border-radius: 2px;
+    margin-left: -1px;
+}
+.swal-icon {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 50%;
+    padding: 0;
+    position: relative;
+    box-sizing: content-box;
+    margin: 13px auto;
+}
+
+.swal-text {
+    font-size: 13px;
+    position: relative;
+    float: none;
+    line-height: normal;
+    vertical-align: top;
+    text-align: left;
+    display: inline-block;
+    margin: 0;
+    padding: -2px -4px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, .64);
+    max-width: calc(100% - 20px);
+    overflow-wrap: break-word;
+    box-sizing: border-box;
+}
+.swal-button {
+    background-color: #7cd1f9;
+    color: #fff;
+    border: none;
+    box-shadow: none;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 11px;
+    padding: 8px 13px;
+    margin: 0;
+    cursor: pointer;
+}
+.swal-icon--warning__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    margin-left: -3px;
+    bottom: -7px;
 }
