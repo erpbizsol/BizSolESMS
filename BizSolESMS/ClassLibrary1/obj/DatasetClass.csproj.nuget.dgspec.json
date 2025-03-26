@@ -4,89 +4,14 @@
     "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj": {}
   },
   "projects": {
-    "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj": {
+    "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
-        "projectName": "DatasetClass",
-        "projectPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
+        "projectUniqueName": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj",
+        "projectName": "Bizsol_ESMS",
+        "projectPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj",
         "packagesPath": "C:\\Users\\BizSol\\.nuget\\packages\\",
-        "outputPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\obj\\",
-        "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
-        "configFilePaths": [
-          "C:\\Users\\BizSol\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-        ],
-        "originalTargetFrameworks": [
-          "net8.0"
-        ],
-        "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
-            "projectReferences": {
-              "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj": {
-                "projectPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj"
-              }
-            }
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
-        }
-      },
-      "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
-          "dependencies": {
-            "MySqlConnector": {
-              "target": "Package",
-              "version": "[2.4.0, )"
-            }
-          },
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48",
-            "net481"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj",
-        "projectName": "ESMS_R",
-        "projectPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj",
-        "packagesPath": "C:\\Users\\BizSol\\.nuget\\packages\\",
-        "outputPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\obj\\",
+        "outputPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\Bizsol_ESMS\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -137,17 +62,81 @@
               "target": "Package",
               "version": "[9.4.193.9, )"
             },
+            "Google.Apis.Admin.Directory.directory_v1": {
+              "target": "Package",
+              "version": "[1.68.0.3604, )"
+            },
+            "Grpc.AspNetCore.Server": {
+              "target": "Package",
+              "version": "[2.67.0, )"
+            },
+            "Grpc.Core": {
+              "target": "Package",
+              "version": "[2.46.6, )"
+            },
+            "HttpContextMoq": {
+              "target": "Package",
+              "version": "[1.6.0, )"
+            },
+            "HttpContextStubs": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
+            "Microsoft.AspNet.WebApi": {
+              "target": "Package",
+              "version": "[5.3.0, )"
+            },
+            "Microsoft.AspNet.WebApi.Client": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
             "Microsoft.AspNetCore.SystemWebAdapters": {
               "target": "Package",
               "version": "[2.0.0, )"
+            },
+            "Microsoft.CodeAnalysis.Common": {
+              "target": "Package",
+              "version": "[4.8.0, )"
+            },
+            "Microsoft.Data.SqlClient.SNI.runtime": {
+              "target": "Package",
+              "version": "[5.2.0, )"
+            },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[9.1.0, )"
+            },
+            "MySqlConnector": {
+              "target": "Package",
+              "version": "[2.4.0, )"
             },
             "ReportViewerCore.NETCore": {
               "target": "Package",
               "version": "[15.1.26, )"
             },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[112.1.0, )"
+            },
             "System.Data.DataSetExtensions": {
               "target": "Package",
               "version": "[4.5.0, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.9.0, )"
+            },
+            "System.Memory": {
+              "target": "Package",
+              "version": "[4.6.0, )"
+            },
+            "System.Net.Http": {
+              "target": "Package",
+              "version": "[4.3.4, )"
+            },
+            "System.Runtime.CompilerServices.Unsafe": {
+              "target": "Package",
+              "version": "[6.1.0, )"
             }
           },
           "imports": [
@@ -165,6 +154,81 @@
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
             },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
+        "projectName": "DatasetClass",
+        "projectPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
+        "packagesPath": "C:\\Users\\BizSol\\.nuget\\packages\\",
+        "outputPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\BizSol\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj": {
+                "projectPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MySqlConnector": {
+              "target": "Package",
+              "version": "[2.4.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }

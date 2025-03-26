@@ -219,11 +219,13 @@ async function deleteItem(code, Order) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
+        $('tr').removeClass('highlight');
         return;
     }
     const { Status, msg1 } = await CheckRelatedRecord(code, 'ordermaster');
     if (Status == true) {
         toastr.error(msg1);
+        $('tr').removeClass('highlight');
         return;
     }
     if (confirm(`Are you sure you want to delete this Order ${Order} ?`)) {
@@ -248,6 +250,10 @@ async function deleteItem(code, Order) {
             }
         });
     }
+    else {
+        $('tr').removeClass('highlight');
+    }
+    $('tr').removeClass('highlight');
 }
 function GetAccountMasterList() {
     $.ajax({

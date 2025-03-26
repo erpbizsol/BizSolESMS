@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ESMS_R\ESMS_R\ESMS_R.csproj" />
+    <ProjectReference Include="..\Bizsol_ESMS\Bizsol_ESMS.csproj" />
   </ItemGroup>
 
   <ItemGroup>

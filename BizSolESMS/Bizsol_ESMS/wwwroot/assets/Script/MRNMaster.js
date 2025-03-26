@@ -328,12 +328,14 @@ async function DeleteItem(code, Challan, status, button) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
+        $('tr').removeClass('highlight');
         return;
     }
     
     const { Status, msg1 } = await CheckRelatedRecord(code, 'mrnmaster');
     if (Status == true) {
         toastr.error(msg1);
+        $('tr').removeClass('highlight');
         return;
     }
     if (confirm(`Are you sure you want to delete this item ${Challan} ?`)) {
@@ -361,6 +363,7 @@ async function DeleteItem(code, Challan, status, button) {
     else {
             $('tr').removeClass('highlight')
     }
+    $('tr').removeClass('highlight');
 }
 function GetAccountMasterList() {
     $.ajax({

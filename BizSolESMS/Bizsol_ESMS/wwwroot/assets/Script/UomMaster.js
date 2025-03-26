@@ -196,12 +196,14 @@ async function deleteItem(code, uomName, button) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (!hasPermission) {
         toastr.error(msg);
+        $('tr').removeClass('highlight');
         return;
     }
 
     const { Status, msg1 } = await CheckRelatedRecord(code, 'UomMaster');
     if (Status) {
         toastr.error(msg1);
+        $('tr').removeClass('highlight');
         return;
     }
 
@@ -230,6 +232,7 @@ async function deleteItem(code, uomName, button) {
     else {
         $('tr').removeClass('highlight');
     }
+    $('tr').removeClass('highlight');
 }
 async function View(code) {
  
