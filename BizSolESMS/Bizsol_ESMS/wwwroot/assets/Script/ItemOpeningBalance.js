@@ -108,9 +108,9 @@ $(document).ready(function () {
     $("#txtheaderdiv").show();
 
     $('#txtItemBarCode').on('focus', function (e) {
-
-        $('#txtItemBarCode').val("");
-
+        $("#txtItemBarCode").val("")
+        $("#txtItemCode").val("")
+        $("#txtItemName").val("")
     });
 });
 function ShowItemOpeningBalancelist() {
@@ -320,6 +320,7 @@ function addNewRow() {
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
             <td id="txtItemCategory"></td>
+            <td id="txtItemCategory"></td>
             <td id="txtItemGroup"></td>
             <td id="txtItemSubGroup"></td>
             <td id="txtItemBrand"></td>
@@ -337,6 +338,7 @@ function addNewRow() {
     } else {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
+            <td id="txtItemCategory"></td>
             <td id="txtItemCategory"></td>
             <td id="txtItemGroup"></td>
             <td id="txtItemSubGroup"></td>

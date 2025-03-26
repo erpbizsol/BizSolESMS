@@ -285,7 +285,7 @@ async function Delete(code, username, button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this user? ${username}`)) {
+    if (confirm(`Are you sure you want to delete this user ${username} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/UserMaster/DeleteUserMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}&Reason=Test`,
             type: 'POST',

@@ -312,7 +312,7 @@ function getParentCode(code, GroupCode) {
     return getParentCode(parentCode, Group_Code);
 }
 function getCheckedCount(className) {
-    return $(`.${className}:checked`).length;
+    return $(`.${className.split(' ')[0]}:checked`).length;
 }
 function getCheckedIdsContainingChk() {
     const data = []; 

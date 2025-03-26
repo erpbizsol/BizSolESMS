@@ -25,7 +25,8 @@ $(document).ready(function () {
     $('#txtBoxNo').on('blur', function () {
         $(this).attr('inputmode', '');
     });
-    MRNDetail();
+    //MRNDetail();
+
 });
 //function BoxUnloading() {
 //    if ($("#txtBoxNo").val() == '') {
@@ -149,35 +150,15 @@ function showToast(Msg) {
         }, 300);
     }, 3000);
 }
-function MRNDetail() {
+function DataExport() {
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/GetMRNDetailForUnloading`,
-        type: 'GET',
+        url: `/Report/Test1`,
+        type: 'Post',
         contentType: "application/json",
         dataType: "json",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
         success: function (response) {
             if (response.length > 0) {
-                $("#UnloadingTable1").show();
-                const StringFilterColumn = ["PickList No", "Vehicle No"];
-                const NumericFilterColumn = [];
-                const DateFilterColumn = [];
-                const Button = false;
-                const showButtons = [];
-                const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code", "Status"];
-                const ColumnAlignment = {
-                };
-                const updatedResponse = response.map(item => ({
-                    ...item, Action: `<button class="btn btn-success icon-height mb-1"  title="Start Un-Loading" onclick="StartUnloading('${item["PickList No"]}','${item["Vehicle No"]}','${item.Code}')"><i class="fa fa-hourglass-start"></i></button>
-                    `
-                }));
-                BizsolCustomFilterGrid.CreateDataTable("table-header1", "table-body1", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-            } else {
-                $("#UnloadingTable1").hide();
-                toastr.error("Record not found...!");
+                alert("Ok")
             }
         },
         error: function (xhr, status, error) {

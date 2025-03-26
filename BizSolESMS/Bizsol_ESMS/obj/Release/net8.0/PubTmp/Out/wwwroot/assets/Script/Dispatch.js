@@ -464,6 +464,9 @@ function GetDispatchOrderLists(Mode) {
 
 }
 async function StartDispatchPanding(Code, Mode) {
+    if (G_DispatchMaster_Code === 0) {
+        GetUserNameList();
+    }
     G_Tab = 1;
     $("#btnShowAll").hide();
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
@@ -492,7 +495,11 @@ async function StartDispatchPanding(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
-                    GetUserNameList();
+                    if (G_DispatchMaster_Code > 0) {
+                        $("#txtPackedBy").prop("disabled", true);
+                    } else {
+                        $("#txtPackedBy").prop("disabled", false);
+                    }
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     $("#tblDispatchData").show();
@@ -626,14 +633,11 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
                 if (G_Tab == 2) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
-                        GetUserNameList();
                     } else if (All == 1) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
-                        GetUserNameList();
                     }
                 } else if (G_Tab == 3){
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
-                    GetUserNameList();
                 }
                 G_IDFORTRCOLOR = 'GET';
             }
@@ -669,7 +673,6 @@ function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
                 G_DispatchMaster_Code = response[0].DispatchMaster_Code;
                 StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                 G_IDFORTRCOLOR = 'GET';
-                GetUserNameList();
             }
         },
         error: function (xhr, status, error) {
@@ -712,14 +715,11 @@ function SaveScanQty() {
                 else if (G_Tab == 2) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
-                        GetUserNameList();
                     } else if (All == 1) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
-                        GetUserNameList();
                     }
                 } else if (G_Tab == 3) {
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
-                    GetUserNameList();
                 }
                 G_IDFORTRCOLOR = 'GET';
                 $("#txtScanProduct").focus();
@@ -774,10 +774,9 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", false);
-                    GetUserNameList();
                     disableFields(false);
-
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     $("#tblDispatchData").show();
@@ -982,8 +981,8 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", false);
-                    GetUserNameList();
                     disableFields(false);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -1152,7 +1151,6 @@ async function ViewDespatchTransit(Code, Mode) {
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", true);
-                    GetUserNameList();
                     disableFields(true);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -1175,7 +1173,7 @@ async function ViewDespatchTransit(Code, Mode) {
                         "Scan Qty": `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                         "Manual Qty": `
-                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" disabled value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
                         "Dispatch Qty": `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
                     }));

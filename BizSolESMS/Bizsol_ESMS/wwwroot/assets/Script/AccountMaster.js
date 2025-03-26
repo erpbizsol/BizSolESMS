@@ -451,6 +451,7 @@ function ClearData() {
     $("#txtAccountName").val("");
     $("#txtDisplayName").val("");
     $("#txtPANNo").val("");
+    $("#txtAccounCode").val("");
     $("#txtIsClient").prop("checked",true);
     $("#txtIsVendor").prop("checked", true);
     $("#txtIsMSME").val("");
@@ -941,8 +942,8 @@ function GetCountryMasterList1() {
 }
 function FillallItemfield1(inputElement) {
     const inputValue = inputElement.value.trim();
-    const Nation = document.querySelector('#tdsStatelist');
-    const State = document.querySelector('#tdsNationlist');
+    const  State = document.querySelector('#tdsStatelist');
+    const Nation = document.querySelector('#tdsNationlist');
     const PIN = document.querySelector('#tdsPIN');
 
     if (!Nation || !State) return;

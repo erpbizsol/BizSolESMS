@@ -139,7 +139,7 @@ async function deleteGroup(code, group, button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this group ? ${group}`)) {
+    if (confirm(`Are you sure you want to delete this group  ${group} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteGroupMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
