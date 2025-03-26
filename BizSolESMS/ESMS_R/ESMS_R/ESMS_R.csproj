@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="App.Metrics.AspNetCore.Reporting" Version="4.0.0" />
+    <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
+    <PackageReference Include="Devart.Data.MySql.EFCore" Version="9.4.193.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="2.0.0" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.26" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="bizsolesms_testDataSet2.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>bizsolesms_testDataSet2.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="bizsolesms_testDataSet3.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>bizsolesms_testDataSet3.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="bizsolesms_testDataSet4.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>bizsolesms_testDataSet4.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="bizsolesms_testDataSet5.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>bizsolesms_testDataSet5.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="bizsolesms_testDataSet2.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>bizsolesms_testDataSet2.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="bizsolesms_testDataSet3.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>bizsolesms_testDataSet3.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="bizsolesms_testDataSet4.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>bizsolesms_testDataSet4.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="bizsolesms_testDataSet5.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>bizsolesms_testDataSet5.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+</Project>
+

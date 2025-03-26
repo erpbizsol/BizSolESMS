@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DatasetClass")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55c2e5801ca6de68668c83502dfb84eab5b7c250")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1af550b27486877cd83b50eef9eac868c7df3987")]
 [assembly: System.Reflection.AssemblyProductAttribute("DatasetClass")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DatasetClass")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

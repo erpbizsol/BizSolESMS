@@ -1,0 +1,12 @@
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\bin\Debug\net8.0\ClassLibrary1.deps.json
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\bin\Debug\net8.0\ClassLibrary1.dll
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\bin\Debug\net8.0\ClassLibrary1.pdb
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.GeneratedMSBuildEditorConfig.editorconfig
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.AssemblyInfoInputs.cache
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.AssemblyInfo.cs
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.csproj.CoreCompileInputs.cache
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.sourcelink.json
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.dll
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\refint\ClassLibrary1.dll
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\ClassLibrary1.pdb
+D:\WebERP2.4Core\BizSolESMS\BizSolESMS\ClassLibrary1\obj\Debug\net8.0\ref\ClassLibrary1.dll

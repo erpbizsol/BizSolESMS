@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="OrderDataset" targetNamespace="http://tempuri.org/OrderDataset.xsd" xmlns:mstns="http://tempuri.org/OrderDataset.xsd" xmlns="http://tempuri.org/OrderDataset.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection ConnectionStringObject="User Id=sa;Host=220.158.165.98;Port=65448;Database=bizsolesms_test" IsAppSettingsProperty="false" Modifier="Assembly" Name="220.158.165.98.bizsolesms_test" Provider="Devart.Data.MySql" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="USP_Order1TableAdapter" GeneratorDataComponentClassName="USP_Order1TableAdapter" Name="USP_Order1" UserDataComponentName="USP_Order1TableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="220.158.165.98.bizsolesms_test" DbObjectName="bizsolesms_test.USP_Order1" DbObjectType="StoredProcedure" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="StoredProcedure" ModifiedByUser="false">
+                    <CommandText>bizsolesms_test.USP_Order1</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="Code" DataSetColumn="Code" />
+              <Mapping SourceColumn="ItemCode" DataSetColumn="ItemCode" />
+              <Mapping SourceColumn="ItemName" DataSetColumn="ItemName" />
+              <Mapping SourceColumn="DisplayName" DataSetColumn="DisplayName" />
+              <Mapping SourceColumn="ItemBarCode" DataSetColumn="ItemBarCode" />
+              <Mapping SourceColumn="UomName" DataSetColumn="UomName" />
+              <Mapping SourceColumn="HSNCode" DataSetColumn="HSNCode" />
+              <Mapping SourceColumn="CategoryName" DataSetColumn="CategoryName" />
+              <Mapping SourceColumn="GroupName" DataSetColumn="GroupName" />
+              <Mapping SourceColumn="SubGroupName" DataSetColumn="SubGroupName" />
+              <Mapping SourceColumn="BrandName" DataSetColumn="BrandName" />
+              <Mapping SourceColumn="ReorderLevel" DataSetColumn="ReorderLevel" />
+              <Mapping SourceColumn="ReorderQty" DataSetColumn="ReorderQty" />
+              <Mapping SourceColumn="locationName" DataSetColumn="locationName" />
+              <Mapping SourceColumn="BoxPacking" DataSetColumn="BoxPacking" />
+              <Mapping SourceColumn="BatchApplicable" DataSetColumn="BatchApplicable" />
+              <Mapping SourceColumn="MaintainExpiry" DataSetColumn="MaintainExpiry" />
+              <Mapping SourceColumn="QtyInBox" DataSetColumn="QtyInBox" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="OrderDataset" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="OrderDataset" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="OrderDataset">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="USP_Order1" msprop:Generator_RowEvHandlerName="USP_Order1RowChangeEventHandler" msprop:Generator_RowDeletedName="USP_Order1RowDeleted" msprop:Generator_RowDeletingName="USP_Order1RowDeleting" msprop:Generator_RowEvArgName="USP_Order1RowChangeEvent" msprop:Generator_TablePropName="USP_Order1" msprop:Generator_RowChangedName="USP_Order1RowChanged" msprop:Generator_RowChangingName="USP_Order1RowChanging" msprop:Generator_TableClassName="USP_Order1DataTable" msprop:Generator_RowClassName="USP_Order1Row" msprop:Generator_TableVarName="tableUSP_Order1" msprop:Generator_UserTableName="USP_Order1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Code" msprop:Generator_ColumnPropNameInRow="Code" msprop:Generator_ColumnPropNameInTable="CodeColumn" msprop:Generator_ColumnVarNameInTable="columnCode" msprop:Generator_UserColumnName="Code" type="xs:int" />
+              <xs:element name="ItemCode" msprop:Generator_ColumnPropNameInRow="ItemCode" msprop:Generator_ColumnPropNameInTable="ItemCodeColumn" msprop:Generator_ColumnVarNameInTable="columnItemCode" msprop:Generator_UserColumnName="ItemCode" type="xs:string" minOccurs="0" />
+              <xs:element name="ItemName" msprop:Generator_ColumnPropNameInRow="ItemName" msprop:Generator_ColumnPropNameInTable="ItemNameColumn" msprop:Generator_ColumnVarNameInTable="columnItemName" msprop:Generator_UserColumnName="ItemName" type="xs:string" />
+              <xs:element name="DisplayName" msprop:Generator_ColumnPropNameInRow="DisplayName" msprop:Generator_ColumnPropNameInTable="DisplayNameColumn" msprop:Generator_ColumnVarNameInTable="columnDisplayName" msprop:Generator_UserColumnName="DisplayName" type="xs:string" minOccurs="0" />
+              <xs:element name="ItemBarCode" msprop:Generator_ColumnPropNameInRow="ItemBarCode" msprop:Generator_ColumnPropNameInTable="ItemBarCodeColumn" msprop:Generator_ColumnVarNameInTable="columnItemBarCode" msprop:Generator_UserColumnName="ItemBarCode" type="xs:string" minOccurs="0" />
+              <xs:element name="UomName" msprop:Generator_ColumnPropNameInRow="UomName" msprop:Generator_ColumnPropNameInTable="UomNameColumn" msprop:Generator_ColumnVarNameInTable="columnUomName" msprop:Generator_UserColumnName="UomName" type="xs:string" minOccurs="0" />
+              <xs:element name="HSNCode" msprop:Generator_ColumnPropNameInRow="HSNCode" msprop:Generator_ColumnPropNameInTable="HSNCodeColumn" msprop:Generator_ColumnVarNameInTable="columnHSNCode" msprop:Generator_UserColumnName="HSNCode" type="xs:string" minOccurs="0" />
+              <xs:element name="CategoryName" msprop:Generator_ColumnPropNameInRow="CategoryName" msprop:Generator_ColumnPropNameInTable="CategoryNameColumn" msprop:Generator_ColumnVarNameInTable="columnCategoryName" msprop:Generator_UserColumnName="CategoryName" type="xs:string" minOccurs="0" />
+              <xs:element name="GroupName" msprop:Generator_ColumnPropNameInRow="GroupName" msprop:Generator_ColumnPropNameInTable="GroupNameColumn" msprop:Generator_ColumnVarNameInTable="columnGroupName" msprop:Generator_UserColumnName="GroupName" type="xs:string" minOccurs="0" />
+              <xs:element name="SubGroupName" msprop:Generator_ColumnPropNameInRow="SubGroupName" msprop:Generator_ColumnPropNameInTable="SubGroupNameColumn" msprop:Generator_ColumnVarNameInTable="columnSubGroupName" msprop:Generator_UserColumnName="SubGroupName" type="xs:string" minOccurs="0" />
+              <xs:element name="BrandName" msprop:Generator_ColumnPropNameInRow="BrandName" msprop:Generator_ColumnPropNameInTable="BrandNameColumn" msprop:Generator_ColumnVarNameInTable="columnBrandName" msprop:Generator_UserColumnName="BrandName" type="xs:string" minOccurs="0" />
+              <xs:element name="ReorderLevel" msprop:Generator_ColumnPropNameInRow="ReorderLevel" msprop:Generator_ColumnPropNameInTable="ReorderLevelColumn" msprop:Generator_ColumnVarNameInTable="columnReorderLevel" msprop:Generator_UserColumnName="ReorderLevel" type="xs:float" minOccurs="0" />
+              <xs:element name="ReorderQty" msprop:Generator_ColumnPropNameInRow="ReorderQty" msprop:Generator_ColumnPropNameInTable="ReorderQtyColumn" msprop:Generator_ColumnVarNameInTable="columnReorderQty" msprop:Generator_UserColumnName="ReorderQty" type="xs:float" minOccurs="0" />
+              <xs:element name="locationName" msprop:Generator_ColumnPropNameInRow="locationName" msprop:Generator_ColumnPropNameInTable="locationNameColumn" msprop:Generator_ColumnVarNameInTable="columnlocationName" msprop:Generator_UserColumnName="locationName" type="xs:string" minOccurs="0" />
+              <xs:element name="BoxPacking" msprop:Generator_ColumnPropNameInRow="BoxPacking" msprop:Generator_ColumnPropNameInTable="BoxPackingColumn" msprop:Generator_ColumnVarNameInTable="columnBoxPacking" msprop:Generator_UserColumnName="BoxPacking" type="xs:string" minOccurs="0" />
+              <xs:element name="BatchApplicable" msprop:Generator_ColumnPropNameInRow="BatchApplicable" msprop:Generator_ColumnPropNameInTable="BatchApplicableColumn" msprop:Generator_ColumnVarNameInTable="columnBatchApplicable" msprop:Generator_UserColumnName="BatchApplicable" type="xs:string" minOccurs="0" />
+              <xs:element name="MaintainExpiry" msprop:Generator_ColumnPropNameInRow="MaintainExpiry" msprop:Generator_ColumnPropNameInTable="MaintainExpiryColumn" msprop:Generator_ColumnVarNameInTable="columnMaintainExpiry" msprop:Generator_UserColumnName="MaintainExpiry" type="xs:string" minOccurs="0" />
+              <xs:element name="QtyInBox" msprop:Generator_ColumnPropNameInRow="QtyInBox" msprop:Generator_ColumnPropNameInTable="QtyInBoxColumn" msprop:Generator_ColumnVarNameInTable="columnQtyInBox" msprop:Generator_UserColumnName="QtyInBox" type="xs:float" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

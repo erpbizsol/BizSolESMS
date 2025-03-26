@@ -24,7 +24,7 @@ namespace DatasetClass.Dataset {
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
     public partial class ItemMaster : global::System.Data.DataSet {
         
-        private itemmasterDataTable tableitemmaster;
+        private USP_ItemMaster1DataTable tableUSP_ItemMaster1;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -56,8 +56,8 @@ namespace DatasetClass.Dataset {
             if ((this.DetermineSchemaSerializationMode(info, context) == global::System.Data.SchemaSerializationMode.IncludeSchema)) {
                 global::System.Data.DataSet ds = new global::System.Data.DataSet();
                 ds.ReadXmlSchema(new global::System.Xml.XmlTextReader(new global::System.IO.StringReader(strSchema)));
-                if ((ds.Tables["itemmaster"] != null)) {
-                    base.Tables.Add(new itemmasterDataTable(ds.Tables["itemmaster"]));
+                if ((ds.Tables["USP_ItemMaster1"] != null)) {
+                    base.Tables.Add(new USP_ItemMaster1DataTable(ds.Tables["USP_ItemMaster1"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -81,9 +81,9 @@ namespace DatasetClass.Dataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public itemmasterDataTable itemmaster {
+        public USP_ItemMaster1DataTable USP_ItemMaster1 {
             get {
-                return this.tableitemmaster;
+                return this.tableUSP_ItemMaster1;
             }
         }
         
@@ -154,8 +154,8 @@ namespace DatasetClass.Dataset {
                 this.Reset();
                 global::System.Data.DataSet ds = new global::System.Data.DataSet();
                 ds.ReadXml(reader);
-                if ((ds.Tables["itemmaster"] != null)) {
-                    base.Tables.Add(new itemmasterDataTable(ds.Tables["itemmaster"]));
+                if ((ds.Tables["USP_ItemMaster1"] != null)) {
+                    base.Tables.Add(new USP_ItemMaster1DataTable(ds.Tables["USP_ItemMaster1"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -190,10 +190,10 @@ namespace DatasetClass.Dataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         internal void InitVars(bool initTable) {
-            this.tableitemmaster = ((itemmasterDataTable)(base.Tables["itemmaster"]));
+            this.tableUSP_ItemMaster1 = ((USP_ItemMaster1DataTable)(base.Tables["USP_ItemMaster1"]));
             if ((initTable == true)) {
-                if ((this.tableitemmaster != null)) {
-                    this.tableitemmaster.InitVars();
+                if ((this.tableUSP_ItemMaster1 != null)) {
+                    this.tableUSP_ItemMaster1.InitVars();
                 }
             }
         }
@@ -206,13 +206,13 @@ namespace DatasetClass.Dataset {
             this.Namespace = "http://tempuri.org/ItemMaster.xsd";
             this.EnforceConstraints = true;
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
-            this.tableitemmaster = new itemmasterDataTable();
-            base.Tables.Add(this.tableitemmaster);
+            this.tableUSP_ItemMaster1 = new USP_ItemMaster1DataTable();
+            base.Tables.Add(this.tableUSP_ItemMaster1);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private bool ShouldSerializeitemmaster() {
+        private bool ShouldSerializeUSP_ItemMaster1() {
             return false;
         }
         
@@ -272,14 +272,14 @@ namespace DatasetClass.Dataset {
         }
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public delegate void itemmasterRowChangeEventHandler(object sender, itemmasterRowChangeEvent e);
+        public delegate void USP_ItemMaster1RowChangeEventHandler(object sender, USP_ItemMaster1RowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class itemmasterDataTable : global::System.Data.TypedTableBase<itemmasterRow> {
+        public partial class USP_ItemMaster1DataTable : global::System.Data.TypedTableBase<USP_ItemMaster1Row> {
             
             private global::System.Data.DataColumn columnCode;
             
@@ -291,40 +291,38 @@ namespace DatasetClass.Dataset {
             
             private global::System.Data.DataColumn columnItemBarCode;
             
-            private global::System.Data.DataColumn columnUOMMaster_Code;
+            private global::System.Data.DataColumn columnUomName;
             
             private global::System.Data.DataColumn columnHSNCode;
             
-            private global::System.Data.DataColumn columnCategoryMaster_Code;
+            private global::System.Data.DataColumn columnCategoryName;
             
-            private global::System.Data.DataColumn columnGroupMaster_Code;
+            private global::System.Data.DataColumn columnGroupName;
             
-            private global::System.Data.DataColumn columnSubGroupMaster_Code;
+            private global::System.Data.DataColumn columnSubGroupName;
             
-            private global::System.Data.DataColumn columnBrandMaster_Code;
+            private global::System.Data.DataColumn columnBrandName;
             
             private global::System.Data.DataColumn columnReorderLevel;
             
             private global::System.Data.DataColumn columnReorderQty;
             
-            private global::System.Data.DataColumn columnLocationMaster_Code;
-            
-            private global::System.Data.DataColumn columnBatchApplicable;
+            private global::System.Data.DataColumn columnlocationName;
             
             private global::System.Data.DataColumn columnBoxPacking;
+            
+            private global::System.Data.DataColumn columnBatchApplicable;
             
             private global::System.Data.DataColumn columnMaintainExpiry;
             
             private global::System.Data.DataColumn columnQtyInBox;
             
-            private global::System.Data.DataColumn columnStatus;
-            
-            private global::System.Data.DataColumn columnDataImported;
+            private global::System.Data.DataColumn columnReorder;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public itemmasterDataTable() {
-                this.TableName = "itemmaster";
+            public USP_ItemMaster1DataTable() {
+                this.TableName = "USP_ItemMaster1";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -332,7 +330,7 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            internal itemmasterDataTable(global::System.Data.DataTable table) {
+            internal USP_ItemMaster1DataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -351,7 +349,7 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [System.ObsoleteAttribute("This API supports obsolete formatter-based serialization. It should not be called" +
                 " or extended by application code.", DiagnosticId="SYSLIB0051")]
-            protected itemmasterDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected USP_ItemMaster1DataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -398,9 +396,9 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn UOMMaster_CodeColumn {
+            public global::System.Data.DataColumn UomNameColumn {
                 get {
-                    return this.columnUOMMaster_Code;
+                    return this.columnUomName;
                 }
             }
             
@@ -414,33 +412,33 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn CategoryMaster_CodeColumn {
+            public global::System.Data.DataColumn CategoryNameColumn {
                 get {
-                    return this.columnCategoryMaster_Code;
+                    return this.columnCategoryName;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn GroupMaster_CodeColumn {
+            public global::System.Data.DataColumn GroupNameColumn {
                 get {
-                    return this.columnGroupMaster_Code;
+                    return this.columnGroupName;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn SubGroupMaster_CodeColumn {
+            public global::System.Data.DataColumn SubGroupNameColumn {
                 get {
-                    return this.columnSubGroupMaster_Code;
+                    return this.columnSubGroupName;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn BrandMaster_CodeColumn {
+            public global::System.Data.DataColumn BrandNameColumn {
                 get {
-                    return this.columnBrandMaster_Code;
+                    return this.columnBrandName;
                 }
             }
             
@@ -462,17 +460,9 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn LocationMaster_CodeColumn {
+            public global::System.Data.DataColumn locationNameColumn {
                 get {
-                    return this.columnLocationMaster_Code;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn BatchApplicableColumn {
-                get {
-                    return this.columnBatchApplicable;
+                    return this.columnlocationName;
                 }
             }
             
@@ -481,6 +471,14 @@ namespace DatasetClass.Dataset {
             public global::System.Data.DataColumn BoxPackingColumn {
                 get {
                     return this.columnBoxPacking;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn BatchApplicableColumn {
+                get {
+                    return this.columnBatchApplicable;
                 }
             }
             
@@ -502,17 +500,9 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn StatusColumn {
+            public global::System.Data.DataColumn ReorderColumn {
                 get {
-                    return this.columnStatus;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn DataImportedColumn {
-                get {
-                    return this.columnDataImported;
+                    return this.columnReorder;
                 }
             }
             
@@ -527,90 +517,82 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public itemmasterRow this[int index] {
+            public USP_ItemMaster1Row this[int index] {
                 get {
-                    return ((itemmasterRow)(this.Rows[index]));
+                    return ((USP_ItemMaster1Row)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event itemmasterRowChangeEventHandler itemmasterRowChanging;
+            public event USP_ItemMaster1RowChangeEventHandler USP_ItemMaster1RowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event itemmasterRowChangeEventHandler itemmasterRowChanged;
+            public event USP_ItemMaster1RowChangeEventHandler USP_ItemMaster1RowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event itemmasterRowChangeEventHandler itemmasterRowDeleting;
+            public event USP_ItemMaster1RowChangeEventHandler USP_ItemMaster1RowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event itemmasterRowChangeEventHandler itemmasterRowDeleted;
+            public event USP_ItemMaster1RowChangeEventHandler USP_ItemMaster1RowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void AdditemmasterRow(itemmasterRow row) {
+            public void AddUSP_ItemMaster1Row(USP_ItemMaster1Row row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public itemmasterRow AdditemmasterRow(
+            public USP_ItemMaster1Row AddUSP_ItemMaster1Row(
+                        int Code, 
                         string ItemCode, 
                         string ItemName, 
                         string DisplayName, 
                         string ItemBarCode, 
-                        int UOMMaster_Code, 
+                        string UomName, 
                         string HSNCode, 
-                        int CategoryMaster_Code, 
-                        int GroupMaster_Code, 
-                        int SubGroupMaster_Code, 
-                        int BrandMaster_Code, 
+                        string CategoryName, 
+                        string GroupName, 
+                        string SubGroupName, 
+                        string BrandName, 
                         float ReorderLevel, 
                         float ReorderQty, 
-                        int LocationMaster_Code, 
-                        string BatchApplicable, 
+                        string locationName, 
                         string BoxPacking, 
+                        string BatchApplicable, 
                         string MaintainExpiry, 
                         float QtyInBox, 
-                        string Status, 
-                        string DataImported) {
-                itemmasterRow rowitemmasterRow = ((itemmasterRow)(this.NewRow()));
+                        double Reorder) {
+                USP_ItemMaster1Row rowUSP_ItemMaster1Row = ((USP_ItemMaster1Row)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        null,
+                        Code,
                         ItemCode,
                         ItemName,
                         DisplayName,
                         ItemBarCode,
-                        UOMMaster_Code,
+                        UomName,
                         HSNCode,
-                        CategoryMaster_Code,
-                        GroupMaster_Code,
-                        SubGroupMaster_Code,
-                        BrandMaster_Code,
+                        CategoryName,
+                        GroupName,
+                        SubGroupName,
+                        BrandName,
                         ReorderLevel,
                         ReorderQty,
-                        LocationMaster_Code,
-                        BatchApplicable,
+                        locationName,
                         BoxPacking,
+                        BatchApplicable,
                         MaintainExpiry,
                         QtyInBox,
-                        Status,
-                        DataImported};
-                rowitemmasterRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowitemmasterRow);
-                return rowitemmasterRow;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public itemmasterRow FindByCode(int Code) {
-                return ((itemmasterRow)(this.Rows.Find(new object[] {
-                            Code})));
+                        Reorder};
+                rowUSP_ItemMaster1Row.ItemArray = columnValuesArray;
+                this.Rows.Add(rowUSP_ItemMaster1Row);
+                return rowUSP_ItemMaster1Row;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                itemmasterDataTable cln = ((itemmasterDataTable)(base.Clone()));
+                USP_ItemMaster1DataTable cln = ((USP_ItemMaster1DataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -618,7 +600,7 @@ namespace DatasetClass.Dataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new itemmasterDataTable();
+                return new USP_ItemMaster1DataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -629,21 +611,20 @@ namespace DatasetClass.Dataset {
                 this.columnItemName = base.Columns["ItemName"];
                 this.columnDisplayName = base.Columns["DisplayName"];
                 this.columnItemBarCode = base.Columns["ItemBarCode"];
-                this.columnUOMMaster_Code = base.Columns["UOMMaster_Code"];
+                this.columnUomName = base.Columns["UomName"];
                 this.columnHSNCode = base.Columns["HSNCode"];
-                this.columnCategoryMaster_Code = base.Columns["CategoryMaster_Code"];
-                this.columnGroupMaster_Code = base.Columns["GroupMaster_Code"];
-                this.columnSubGroupMaster_Code = base.Columns["SubGroupMaster_Code"];
-                this.columnBrandMaster_Code = base.Columns["BrandMaster_Code"];
+                this.columnCategoryName = base.Columns["CategoryName"];
+                this.columnGroupName = base.Columns["GroupName"];
+                this.columnSubGroupName = base.Columns["SubGroupName"];
+                this.columnBrandName = base.Columns["BrandName"];
                 this.columnReorderLevel = base.Columns["ReorderLevel"];
                 this.columnReorderQty = base.Columns["ReorderQty"];
-                this.columnLocationMaster_Code = base.Columns["LocationMaster_Code"];
-                this.columnBatchApplicable = base.Columns["BatchApplicable"];
+                this.columnlocationName = base.Columns["locationName"];
                 this.columnBoxPacking = base.Columns["BoxPacking"];
+                this.columnBatchApplicable = base.Columns["BatchApplicable"];
                 this.columnMaintainExpiry = base.Columns["MaintainExpiry"];
                 this.columnQtyInBox = base.Columns["QtyInBox"];
-                this.columnStatus = base.Columns["Status"];
-                this.columnDataImported = base.Columns["DataImported"];
+                this.columnReorder = base.Columns["Reorder"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -659,70 +640,63 @@ namespace DatasetClass.Dataset {
                 base.Columns.Add(this.columnDisplayName);
                 this.columnItemBarCode = new global::System.Data.DataColumn("ItemBarCode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnItemBarCode);
-                this.columnUOMMaster_Code = new global::System.Data.DataColumn("UOMMaster_Code", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnUOMMaster_Code);
+                this.columnUomName = new global::System.Data.DataColumn("UomName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnUomName);
                 this.columnHSNCode = new global::System.Data.DataColumn("HSNCode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnHSNCode);
-                this.columnCategoryMaster_Code = new global::System.Data.DataColumn("CategoryMaster_Code", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnCategoryMaster_Code);
-                this.columnGroupMaster_Code = new global::System.Data.DataColumn("GroupMaster_Code", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnGroupMaster_Code);
-                this.columnSubGroupMaster_Code = new global::System.Data.DataColumn("SubGroupMaster_Code", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnSubGroupMaster_Code);
-                this.columnBrandMaster_Code = new global::System.Data.DataColumn("BrandMaster_Code", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnBrandMaster_Code);
+                this.columnCategoryName = new global::System.Data.DataColumn("CategoryName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCategoryName);
+                this.columnGroupName = new global::System.Data.DataColumn("GroupName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnGroupName);
+                this.columnSubGroupName = new global::System.Data.DataColumn("SubGroupName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSubGroupName);
+                this.columnBrandName = new global::System.Data.DataColumn("BrandName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnBrandName);
                 this.columnReorderLevel = new global::System.Data.DataColumn("ReorderLevel", typeof(float), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnReorderLevel);
                 this.columnReorderQty = new global::System.Data.DataColumn("ReorderQty", typeof(float), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnReorderQty);
-                this.columnLocationMaster_Code = new global::System.Data.DataColumn("LocationMaster_Code", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnLocationMaster_Code);
-                this.columnBatchApplicable = new global::System.Data.DataColumn("BatchApplicable", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnBatchApplicable);
+                this.columnlocationName = new global::System.Data.DataColumn("locationName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnlocationName);
                 this.columnBoxPacking = new global::System.Data.DataColumn("BoxPacking", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnBoxPacking);
+                this.columnBatchApplicable = new global::System.Data.DataColumn("BatchApplicable", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnBatchApplicable);
                 this.columnMaintainExpiry = new global::System.Data.DataColumn("MaintainExpiry", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnMaintainExpiry);
                 this.columnQtyInBox = new global::System.Data.DataColumn("QtyInBox", typeof(float), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnQtyInBox);
-                this.columnStatus = new global::System.Data.DataColumn("Status", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnStatus);
-                this.columnDataImported = new global::System.Data.DataColumn("DataImported", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnDataImported);
-                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
-                                this.columnCode}, true));
-                this.columnCode.AutoIncrement = true;
-                this.columnCode.AutoIncrementSeed = -1;
-                this.columnCode.AutoIncrementStep = -1;
+                this.columnReorder = new global::System.Data.DataColumn("Reorder", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnReorder);
                 this.columnCode.AllowDBNull = false;
-                this.columnCode.Unique = true;
                 this.columnItemName.AllowDBNull = false;
+                this.columnReorder.ReadOnly = true;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public itemmasterRow NewitemmasterRow() {
-                return ((itemmasterRow)(this.NewRow()));
+            public USP_ItemMaster1Row NewUSP_ItemMaster1Row() {
+                return ((USP_ItemMaster1Row)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new itemmasterRow(builder);
+                return new USP_ItemMaster1Row(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(itemmasterRow);
+                return typeof(USP_ItemMaster1Row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.itemmasterRowChanged != null)) {
-                    this.itemmasterRowChanged(this, new itemmasterRowChangeEvent(((itemmasterRow)(e.Row)), e.Action));
+                if ((this.USP_ItemMaster1RowChanged != null)) {
+                    this.USP_ItemMaster1RowChanged(this, new USP_ItemMaster1RowChangeEvent(((USP_ItemMaster1Row)(e.Row)), e.Action));
                 }
             }
             
@@ -730,8 +704,8 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.itemmasterRowChanging != null)) {
-                    this.itemmasterRowChanging(this, new itemmasterRowChangeEvent(((itemmasterRow)(e.Row)), e.Action));
+                if ((this.USP_ItemMaster1RowChanging != null)) {
+                    this.USP_ItemMaster1RowChanging(this, new USP_ItemMaster1RowChangeEvent(((USP_ItemMaster1Row)(e.Row)), e.Action));
                 }
             }
             
@@ -739,8 +713,8 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.itemmasterRowDeleted != null)) {
-                    this.itemmasterRowDeleted(this, new itemmasterRowChangeEvent(((itemmasterRow)(e.Row)), e.Action));
+                if ((this.USP_ItemMaster1RowDeleted != null)) {
+                    this.USP_ItemMaster1RowDeleted(this, new USP_ItemMaster1RowChangeEvent(((USP_ItemMaster1Row)(e.Row)), e.Action));
                 }
             }
             
@@ -748,14 +722,14 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.itemmasterRowDeleting != null)) {
-                    this.itemmasterRowDeleting(this, new itemmasterRowChangeEvent(((itemmasterRow)(e.Row)), e.Action));
+                if ((this.USP_ItemMaster1RowDeleting != null)) {
+                    this.USP_ItemMaster1RowDeleting(this, new USP_ItemMaster1RowChangeEvent(((USP_ItemMaster1Row)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void RemoveitemmasterRow(itemmasterRow row) {
+            public void RemoveUSP_ItemMaster1Row(USP_ItemMaster1Row row) {
                 this.Rows.Remove(row);
             }
             
@@ -782,7 +756,7 @@ namespace DatasetClass.Dataset {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "itemmasterDataTable";
+                attribute2.FixedValue = "USP_ItemMaster1DataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -826,25 +800,25 @@ namespace DatasetClass.Dataset {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class itemmasterRow : global::System.Data.DataRow {
+        public partial class USP_ItemMaster1Row : global::System.Data.DataRow {
             
-            private itemmasterDataTable tableitemmaster;
+            private USP_ItemMaster1DataTable tableUSP_ItemMaster1;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            internal itemmasterRow(global::System.Data.DataRowBuilder rb) : 
+            internal USP_ItemMaster1Row(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableitemmaster = ((itemmasterDataTable)(this.Table));
+                this.tableUSP_ItemMaster1 = ((USP_ItemMaster1DataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public int Code {
                 get {
-                    return ((int)(this[this.tableitemmaster.CodeColumn]));
+                    return ((int)(this[this.tableUSP_ItemMaster1.CodeColumn]));
                 }
                 set {
-                    this[this.tableitemmaster.CodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.CodeColumn] = value;
                 }
             }
             
@@ -853,14 +827,14 @@ namespace DatasetClass.Dataset {
             public string ItemCode {
                 get {
                     try {
-                        return ((string)(this[this.tableitemmaster.ItemCodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.ItemCodeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ItemCode\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'ItemCode\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.ItemCodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.ItemCodeColumn] = value;
                 }
             }
             
@@ -868,10 +842,10 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public string ItemName {
                 get {
-                    return ((string)(this[this.tableitemmaster.ItemNameColumn]));
+                    return ((string)(this[this.tableUSP_ItemMaster1.ItemNameColumn]));
                 }
                 set {
-                    this[this.tableitemmaster.ItemNameColumn] = value;
+                    this[this.tableUSP_ItemMaster1.ItemNameColumn] = value;
                 }
             }
             
@@ -880,14 +854,14 @@ namespace DatasetClass.Dataset {
             public string DisplayName {
                 get {
                     try {
-                        return ((string)(this[this.tableitemmaster.DisplayNameColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.DisplayNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'DisplayName\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'DisplayName\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.DisplayNameColumn] = value;
+                    this[this.tableUSP_ItemMaster1.DisplayNameColumn] = value;
                 }
             }
             
@@ -896,30 +870,30 @@ namespace DatasetClass.Dataset {
             public string ItemBarCode {
                 get {
                     try {
-                        return ((string)(this[this.tableitemmaster.ItemBarCodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.ItemBarCodeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ItemBarCode\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'ItemBarCode\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.ItemBarCodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.ItemBarCodeColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int UOMMaster_Code {
+            public string UomName {
                 get {
                     try {
-                        return ((int)(this[this.tableitemmaster.UOMMaster_CodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.UomNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'UOMMaster_Code\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'UomName\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.UOMMaster_CodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.UomNameColumn] = value;
                 }
             }
             
@@ -928,78 +902,78 @@ namespace DatasetClass.Dataset {
             public string HSNCode {
                 get {
                     try {
-                        return ((string)(this[this.tableitemmaster.HSNCodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.HSNCodeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'HSNCode\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'HSNCode\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.HSNCodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.HSNCodeColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int CategoryMaster_Code {
+            public string CategoryName {
                 get {
                     try {
-                        return ((int)(this[this.tableitemmaster.CategoryMaster_CodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.CategoryNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'CategoryMaster_Code\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'CategoryName\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.CategoryMaster_CodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.CategoryNameColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int GroupMaster_Code {
+            public string GroupName {
                 get {
                     try {
-                        return ((int)(this[this.tableitemmaster.GroupMaster_CodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.GroupNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'GroupMaster_Code\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'GroupName\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.GroupMaster_CodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.GroupNameColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int SubGroupMaster_Code {
+            public string SubGroupName {
                 get {
                     try {
-                        return ((int)(this[this.tableitemmaster.SubGroupMaster_CodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.SubGroupNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'SubGroupMaster_Code\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SubGroupName\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.SubGroupMaster_CodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.SubGroupNameColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int BrandMaster_Code {
+            public string BrandName {
                 get {
                     try {
-                        return ((int)(this[this.tableitemmaster.BrandMaster_CodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.BrandNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'BrandMaster_Code\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'BrandName\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.BrandMaster_CodeColumn] = value;
+                    this[this.tableUSP_ItemMaster1.BrandNameColumn] = value;
                 }
             }
             
@@ -1008,14 +982,14 @@ namespace DatasetClass.Dataset {
             public float ReorderLevel {
                 get {
                     try {
-                        return ((float)(this[this.tableitemmaster.ReorderLevelColumn]));
+                        return ((float)(this[this.tableUSP_ItemMaster1.ReorderLevelColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ReorderLevel\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'ReorderLevel\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.ReorderLevelColumn] = value;
+                    this[this.tableUSP_ItemMaster1.ReorderLevelColumn] = value;
                 }
             }
             
@@ -1024,46 +998,30 @@ namespace DatasetClass.Dataset {
             public float ReorderQty {
                 get {
                     try {
-                        return ((float)(this[this.tableitemmaster.ReorderQtyColumn]));
+                        return ((float)(this[this.tableUSP_ItemMaster1.ReorderQtyColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ReorderQty\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'ReorderQty\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.ReorderQtyColumn] = value;
+                    this[this.tableUSP_ItemMaster1.ReorderQtyColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int LocationMaster_Code {
+            public string locationName {
                 get {
                     try {
-                        return ((int)(this[this.tableitemmaster.LocationMaster_CodeColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.locationNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'LocationMaster_Code\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'locationName\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.LocationMaster_CodeColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string BatchApplicable {
-                get {
-                    try {
-                        return ((string)(this[this.tableitemmaster.BatchApplicableColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'BatchApplicable\' in table \'itemmaster\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableitemmaster.BatchApplicableColumn] = value;
+                    this[this.tableUSP_ItemMaster1.locationNameColumn] = value;
                 }
             }
             
@@ -1072,14 +1030,30 @@ namespace DatasetClass.Dataset {
             public string BoxPacking {
                 get {
                     try {
-                        return ((string)(this[this.tableitemmaster.BoxPackingColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.BoxPackingColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'BoxPacking\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'BoxPacking\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.BoxPackingColumn] = value;
+                    this[this.tableUSP_ItemMaster1.BoxPackingColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string BatchApplicable {
+                get {
+                    try {
+                        return ((string)(this[this.tableUSP_ItemMaster1.BatchApplicableColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'BatchApplicable\' in table \'USP_ItemMaster1\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableUSP_ItemMaster1.BatchApplicableColumn] = value;
                 }
             }
             
@@ -1088,14 +1062,14 @@ namespace DatasetClass.Dataset {
             public string MaintainExpiry {
                 get {
                     try {
-                        return ((string)(this[this.tableitemmaster.MaintainExpiryColumn]));
+                        return ((string)(this[this.tableUSP_ItemMaster1.MaintainExpiryColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'MaintainExpiry\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'MaintainExpiry\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.MaintainExpiryColumn] = value;
+                    this[this.tableUSP_ItemMaster1.MaintainExpiryColumn] = value;
                 }
             }
             
@@ -1104,263 +1078,235 @@ namespace DatasetClass.Dataset {
             public float QtyInBox {
                 get {
                     try {
-                        return ((float)(this[this.tableitemmaster.QtyInBoxColumn]));
+                        return ((float)(this[this.tableUSP_ItemMaster1.QtyInBoxColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'QtyInBox\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'QtyInBox\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.QtyInBoxColumn] = value;
+                    this[this.tableUSP_ItemMaster1.QtyInBoxColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string Status {
+            public double Reorder {
                 get {
                     try {
-                        return ((string)(this[this.tableitemmaster.StatusColumn]));
+                        return ((double)(this[this.tableUSP_ItemMaster1.ReorderColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Status\' in table \'itemmaster\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Reorder\' in table \'USP_ItemMaster1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableitemmaster.StatusColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string DataImported {
-                get {
-                    try {
-                        return ((string)(this[this.tableitemmaster.DataImportedColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'DataImported\' in table \'itemmaster\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableitemmaster.DataImportedColumn] = value;
+                    this[this.tableUSP_ItemMaster1.ReorderColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsItemCodeNull() {
-                return this.IsNull(this.tableitemmaster.ItemCodeColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.ItemCodeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetItemCodeNull() {
-                this[this.tableitemmaster.ItemCodeColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.ItemCodeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsDisplayNameNull() {
-                return this.IsNull(this.tableitemmaster.DisplayNameColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.DisplayNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetDisplayNameNull() {
-                this[this.tableitemmaster.DisplayNameColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.DisplayNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsItemBarCodeNull() {
-                return this.IsNull(this.tableitemmaster.ItemBarCodeColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.ItemBarCodeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetItemBarCodeNull() {
-                this[this.tableitemmaster.ItemBarCodeColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.ItemBarCodeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsUOMMaster_CodeNull() {
-                return this.IsNull(this.tableitemmaster.UOMMaster_CodeColumn);
+            public bool IsUomNameNull() {
+                return this.IsNull(this.tableUSP_ItemMaster1.UomNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetUOMMaster_CodeNull() {
-                this[this.tableitemmaster.UOMMaster_CodeColumn] = global::System.Convert.DBNull;
+            public void SetUomNameNull() {
+                this[this.tableUSP_ItemMaster1.UomNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsHSNCodeNull() {
-                return this.IsNull(this.tableitemmaster.HSNCodeColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.HSNCodeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetHSNCodeNull() {
-                this[this.tableitemmaster.HSNCodeColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.HSNCodeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsCategoryMaster_CodeNull() {
-                return this.IsNull(this.tableitemmaster.CategoryMaster_CodeColumn);
+            public bool IsCategoryNameNull() {
+                return this.IsNull(this.tableUSP_ItemMaster1.CategoryNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetCategoryMaster_CodeNull() {
-                this[this.tableitemmaster.CategoryMaster_CodeColumn] = global::System.Convert.DBNull;
+            public void SetCategoryNameNull() {
+                this[this.tableUSP_ItemMaster1.CategoryNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsGroupMaster_CodeNull() {
-                return this.IsNull(this.tableitemmaster.GroupMaster_CodeColumn);
+            public bool IsGroupNameNull() {
+                return this.IsNull(this.tableUSP_ItemMaster1.GroupNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetGroupMaster_CodeNull() {
-                this[this.tableitemmaster.GroupMaster_CodeColumn] = global::System.Convert.DBNull;
+            public void SetGroupNameNull() {
+                this[this.tableUSP_ItemMaster1.GroupNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsSubGroupMaster_CodeNull() {
-                return this.IsNull(this.tableitemmaster.SubGroupMaster_CodeColumn);
+            public bool IsSubGroupNameNull() {
+                return this.IsNull(this.tableUSP_ItemMaster1.SubGroupNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetSubGroupMaster_CodeNull() {
-                this[this.tableitemmaster.SubGroupMaster_CodeColumn] = global::System.Convert.DBNull;
+            public void SetSubGroupNameNull() {
+                this[this.tableUSP_ItemMaster1.SubGroupNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsBrandMaster_CodeNull() {
-                return this.IsNull(this.tableitemmaster.BrandMaster_CodeColumn);
+            public bool IsBrandNameNull() {
+                return this.IsNull(this.tableUSP_ItemMaster1.BrandNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetBrandMaster_CodeNull() {
-                this[this.tableitemmaster.BrandMaster_CodeColumn] = global::System.Convert.DBNull;
+            public void SetBrandNameNull() {
+                this[this.tableUSP_ItemMaster1.BrandNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsReorderLevelNull() {
-                return this.IsNull(this.tableitemmaster.ReorderLevelColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.ReorderLevelColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetReorderLevelNull() {
-                this[this.tableitemmaster.ReorderLevelColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.ReorderLevelColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsReorderQtyNull() {
-                return this.IsNull(this.tableitemmaster.ReorderQtyColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.ReorderQtyColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetReorderQtyNull() {
-                this[this.tableitemmaster.ReorderQtyColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.ReorderQtyColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsLocationMaster_CodeNull() {
-                return this.IsNull(this.tableitemmaster.LocationMaster_CodeColumn);
+            public bool IslocationNameNull() {
+                return this.IsNull(this.tableUSP_ItemMaster1.locationNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetLocationMaster_CodeNull() {
-                this[this.tableitemmaster.LocationMaster_CodeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsBatchApplicableNull() {
-                return this.IsNull(this.tableitemmaster.BatchApplicableColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetBatchApplicableNull() {
-                this[this.tableitemmaster.BatchApplicableColumn] = global::System.Convert.DBNull;
+            public void SetlocationNameNull() {
+                this[this.tableUSP_ItemMaster1.locationNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsBoxPackingNull() {
-                return this.IsNull(this.tableitemmaster.BoxPackingColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.BoxPackingColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetBoxPackingNull() {
-                this[this.tableitemmaster.BoxPackingColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.BoxPackingColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsBatchApplicableNull() {
+                return this.IsNull(this.tableUSP_ItemMaster1.BatchApplicableColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetBatchApplicableNull() {
+                this[this.tableUSP_ItemMaster1.BatchApplicableColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsMaintainExpiryNull() {
-                return this.IsNull(this.tableitemmaster.MaintainExpiryColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.MaintainExpiryColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetMaintainExpiryNull() {
-                this[this.tableitemmaster.MaintainExpiryColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.MaintainExpiryColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsQtyInBoxNull() {
-                return this.IsNull(this.tableitemmaster.QtyInBoxColumn);
+                return this.IsNull(this.tableUSP_ItemMaster1.QtyInBoxColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetQtyInBoxNull() {
-                this[this.tableitemmaster.QtyInBoxColumn] = global::System.Convert.DBNull;
+                this[this.tableUSP_ItemMaster1.QtyInBoxColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsStatusNull() {
-                return this.IsNull(this.tableitemmaster.StatusColumn);
+            public bool IsReorderNull() {
+                return this.IsNull(this.tableUSP_ItemMaster1.ReorderColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetStatusNull() {
-                this[this.tableitemmaster.StatusColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsDataImportedNull() {
-                return this.IsNull(this.tableitemmaster.DataImportedColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetDataImportedNull() {
-                this[this.tableitemmaster.DataImportedColumn] = global::System.Convert.DBNull;
+            public void SetReorderNull() {
+                this[this.tableUSP_ItemMaster1.ReorderColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -1368,22 +1314,22 @@ namespace DatasetClass.Dataset {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public class itemmasterRowChangeEvent : global::System.EventArgs {
+        public class USP_ItemMaster1RowChangeEvent : global::System.EventArgs {
             
-            private itemmasterRow eventRow;
+            private USP_ItemMaster1Row eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public itemmasterRowChangeEvent(itemmasterRow row, global::System.Data.DataRowAction action) {
+            public USP_ItemMaster1RowChangeEvent(USP_ItemMaster1Row row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public itemmasterRow Row {
+            public USP_ItemMaster1Row Row {
                 get {
                     return this.eventRow;
                 }
@@ -1411,7 +1357,7 @@ namespace DatasetClass.Dataset.ItemMasterTableAdapters {
     [global::System.ComponentModel.DesignerAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterDesigner, Microsoft.VSDesigner" +
         ", Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-    public partial class itemmasterTableAdapter : global::System.ComponentModel.Component {
+    public partial class USP_ItemMaster1TableAdapter : global::System.ComponentModel.Component {
         
         private global::Devart.Data.MySql.MySqlDataAdapter _adapter;
         
@@ -1425,7 +1371,7 @@ namespace DatasetClass.Dataset.ItemMasterTableAdapters {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public itemmasterTableAdapter() {
+        public USP_ItemMaster1TableAdapter() {
             this.ClearBeforeFill = true;
         }
         
@@ -1522,996 +1468,34 @@ namespace DatasetClass.Dataset.ItemMasterTableAdapters {
             this._adapter = new global::Devart.Data.MySql.MySqlDataAdapter();
             global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
             tableMapping.SourceTable = "Table";
-            tableMapping.DataSetTable = "itemmaster";
+            tableMapping.DataSetTable = "USP_ItemMaster1";
             tableMapping.ColumnMappings.Add("Code", "Code");
             tableMapping.ColumnMappings.Add("ItemCode", "ItemCode");
             tableMapping.ColumnMappings.Add("ItemName", "ItemName");
             tableMapping.ColumnMappings.Add("DisplayName", "DisplayName");
             tableMapping.ColumnMappings.Add("ItemBarCode", "ItemBarCode");
-            tableMapping.ColumnMappings.Add("UOMMaster_Code", "UOMMaster_Code");
+            tableMapping.ColumnMappings.Add("UomName", "UomName");
             tableMapping.ColumnMappings.Add("HSNCode", "HSNCode");
-            tableMapping.ColumnMappings.Add("CategoryMaster_Code", "CategoryMaster_Code");
-            tableMapping.ColumnMappings.Add("GroupMaster_Code", "GroupMaster_Code");
-            tableMapping.ColumnMappings.Add("SubGroupMaster_Code", "SubGroupMaster_Code");
-            tableMapping.ColumnMappings.Add("BrandMaster_Code", "BrandMaster_Code");
+            tableMapping.ColumnMappings.Add("CategoryName", "CategoryName");
+            tableMapping.ColumnMappings.Add("GroupName", "GroupName");
+            tableMapping.ColumnMappings.Add("SubGroupName", "SubGroupName");
+            tableMapping.ColumnMappings.Add("BrandName", "BrandName");
             tableMapping.ColumnMappings.Add("ReorderLevel", "ReorderLevel");
             tableMapping.ColumnMappings.Add("ReorderQty", "ReorderQty");
-            tableMapping.ColumnMappings.Add("LocationMaster_Code", "LocationMaster_Code");
-            tableMapping.ColumnMappings.Add("BatchApplicable", "BatchApplicable");
+            tableMapping.ColumnMappings.Add("locationName", "locationName");
             tableMapping.ColumnMappings.Add("BoxPacking", "BoxPacking");
+            tableMapping.ColumnMappings.Add("BatchApplicable", "BatchApplicable");
             tableMapping.ColumnMappings.Add("MaintainExpiry", "MaintainExpiry");
             tableMapping.ColumnMappings.Add("QtyInBox", "QtyInBox");
-            tableMapping.ColumnMappings.Add("Status", "Status");
-            tableMapping.ColumnMappings.Add("DataImported", "DataImported");
+            tableMapping.ColumnMappings.Add("Reorder", "Reorder");
             this._adapter.TableMappings.Add(tableMapping);
-            this._adapter.DeleteCommand = new global::Devart.Data.MySql.MySqlCommand();
-            this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = "DELETE FROM `bizsolesms_test`.`itemmaster` WHERE ((`Code` = :Original_Code) AND (" +
-                "(:IsNull_ItemCode = 1 AND `ItemCode` IS NULL) OR (`ItemCode` = :Original_ItemCod" +
-                "e)) AND (`ItemName` = :Original_ItemName) AND ((:IsNull_DisplayName = 1 AND `Dis" +
-                "playName` IS NULL) OR (`DisplayName` = :Original_DisplayName)) AND ((:IsNull_Ite" +
-                "mBarCode = 1 AND `ItemBarCode` IS NULL) OR (`ItemBarCode` = :Original_ItemBarCod" +
-                "e)) AND ((:IsNull_UOMMaster_Code = 1 AND `UOMMaster_Code` IS NULL) OR (`UOMMaste" +
-                "r_Code` = :Original_UOMMaster_Code)) AND ((:IsNull_HSNCode = 1 AND `HSNCode` IS " +
-                "NULL) OR (`HSNCode` = :Original_HSNCode)) AND ((:IsNull_CategoryMaster_Code = 1 " +
-                "AND `CategoryMaster_Code` IS NULL) OR (`CategoryMaster_Code` = :Original_Categor" +
-                "yMaster_Code)) AND ((:IsNull_GroupMaster_Code = 1 AND `GroupMaster_Code` IS NULL" +
-                ") OR (`GroupMaster_Code` = :Original_GroupMaster_Code)) AND ((:IsNull_SubGroupMa" +
-                "ster_Code = 1 AND `SubGroupMaster_Code` IS NULL) OR (`SubGroupMaster_Code` = :Or" +
-                "iginal_SubGroupMaster_Code)) AND ((:IsNull_BrandMaster_Code = 1 AND `BrandMaster" +
-                "_Code` IS NULL) OR (`BrandMaster_Code` = :Original_BrandMaster_Code)) AND ((:IsN" +
-                "ull_ReorderLevel = 1 AND `ReorderLevel` IS NULL) OR (`ReorderLevel` = :Original_" +
-                "ReorderLevel)) AND ((:IsNull_ReorderQty = 1 AND `ReorderQty` IS NULL) OR (`Reord" +
-                "erQty` = :Original_ReorderQty)) AND ((:IsNull_LocationMaster_Code = 1 AND `Locat" +
-                "ionMaster_Code` IS NULL) OR (`LocationMaster_Code` = :Original_LocationMaster_Co" +
-                "de)) AND ((:IsNull_BatchApplicable = 1 AND `BatchApplicable` IS NULL) OR (`Batch" +
-                "Applicable` = :Original_BatchApplicable)) AND ((:IsNull_BoxPacking = 1 AND `BoxP" +
-                "acking` IS NULL) OR (`BoxPacking` = :Original_BoxPacking)) AND ((:IsNull_Maintai" +
-                "nExpiry = 1 AND `MaintainExpiry` IS NULL) OR (`MaintainExpiry` = :Original_Maint" +
-                "ainExpiry)) AND ((:IsNull_QtyInBox = 1 AND `QtyInBox` IS NULL) OR (`QtyInBox` = " +
-                ":Original_QtyInBox)) AND ((:IsNull_Status = 1 AND `Status` IS NULL) OR (`Status`" +
-                " = :Original_Status)) AND ((:IsNull_DataImported = 1 AND `DataImported` IS NULL)" +
-                " OR (`DataImported` = :Original_DataImported)))";
-            this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
-            global::Devart.Data.MySql.MySqlParameter param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_ItemCode";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ItemCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ItemName";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemName";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_DisplayName";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "DisplayName";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_DisplayName";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "DisplayName";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_ItemBarCode";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemBarCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ItemBarCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemBarCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_UOMMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "UOMMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_UOMMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "UOMMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_HSNCode";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "HSNCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_HSNCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "HSNCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_CategoryMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "CategoryMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_CategoryMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "CategoryMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_GroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "GroupMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_GroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "GroupMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_SubGroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "SubGroupMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_SubGroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "SubGroupMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_BrandMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BrandMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_BrandMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BrandMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_ReorderLevel";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderLevel";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ReorderLevel";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderLevel";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_ReorderQty";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderQty";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ReorderQty";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderQty";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_LocationMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "LocationMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_LocationMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "LocationMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_BatchApplicable";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BatchApplicable";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_BatchApplicable";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "BatchApplicable";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_BoxPacking";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BoxPacking";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_BoxPacking";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "BoxPacking";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_MaintainExpiry";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "MaintainExpiry";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_MaintainExpiry";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "MaintainExpiry";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_QtyInBox";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "QtyInBox";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_QtyInBox";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "QtyInBox";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_Status";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "Status";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_Status";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "Status";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_DataImported";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "DataImported";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_DataImported";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "DataImported";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            this._adapter.InsertCommand = new global::Devart.Data.MySql.MySqlCommand();
-            this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = @"INSERT INTO `bizsolesms_test`.`itemmaster` (`ItemCode`, `ItemName`, `DisplayName`, `ItemBarCode`, `UOMMaster_Code`, `HSNCode`, `CategoryMaster_Code`, `GroupMaster_Code`, `SubGroupMaster_Code`, `BrandMaster_Code`, `ReorderLevel`, `ReorderQty`, `LocationMaster_Code`, `BatchApplicable`, `BoxPacking`, `MaintainExpiry`, `QtyInBox`, `Status`, `DataImported`) VALUES (:ItemCode, :ItemName, :DisplayName, :ItemBarCode, :UOMMaster_Code, :HSNCode, :CategoryMaster_Code, :GroupMaster_Code, :SubGroupMaster_Code, :BrandMaster_Code, :ReorderLevel, :ReorderQty, :LocationMaster_Code, :BatchApplicable, :BoxPacking, :MaintainExpiry, :QtyInBox, :Status, :DataImported)";
-            this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ItemCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemCode";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ItemName";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemName";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "DisplayName";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "DisplayName";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ItemBarCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemBarCode";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "UOMMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "UOMMaster_Code";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "HSNCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "HSNCode";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "CategoryMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "CategoryMaster_Code";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "GroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "GroupMaster_Code";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "SubGroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "SubGroupMaster_Code";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "BrandMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BrandMaster_Code";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ReorderLevel";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderLevel";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ReorderQty";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderQty";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "LocationMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "LocationMaster_Code";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "BatchApplicable";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "BatchApplicable";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "BoxPacking";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "BoxPacking";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "MaintainExpiry";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "MaintainExpiry";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "QtyInBox";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "QtyInBox";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Status";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "Status";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "DataImported";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "DataImported";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            this._adapter.UpdateCommand = new global::Devart.Data.MySql.MySqlCommand();
-            this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = "UPDATE `bizsolesms_test`.`itemmaster` SET `ItemCode` = :ItemCode, `ItemName` = :I" +
-                "temName, `DisplayName` = :DisplayName, `ItemBarCode` = :ItemBarCode, `UOMMaster_" +
-                "Code` = :UOMMaster_Code, `HSNCode` = :HSNCode, `CategoryMaster_Code` = :Category" +
-                "Master_Code, `GroupMaster_Code` = :GroupMaster_Code, `SubGroupMaster_Code` = :Su" +
-                "bGroupMaster_Code, `BrandMaster_Code` = :BrandMaster_Code, `ReorderLevel` = :Reo" +
-                "rderLevel, `ReorderQty` = :ReorderQty, `LocationMaster_Code` = :LocationMaster_C" +
-                "ode, `BatchApplicable` = :BatchApplicable, `BoxPacking` = :BoxPacking, `Maintain" +
-                "Expiry` = :MaintainExpiry, `QtyInBox` = :QtyInBox, `Status` = :Status, `DataImpo" +
-                "rted` = :DataImported WHERE ((`Code` = :Original_Code) AND ((:IsNull_ItemCode = " +
-                "1 AND `ItemCode` IS NULL) OR (`ItemCode` = :Original_ItemCode)) AND (`ItemName` " +
-                "= :Original_ItemName) AND ((:IsNull_DisplayName = 1 AND `DisplayName` IS NULL) O" +
-                "R (`DisplayName` = :Original_DisplayName)) AND ((:IsNull_ItemBarCode = 1 AND `It" +
-                "emBarCode` IS NULL) OR (`ItemBarCode` = :Original_ItemBarCode)) AND ((:IsNull_UO" +
-                "MMaster_Code = 1 AND `UOMMaster_Code` IS NULL) OR (`UOMMaster_Code` = :Original_" +
-                "UOMMaster_Code)) AND ((:IsNull_HSNCode = 1 AND `HSNCode` IS NULL) OR (`HSNCode` " +
-                "= :Original_HSNCode)) AND ((:IsNull_CategoryMaster_Code = 1 AND `CategoryMaster_" +
-                "Code` IS NULL) OR (`CategoryMaster_Code` = :Original_CategoryMaster_Code)) AND (" +
-                "(:IsNull_GroupMaster_Code = 1 AND `GroupMaster_Code` IS NULL) OR (`GroupMaster_C" +
-                "ode` = :Original_GroupMaster_Code)) AND ((:IsNull_SubGroupMaster_Code = 1 AND `S" +
-                "ubGroupMaster_Code` IS NULL) OR (`SubGroupMaster_Code` = :Original_SubGroupMaste" +
-                "r_Code)) AND ((:IsNull_BrandMaster_Code = 1 AND `BrandMaster_Code` IS NULL) OR (" +
-                "`BrandMaster_Code` = :Original_BrandMaster_Code)) AND ((:IsNull_ReorderLevel = 1" +
-                " AND `ReorderLevel` IS NULL) OR (`ReorderLevel` = :Original_ReorderLevel)) AND (" +
-                "(:IsNull_ReorderQty = 1 AND `ReorderQty` IS NULL) OR (`ReorderQty` = :Original_R" +
-                "eorderQty)) AND ((:IsNull_LocationMaster_Code = 1 AND `LocationMaster_Code` IS N" +
-                "ULL) OR (`LocationMaster_Code` = :Original_LocationMaster_Code)) AND ((:IsNull_B" +
-                "atchApplicable = 1 AND `BatchApplicable` IS NULL) OR (`BatchApplicable` = :Origi" +
-                "nal_BatchApplicable)) AND ((:IsNull_BoxPacking = 1 AND `BoxPacking` IS NULL) OR " +
-                "(`BoxPacking` = :Original_BoxPacking)) AND ((:IsNull_MaintainExpiry = 1 AND `Mai" +
-                "ntainExpiry` IS NULL) OR (`MaintainExpiry` = :Original_MaintainExpiry)) AND ((:I" +
-                "sNull_QtyInBox = 1 AND `QtyInBox` IS NULL) OR (`QtyInBox` = :Original_QtyInBox))" +
-                " AND ((:IsNull_Status = 1 AND `Status` IS NULL) OR (`Status` = :Original_Status)" +
-                ") AND ((:IsNull_DataImported = 1 AND `DataImported` IS NULL) OR (`DataImported` " +
-                "= :Original_DataImported)))";
-            this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ItemCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemCode";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ItemName";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemName";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "DisplayName";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "DisplayName";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ItemBarCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemBarCode";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "UOMMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "UOMMaster_Code";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "HSNCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "HSNCode";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "CategoryMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "CategoryMaster_Code";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "GroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "GroupMaster_Code";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "SubGroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "SubGroupMaster_Code";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "BrandMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BrandMaster_Code";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ReorderLevel";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderLevel";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "ReorderQty";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderQty";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "LocationMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "LocationMaster_Code";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "BatchApplicable";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "BatchApplicable";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "BoxPacking";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "BoxPacking";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "MaintainExpiry";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "MaintainExpiry";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "QtyInBox";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "QtyInBox";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Status";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "Status";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "DataImported";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "DataImported";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_ItemCode";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ItemCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ItemName";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemName";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_DisplayName";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "DisplayName";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_DisplayName";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "DisplayName";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_ItemBarCode";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemBarCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ItemBarCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "ItemBarCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_UOMMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "UOMMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_UOMMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "UOMMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_HSNCode";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "HSNCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_HSNCode";
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.VarChar;
-            param.IsNullable = true;
-            param.SourceColumn = "HSNCode";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_CategoryMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "CategoryMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_CategoryMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "CategoryMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_GroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "GroupMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_GroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "GroupMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_SubGroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "SubGroupMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_SubGroupMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "SubGroupMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_BrandMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BrandMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_BrandMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BrandMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_ReorderLevel";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderLevel";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ReorderLevel";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderLevel";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_ReorderQty";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderQty";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_ReorderQty";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "ReorderQty";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_LocationMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "LocationMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_LocationMaster_Code";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "LocationMaster_Code";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_BatchApplicable";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BatchApplicable";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_BatchApplicable";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "BatchApplicable";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_BoxPacking";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "BoxPacking";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_BoxPacking";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "BoxPacking";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_MaintainExpiry";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "MaintainExpiry";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_MaintainExpiry";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "MaintainExpiry";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_QtyInBox";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "QtyInBox";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_QtyInBox";
-            param.DbType = global::System.Data.DbType.Single;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Float;
-            param.IsNullable = true;
-            param.SourceColumn = "QtyInBox";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_Status";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "Status";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_Status";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "Status";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "IsNull_DataImported";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Int;
-            param.IsNullable = true;
-            param.SourceColumn = "DataImported";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::Devart.Data.MySql.MySqlParameter();
-            param.ParameterName = "Original_DataImported";
-            param.DbType = global::System.Data.DbType.AnsiStringFixedLength;
-            param.MySqlType = global::Devart.Data.MySql.MySqlType.Char;
-            param.IsNullable = true;
-            param.SourceColumn = "DataImported";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private void InitConnection() {
             this._connection = new global::Devart.Data.MySql.MySqlConnection();
-            this._connection.ConnectionString = "User Id=sa;Password=biz1981;Host=220.158.165.98;Port=65448;Database=bizsolesms_te" +
-                "st";
+            this._connection.ConnectionString = "User Id=sa;Host=220.158.165.98;Port=65448;Database=bizsolesms_test";
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2520,17 +1504,15 @@ namespace DatasetClass.Dataset.ItemMasterTableAdapters {
             this._commandCollection = new global::Devart.Data.MySql.MySqlCommand[1];
             this._commandCollection[0] = new global::Devart.Data.MySql.MySqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = @"SELECT Code, ItemCode, ItemName, DisplayName, ItemBarCode, UOMMaster_Code, HSNCode, CategoryMaster_Code, GroupMaster_Code, SubGroupMaster_Code, BrandMaster_Code, ReorderLevel, ReorderQty, LocationMaster_Code, 
-                  BatchApplicable, BoxPacking, MaintainExpiry, QtyInBox, Status, DataImported
-FROM     itemmaster";
-            this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
+            this._commandCollection[0].CommandText = "bizsolesms_test.USP_ItemMaster1";
+            this._commandCollection[0].CommandType = global::System.Data.CommandType.StoredProcedure;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(ItemMaster.itemmasterDataTable dataTable) {
+        public virtual int Fill(ItemMaster.USP_ItemMaster1DataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -2543,711 +1525,11 @@ FROM     itemmaster";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual ItemMaster.itemmasterDataTable GetData() {
+        public virtual ItemMaster.USP_ItemMaster1DataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            ItemMaster.itemmasterDataTable dataTable = new ItemMaster.itemmasterDataTable();
+            ItemMaster.USP_ItemMaster1DataTable dataTable = new ItemMaster.USP_ItemMaster1DataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(ItemMaster.itemmasterDataTable dataTable) {
-            return this.Adapter.Update(dataTable);
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(ItemMaster dataSet) {
-            return this.Adapter.Update(dataSet, "itemmaster");
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(global::System.Data.DataRow dataRow) {
-            return this.Adapter.Update(new global::System.Data.DataRow[] {
-                        dataRow});
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(global::System.Data.DataRow[] dataRows) {
-            return this.Adapter.Update(dataRows);
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(
-                    int Original_Code, 
-                    string Original_ItemCode, 
-                    string Original_ItemName, 
-                    string Original_DisplayName, 
-                    string Original_ItemBarCode, 
-                    global::System.Nullable<int> Original_UOMMaster_Code, 
-                    string Original_HSNCode, 
-                    global::System.Nullable<int> Original_CategoryMaster_Code, 
-                    global::System.Nullable<int> Original_GroupMaster_Code, 
-                    global::System.Nullable<int> Original_SubGroupMaster_Code, 
-                    global::System.Nullable<int> Original_BrandMaster_Code, 
-                    global::System.Nullable<float> Original_ReorderLevel, 
-                    global::System.Nullable<float> Original_ReorderQty, 
-                    global::System.Nullable<int> Original_LocationMaster_Code, 
-                    string Original_BatchApplicable, 
-                    string Original_BoxPacking, 
-                    string Original_MaintainExpiry, 
-                    global::System.Nullable<float> Original_QtyInBox, 
-                    string Original_Status, 
-                    string Original_DataImported) {
-            this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Code));
-            if ((Original_ItemCode == null)) {
-                this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[2].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[2].Value = ((string)(Original_ItemCode));
-            }
-            if ((Original_ItemName == null)) {
-                throw new global::System.ArgumentNullException("Original_ItemName");
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[3].Value = ((string)(Original_ItemName));
-            }
-            if ((Original_DisplayName == null)) {
-                this.Adapter.DeleteCommand.Parameters[4].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[5].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[4].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((string)(Original_DisplayName));
-            }
-            if ((Original_ItemBarCode == null)) {
-                this.Adapter.DeleteCommand.Parameters[6].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[7].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[6].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[7].Value = ((string)(Original_ItemBarCode));
-            }
-            if ((Original_UOMMaster_Code.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[8].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[9].Value = ((int)(Original_UOMMaster_Code.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[8].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[9].Value = global::System.DBNull.Value;
-            }
-            if ((Original_HSNCode == null)) {
-                this.Adapter.DeleteCommand.Parameters[10].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[11].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[10].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[11].Value = ((string)(Original_HSNCode));
-            }
-            if ((Original_CategoryMaster_Code.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[12].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[13].Value = ((int)(Original_CategoryMaster_Code.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[12].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[13].Value = global::System.DBNull.Value;
-            }
-            if ((Original_GroupMaster_Code.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[14].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[15].Value = ((int)(Original_GroupMaster_Code.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[14].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[15].Value = global::System.DBNull.Value;
-            }
-            if ((Original_SubGroupMaster_Code.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[16].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[17].Value = ((int)(Original_SubGroupMaster_Code.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[16].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[17].Value = global::System.DBNull.Value;
-            }
-            if ((Original_BrandMaster_Code.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[18].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[19].Value = ((int)(Original_BrandMaster_Code.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[18].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[19].Value = global::System.DBNull.Value;
-            }
-            if ((Original_ReorderLevel.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[20].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[21].Value = ((float)(Original_ReorderLevel.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[20].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[21].Value = global::System.DBNull.Value;
-            }
-            if ((Original_ReorderQty.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[22].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[23].Value = ((float)(Original_ReorderQty.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[22].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[23].Value = global::System.DBNull.Value;
-            }
-            if ((Original_LocationMaster_Code.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[24].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[25].Value = ((int)(Original_LocationMaster_Code.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[24].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[25].Value = global::System.DBNull.Value;
-            }
-            if ((Original_BatchApplicable == null)) {
-                this.Adapter.DeleteCommand.Parameters[26].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[27].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[26].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[27].Value = ((string)(Original_BatchApplicable));
-            }
-            if ((Original_BoxPacking == null)) {
-                this.Adapter.DeleteCommand.Parameters[28].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[29].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[28].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[29].Value = ((string)(Original_BoxPacking));
-            }
-            if ((Original_MaintainExpiry == null)) {
-                this.Adapter.DeleteCommand.Parameters[30].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[31].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[30].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[31].Value = ((string)(Original_MaintainExpiry));
-            }
-            if ((Original_QtyInBox.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[32].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[33].Value = ((float)(Original_QtyInBox.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[32].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[33].Value = global::System.DBNull.Value;
-            }
-            if ((Original_Status == null)) {
-                this.Adapter.DeleteCommand.Parameters[34].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[35].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[34].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[35].Value = ((string)(Original_Status));
-            }
-            if ((Original_DataImported == null)) {
-                this.Adapter.DeleteCommand.Parameters[36].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[37].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[36].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[37].Value = ((string)(Original_DataImported));
-            }
-            global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
-            if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
-                        != global::System.Data.ConnectionState.Open)) {
-                this.Adapter.DeleteCommand.Connection.Open();
-            }
-            try {
-                int returnValue = this.Adapter.DeleteCommand.ExecuteNonQuery();
-                return returnValue;
-            }
-            finally {
-                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
-                    this.Adapter.DeleteCommand.Connection.Close();
-                }
-            }
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(
-                    string ItemCode, 
-                    string ItemName, 
-                    string DisplayName, 
-                    string ItemBarCode, 
-                    global::System.Nullable<int> UOMMaster_Code, 
-                    string HSNCode, 
-                    global::System.Nullable<int> CategoryMaster_Code, 
-                    global::System.Nullable<int> GroupMaster_Code, 
-                    global::System.Nullable<int> SubGroupMaster_Code, 
-                    global::System.Nullable<int> BrandMaster_Code, 
-                    global::System.Nullable<float> ReorderLevel, 
-                    global::System.Nullable<float> ReorderQty, 
-                    global::System.Nullable<int> LocationMaster_Code, 
-                    string BatchApplicable, 
-                    string BoxPacking, 
-                    string MaintainExpiry, 
-                    global::System.Nullable<float> QtyInBox, 
-                    string Status, 
-                    string DataImported) {
-            if ((ItemCode == null)) {
-                this.Adapter.InsertCommand.Parameters[0].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[0].Value = ((string)(ItemCode));
-            }
-            if ((ItemName == null)) {
-                throw new global::System.ArgumentNullException("ItemName");
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[1].Value = ((string)(ItemName));
-            }
-            if ((DisplayName == null)) {
-                this.Adapter.InsertCommand.Parameters[2].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[2].Value = ((string)(DisplayName));
-            }
-            if ((ItemBarCode == null)) {
-                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[3].Value = ((string)(ItemBarCode));
-            }
-            if ((UOMMaster_Code.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[4].Value = ((int)(UOMMaster_Code.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[4].Value = global::System.DBNull.Value;
-            }
-            if ((HSNCode == null)) {
-                this.Adapter.InsertCommand.Parameters[5].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[5].Value = ((string)(HSNCode));
-            }
-            if ((CategoryMaster_Code.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[6].Value = ((int)(CategoryMaster_Code.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[6].Value = global::System.DBNull.Value;
-            }
-            if ((GroupMaster_Code.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[7].Value = ((int)(GroupMaster_Code.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[7].Value = global::System.DBNull.Value;
-            }
-            if ((SubGroupMaster_Code.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[8].Value = ((int)(SubGroupMaster_Code.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[8].Value = global::System.DBNull.Value;
-            }
-            if ((BrandMaster_Code.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[9].Value = ((int)(BrandMaster_Code.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[9].Value = global::System.DBNull.Value;
-            }
-            if ((ReorderLevel.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[10].Value = ((float)(ReorderLevel.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[10].Value = global::System.DBNull.Value;
-            }
-            if ((ReorderQty.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[11].Value = ((float)(ReorderQty.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[11].Value = global::System.DBNull.Value;
-            }
-            if ((LocationMaster_Code.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[12].Value = ((int)(LocationMaster_Code.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[12].Value = global::System.DBNull.Value;
-            }
-            if ((BatchApplicable == null)) {
-                this.Adapter.InsertCommand.Parameters[13].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[13].Value = ((string)(BatchApplicable));
-            }
-            if ((BoxPacking == null)) {
-                this.Adapter.InsertCommand.Parameters[14].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[14].Value = ((string)(BoxPacking));
-            }
-            if ((MaintainExpiry == null)) {
-                this.Adapter.InsertCommand.Parameters[15].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[15].Value = ((string)(MaintainExpiry));
-            }
-            if ((QtyInBox.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[16].Value = ((float)(QtyInBox.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[16].Value = global::System.DBNull.Value;
-            }
-            if ((Status == null)) {
-                this.Adapter.InsertCommand.Parameters[17].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[17].Value = ((string)(Status));
-            }
-            if ((DataImported == null)) {
-                this.Adapter.InsertCommand.Parameters[18].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[18].Value = ((string)(DataImported));
-            }
-            global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
-            if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
-                        != global::System.Data.ConnectionState.Open)) {
-                this.Adapter.InsertCommand.Connection.Open();
-            }
-            try {
-                int returnValue = this.Adapter.InsertCommand.ExecuteNonQuery();
-                return returnValue;
-            }
-            finally {
-                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
-                    this.Adapter.InsertCommand.Connection.Close();
-                }
-            }
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(
-                    string ItemCode, 
-                    string ItemName, 
-                    string DisplayName, 
-                    string ItemBarCode, 
-                    global::System.Nullable<int> UOMMaster_Code, 
-                    string HSNCode, 
-                    global::System.Nullable<int> CategoryMaster_Code, 
-                    global::System.Nullable<int> GroupMaster_Code, 
-                    global::System.Nullable<int> SubGroupMaster_Code, 
-                    global::System.Nullable<int> BrandMaster_Code, 
-                    global::System.Nullable<float> ReorderLevel, 
-                    global::System.Nullable<float> ReorderQty, 
-                    global::System.Nullable<int> LocationMaster_Code, 
-                    string BatchApplicable, 
-                    string BoxPacking, 
-                    string MaintainExpiry, 
-                    global::System.Nullable<float> QtyInBox, 
-                    string Status, 
-                    string DataImported, 
-                    int Original_Code, 
-                    string Original_ItemCode, 
-                    string Original_ItemName, 
-                    string Original_DisplayName, 
-                    string Original_ItemBarCode, 
-                    global::System.Nullable<int> Original_UOMMaster_Code, 
-                    string Original_HSNCode, 
-                    global::System.Nullable<int> Original_CategoryMaster_Code, 
-                    global::System.Nullable<int> Original_GroupMaster_Code, 
-                    global::System.Nullable<int> Original_SubGroupMaster_Code, 
-                    global::System.Nullable<int> Original_BrandMaster_Code, 
-                    global::System.Nullable<float> Original_ReorderLevel, 
-                    global::System.Nullable<float> Original_ReorderQty, 
-                    global::System.Nullable<int> Original_LocationMaster_Code, 
-                    string Original_BatchApplicable, 
-                    string Original_BoxPacking, 
-                    string Original_MaintainExpiry, 
-                    global::System.Nullable<float> Original_QtyInBox, 
-                    string Original_Status, 
-                    string Original_DataImported) {
-            if ((ItemCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[0].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[0].Value = ((string)(ItemCode));
-            }
-            if ((ItemName == null)) {
-                throw new global::System.ArgumentNullException("ItemName");
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(ItemName));
-            }
-            if ((DisplayName == null)) {
-                this.Adapter.UpdateCommand.Parameters[2].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[2].Value = ((string)(DisplayName));
-            }
-            if ((ItemBarCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(ItemBarCode));
-            }
-            if ((UOMMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[4].Value = ((int)(UOMMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
-            }
-            if ((HSNCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[5].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[5].Value = ((string)(HSNCode));
-            }
-            if ((CategoryMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((int)(CategoryMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
-            }
-            if ((GroupMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[7].Value = ((int)(GroupMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[7].Value = global::System.DBNull.Value;
-            }
-            if ((SubGroupMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((int)(SubGroupMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[8].Value = global::System.DBNull.Value;
-            }
-            if ((BrandMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((int)(BrandMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[9].Value = global::System.DBNull.Value;
-            }
-            if ((ReorderLevel.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((float)(ReorderLevel.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[10].Value = global::System.DBNull.Value;
-            }
-            if ((ReorderQty.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((float)(ReorderQty.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[11].Value = global::System.DBNull.Value;
-            }
-            if ((LocationMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((int)(LocationMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[12].Value = global::System.DBNull.Value;
-            }
-            if ((BatchApplicable == null)) {
-                this.Adapter.UpdateCommand.Parameters[13].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((string)(BatchApplicable));
-            }
-            if ((BoxPacking == null)) {
-                this.Adapter.UpdateCommand.Parameters[14].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[14].Value = ((string)(BoxPacking));
-            }
-            if ((MaintainExpiry == null)) {
-                this.Adapter.UpdateCommand.Parameters[15].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((string)(MaintainExpiry));
-            }
-            if ((QtyInBox.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[16].Value = ((float)(QtyInBox.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[16].Value = global::System.DBNull.Value;
-            }
-            if ((Status == null)) {
-                this.Adapter.UpdateCommand.Parameters[17].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((string)(Status));
-            }
-            if ((DataImported == null)) {
-                this.Adapter.UpdateCommand.Parameters[18].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[18].Value = ((string)(DataImported));
-            }
-            this.Adapter.UpdateCommand.Parameters[19].Value = ((int)(Original_Code));
-            if ((Original_ItemCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[21].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[21].Value = ((string)(Original_ItemCode));
-            }
-            if ((Original_ItemName == null)) {
-                throw new global::System.ArgumentNullException("Original_ItemName");
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[22].Value = ((string)(Original_ItemName));
-            }
-            if ((Original_DisplayName == null)) {
-                this.Adapter.UpdateCommand.Parameters[23].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[24].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[23].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[24].Value = ((string)(Original_DisplayName));
-            }
-            if ((Original_ItemBarCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[25].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[26].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[25].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[26].Value = ((string)(Original_ItemBarCode));
-            }
-            if ((Original_UOMMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[27].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[28].Value = ((int)(Original_UOMMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[27].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[28].Value = global::System.DBNull.Value;
-            }
-            if ((Original_HSNCode == null)) {
-                this.Adapter.UpdateCommand.Parameters[29].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[30].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[29].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[30].Value = ((string)(Original_HSNCode));
-            }
-            if ((Original_CategoryMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[31].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[32].Value = ((int)(Original_CategoryMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[31].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[32].Value = global::System.DBNull.Value;
-            }
-            if ((Original_GroupMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[33].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[34].Value = ((int)(Original_GroupMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[33].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[34].Value = global::System.DBNull.Value;
-            }
-            if ((Original_SubGroupMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[35].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[36].Value = ((int)(Original_SubGroupMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[35].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[36].Value = global::System.DBNull.Value;
-            }
-            if ((Original_BrandMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[37].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[38].Value = ((int)(Original_BrandMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[37].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[38].Value = global::System.DBNull.Value;
-            }
-            if ((Original_ReorderLevel.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[39].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[40].Value = ((float)(Original_ReorderLevel.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[39].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[40].Value = global::System.DBNull.Value;
-            }
-            if ((Original_ReorderQty.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[41].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[42].Value = ((float)(Original_ReorderQty.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[41].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[42].Value = global::System.DBNull.Value;
-            }
-            if ((Original_LocationMaster_Code.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[43].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[44].Value = ((int)(Original_LocationMaster_Code.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[43].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[44].Value = global::System.DBNull.Value;
-            }
-            if ((Original_BatchApplicable == null)) {
-                this.Adapter.UpdateCommand.Parameters[45].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[46].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[45].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[46].Value = ((string)(Original_BatchApplicable));
-            }
-            if ((Original_BoxPacking == null)) {
-                this.Adapter.UpdateCommand.Parameters[47].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[48].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[47].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[48].Value = ((string)(Original_BoxPacking));
-            }
-            if ((Original_MaintainExpiry == null)) {
-                this.Adapter.UpdateCommand.Parameters[49].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[50].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[49].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[50].Value = ((string)(Original_MaintainExpiry));
-            }
-            if ((Original_QtyInBox.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[51].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[52].Value = ((float)(Original_QtyInBox.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[51].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[52].Value = global::System.DBNull.Value;
-            }
-            if ((Original_Status == null)) {
-                this.Adapter.UpdateCommand.Parameters[53].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[54].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[53].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[54].Value = ((string)(Original_Status));
-            }
-            if ((Original_DataImported == null)) {
-                this.Adapter.UpdateCommand.Parameters[55].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[56].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[55].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[56].Value = ((string)(Original_DataImported));
-            }
-            global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
-            if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
-                        != global::System.Data.ConnectionState.Open)) {
-                this.Adapter.UpdateCommand.Connection.Open();
-            }
-            try {
-                int returnValue = this.Adapter.UpdateCommand.ExecuteNonQuery();
-                return returnValue;
-            }
-            finally {
-                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
-                    this.Adapter.UpdateCommand.Connection.Close();
-                }
-            }
         }
     }
     
@@ -3263,8 +1545,6 @@ FROM     itemmaster";
         
         private UpdateOrderOption _updateOrder;
         
-        private itemmasterTableAdapter _itemmasterTableAdapter;
-        
         private bool _backupDataSetBeforeUpdate;
         
         private global::System.Data.IDbConnection _connection;
@@ -3277,20 +1557,6 @@ FROM     itemmaster";
             }
             set {
                 this._updateOrder = value;
-            }
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        [global::System.ComponentModel.EditorAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterManagerPropertyEditor, Microso" +
-            "ft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3" +
-            "a", "System.Drawing.Design.UITypeEditor")]
-        public itemmasterTableAdapter itemmasterTableAdapter {
-            get {
-                return this._itemmasterTableAdapter;
-            }
-            set {
-                this._itemmasterTableAdapter = value;
             }
         }
         
@@ -3313,10 +1579,6 @@ FROM     itemmaster";
                 if ((this._connection != null)) {
                     return this._connection;
                 }
-                if (((this._itemmasterTableAdapter != null) 
-                            && (this._itemmasterTableAdapter.Connection != null))) {
-                    return this._itemmasterTableAdapter.Connection;
-                }
                 return null;
             }
             set {
@@ -3330,9 +1592,6 @@ FROM     itemmaster";
         public int TableAdapterInstanceCount {
             get {
                 int count = 0;
-                if ((this._itemmasterTableAdapter != null)) {
-                    count = (count + 1);
-                }
                 return count;
             }
         }
@@ -3344,15 +1603,6 @@ FROM     itemmaster";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private int UpdateUpdatedRows(ItemMaster dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
-            if ((this._itemmasterTableAdapter != null)) {
-                global::System.Data.DataRow[] updatedRows = dataSet.itemmaster.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
-                updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
-                if (((updatedRows != null) 
-                            && (0 < updatedRows.Length))) {
-                    result = (result + this._itemmasterTableAdapter.Update(updatedRows));
-                    allChangedRows.AddRange(updatedRows);
-                }
-            }
             return result;
         }
         
@@ -3363,14 +1613,6 @@ FROM     itemmaster";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private int UpdateInsertedRows(ItemMaster dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
-            if ((this._itemmasterTableAdapter != null)) {
-                global::System.Data.DataRow[] addedRows = dataSet.itemmaster.Select(null, null, global::System.Data.DataViewRowState.Added);
-                if (((addedRows != null) 
-                            && (0 < addedRows.Length))) {
-                    result = (result + this._itemmasterTableAdapter.Update(addedRows));
-                    allAddedRows.AddRange(addedRows);
-                }
-            }
             return result;
         }
         
@@ -3381,14 +1623,6 @@ FROM     itemmaster";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private int UpdateDeletedRows(ItemMaster dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
             int result = 0;
-            if ((this._itemmasterTableAdapter != null)) {
-                global::System.Data.DataRow[] deletedRows = dataSet.itemmaster.Select(null, null, global::System.Data.DataViewRowState.Deleted);
-                if (((deletedRows != null) 
-                            && (0 < deletedRows.Length))) {
-                    result = (result + this._itemmasterTableAdapter.Update(deletedRows));
-                    allChangedRows.AddRange(deletedRows);
-                }
-            }
             return result;
         }
         
@@ -3428,11 +1662,6 @@ FROM     itemmaster";
             if ((dataSet.HasChanges() == false)) {
                 return 0;
             }
-            if (((this._itemmasterTableAdapter != null) 
-                        && (this.MatchTableAdapterConnection(this._itemmasterTableAdapter.Connection) == false))) {
-                throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
-                        "tring.");
-            }
             global::System.Data.IDbConnection workConnection = this.Connection;
             if ((workConnection == null)) {
                 throw new global::System.ApplicationException("TableAdapterManager contains no connection information. Set each TableAdapterMana" +
@@ -3465,15 +1694,6 @@ FROM     itemmaster";
             try {
                 // ---- Prepare for update -----------
                 //
-                if ((this._itemmasterTableAdapter != null)) {
-                    revertConnections.Add(this._itemmasterTableAdapter, this._itemmasterTableAdapter.Connection);
-                    this._itemmasterTableAdapter.Connection = ((global::Devart.Data.MySql.MySqlConnection)(workConnection));
-                    this._itemmasterTableAdapter.Transaction = ((global::System.Data.Common.DbTransaction)(workTransaction));
-                    if (this._itemmasterTableAdapter.Adapter.AcceptChangesDuringUpdate) {
-                        this._itemmasterTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
-                        adaptersWithAcceptChangesDuringUpdate.Add(this._itemmasterTableAdapter.Adapter);
-                    }
-                }
                 // 
                 //---- Perform updates -----------
                 //
@@ -3531,10 +1751,6 @@ FROM     itemmaster";
             finally {
                 if (workConnOpened) {
                     workConnection.Close();
-                }
-                if ((this._itemmasterTableAdapter != null)) {
-                    this._itemmasterTableAdapter.Connection = ((global::Devart.Data.MySql.MySqlConnection)(revertConnections[this._itemmasterTableAdapter]));
-                    this._itemmasterTableAdapter.Transaction = null;
                 }
                 if ((0 < adaptersWithAcceptChangesDuringUpdate.Count)) {
                     global::System.Data.Common.DataAdapter[] adapters = new System.Data.Common.DataAdapter[adaptersWithAcceptChangesDuringUpdate.Count];

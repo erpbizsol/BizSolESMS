@@ -1,0 +1,102 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj": {}
+  },
+  "projects": {
+    "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj",
+        "projectName": "ESMS_R",
+        "projectPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\ESMS_R.csproj",
+        "packagesPath": "C:\\Users\\BizSol\\.nuget\\packages\\",
+        "outputPath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ESMS_R\\ESMS_R\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\BizSol\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "App.Metrics.AspNetCore.Reporting": {
+              "target": "Package",
+              "version": "[4.0.0, )"
+            },
+            "AspNetCore.Reporting": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "Devart.Data.MySql.EFCore": {
+              "target": "Package",
+              "version": "[9.4.193.9, )"
+            },
+            "Microsoft.AspNetCore.SystemWebAdapters": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "ReportViewerCore.NETCore": {
+              "target": "Package",
+              "version": "[15.1.26, )"
+            },
+            "System.Data.DataSetExtensions": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

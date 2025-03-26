@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\ESMS_R.props" />
+</Project>

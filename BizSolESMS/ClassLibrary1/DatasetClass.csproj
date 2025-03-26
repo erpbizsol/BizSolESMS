@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Reports\UomReport.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\UomReport.rdlc">
+      <CopyToOutputDirectory>
+   presreveNewest
+      </CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ESMS_R\ESMS_R\ESMS_R.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dataset\DataSet1.Designer.cs">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Dataset\ItemMaster.Designer.cs">
+      <DependentUpon>ItemMaster.xsd</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Dataset\OrderDataset.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OrderDataset.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dataset\DataSet1.xsd">
+      <LastGenOutput>DataSet1.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="Dataset\ItemMaster.xsd">
+      <LastGenOutput>ItemMaster.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="Dataset\OrderDataset.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>OrderDataset.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+
+</Project>
