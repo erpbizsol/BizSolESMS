@@ -9,109 +9,135 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Bizsol_ESMS
 build_property.RootNamespace = Bizsol_ESMS
-build_property.ProjectDir = D:\ESMS\BizSolESMS\BizSolESMS\Bizsol_ESMS\
+build_property.ProjectDir = D:\WebERP2.4Core\BizSolESMS\BizSolESMS\Bizsol_ESMS\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\ESMS\BizSolESMS\BizSolESMS\Bizsol_ESMS
+build_property.MSBuildProjectDirectory = D:\WebERP2.4Core\BizSolESMS\BizSolESMS\Bizsol_ESMS
 build_property._RazorSourceGeneratorDebug = 
-build_property.EffectiveAnalysisLevelStyle = 8.0
-build_property.EnableCodeStyleSeverity = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Dashbord/Dashbord.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Dashbord/Dashbord.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvcmRcRGFzaGJvcmQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Login/Login.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Login/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cTG9naW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/BrandMasterList.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/AccountMaster.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEFjY291bnRNYXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/BrandMasterList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEJyYW5kTWFzdGVyTGlzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CategoryMasterList.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CategoryMasterList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENhdGVnb3J5TWFzdGVyTGlzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CreateBrandMaster.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyZWF0ZUJyYW5kTWFzdGVyLmNzaHRtbA==
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CityMasterList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENpdHlNYXN0ZXJMaXN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CreateCategoryMaster.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyZWF0ZUNhdGVnb3J5TWFzdGVyLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CreateGroupMaster.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyZWF0ZUdyb3VwTWFzdGVyLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CreateItemMaster.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyZWF0ZUl0ZW1NYXN0ZXIuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CreateLocationMaster.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyZWF0ZUxvY2F0aW9uTWFzdGVyLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CreateSubGroupMaster.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyZWF0ZVN1Ykdyb3VwTWFzdGVyLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CreateUOMMaster.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyZWF0ZVVPTU1hc3Rlci5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/CreateWarehouseMaster.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyZWF0ZVdhcmVob3VzZU1hc3Rlci5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/GroupMasterList.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/GroupMasterList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEdyb3VwTWFzdGVyTGlzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/ItemMasterList.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/ItemConfigList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEl0ZW1Db25maWdMaXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/ItemMasterList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEl0ZW1NYXN0ZXJMaXN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/LocationMasterList.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/LocationMasterList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXExvY2F0aW9uTWFzdGVyTGlzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/SubGroupMasterList.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/MRNMaster.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXE1STk1hc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/PageSizeConfiguration.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFBhZ2VTaXplQ29uZmlndXJhdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/PrefixConfiguration.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFByZWZpeENvbmZpZ3VyYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/StateMasterList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFN0YXRlTWFzdGVyTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/SubGroupMasterList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFN1Ykdyb3VwTWFzdGVyTGlzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/UOMMasterList.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/UOMMasterList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFVPTU1hc3Rlckxpc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/WarehouseMasterList.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/UserGroupMaster.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFVzZXJHcm91cE1hc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/UserMaster.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFVzZXJNYXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/UserMenuRights.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFVzZXJNZW51UmlnaHRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/WarehouseMasterList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFdhcmVob3VzZU1hc3Rlckxpc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Shared/Error.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/BoxUnloading.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcQm94VW5sb2FkaW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/BoxValidation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcQm94VmFsaWRhdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/Dispatch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcRGlzcGF0Y2guY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/ItemOpeningBalance.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcSXRlbU9wZW5pbmdCYWxhbmNlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/OrderMaster.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcT3JkZXJNYXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Shared/_Layout1.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Shared/_Layout1.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQxLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/_ViewImports.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/_ViewStart.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/ESMS/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Shared/_Layout.cshtml]
+[D:/WebERP2.4Core/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-ckkn52u7mo

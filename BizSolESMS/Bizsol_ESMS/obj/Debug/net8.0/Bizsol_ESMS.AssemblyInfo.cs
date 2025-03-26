@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bizsol_ESMS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bf8c4e2b1e9a1359502ea0ce6156c4599d65c871")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cef6d00135591b526c314fc1b4a19c8d35e5a258")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bizsol_ESMS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bizsol_ESMS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
