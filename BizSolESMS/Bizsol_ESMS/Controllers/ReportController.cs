@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MySql.Data.MySqlClient;
+using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace Bizsol_ESMS.Controllers
 {
@@ -8,5 +12,11 @@ namespace Bizsol_ESMS.Controllers
         {
             return View();
         }
+
+        public IActionResult Test()
+        {
+            return View();
+        }
+
     }
 }

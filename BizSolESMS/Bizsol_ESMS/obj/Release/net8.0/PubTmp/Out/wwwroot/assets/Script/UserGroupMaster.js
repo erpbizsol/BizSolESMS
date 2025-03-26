@@ -104,7 +104,7 @@ async function Delete(code, userGroup,button) {
         toastr.error(msg1);
         return;
     }
-    if (confirm(`Are you sure you want to delete this item? ${userGroup}`)) {
+    if (confirm(`Are you sure you want to delete this item ${userGroup} ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/Master/DeleteUserGroupMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}&Reason=Test`,
             type: 'POST',

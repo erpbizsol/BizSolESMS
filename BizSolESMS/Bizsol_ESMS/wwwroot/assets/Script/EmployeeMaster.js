@@ -115,8 +115,8 @@ function ShowEmployeeMaster(Type) {
 }
 function Save() {
     var EmployeeName = $("#txtEmployeeName").val();
-    if ($("#txtUOM").val() == "") {
-        toastr.error('Please enter a Employee Name.');
+    if ($("#txtEmployeeName").val() == "") {
+        toastr.error('Please enter Employee Name.');
         $("#txtEmployeeName").focus();
     }
     else {

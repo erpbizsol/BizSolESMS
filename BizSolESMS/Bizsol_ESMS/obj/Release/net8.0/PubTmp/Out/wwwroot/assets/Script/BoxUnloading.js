@@ -67,7 +67,6 @@ function BoxUnloading() {
                 if (response[0].Status == 'Y') {
                     GetDataByPicklist('Res');
                     CaseNo = response[0].CaseNo;
-                    goToRow(CaseNo);
                    $("#txtBoxNo").focus();
                 } else {
                     CaseNo = 0;

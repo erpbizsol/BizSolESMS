@@ -86,4 +86,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 window.ConfrmationMaltipal = ConfrmationMaltipal;
-window.Confirmation = Confirmation;

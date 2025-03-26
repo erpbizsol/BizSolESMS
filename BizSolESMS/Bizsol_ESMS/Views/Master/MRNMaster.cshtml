@@ -123,6 +123,11 @@
         background-color: #f5c0bfc4;
     }
 
+    .active {
+        background-color: #275481;
+        color: #fff;
+    }
+
     .container-fluid {
         padding-right: 0;
         padding-left: 0;
@@ -163,7 +168,15 @@
     .page-content {
         padding: 3px 0;
     }
- 
+
+    .datepicker {
+        top: 157.766px !important;
+        left: 262px;
+        z-index: 10;
+        display: block;
+    }
+
+   
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -306,8 +319,8 @@
                 </div>
                 <div class="row" id="divOrderBooking mb-2">
                     <div class="accordion accordion-flush" id="accordionFlushOrder">
-                        <div class="accordion-item tab active">
-                            <div class="accordion-header tab-header .active" id="flush-headingOne">
+                        <div class="accordion-item tab">
+                            <div class="accordion-header tab-header" id="flush-headingOne">
                                 <h2>
                                     <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
                                         MRN Details
