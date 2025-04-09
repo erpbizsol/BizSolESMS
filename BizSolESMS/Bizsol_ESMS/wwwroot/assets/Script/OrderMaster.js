@@ -1267,6 +1267,52 @@ function validateExcelFormat(data) {
 function cleanHeader(header) {
     return header.replace(/[^a-zA-Z0-9]/g, "").trim(); 
 }
+//function validateCSV(event, callback) {
+//    const file = event.target.files[0];
+//    if (!file) {
+//        alert("Please select a file.");
+//        callback(false);
+//        return;
+//    }
+
+//    let expectedHeaders = [];
+//    if ($("#txtClientType").val() == 'S') {
+//        expectedHeaders = ["Part", "OrderQty", "PartDescription"];
+//    } else {
+//        expectedHeaders = ["Order", "Part", "Date", "PartDescription", "AccountName", "Code", "OrderQuantity", "ReservedQty", "Status", "ContactLastName", "CashCustomerName"];
+//    }
+//    const reader = new FileReader();
+//    reader.onload = function (e) {
+//        const csvData = e.target.result;
+//        const rows = csvData.split(/\r?\n/);
+//        const headers = rows[0].split(/\t|,/).map(h => cleanHeader(h));
+
+//        const normalizeArray = arr => arr.map(item => item.trim().toLowerCase()).sort();
+
+//        const areHeadersEqual = (headers, expectedHeaders) => {
+//            const sortedHeaders = normalizeArray(headers);
+//            const sortedExpectedHeaders = normalizeArray(expectedHeaders);
+
+//            console.log("Normalized Headers:", sortedHeaders);
+//            console.log("Normalized Expected Headers:", sortedExpectedHeaders);
+
+//            return JSON.stringify(sortedHeaders) === JSON.stringify(sortedExpectedHeaders);
+//        };
+
+//        if (areHeadersEqual(headers, expectedHeaders)) {
+//            console.log("CSV Headers Matched ✅");
+//            callback(true);
+//        } else {
+//            alert("Invalid file. Headers do not match!");
+//            console.log("Expected:", expectedHeaders);
+//            console.log("Found:", headers);
+//            callback(false);
+//        }
+
+//    };
+
+//    reader.readAsText(file);
+//}
 function validateCSV(event, callback) {
     const file = event.target.files[0];
     if (!file) {
@@ -1276,22 +1322,36 @@ function validateCSV(event, callback) {
     }
 
     let expectedHeaders = [];
-    if ($("#txtClientType").val() == 'S') {
+    if ($("#txtClientType").val() === 'S') {
         expectedHeaders = ["Part", "OrderQty", "PartDescription"];
     } else {
-        expectedHeaders = ["Order", "Part", "Date", "PartDescription", "AccountName", "Code", "OrderQuantity", "ReservedQty", "Status", "ContactLastName", "CashCustomerName"];
+        expectedHeaders = [
+            "Order", "Part", "Date", "PartDescription", "AccountName", "Code",
+            "OrderQuantity", "ReservedQty", "Status", "ContactLastName", "CashCustomerName"
+        ];
     }
+
     const reader = new FileReader();
     reader.onload = function (e) {
         const csvData = e.target.result;
         const rows = csvData.split(/\r?\n/);
-        const headers = rows[0].split(/\t|,/).map(h => cleanHeader(h));
+        if (rows.length === 0) {
+            alert("Empty file.");
+            callback(false);
+            return;
+        }
 
-        if (JSON.stringify(headers) === JSON.stringify(expectedHeaders)) {
+        const headers = rows[0].split(/\t|,/).map(h => cleanHeader(h.trim()));
+
+        const missingHeaders = expectedHeaders.filter(expected =>
+            !headers.includes(expected)
+        );
+
+        if (missingHeaders.length === 0) {
             console.log("CSV Headers Matched ✅");
             callback(true);
         } else {
-            alert("Invalid file. Headers do not match!");
+            alert("Invalid file. Missing required headers: " + missingHeaders.join(", "));
             console.log("Expected:", expectedHeaders);
             console.log("Found:", headers);
             callback(false);
@@ -1300,6 +1360,7 @@ function validateCSV(event, callback) {
 
     reader.readAsText(file);
 }
+
 function disableFields(disabled) {
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
 }
