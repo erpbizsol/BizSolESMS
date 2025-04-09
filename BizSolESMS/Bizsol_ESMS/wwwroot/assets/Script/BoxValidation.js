@@ -49,6 +49,7 @@ $(document).ready(function () {
     $('#txtScanProduct').on('blur', function () {
         $(this).attr('inputmode', '');
     });
+    GetModuleMasterCode();
 });
 function BoxValidationDetail() {
     if ($("#txtBoxNo").val() == '') {
