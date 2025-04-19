@@ -149,6 +149,11 @@ $(document).ready(function () {
     });
     GetModuleMasterCode();
     ShowCityMasterlist();
+    toggleClientType();
+    $("#txtIsClient").change(function () {
+        toggleClientType();
+    });
+
 });
 function ShowAccountMasterlist(Type) {
     $.ajax({
@@ -160,13 +165,13 @@ function ShowAccountMasterlist(Type) {
         success: function (response) {
             if (response.length > 0) {
                 $("#txtAccounttable").show();
-                const StringFilterColumn = ["Account Name","Display Name"];
+                const StringFilterColumn = ["Account Name", "Display Name","Client Type"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code","DataImported"];
+                const hiddenColumns = ["Code", "DataImported","PAN No"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',
@@ -228,6 +233,15 @@ async function CreateItemMaster() {
     $("#txtIsVendor").prop("disabled", false);
     disableFields(false);
     $("#txtheaderdiv").show();
+  
+}
+function toggleClientType() {
+    if ($("#txtIsClient").is(":checked")) {
+        $("#txtClientType").prop("disabled", false); 
+    } else {
+        $("#txtClientType").prop("disabled", true);  
+     
+    }
 }
 function BackMaster() {
     $("#txtListpage").show();
@@ -260,7 +274,7 @@ function BackMaster() {
     $("#txtIsVendor").prop("disabled", false);
 }
 async function Edit(code) {
-   
+    toggleClientType();
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -286,6 +300,7 @@ async function Edit(code) {
                     $("#txtDisplayName").val(accountMaster.DisplayName || "");
                     $("#txtPANNo").val(accountMaster.PANNo || "");
                     $("#txtIsMSME").val(accountMaster.IsMSME || "");
+                    $("#txtClientType").val(accountMaster.ClientType);
                     disableFields(false);
                     $("#tdsAddressCode1").prop("disabled", false);
                     $("#tdsAddressLine1").prop("disabled", false);
@@ -461,7 +476,7 @@ function ClearData() {
     $("#Orderdata").empty();
 }
 function Save() {
-    // Collect Account Master Data
+  
     const AccountName = $("#txtAccountName").val();
     const DisplayName = $("#txtDisplayName").val();
     const AccounCode = $("#txtAccounCode").val();
@@ -486,6 +501,19 @@ function Save() {
     else if (getCheckedCount('chkIsDefault') == 0) {
         toastr.error("At least one default field is correctly checked!");
         return;
+    }
+    else if ($("#txtIsClient").is(":checked")) {
+        $("#txtClientType").prop("disabled", false);
+        const ClientType = $("#txtClientType").val();
+        if (!ClientType) {
+            toastr.error("Please select  Client Type!");
+            $("#txtClientType").focus();
+            return;
+        }
+        else {
+            $("#txtClientType").prop("disabled", true);
+           
+        }
     }
     let validationFailed = false;
     $("#tblorderbooking tbody tr").each(function () {
@@ -556,10 +584,12 @@ function Save() {
         Code: $("#hfCode").val(),
         AccountCode: $("#txtAccounCode").val(),
         AccountName: AccountName,
+        ClientType: $("#txtClientType").val(),
         DisplayName: DisplayName,
         PANNo: $("#txtPANNo").val(),
         IsClient: $("#txtIsClient").is(":checked") ? "Y" : "N", 
         IsVendor: $("#txtIsVendor").is(":checked") ? "Y" : "N", 
+       
     }];
     // Collect Address Details Data
     const addressData = [];
@@ -1155,6 +1185,7 @@ async function View(code) {
                     $("#txtIsMSME").val(accountMaster.IsMSME || "").prop("disabled", true);
                     $("#txtIsClient").prop("disabled", true);
                     $("#txtIsVendor").prop("disabled", true);
+                    $("#txtClientType").prop("disabled", true);
                     $("#txtsave").prop("disabled", true);
                     $("#tdsAddressCode1").prop("disabled", true);
                     $("#tdsAddressLine1").prop("disabled", true);
