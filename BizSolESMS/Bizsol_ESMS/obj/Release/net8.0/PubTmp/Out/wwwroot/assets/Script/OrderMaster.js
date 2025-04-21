@@ -43,17 +43,12 @@ $(document).ready(function () {
         addNewRow();
     });
     GetModuleMasterCode();
-    $("#txtClientName").on("focus", function () {
-        $("#txtClientName").val("");
-    });
-    $("#txtImportClientName").on("focus", function () {
-        $("#txtImportClientName").val("");
-    });
+   
     $("#txtClientName").on("change", function () {
 
         let value = $(this).val();
         let isValid = false;
-        $("#txtClientNameList option").each(function () {
+        $("#txtClientName option").each(function () {
             if ($(this).val() === value) {
                 const item = AccountList.find(entry => entry.AccountName == value);
                 $("#txtAddress").val(item.Address)
@@ -61,6 +56,7 @@ $(document).ready(function () {
                 return false;
             }
         });
+        
         if (!isValid) {
             $(this).val("");
             $("#txtAddress").val("")
@@ -73,10 +69,17 @@ $(document).ready(function () {
         var value = $(this).val();
         if (value == 'S') {
             $("#txtImportClientName").prop("disabled", false);
+            $("#txtImportOrderNo").prop("disabled", false);
         } else {
-            $("#txtImportClientName").val("");
+            SelectOptionByText('txtImportClientName', 'Select');
             $("#txtImportClientName").prop("disabled", true);
+            $("#txtImportOrderNo").val("");
+            $("#txtImportOrderNo").prop("disabled", true);
         }
+    });
+    $("#txtImportClientName").on("change", function () {
+        $("#txtExcelFile").val('');
+        JsonData = [];
     });
 });
 function ShowOrderMasterlist(Type) {
@@ -177,6 +180,7 @@ async function Edit(code) {
                     $("#hfCode").val(OrderMaster.Code || "");
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtOrderDate").val(OrderMaster.OrderDate || "");
+                    SelectOptionByText('txtClientName',OrderMaster.AccountName);
                     $("#txtClientName").val(OrderMaster.AccountName || "");
                     $("#txtAddress").val(OrderMaster.Address || "");
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
@@ -219,11 +223,13 @@ async function deleteItem(code, Order) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
+        $('tr').removeClass('highlight');
         return;
     }
     const { Status, msg1 } = await CheckRelatedRecord(code, 'ordermaster');
     if (Status == true) {
         toastr.error(msg1);
+        $('tr').removeClass('highlight');
         return;
     }
     if (confirm(`Are you sure you want to delete this Order ${Order} ?`)) {
@@ -248,6 +254,10 @@ async function deleteItem(code, Order) {
             }
         });
     }
+    else {
+        $('tr').removeClass('highlight');
+    }
+    $('tr').removeClass('highlight');
 }
 function GetAccountMasterList() {
     $.ajax({
@@ -259,14 +269,27 @@ function GetAccountMasterList() {
         success: function (response) {
             if (response.length > 0) {
                 AccountList = response;
-                CreateVendorlist();
+                let option = '<option value="">Select</option>';
+                $.each(response, function (key, val) {
+
+                    option += '<option value="' + val["AccountName"] + '">' + val["AccountName"] + '</option>';
+                });
+
+                $('#txtImportClientName')[0].innerHTML = option;
+                $('#txtClientName')[0].innerHTML = option;
+
+                $('#txtImportClientName,#txtClientName').select2({
+                    width: '-webkit-fill-available'
+                });
             } else {
-                $('#txtClientNameList').empty();
+                $('#txtImportClientName').empty();
+                $('#txtClientName').empty();
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-            $('#txtClientNameList').empty();
+            $('#txtImportClientName').empty();
+            $('#txtClientName').empty();
         }
     });
 }
@@ -309,11 +332,10 @@ function GetItemDetails() {
 function ClearData() {
     $("#hfCode").val("0");
     $("#txtOrderNo").val("");
-    $("#txtClientName").val("");
     $("#txtAddress").val("");
     $("#txtBuyerPONo").val("");
     $("#Orderdata").empty();
-
+    SelectOptionByText('txtClientName','Select');
 }
 function Save() {
     var OrderNo = $("#txtOrderNo").val();
@@ -933,9 +955,10 @@ async function View(code) {
     });
 }
 function ClearDataImport() {
-    $("#txtImportClientName").val("");
-    $("#txtClientType").val("");
+    SelectOptionByText('txtImportClientName','Select');
+    $("#txtClientType").val("S");
     $("#txtExcelFile").val("");
+    $("#txtImportOrderNo").val("");
     $("#Orderdata").empty();
     GetCurrentDate();
     GetAccountMasterList();
@@ -957,9 +980,14 @@ function validateExcelFormat(data) {
 function GetImportFile() {
     const ClientType = $("#txtClientType").val();
     const ClientName = $("#txtImportClientName").val();
+    const OrderNo = $("#txtImportOrderNo").val();
     if (ClientType == '') {
         toastr.error("Please select client type !");
         $("#txtClientType").focus();
+        return;
+    } else if (OrderNo == '' && ClientType == 'S') {
+        toastr.error("Please enter order no !");
+        $("#txtImportOrderNo").focus();
         return;
     } else if (ClientName == '' && ClientType == 'S') {
         toastr.error("Please select client name !");
@@ -974,6 +1002,7 @@ function GetImportFile() {
         JsonData: JsonData,
         ClientType: ClientType,
         ClientName: ClientName,
+        OrderNo: OrderNo,
         UserMaster_Code: UserMaster_Code
     };
     $.ajax({
@@ -1270,22 +1299,36 @@ function validateCSV(event, callback) {
     }
 
     let expectedHeaders = [];
-    if ($("#txtClientType").val() == 'S') {
+    if ($("#txtClientType").val() === 'S') {
         expectedHeaders = ["Part", "OrderQty", "PartDescription"];
     } else {
-        expectedHeaders = ["Order", "Part", "Date", "PartDescription", "AccountName", "Code", "OrderQuantity", "ReservedQty", "Status", "ContactLastName", "CashCustomerName"];
+        expectedHeaders = [
+            "Order", "Part", "Date", "PartDescription", "AccountName", "Code",
+            "OrderQuantity", "ReservedQty", "Status", "ContactLastName", "CashCustomerName"
+        ];
     }
+
     const reader = new FileReader();
     reader.onload = function (e) {
         const csvData = e.target.result;
         const rows = csvData.split(/\r?\n/);
-        const headers = rows[0].split(/\t|,/).map(h => cleanHeader(h));
+        if (rows.length === 0) {
+            alert("Empty file.");
+            callback(false);
+            return;
+        }
 
-        if (JSON.stringify(headers) === JSON.stringify(expectedHeaders)) {
+        const headers = rows[0].split(/\t|,/).map(h => cleanHeader(h.trim()));
+
+        const missingHeaders = expectedHeaders.filter(expected =>
+            !headers.includes(expected)
+        );
+
+        if (missingHeaders.length === 0) {
             console.log("CSV Headers Matched ✅");
             callback(true);
         } else {
-            alert("Invalid file. Headers do not match!");
+            alert("Invalid file. Missing required headers: " + missingHeaders.join(", "));
             console.log("Expected:", expectedHeaders);
             console.log("Found:", headers);
             callback(false);

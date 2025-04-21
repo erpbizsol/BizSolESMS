@@ -196,12 +196,14 @@ async function deleteItem(code, uomName, button) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (!hasPermission) {
         toastr.error(msg);
+        $('tr').removeClass('highlight');
         return;
     }
 
     const { Status, msg1 } = await CheckRelatedRecord(code, 'UomMaster');
     if (Status) {
         toastr.error(msg1);
+        $('tr').removeClass('highlight');
         return;
     }
 
@@ -230,6 +232,7 @@ async function deleteItem(code, uomName, button) {
     else {
         $('tr').removeClass('highlight');
     }
+    $('tr').removeClass('highlight');
 }
 async function View(code) {
  
@@ -310,4 +313,30 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "UOMMaster.xlsx");
 }
+
+function Report() {
+    $.ajax({
+        url: '/Home/Index1',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ ReportType: "PDF", newConnectionString: authKeyData }),
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+
+            // Open the PDF in a new Chrome tab
+            window.open(url, '_blank');
+
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
+}
+
+
+
 

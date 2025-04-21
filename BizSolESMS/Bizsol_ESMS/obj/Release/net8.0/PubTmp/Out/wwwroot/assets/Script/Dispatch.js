@@ -4,7 +4,9 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 let Data = [];
+let UserName = authKeyData.UserID;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 let AccountList = [];
 let ItemDetail = [];
 let G_OrderList = [];
@@ -56,19 +58,19 @@ $(document).ready(function () {
         }
     });
    
-    $(".pendingOrder").click(function () {
+    $("#pendingOrder").click(function () {
       
         GetDispatchOrderLists('GETCLIENT');
    
     });
 
-    $(".despatchTransit").click(function () {
+    $("#despatchTransit").click(function () {
         
         GetDespatchTransitOrderList('DespatchTransit');
        
     });
 
-    $(".completedDespatch").click(function () {
+    $("#completedDespatch").click(function () {
         
         GetCompletedDespatchOrderList('CompletedDespatch');
       
@@ -84,8 +86,6 @@ $(document).ready(function () {
     $("#txtOrderNo").on("change", function () {
         let value = $(this).val();
         let isValid = false;
-   
-        $("#txtOrderNoList option").each(function () {
             if ($(this).val() === value) {
                 const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == value);
                 if (item.Code != undefined) {
@@ -95,14 +95,9 @@ $(document).ready(function () {
                 isValid = true;
                 return false;
             }
-        });
         if (!isValid) {
             $(this).val("");
         }
-    });
-
-    $("#txtOrderNo").on("focus", function () {
-        $("#txtOrderNo").val("");
     });
     $("#ShowAll").click(function () {
         All = 1;
@@ -123,26 +118,7 @@ $(document).ready(function () {
             }, 2);
         }
     });
-
-    $("#txtPackedBy").on("change", function () {
-        let value = $(this).val();
-        let isValid = false;
-        $("#txtPackedByList option").each(function () {
-            if ($(this).val() === value) {
-
-                isValid = true;
-                return false;
-            }
-        });
-        if (!isValid) {
-            $(this).val("");
-            $("#txtPackedByList").val("");
-        }
-    });
-
-    $('#txtPackedBy').on('focus', function (e) {
-        $('#txtPackedBy').val("");
-    });
+  
     GetUserNameList();
 });
 function BackMaster() {
@@ -202,12 +178,14 @@ function ClearData() {
     All = 0;
     $("#hfCode").val("0");
     $("#txtChallanNo").val("");
-    $("#txtOrderNo").val("");
+    //$("#txtOrderNo").val("");
     $("#txtScanProduct").val("");
     $("#txtClientDispatchName").val("");
     $("#tblDispatchData").hide();
     $("#txtScanProduct").attr('inputmode', '');
-    $("#txtPackedBy").val("");
+    //$("#txtPackedBy").val("");
+    SelectOptionByText('txtOrderNo','Select');
+    SelectOptionByText('txtPackedBy','Select');
 }
 function OnChangeNumericTextBox(element) {
 
@@ -443,9 +421,8 @@ function GetDispatchOrderLists(Mode) {
                 const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Code"];
                 const ColumnAlignment = {
-                    "Reorder Level": 'right',
-                    "Reorder Qty": 'right',
-                    "Qty In Box": 'right',
+                    "Total Order Qty": 'right',
+                    "Total Balance Qty": 'right'
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
@@ -491,10 +468,12 @@ async function StartDispatchPanding(Code, Mode) {
                 if (response.OrderMaster && response.OrderMaster.length > 0) {
                     const OrderMaster = response.OrderMaster[0];
                     $("#hfCode").val(OrderMaster.Code || "");
-                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
+                    //$("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-                    $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    //$("#txtPackedBy").val(OrderMaster.PackedBy);
+                    SelectOptionByText('txtPackedBy', OrderMaster.PackedBy || "");
                     if (G_DispatchMaster_Code > 0) {
                         $("#txtPackedBy").prop("disabled", true);
                     } else {
@@ -511,10 +490,18 @@ async function StartDispatchPanding(Code, Mode) {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
-                    const hiddenColumns = ["Code"];
+                    let hiddenColumns = [];
+                    if (UserType == "A") {
+                        hiddenColumns = ["Code", "ROWSTATUS"];
+                    } else {
+                        hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
+                    }
                     const ColumnAlignment = {
-                        "Order Quantity": "right",
-                        "Balance Quantity": "right"
+                        "Ord Qty": "right;width:30px;",
+                        "Bal Qty": "right;width:30px;",
+                        "Scan Qty":"right;width:70px;",
+                        "Packing Qty":"right;width:70px;",
+                        "Manual Qty":"right;width:70px;",
                     };
                     const updatedResponse = Response.map(item => ({
                         ...item,
@@ -522,8 +509,8 @@ async function StartDispatchPanding(Code, Mode) {
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                         "Manual Qty": `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Dispatch Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                        "Packing Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
                     }));
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -548,8 +535,8 @@ function checkValidateqty(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Balance Quantity"])) {
-        toastr.error("Invalid Dispatch Qty!");
+    if (total > parseInt(item["Bal Qty"])) {
+        toastr.error("Invalid Packing Qty!");
         StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
         $("#txtManualQty_" + Code).focus();
     } else {
@@ -571,10 +558,19 @@ function checkValidateqty1(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Balance Quantity"])) {
-        toastr.error("Invalid Dispatch Qty!");
+    if (total > parseInt(item["Bal Qty"])) {
+        toastr.error("Invalid Packing Qty!");
         StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
     } else {
+        if ($("#txtPackedBy").val() === '') {
+            toastr.error("Please select packed by..!");
+            StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+            return;
+        }else if ($("#txtBoxNo").val() === '') {
+            toastr.error("Please enter box no..!");
+            StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+            return;
+        }
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
             G_IDFORTRCOLOR = "txtDispatchQty_" + Code;
@@ -609,6 +605,10 @@ function BizSolhandleEnterKey(event) {
     }
 }
 function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
+    if ($("#txtBoxNo").val() === '') {
+        toastr.error("please enter box no..!");
+        return;
+    }
     const payload = {
         Code: Code,
         DispatchMaster_Code: G_DispatchMaster_Code,
@@ -649,6 +649,10 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
 
 }
 function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
+    if ($("#txtBoxNo").val() === '') {
+        toastr.error("please enter box no..!");
+        return;
+    }
     const payload = {
         Code: Code,
         DispatchMaster_Code:G_DispatchMaster_Code,
@@ -686,6 +690,12 @@ function SaveScanQty() {
         toastr.error("Please scan product !");
         $("#txtScanProduct").focus();
         return;
+    } else if ($("#txtPackedBy").val() === '') {
+        toastr.error("Please select packed by..!");
+        return;
+    } else if ($("#txtBoxNo").val() === '') {
+        toastr.error("Please enter box no..!");
+        return;
     }
     const payload = {
         Code: $("#hfCode").val(),
@@ -695,7 +705,8 @@ function SaveScanQty() {
         DispatchQty: 0,
         DispatchMaster_Code: G_DispatchMaster_Code,
         UserMaster_Code: UserMaster_Code,
-        PackedBy: $("#txtPackedBy").val()
+        PackedBy: $("#txtPackedBy").val(),
+        BoxNo: $("#txtBoxNo").val()
     }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch?Mode=Scan`,
@@ -709,6 +720,7 @@ function SaveScanQty() {
         success: function (response) {
             if (response[0].Status == 'Y') {
                 G_DispatchMaster_Code = response[0].DispatchMaster_Code;
+                $("#SuccessVoice")[0].play();
                 if (G_Tab == 1) {
                     StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                 }
@@ -722,21 +734,24 @@ function SaveScanQty() {
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
                 }
                 G_IDFORTRCOLOR = 'GET';
+                $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
             } else if (response[0].Status == 'N') {
                 G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
+                $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
             } else {
                 G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
+                $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
             }
         },
         error: function (xhr, status, error) {
             showToast("INVALID SCAN NO !");
+            $("#txtScanProduct").val("");
             $("#txtScanProduct").focus();
-            //$("#txtScanProduct").val("");
         }
     });
 
@@ -769,11 +784,13 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                 if (response.OrderMaster && response.OrderMaster.length > 0) {
                     const OrderMaster = response.OrderMaster[0];
                     $("#hfCode").val(OrderMaster.Code || "");
-                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
+                    //$("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
-                    $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    //$("#txtPackedBy").val(OrderMaster.PackedBy);
+                    SelectOptionByText('txtPackedBy', OrderMaster.PackedBy);
                     $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", false);
                     disableFields(false);
@@ -788,10 +805,18 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
-                    const hiddenColumns = ["Code"];
+                    let hiddenColumns = [];
+                    if (UserType == "A") {
+                        hiddenColumns = ["Code", "ROWSTATUS"];
+                    } else {
+                        hiddenColumns = ["Code", "Manual Qty","ROWSTATUS"];
+                    }
                     const ColumnAlignment = {
-                        "Order Quantity": "right",
-                        "Balance Quantity": "right"
+                        "Ord Qty": "right;width:30px;",
+                        "Bal Qty": "right;width:30px;",
+                        "Scan Qty": "right;width:70px;",
+                        "Packing Qty": "right;width:70px;",
+                        "Manual Qty": "right;width:70px;",
                     };
                     const updatedResponse = Response.map(item => ({
                         ...item,
@@ -799,8 +824,8 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                         "Manual Qty": `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Dispatch Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                        "Packing Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
                     }));
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -825,8 +850,8 @@ function checkValidateqtyTransit(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Balance Quantity"])) {
-        toastr.error("Invalid Dispatch Qty!");
+    if (total > parseInt(item["Bal Qty"])) {
+        toastr.error("Invalid Packing Qty!");
         if (All == 0) {
             StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
         } else if (All == 1) {
@@ -852,14 +877,31 @@ function checkValidateqtyTransit1(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Balance Quantity"])) {
-        toastr.error("Invalid Dispatch Qty!");
+    if (total > parseInt(item["Bal Qty"])) {
+        toastr.error("Invalid Packing Qty!");
         if (All == 0) {
             StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
         } else if (All == 1) {
             StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
         }
     } else {
+        if ($("#txtPackedBy").val() === '') {
+            toastr.error("Please select packed by..!");
+            if (All == 0) {
+                StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+            } else if (All == 1) {
+                StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+            }
+            return;
+        } else if ($("#txtBoxNo").val() === '') {
+            toastr.error("Please enter box no..!");
+            if (All == 0) {
+                StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+            } else if (All == 1) {
+                StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+            }
+            return;
+        }
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
             SaveEditManualQty(Code, scanQty, manualQty, total);
@@ -885,9 +927,7 @@ function GetDespatchTransitOrderList(Mode) {
                 const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Code", "D_Code"];
                 const ColumnAlignment = {
-                    "Reorder Level": 'right',
-                    "Reorder Qty": 'right',
-                    "Qty In Box": 'right',
+                    "Total Dispatch Qty": 'right'
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
@@ -928,15 +968,14 @@ function GetCompletedDespatchOrderList(Mode) {
                 const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Code", "D_Code"];
                 const ColumnAlignment = {
-                    "Reorder Level": 'right',
-                    "Reorder Qty": 'right',
-                    "Qty In Box": 'right',
+                    "Total Dispatch Qty": 'right'
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="Report('${item.D_Code}','CDETAILS')"><i class="fa fa-download" aria-hidden="true"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -977,10 +1016,12 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                 if (response.OrderMaster && response.OrderMaster.length > 0) {
                     const OrderMaster = response.OrderMaster[0];
                     $("#hfCode").val(OrderMaster.Code || "");
-                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
+                    //$("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-                    $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    SelectOptionByText('txtPackedBy', OrderMaster.PackedBy || "");
+                    //$("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", false);
                     disableFields(false);
@@ -990,15 +1031,23 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     var Response = response.OrderDetial;
                     Data = response.OrderDetial;
                     const StringFilterColumn = [];
-                    const NumericFilterColumn = ["Order Quantity", "Balance Quantity"];
+                    const NumericFilterColumn = ["Ord Qty", "Bal Qty"];
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
-                    const hiddenColumns = ["Code"];
+                    let hiddenColumns = [];
+                    if (UserType == "A") {
+                        hiddenColumns = ["Code", "ROWSTATUS"];
+                    } else {
+                        hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
+                    }
                     const ColumnAlignment = {
-                        "Order Quantity": "right",
-                        "Balance Quantity": "right"
+                        "Ord Qty": "right;width:30px;",
+                        "Bal Qty": "right;width:30px;",
+                        "Scan Qty": "right;width:70px;",
+                        "Packing Qty": "right;width:70px;",
+                        "Manual Qty": "right;width:70px;",
                     };
                     const updatedResponse = Response.map(item => ({
                         ...item,
@@ -1006,8 +1055,8 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                         "Manual Qty": `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyCompleteTransit(this,${item.Code});" onfocusout="checkValidateqtyCompleteTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Dispatch Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                        "Packing Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
                     }));
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -1032,8 +1081,8 @@ function checkValidateqtyCompleteTransit(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Balance Quantity"])) {
-        toastr.error("Invalid Dispatch Qty!");
+    if (total > parseInt(item["Bal Qty"])) {
+        toastr.error("Invalid Packing Qty!");
         StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
         $("#txtManualQty_" + Code).focus();
     } else {
@@ -1055,10 +1104,19 @@ function checkValidateqtyCompleteTransit1(element, Code) {
     const item = Data.find(entry => entry.Code == Code);
     var total = scanQty + manualQty;
 
-    if (total > parseInt(item["Balance Quantity"])) {
-        toastr.error("Invalid Dispatch Qty!");
+    if (total > parseInt(item["Bal Qty"])) {
+        toastr.error("Invalid Packing Qty!");
         StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
     } else {
+        if ($("#txtPackedBy").val() === '') {
+            toastr.error("Please select packed by..!");
+            StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+            return;
+        } else if ($("#txtBoxNo").val() === '') {
+            toastr.error("Please enter box no..!");
+            StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+            return;
+        }
         $("#txtDispatchQty_" + Code).val(total);
         if (manualQty > 0) {
             SaveEditManualQty(Code, scanQty, manualQty, total);
@@ -1096,22 +1154,21 @@ function GetOrderNoList1() {
         success: function (response) {
             G_OrderList = response;
             if (response.length > 0) {
+                    let option = '<option value="">Select</option>';
+                    $.each(response, function (key, val) {
 
-                $('#txtOrderNoList').empty();
-                let options = '';
-                response.forEach(item => {
+                        option += '<option value="' + val["OrderNoWithPrefix"] + '">' + val["OrderNoWithPrefix"] + '</option>';
+                    });
 
-                    options += '<option value="' + item.OrderNoWithPrefix + '" text="' + item.OrderNoWithPrefix + '"></option>';
-                });
-                //firstCode = response[0].Code;
-                //alert(firstCode);
-                //if (firstCode) {
-                //    CreateOrderNo(firstCode);
-                //}
-                $('#txtOrderNoList').html(options);
-            } else {
-                $('#txtOrderNoList').empty();
-            }
+                    $('#txtOrderNo')[0].innerHTML = option;
+                    $('#txtOrderNo')[0].innerHTML = option;
+
+                $('#txtOrderNo').select2({
+                        width: '-webkit-fill-available'
+                    });
+                } else {
+                    $('#txtOrderNo').empty();
+                }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
@@ -1148,7 +1205,8 @@ async function ViewDespatchTransit(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
-                    $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    SelectOptionByText('txtPackedBy', OrderMaster.PackedBy);
+                    //$("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", true);
                     disableFields(true);
@@ -1163,10 +1221,18 @@ async function ViewDespatchTransit(Code, Mode) {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
-                    const hiddenColumns = ["Code"];
+                    let hiddenColumns = [];
+                    if (UserType == "A") {
+                        hiddenColumns = ["Code", "ROWSTATUS"];
+                    } else {
+                        hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
+                    }
                     const ColumnAlignment = {
-                        "Order Quantity": "right",
-                        "Balance Quantity": "right"
+                        "Ord Qty": "right;width:30px;",
+                        "Bal Qty": "right;width:30px;",
+                        "Scan Qty": "right;width:70px;",
+                        "Packing Qty": "right;width:70px;",
+                        "Manual Qty": "right;width:70px;",
                     };
                     const updatedResponse = Response.map(item => ({
                         ...item,
@@ -1174,8 +1240,8 @@ async function ViewDespatchTransit(Code, Mode) {
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                         "Manual Qty": `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" disabled value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Dispatch Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Dispatch Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Dispatch Qty..">`,
+                        "Packing Qty": `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
                     }));
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
@@ -1261,13 +1327,6 @@ function MarkasCompete(code) {
 function disableFields(disable) {
     $("#txtCreatepage").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
-function ChangecolorTr() {
-    if (G_IDFORTRCOLOR != '') {
-        const firstTr = document.querySelector("#DispatchTable-Body > tr");
-        firstTr.style.backgroundColor = "#2be399";
-    }
-}
-setInterval(ChangecolorTr, 100);
 function GetUserNameList() {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetEmployeeList?UserMaster_Code=${UserMaster_Code}`,
@@ -1277,20 +1336,84 @@ function GetUserNameList() {
         },
         success: function (response) {
             if (response.length > 0) {
-                $('#txtPackedByList').empty();
-                let options = '';
-                response.forEach(item => {
-                    options += '<option value="' + item.EmployeeName + '" text="' + item.Code + '"></option>';
+                let option = '<option value="">Select</option>';
+                $.each(response, function (key, val) {
+
+                    option += '<option value="' + val["EmployeeName"] + '">' + val["EmployeeName"] + '</option>';
                 });
-                $('#txtPackedByList').html(options);
-                $("#txtPackedBy").val(response.length > 0 ? response[0].EmployeeName : "");
+
+                $('#txtPackedBy')[0].innerHTML = option;
+                $('#txtPackedBy')[0].innerHTML = option;
+
+                $('#txtPackedBy').select2({
+                    width: '-webkit-fill-available'
+                });
             } else {
-                $('#txtPackedByList').empty();
+                $('#txtPackedBy').empty();
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-            $('#txtPackedByList').empty();
+            $('#txtPackedBy').empty();
         }
     });
 }
+function Report(C_Code) {
+    $.ajax({
+        url: `${AppBaseURLMenu}/Home/OrderMaster`,
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        data: {
+            ReportType: "PDF",
+            newConnectionString: authKeyData,
+            p_Code: C_Code,
+            UserName: UserName
+        },
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "DispatchReport.pdf"; 
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
+}
+function changeValue(delta) {
+    const input = document.getElementById('txtBoxNo');
+    let value = parseInt(input.value) || 1;
+    value += delta;
+    if (value < 1) value = 1;
+    input.value = value;
+}
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#DispatchTable-Body tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = tds[11]?.textContent.trim();
+        if (columnValue === 'GREEN') {
+            row.style.backgroundColor = '#07bb72';
+            tds.forEach(td => {
+                td.style.color = '#ffffff';
+            });
+        } else if (columnValue === 'YELLOW') {
+            row.style.backgroundColor = '#ebb861';
+            tds.forEach(td => {
+                td.style.color = '#ffffff';
+            });
+        } else {
+            row.style.backgroundColor = '#f5c0bf';
+            
+        }
+    });
+}
+
+setInterval(ChangecolorTr, 100);

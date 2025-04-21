@@ -243,7 +243,7 @@ window.applyFilters = function applyFilters(bodyId) {
     const th = $('#filterDropdown-' + column1.replace(/\s+/g, '')).closest('th');
     const span = th.find('span.filter-table-heading');
     span.find('.fa-filter').remove();
-    span.append('<i class="fa-solid fa-filter" style="color: #072d66; margin-left: 5px;"></i>');
+    span.append('<i class="fa-solid fa-filter" style="color: #eceef1; margin-left: 5px;"></i>');
 
 }
 window.toggleFilterNumeric = function (filterId, ColumnName) {
@@ -307,7 +307,7 @@ window.applyNumericFilter = function (columnName, bodyId) {
         const th = $('#filterDropdown-' + columnName.replace(/\s+/g, '')).closest('th');
         const span = th.find('span.filter-table-heading');
         span.find('.fa-filter').remove();
-        span.append('<i class="fa-solid fa-filter" style="color: #072d66; margin-left: 5px;"></i>');
+        span.append('<i class="fa-solid fa-filter" style="color: #eceef1; margin-left: 5px;"></i>');
     }
 
     closeAllFilters();
@@ -354,7 +354,7 @@ window.applyStringFilters = function applyStringFilters(columnName, bodyId) {
         const th = $('#filterDropdown-' + column.replace(/\s+/g, '')).closest('th');
         const span = th.find('span.filter-table-heading');
         span.find('.fa-filter').remove();
-        span.append('<i class="fa-solid fa-filter" style="color: #072d66; margin-left: 5px;"></i>');
+        span.append('<i class="fa-solid fa-filter" style="color: #eceef1; margin-left: 5px;"></i>');
     }
     closeAllFilters();
 }
@@ -431,7 +431,7 @@ window.applyfilterdouble = function applyfilterdouble(columnName, bodyId) {
         const th = $('#filterDropdown-' + column.replace(/\s+/g, '')).closest('th');
         const span = th.find('span.filter-table-heading');
         span.find('.fa-filter').remove();
-        span.append('<i class="fa-solid fa-filter" style="color: #072d66; margin-left: 5px;"></i>');
+        span.append('<i class="fa-solid fa-filter" style="color: #eceef1; margin-left: 5px;"></i>');
     }
     closeAllFiltersDouble();
 };

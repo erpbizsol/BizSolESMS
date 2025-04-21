@@ -40,6 +40,7 @@ $(document).ready(function () {
         ShowProductlist();
     });
     Serch();
+  
 });
 function Serch() {
     $("#txSearch").on("input", function () {
@@ -77,8 +78,8 @@ async function ShowProductlist() {
             if (response.length > 0) {
                 G_Value = response;
 
-                const StringFilterColumn = ["Product Code", "Location"];
-                const NumericFilterColumn = [];
+                const StringFilterColumn = ["Item Product Code", "Location"];
+                const NumericFilterColumn = ["QTY"];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
@@ -164,3 +165,17 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "Location_information.xlsx");
 }
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#table-body tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = tds[3]?.textContent.trim();
+        if (columnValue > '0') {
+            row.style.backgroundColor = '';
+        } else {
+            row.style.backgroundColor = '#f5c0bf';
+        }
+    });
+}
+
+setInterval(ChangecolorTr, 100);

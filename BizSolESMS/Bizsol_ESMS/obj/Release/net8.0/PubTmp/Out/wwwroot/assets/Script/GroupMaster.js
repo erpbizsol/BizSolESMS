@@ -132,11 +132,13 @@ async function deleteGroup(code, group, button) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
+        $('tr').removeClass('highlight');
         return;
     }
     const { Status, msg1 } = await CheckRelatedRecord(code, 'groupmaster');
     if (Status == true) {
         toastr.error(msg1);
+        $('tr').removeClass('highlight');
         return;
     }
     if (confirm(`Are you sure you want to delete this group  ${group} ?`)) {
@@ -164,6 +166,7 @@ async function deleteGroup(code, group, button) {
     else {
           $('tr').removeClass('highlight');
     }
+    $('tr').removeClass('highlight');
 }
 async function Edit(code) {
 

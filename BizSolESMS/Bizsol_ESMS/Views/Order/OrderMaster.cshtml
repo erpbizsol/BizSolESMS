@@ -251,8 +251,11 @@
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="txtClientName" class="col-form-label-sm fw-bold">Client Name</label><span class="text-danger">*</span>
-                            <datalist id="txtClientNameList"></datalist>
+                            @* <datalist id="txtClientNameList"></datalist>
                             <input list="txtClientNameList" id="txtClientName" name="txtClientName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name">
+                               *@  
+                               <select id="txtClientName" class="form-control form-control-sm box_border">
+                            </select>
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="txtAddress" class="col-form-label-sm fw-bold">Address<span class="text-danger">*</span></label>
@@ -362,10 +365,17 @@
                                 </select>
                             </div>
                             <div class="col-md-3 col-sm-6">
-                                <label for="txtClientName" class="col-form-label-sm fw-bold">Client Name</label><span class="text-danger">*</span>
-                                <datalist id="txtClientNameList"></datalist>
-                                <input list="txtClientNameList" id="txtImportClientName" name="txtClientName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name">
+                                <label for="txtImportOrderNo" class="col-form-label-sm fw-bold">Order No</label><span class="text-danger">*</span>
+                                <input type="text" id="txtImportOrderNo" class="box_border form-control form-control-sm" autocomplete="off" maxlength="50" placeholder="Please enter order no..">
                             </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtClientName" class="col-form-label-sm fw-bold">Client Name</label><span class="text-danger">*</span>
+                               @*  <datalist id="txtClientNameList"></datalist>
+                                <input list="txtClientNameList" id="txtImportClientName" name="txtClientName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name">
+                                *@<select id="txtImportClientName" class="form-control form-control-sm box_border" onchange="GetEmployeeRateDetails(this)">
+                                </select>
+                            </div>
+                            
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtExcelFile" class="col-form-label-sm fw-bold">Choose File</label><span class="text-danger">*</span>
                                 <input type="file" id="txtExcelFile" class="box_border form-control form-control-sm" autocomplete="off" accept=".xlsx, .xls, .csv">

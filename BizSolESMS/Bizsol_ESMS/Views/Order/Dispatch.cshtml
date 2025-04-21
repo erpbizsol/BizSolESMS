@@ -304,9 +304,12 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-3 col-sm-6">
+                                <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
                                 <label for="txtOrderNo" class="col-form-label-sm fw-bold">Order No<span class="text-danger">*</span></label>
-                                <input type="text" id="txtOrderNo" list="txtOrderNoList" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled>
-                                <datalist id="txtOrderNoList"></datalist>
+                                @* <input type="text" id="txtOrderNo" list="txtOrderNoList" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled>
+                                <datalist id="txtOrderNoList"></datalist> *@
+                                <select id="txtOrderNo" class="form-control form-control-sm box_border">
+                                </select>
                                 <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled value="0">
                             </div>
                             <div class="col-md-3 col-sm-6">
@@ -322,9 +325,18 @@
                                 <input type="text" id="txtClientDispatchName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name.." disabled>
                             </div>
                             <div class="col-md-3 col-sm-6">
+
                                 <label for="txtPackedBy" class="col-form-label-sm fw-bold">Packed By</label><span class="text-danger">*</span>
-                                <datalist id="txtPackedByList"></datalist>
+                                @* <datalist id="txtPackedByList"></datalist>
                                 <input list="txtPackedByList" id="txtPackedBy" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Packed By..">
+                             *@
+                                <select id="txtPackedBy" class="form-control form-control-sm box_border">
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product<span class="text-danger">*</span></label>
+                                <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product.." onfocus="this.select()">
                             </div>
                             <div class="col-md-2 without-label-field">
                                 <label for="txtIsManual"></label>
@@ -332,10 +344,11 @@
                                 <label for="txtIsManual"><nobr>Show Keyboard</nobr></label>
                             </div>
                             <div class="col-md-3 col-sm-6">
-                                <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product<span class="text-danger">*</span></label>
-                                <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product.." onfocus="this.select()">
+                                <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No<span class="text-danger">*</span></label>
+                                 <br/><button onclick="changeValue(-1)" style="border: 1px solid #275481;border-radius:4px;">➖</button>
+                                <input type="text" id="txtBoxNo" class="Number" style="border: 1px solid #275481;width:45px;border-radius:4px;text-align:center;" value="1" min="1">
+                                <button onclick="changeValue(1)" style="border: 1px solid #275481;border-radius:4px;">➕</button>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -386,16 +399,10 @@
 <script src="~/assets/js/filter.js"></script>
 
 <script>
-        // Get all the tabs
     const tabs = document.querySelectorAll('.nav-item-btn');
-
-    // Loop through each tab and add an event listener
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            // Remove the 'active' class from all tabs
             tabs.forEach(t => t.classList.remove('active'));
-
-            // Add 'active' class to the clicked tab
             tab.classList.add('active');
         });
     });

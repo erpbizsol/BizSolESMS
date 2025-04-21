@@ -238,6 +238,10 @@ $(document).ready(function () {
             $("#txtQtyinBox").val("0");
         }
     });
+    LocationList();
+    $("#btnSaveLocation").on("click", function () {
+        Savelocation();
+    });
 });
 function UpdateLabelforItemMaster() {
     $.ajax({
@@ -319,20 +323,24 @@ function ShowItemMasterlist(Type) {
             if (response.length > 0) {
                 $("#txtitemtable").show();
                
-                const StringFilterColumn = ["Item Code", "Display Name", "Category Name", "Group Name", "Sub Group Name", "Brand Name", "Location Name"];
-                const NumericFilterColumn = ["Reorder Level", "Reorder Qty", "Qty In Box"];
+                const StringFilterColumn = ["Item Code", "Category Name", "Brand Name", "Location Name"];
+                const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = ["Item Name"];
-                const hiddenColumns = ["Code","DataImported"];
+                const hiddenColumns = ["Group Name","Sub Group Name","Display Name","Code", "DataImported", "Reorder Level", "Reorder Qty","Box Packing","Batch Applicable","Maintain Expiry","Qty In Box"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',
                     "Qty In Box": 'right',
+                    "Action": 'left;width:140px;',
+                    "Location Name":'center'
                 };
                 const updatedResponse = response.map(item => ({
-                    ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
+                    ...item,
+                    "Location Name": item["Location Name"] == '' ? `<button class="btn btn-primary icon-height mb-1"  title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>` : `${item["Location Name"]}`,
+                    Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
                     `
@@ -955,7 +963,6 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "ItemMaster.xlsx");
 }
-
 //function Report() {
 //    $.ajax({
 //        url: '/Home/ItemMaster',
@@ -978,7 +985,6 @@ function Export(jsonData) {
 //        }
 //    });
 //}
-
 function Report() {
     $.ajax({
         url: '/Home/OrderMaster',
@@ -997,4 +1003,83 @@ function Report() {
             console.error('Error:', xhr.responseText);
         }
     });
+}
+function CreateLocation(Code) {
+    $("#hfItemCode").val(Code);
+    $("#LocationModal").modal({
+        backdrop: 'static',
+    });
+    $('#LocationModal').modal('show');
+}
+function LocationList() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowLocationMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response && response.length > 0) {
+                SetUpAutoSuggestion($('#txtLocationName'), $('#txtLocationNameList'), response.map((item) => ({ Desp: item["Location Name"] })), 'StartWith');
+            } else {
+                $('#txtLocationNameList').empty();
+            }
+        },  
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function ClearLocationData() {
+        G_IsCheckExists = 'N';
+        $("#hfItemCode").val('0'),
+        $("#txtLocationName").val('')
+        $('#LocationModal').modal('hide');
+}
+
+let G_IsCheckExists = 'N';
+function Savelocation() {
+    var LocationName = $("#txtLocationName").val();
+    if (LocationName === '') {
+        toastr.error('Please enter location name !');
+        $("#txtLocationName").focus();
+    }
+    else {
+        const payload = {
+            Code : $("#hfItemCode").val(),
+            LocationName : $("#txtLocationName").val()
+        };
+        $.ajax({
+            url: `${appBaseURL}/api/Master/CreateLocationFromItemMaster?UserMaster_Code=${UserMaster_Code}&IsCheckExists=${G_IsCheckExists}`,
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response[0].Status === 'Y') {
+                    toastr.success(response[0].Msg);
+                    G_IsCheckExists = 'N';
+                    ClearLocationData();
+                    ShowItemMasterlist('Get');
+                } else if (response[0].Status === 'N') {
+                    if (confirm(`${response[0].Msg}`)) {
+                        G_IsCheckExists = 'Y';
+                        Savelocation();
+                    }
+                }
+                else {
+                    toastr.error(response[0].Msg);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText);
+                toastr.error("An error occurred while saving the data.");
+            }
+        });
+
+    }
 }

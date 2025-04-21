@@ -65,6 +65,7 @@ function BoxUnloading() {
         success: function (response) {
             if (response.length > 0) {
                 if (response[0].Status == 'Y') {
+                    $("#SuccessVoice")[0].play();
                     GetDataByPicklist('Res');
                     CaseNo = response[0].CaseNo;
                    $("#txtBoxNo").focus();

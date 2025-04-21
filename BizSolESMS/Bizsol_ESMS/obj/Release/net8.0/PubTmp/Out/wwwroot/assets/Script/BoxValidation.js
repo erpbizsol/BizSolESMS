@@ -49,6 +49,7 @@ $(document).ready(function () {
     $('#txtScanProduct').on('blur', function () {
         $(this).attr('inputmode', '');
     });
+    GetModuleMasterCode();
 });
 function BoxValidationDetail() {
     if ($("#txtBoxNo").val() == '') {
@@ -76,6 +77,7 @@ function BoxValidationDetail() {
             if (response.length > 0) {
                 Data = response;
                 if (response[0].Status == 'Y') {
+                    $("#SuccessVoice")[0].play();
                     $("#txtScanProduct").focus();
                     $("#txtScanProduct").prop("disabled",false);
                     $("#UnloadingTable").show();
@@ -85,7 +87,14 @@ function BoxValidationDetail() {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = ["Item Name", "Item Code", "Item Bar Code"];
-                    const hiddenColumns = ["Msg", "Status","Code"];
+                    let hiddenColumns = [];
+                    if (UserType == "A") {
+                        hiddenColumns = ["Msg", "Status", "Code"];
+                        $("#btnAutoUpdate").show();
+                    } else {
+                        hiddenColumns = ["Msg", "Status", "Code", "Manual Qty"];
+                        $("#btnAutoUpdate").hide();
+                    }
                     const ColumnAlignment = {
                         Qty: "right"
                     };
@@ -288,6 +297,7 @@ function SaveScanValidationDetail() {
         },
         success: function (response) {
             if (response[0].Status == 'Y') {
+                $("#SuccessVoice")[0].play();
                 BoxValidationDetail();
                 $("#txtScanProduct").focus();
                 G_IDFORTRCOLOR = 'GET';

@@ -5,6 +5,7 @@
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="~/assets/script/itemmaster.js"></script>
+<script src="~/assets/js/autosuggestion.js"></script>
 <style>
    
 
@@ -120,6 +121,8 @@
     .page-content {
         padding: 3px 0;
     }
+
+    
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -253,12 +256,36 @@
                                         <input type="checkbox" id="txtMaintainExpiry" name="txtMaintainExpiry" class="box_border" checked />
                                         <label for="txtMaintainExpiry">Maintain Expiry</label>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="LocationModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content w-100" style="max-width: 515px;">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Location (Bin)</h5>
+                <button type="button" class="close modal-close" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-6">
+                        <label for="txtLocationName" class="col-form-label-sm fw-bold">Location Name</label><span class="text-danger">*</span>
+                        <input type="text" id="txtLocationName" name="txtLocationName" class="box_border form-control form-control-sm" value="" autocomplete="off" placeholder="please enter location..." />
+                        <input type="hidden" id="hfItemCode" name="hfItemCode" class="box_border form-control form-control-sm" value="0" autocomplete="off"/>
+                        <ul id="txtLocationNameList" class="AutoSuggestion-list"></ul>
+                    </div>
+                </div>
+             
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btn-height" id="btnSaveLocation">Save</button>
+                <button type="button" class="btn btn-danger btn-height" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
