@@ -240,6 +240,8 @@ function toggleClientType() {
         $("#txtClientType").prop("disabled", false); 
     } else {
         $("#txtClientType").prop("disabled", true);  
+        $("#txtClientType").val("");  
+
      
     }
 }
@@ -274,7 +276,7 @@ function BackMaster() {
     $("#txtIsVendor").prop("disabled", false);
 }
 async function Edit(code) {
-    toggleClientType();
+ 
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -320,6 +322,12 @@ async function Edit(code) {
                     }
                     if (accountMaster.IsVendor == 'N') {
                         $("#txtIsVendor").prop("checked", false);
+                    }
+                    if ($("#txtIsClient").is(":checked")) {
+                        $("#txtClientType").prop("disabled", false);
+                    } else {
+                        $("#txtClientType").prop("disabled", true);
+                        $("#txtClientType").val(""); 
                     }
                 } else {
                     toastr.warning("Account master data is missing.");
@@ -474,6 +482,7 @@ function ClearData() {
     $("#txtIsVendor").prop("checked", true);
     $("#txtIsMSME").val("");
     $("#Orderdata").empty();
+    $("#txtClientType").val("");
 }
 function Save() {
   
