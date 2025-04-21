@@ -278,10 +278,20 @@
                                 <input type="checkbox" id="txtIsClient" name="txtIsClient" class="box_border" checked />
                                 <label for="txtIsClient">Client</label>
                             </div>
+                            
                             <div class="col-md-1 without-label-field">
                                 <label for="txtIsVendor"></label>
                                 <input type="checkbox" id="txtIsVendor" name="txtIsVendor" class="box_border" checked />
                                 <label for="txtIsVendor">Vendor</label>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtClientType" class="col-form-label-sm fw-bold">Client Type </label><span class="text-danger">*</span>
+                                <select id="txtClientType" class="box_border form-control form-control-sm" disabled>
+                                    <option value="">Select Client Type</option>
+                                    <option value="ANC">ANC</option>
+                                    <option value="MA">MA</option>
+                                    <option value="HGBD">HGBD</option>
+                                </select>
                             </div>
                         </div>
                     </div>
