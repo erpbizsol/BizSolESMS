@@ -267,23 +267,23 @@
 </div>
 <div class="modal fade" id="LocationModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content w-100" style="max-width: 515px;">
+        <div class="modal-content modal-content-width-sm mt-5" style="max-width: 400px;">
             <div class="modal-header">
                 <h5 class="modal-title">Create Location (Bin)</h5>
                 <button type="button" class="close modal-close" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-6 col-6">
-                        <label for="txtLocationName" class="col-form-label-sm fw-bold">Location Name</label><span class="text-danger">*</span>
-                        <input type="text" id="txtLocationName" name="txtLocationName" class="box_border form-control form-control-sm" value="" autocomplete="off" placeholder="please enter location..." />
-                        <input type="hidden" id="hfItemCode" name="hfItemCode" class="box_border form-control form-control-sm" value="0" autocomplete="off"/>
+                    <div class="col-md-12 col-12">
+                        <label for="txtLocationName" class="fw-bold">Location Name</label><span class="text-danger">*</span>
+                        <input type="text" id="txtLocationName" name="txtLocationName" class="box_border form-control mb-0 form-control-sm" value="" autocomplete="off" placeholder="please enter location..." />
+                        <input type="hidden" id="hfItemCode" name="hfItemCode" class="box_border form-control form-control-sm mb-0" value="0" autocomplete="off"/>
                         <ul id="txtLocationNameList" class="AutoSuggestion-list"></ul>
                     </div>
                 </div>
              
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer pt-0">
                 <button type="button" class="btn btn-success btn-height" id="btnSaveLocation">Save</button>
                 <button type="button" class="btn btn-danger btn-height" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal">Cancel</button>
             </div>

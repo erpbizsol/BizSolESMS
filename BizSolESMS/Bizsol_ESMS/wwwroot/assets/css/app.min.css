@@ -6217,11 +6217,11 @@ label {
 .modal-close {
     border: none;
     border-radius: 5px;
-    padding: 0px 0px;
-    font-size: 20pt;
+    padding: 0px 0px 3px 0px;
+    font-size: 15pt;
     height: 25px;
     width: 25px;
-    line-height: 0.4;
+    line-height: 1;
 }
 
 .modal-dialog .modal-close-icon {
