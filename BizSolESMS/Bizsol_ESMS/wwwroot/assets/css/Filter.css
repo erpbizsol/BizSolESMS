@@ -281,8 +281,7 @@ i:hover {
     margin-top: 10px !important;
 }
 .swal-footer {
-    padding-top: 13px !important;
-    padding: 13px 16px !important;
+    margin: 0;
     border-radius: inherit !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
@@ -295,7 +294,6 @@ i:hover {
     text-align: center;
     border-radius: 10px;
     position: static;
-    margin: 90px auto;
     display: inline-block;
     vertical-align: middle;
     -webkit-transform: scale(1);
@@ -332,14 +330,9 @@ i:hover {
 .swal-text {
     font-size: 13px;
     position: relative;
-    float: none;
-    line-height: normal;
-    vertical-align: top;
-    text-align: left;
     display: inline-block;
+    line-height: normal;
     margin: 0;
-    padding: -2px -4px;
-    font-weight: 400;
     color: rgba(0, 0, 0, .64);
     max-width: calc(100% - 20px);
     overflow-wrap: break-word;
@@ -363,4 +356,36 @@ i:hover {
     border-radius: 50%;
     margin-left: -3px;
     bottom: -7px;
+}
+
+.swal-icon--success__line--long {
+    width: 26px;
+    right: 7px;
+    top: 19px;
+}
+
+.swal-icon--success__line--tip {
+    width: 26px;
+    left: 7px;
+    top: 19px;
+}
+
+.swal-icon--success__hide-corners {
+    display: none !important;
+}
+
+.swal-icon--success__line {
+    height: 2px;
+}
+
+.swal-icon--success__ring {
+    display: none !important;
+}
+
+.swal-icon--success:after, .swal-icon--success:before {
+    display: none !important;
+}
+
+.swal-button:focus {
+    box-shadow: none;
 }
