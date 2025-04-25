@@ -40,6 +40,13 @@ namespace Bizsol_ESMS.Controllers
         {
             return View();
         }
-        #endregion  BoxValidation 
+        #endregion  BoxValidation
+        
+        #region  SalesReturnMaster 
+        public IActionResult SalesReturnMaster()
+        {
+            return View();
+        }
+        #endregion  SalesReturnMaster 
     }
 }

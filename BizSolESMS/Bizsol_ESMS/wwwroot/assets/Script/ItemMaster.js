@@ -238,7 +238,7 @@ $(document).ready(function () {
             $("#txtQtyinBox").val("0");
         }
     });
-    LocationList();
+    
     $("#btnSaveLocation").on("click", function () {
         Savelocation();
     });
@@ -1005,6 +1005,7 @@ function Report() {
     });
 }
 function CreateLocation(Code) {
+    LocationList();
     $("#hfItemCode").val(Code);
     $("#LocationModal").modal({
         backdrop: 'static',

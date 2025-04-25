@@ -6,6 +6,10 @@ namespace Bizsol_ESMS.Dataset
 {
 }
 
+namespace Bizsol_ESMS.Dataset
+{
+}
+
 namespace ESMS_R.Dataset
 {
 }

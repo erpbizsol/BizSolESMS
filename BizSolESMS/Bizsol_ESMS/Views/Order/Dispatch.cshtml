@@ -270,7 +270,7 @@
                         </div>
                         <div class="nav-item" id="despatchTransit">
                             <button class="nav-item-btn">
-                                <div id="tab1" class="tab">Dispatch in Transit</div>
+                                <div id="tab1" class="tab">Partial Packed</div>
                             </button>
                         </div>
                         <div class="nav-item" id="completedDespatch">
@@ -327,11 +327,7 @@
                             <div class="col-md-3 col-sm-6">
 
                                 <label for="txtPackedBy" class="col-form-label-sm fw-bold">Packed By</label><span class="text-danger">*</span>
-                                @* <datalist id="txtPackedByList"></datalist>
-                                <input list="txtPackedByList" id="txtPackedBy" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Packed By..">
-                             *@
-                                <select id="txtPackedBy" class="form-control form-control-sm box_border">
-                                </select>
+                                <input type="text" id="txtPackedBy" disabled class="box_border form-control form-control-sm" autocomplete="off" maxlength="50" placeholder="Packed By..">
                             </div>
                             
                             <div class="col-md-3 col-sm-6">

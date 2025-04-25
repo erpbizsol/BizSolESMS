@@ -38,6 +38,7 @@ $(document).ready(function () {
             $("#txtBoxNoList").empty();
         }
     });
+    GetModuleMasterCode();
 });
 
 function BoxUnloading() {

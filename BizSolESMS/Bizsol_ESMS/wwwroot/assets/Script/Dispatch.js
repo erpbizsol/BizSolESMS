@@ -1,11 +1,10 @@
-﻿
-var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 let Data = [];
-let UserName = authKeyData.UserID;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const G_UserName = sessionStorage.getItem('UserName');
 const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 let AccountList = [];
 let ItemDetail = [];
@@ -104,22 +103,32 @@ $(document).ready(function () {
         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
     });
   
-    $('#txtScanProduct').on('focus', function (e) {
-        if ($("#txtIsManual").is(':checked')) {
-            var inputElement = this;
-            setTimeout(function () {
-                inputElement.setAttribute('inputmode', '');
-            }, 2);
-            
-        } else {
-            var inputElement = this;
-            setTimeout(function () {
-                inputElement.setAttribute('inputmode', 'none');
-            }, 2);
-        }
+    //$('#txtScanProduct').on('focus', function (e) {
+    //    if ($("#txtIsManual").is(':checked')) {
+    //        var inputElement = this;
+    //        setTimeout(function () {
+    //            inputElement.setAttribute('inputmode', '');
+    //        }, 2);
+
+    //    } else {
+    //        var inputElement = this;
+    //        setTimeout(function () {
+    //            inputElement.setAttribute('inputmode', 'none');
+    //        }, 2);
+    //    }
+    //});
+    $("#txtPackedBy").val(G_UserName);
+    $('#txtScanProduct').on('focus', function () {
+        const inputElement = this;
+        const isManual = $("#txtIsManual").is(':checked');
+        setTimeout(function () {
+            inputElement.setAttribute('inputmode', isManual ? '' : 'none');
+        }, 2);
     });
-  
-    GetUserNameList();
+    $('#txtScanProduct').on('blur', function () {
+        $(this).attr('inputmode', '');
+    });
+    //GetUserNameList();
 });
 function BackMaster() {
     G_IDFORTRCOLOR = '';
@@ -130,20 +139,14 @@ function BackMaster() {
     disableFields(false);
     $("#btnShowAll").hide();
     $("#txtOrderNo").prop("disabled", true);
-    $("#txtPackedBy").prop("disabled", false);
     if (G_Tab == 3) {
         GetCompletedDespatchOrderList('CompletedDespatch');
-        GetUserNameList();
     }
     if (G_Tab == 2) {
         GetDespatchTransitOrderList('DespatchTransit');
-        GetUserNameList();
-
     }
     if (G_Tab == 1) {
         GetDispatchOrderLists('GETCLIENT');
-        GetUserNameList();
-        
     }
 }
 function GetAccountMasterList() {
@@ -178,14 +181,11 @@ function ClearData() {
     All = 0;
     $("#hfCode").val("0");
     $("#txtChallanNo").val("");
-    //$("#txtOrderNo").val("");
     $("#txtScanProduct").val("");
     $("#txtClientDispatchName").val("");
     $("#tblDispatchData").hide();
     $("#txtScanProduct").attr('inputmode', '');
-    //$("#txtPackedBy").val("");
     SelectOptionByText('txtOrderNo','Select');
-    SelectOptionByText('txtPackedBy','Select');
 }
 function OnChangeNumericTextBox(element) {
 
@@ -442,7 +442,7 @@ function GetDispatchOrderLists(Mode) {
 }
 async function StartDispatchPanding(Code, Mode) {
     if (G_DispatchMaster_Code === 0) {
-        GetUserNameList();
+        //GetUserNameList();
     }
     G_Tab = 1;
     $("#btnShowAll").hide();
@@ -469,16 +469,9 @@ async function StartDispatchPanding(Code, Mode) {
                     const OrderMaster = response.OrderMaster[0];
                     $("#hfCode").val(OrderMaster.Code || "");
                     SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
-                    //$("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-                    //$("#txtPackedBy").val(OrderMaster.PackedBy);
-                    SelectOptionByText('txtPackedBy', OrderMaster.PackedBy || "");
-                    if (G_DispatchMaster_Code > 0) {
-                        $("#txtPackedBy").prop("disabled", true);
-                    } else {
-                        $("#txtPackedBy").prop("disabled", false);
-                    }
+                    
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     $("#tblDispatchData").show();
@@ -562,11 +555,7 @@ function checkValidateqty1(element, Code) {
         toastr.error("Invalid Packing Qty!");
         StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
     } else {
-        if ($("#txtPackedBy").val() === '') {
-            toastr.error("Please select packed by..!");
-            StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
-            return;
-        }else if ($("#txtBoxNo").val() === '') {
+        if ($("#txtBoxNo").val() === '') {
             toastr.error("Please enter box no..!");
             StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
             return;
@@ -617,7 +606,7 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         ManualQty: ManualQty,
         DispatchQty: DispatchQty,
         UserMaster_Code: UserMaster_Code,
-        PackedBy: $("#txtPackedBy").val()
+        PackedBy:''
     }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch?Mode=Edit`,
@@ -661,7 +650,7 @@ function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         ManualQty: ManualQty,
         DispatchQty: DispatchQty,
         UserMaster_Code: UserMaster_Code,
-        PackedBy: $("#txtPackedBy").val()
+        PackedBy: ''
     }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch?Mode=New`,
@@ -690,10 +679,7 @@ function SaveScanQty() {
         toastr.error("Please scan product !");
         $("#txtScanProduct").focus();
         return;
-    } else if ($("#txtPackedBy").val() === '') {
-        toastr.error("Please select packed by..!");
-        return;
-    } else if ($("#txtBoxNo").val() === '') {
+    }else if ($("#txtBoxNo").val() === '') {
         toastr.error("Please enter box no..!");
         return;
     }
@@ -705,7 +691,7 @@ function SaveScanQty() {
         DispatchQty: 0,
         DispatchMaster_Code: G_DispatchMaster_Code,
         UserMaster_Code: UserMaster_Code,
-        PackedBy: $("#txtPackedBy").val(),
+        PackedBy: '',
         BoxNo: $("#txtBoxNo").val()
     }
     $.ajax({
@@ -785,13 +771,9 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     const OrderMaster = response.OrderMaster[0];
                     $("#hfCode").val(OrderMaster.Code || "");
                     SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
-                    //$("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
-                    //$("#txtPackedBy").val(OrderMaster.PackedBy);
-                    SelectOptionByText('txtPackedBy', OrderMaster.PackedBy);
-                    $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", false);
                     disableFields(false);
                 }
@@ -885,15 +867,7 @@ function checkValidateqtyTransit1(element, Code) {
             StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
         }
     } else {
-        if ($("#txtPackedBy").val() === '') {
-            toastr.error("Please select packed by..!");
-            if (All == 0) {
-                StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
-            } else if (All == 1) {
-                StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
-            }
-            return;
-        } else if ($("#txtBoxNo").val() === '') {
+        if ($("#txtBoxNo").val() === '') {
             toastr.error("Please enter box no..!");
             if (All == 0) {
                 StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
@@ -1017,12 +991,8 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     const OrderMaster = response.OrderMaster[0];
                     $("#hfCode").val(OrderMaster.Code || "");
                     SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
-                    //$("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
-                    SelectOptionByText('txtPackedBy', OrderMaster.PackedBy || "");
-                    //$("#txtPackedBy").val(OrderMaster.PackedBy);
-                    $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", false);
                     disableFields(false);
                 }
@@ -1108,11 +1078,7 @@ function checkValidateqtyCompleteTransit1(element, Code) {
         toastr.error("Invalid Packing Qty!");
         StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
     } else {
-        if ($("#txtPackedBy").val() === '') {
-            toastr.error("Please select packed by..!");
-            StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
-            return;
-        } else if ($("#txtBoxNo").val() === '') {
+        if ($("#txtBoxNo").val() === '') {
             toastr.error("Please enter box no..!");
             StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
             return;
@@ -1136,13 +1102,11 @@ async function StartDispatchOrderNo() {
     $("#txtheaderdiv").show();
     $("#txtOrderNo").prop("disabled", false);
     $("#txtScanProduct").prop("disabled", false);
-    $("#txtPackedBy").prop("disabled", false);
-    GetUserNameList();
     disableFields(false);
 }
 function CreateOrderNo(Code) {
     StartDispatchPanding(Code, "ORDERDETAILS");
-    GetUserNameList();
+    //GetUserNameList();
 }
 function GetOrderNoList1() {
     $.ajax({
@@ -1205,9 +1169,6 @@ async function ViewDespatchTransit(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
-                    SelectOptionByText('txtPackedBy', OrderMaster.PackedBy);
-                    //$("#txtPackedBy").val(OrderMaster.PackedBy);
-                    $("#txtPackedBy").prop("disabled", true);
                     $("#txtScanProduct").prop("disabled", true);
                     disableFields(true);
                 }
@@ -1327,37 +1288,6 @@ function MarkasCompete(code) {
 function disableFields(disable) {
     $("#txtCreatepage").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
-function GetUserNameList() {
-    $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetEmployeeList?UserMaster_Code=${UserMaster_Code}`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response.length > 0) {
-                let option = '<option value="">Select</option>';
-                $.each(response, function (key, val) {
-
-                    option += '<option value="' + val["EmployeeName"] + '">' + val["EmployeeName"] + '</option>';
-                });
-
-                $('#txtPackedBy')[0].innerHTML = option;
-                $('#txtPackedBy')[0].innerHTML = option;
-
-                $('#txtPackedBy').select2({
-                    width: '-webkit-fill-available'
-                });
-            } else {
-                $('#txtPackedBy').empty();
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-            $('#txtPackedBy').empty();
-        }
-    });
-}
 function Report(C_Code) {
     $.ajax({
         url: `${AppBaseURLMenu}/Home/OrderMaster`,
@@ -1401,14 +1331,10 @@ function ChangecolorTr() {
         const columnValue = tds[11]?.textContent.trim();
         if (columnValue === 'GREEN') {
             row.style.backgroundColor = '#07bb72';
-            tds.forEach(td => {
-                td.style.color = '#ffffff';
-            });
+            
         } else if (columnValue === 'YELLOW') {
             row.style.backgroundColor = '#ebb861';
-            tds.forEach(td => {
-                td.style.color = '#ffffff';
-            });
+           
         } else {
             row.style.backgroundColor = '#f5c0bf';
             
