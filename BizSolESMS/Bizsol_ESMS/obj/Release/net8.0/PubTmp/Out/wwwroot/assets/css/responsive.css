@@ -65,6 +65,10 @@
     .sidebar-overlay-n {
         display: none;
     }
+
+    .modal-content-width-sm {
+        width: 100% !important;
+    }
 }
 
 /* End Overlay styles */

@@ -183,7 +183,7 @@
     }
 </style>
 
-<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+<section class="breadcrumbs1" id="txtHeaderDv1" style="display:none">
     <div class="container-fluid" style="">
         <div class="fix-header">
             <div class="row">
@@ -200,17 +200,38 @@
         </div>
     </div>
 </section>
+<section class="breadcrumbs1" id="txtHeaderDv2" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="SaveImport()" title="Save Import"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">Import</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <div class="container">
-    <div id="txtCreatepage">
-        <div class="card shadow-sm" style="background-color:#e9e9ef">
+    <div id="txtCreatePage" style="display:block;">
+        <div class="card shadow-sm">
             <div class="tabs">
+                <div class="row">
+                    <div class="col-sm-12 text-end">
+                        <button type="button" class="btn btn-info btn-height" onclick="ImportExcel()" id="ImportExcel">IMPORT</button>
+                    </div>
+                </div>
                 <div class="row p-1">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
-                                <datalist id="txtWarehouseList"></datalist>
-                                <input list="txtWarehouseList" id="txtWarehouse" onfocusout="CheckWarehouse(this);" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Warehouse..">
+                                <select id="txtWarehouse" class="box_border form-control form-control-sm"></select>
                             </div>
                         </div>
                     </div>
@@ -230,28 +251,9 @@
                                         <div class="col-md-12">
                                             <div class="table-wrapper" style="overflow: auto;">
                                                 <table id="table" class="table">
-                                                    <thead role="rowgroup" id="table-header">
-                                                        @* <tr role="row">
-                                                        <th class="lead-Date width_cust" role="columnheader">Category<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Group<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Sub Group<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Brand<span class="text-danger">*</span></th>
-                                                        <th class="lead-Date width_cust" role="columnheader">Item Code<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Item Name<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Warehouse<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Opening Balance<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Delete</th>
-                                                        </tr> *@
-
+                                                    <thead id="table-header">
                                                     </thead>
-                                                    <tbody role="rowgroup" id="table-body"></tbody>
-                                                    @* <tfoot>
-                                                    <tr role="row" id="trAddBtn">
-                                                    <td style="text-align: left;">
-                                                    <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
-                                                    </td>
-                                                    </tr>
-                                                    </tfoot> *@
+                                                    <tbody id="table-body"></tbody>
                                                 </table>
                                             </div>
                                             <div class="paginator" id="paginator-table">
@@ -277,37 +279,74 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 col-sm-6">
-                                            <label for="txtItemBarCode" class="col-form-label-sm fw-bold">Item Bar Code</label><span class="text-danger">*</span>
-                                            <datalist id="txtItemBarCodelist"></datalist>
-                                            <input list="txtItemBarCodelist" id="txtItemBarCode" onchange="FillallItemfield(this);" class=" box_border form-control form-control-sm" autocomplete="off" placeholder="Item Bar Code..">
-                                        </div>
-
-
-                                        <div class="col-md-3 col-sm-6">
                                             <label for="txtItemCode" class="col-form-label-sm fw-bold">Item Code</label><span class="text-danger">*</span>
                                             <datalist id="txtItemCodelist"></datalist>
-                                            <input list="txtItemCodelist" id="txtItemCode" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Code..">
+                                            <input list="txtItemCodelist" id="txtItemCode" onchange="FillallItemfield(this);"  class="box_border form-control form-control-sm" autocomplete="off" placeholder="Item Code..">
                                         </div>
-
-
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtItemBarCode" class="col-form-label-sm fw-bold">Item Bar Code</label><span class="text-danger">*</span>
+                                            <datalist id="txtItemBarCodelist"></datalist>
+                                            <input list="txtItemBarCodelist" disabled id="txtItemBarCode" class=" box_border form-control form-control-sm" autocomplete="off" placeholder="Item Bar Code..">
+                                        </div>
                                         <div class="col-md-3 col-sm-6">
                                             <label for="txtItemName" class="col-form-label-sm fw-bold">Item Name</label><span class="text-danger">*</span>
                                             <datalist id="txtItemNamelist"></datalist>
                                             <input list="txtItemNamelist" id="txtItemName" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Name..">
                                         </div>
-
-
                                         <div class="col-md-3 col-sm-6">
                                             <label for="txtOpeningBalance" class="col-form-label-sm fw-bold ">Opening Balance</label><span class="text-danger">*</span>
                                             <input type="text" id="txtOpeningBalance" onkeypress="return OnChangeNumericTextBox(event,this);" class="box_border form-control form-control-sm text-right Number" autocomplete="off" placeholder="Opening Balance..">
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-success btn-height" id="txtbtnSave" onclick="confirmSave()">Save</button>
                                 <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="txtImport" style="display:none;">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtImportWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
+                                <select id="txtImportWarehouse" class="box_border form-control form-control-sm"></select>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtFile" class="col-form-label-sm fw-bold">File</label><span class="text-danger">*</span>
+                                <input type="file" id="txtFile" class="box_border form-control form-control-sm" autocomplete="off" placeholder="file..">
+                            </div>
+                            <div class="col-md-3 col-sm-6" style="margin-top:32px;">
+                                <button type="button" class="btn btn-info btn-height" onclick="DownloadTemplate();">Download Template</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row p-2 " id="dvImportTable" style="display:none;" >
+                    <div class="accordion accordion-flush" id="accordionFlushOrder">
+                        <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
+                            <div class="accordion-body-sec">
+                                <div class="row">
+                                    <div class="col-md-12" style="background: white;padding: 0px;">
+                                        <div class="table-wrapper" style="overflow: auto;">
+                                            <table id="ImportTable" class="table">
+                                                <thead id="ImportTable-header">
+                                                </thead>
+                                                <tbody id="ImportTable-body"></tbody>
+                                            </table>
+                                        </div>
+                                        <div class="paginator" id="paginator-ImportTable">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

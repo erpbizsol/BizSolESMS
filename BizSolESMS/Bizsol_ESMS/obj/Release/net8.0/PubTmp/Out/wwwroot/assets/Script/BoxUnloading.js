@@ -38,6 +38,7 @@ $(document).ready(function () {
             $("#txtBoxNoList").empty();
         }
     });
+    GetModuleMasterCode();
 });
 
 function BoxUnloading() {
@@ -190,7 +191,7 @@ function GetDataByPicklist(Orderby) {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "BillQty", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName","SNo"];
+                    const hiddenColumns = ["SNo","Code", "BillQtyBox", "Status", "TotalBox","ScannedQty"];
                     const ColumnAlignment = {
                 };
                 var value = [];
@@ -210,7 +211,7 @@ function GetDataByPicklist(Orderby) {
                 }
                 
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", value, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, true);
-               
+                $("#txtBoxQty").text(response[0].TotalBox+'/'+response[0].ScannedQty)
                 
             } else {
                 toastr.error("Record not found...!");

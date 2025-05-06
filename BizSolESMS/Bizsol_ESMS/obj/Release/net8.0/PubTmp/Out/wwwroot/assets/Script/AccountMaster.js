@@ -149,6 +149,11 @@ $(document).ready(function () {
     });
     GetModuleMasterCode();
     ShowCityMasterlist();
+    toggleClientType();
+    $("#txtIsClient").change(function () {
+        toggleClientType();
+    });
+
 });
 function ShowAccountMasterlist(Type) {
     $.ajax({
@@ -160,13 +165,13 @@ function ShowAccountMasterlist(Type) {
         success: function (response) {
             if (response.length > 0) {
                 $("#txtAccounttable").show();
-                const StringFilterColumn = ["Account Name","Display Name"];
+                const StringFilterColumn = ["Account Name", "Display Name","Client Type"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code","DataImported"];
+                const hiddenColumns = ["Code", "DataImported","PAN No"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',
@@ -228,6 +233,17 @@ async function CreateItemMaster() {
     $("#txtIsVendor").prop("disabled", false);
     disableFields(false);
     $("#txtheaderdiv").show();
+  
+}
+function toggleClientType() {
+    if ($("#txtIsClient").is(":checked")) {
+        $("#txtClientType").prop("disabled", false); 
+    } else {
+        $("#txtClientType").prop("disabled", true);  
+        $("#txtClientType").val("");  
+
+     
+    }
 }
 function BackMaster() {
     $("#txtListpage").show();
@@ -260,7 +276,7 @@ function BackMaster() {
     $("#txtIsVendor").prop("disabled", false);
 }
 async function Edit(code) {
-   
+ 
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -286,6 +302,7 @@ async function Edit(code) {
                     $("#txtDisplayName").val(accountMaster.DisplayName || "");
                     $("#txtPANNo").val(accountMaster.PANNo || "");
                     $("#txtIsMSME").val(accountMaster.IsMSME || "");
+                    $("#txtClientType").val(accountMaster.ClientType);
                     disableFields(false);
                     $("#tdsAddressCode1").prop("disabled", false);
                     $("#tdsAddressLine1").prop("disabled", false);
@@ -306,6 +323,12 @@ async function Edit(code) {
                     if (accountMaster.IsVendor == 'N') {
                         $("#txtIsVendor").prop("checked", false);
                     }
+                    if ($("#txtIsClient").is(":checked")) {
+                        $("#txtClientType").prop("disabled", false);
+                    } else {
+                        $("#txtClientType").prop("disabled", true);
+                        $("#txtClientType").val(""); 
+                    }
                 } else {
                     toastr.warning("Account master data is missing.");
                 }
@@ -316,7 +339,7 @@ async function Edit(code) {
                         addNewRowEdit(index, address);
                     });
                 } else {
-                    toastr.info("No addresses available for this account.");
+                    addNewRow();
                 }
             } else {
                 toastr.error("Record not found...!");
@@ -459,9 +482,10 @@ function ClearData() {
     $("#txtIsVendor").prop("checked", true);
     $("#txtIsMSME").val("");
     $("#Orderdata").empty();
+    $("#txtClientType").val("");
 }
 function Save() {
-    // Collect Account Master Data
+  
     const AccountName = $("#txtAccountName").val();
     const DisplayName = $("#txtDisplayName").val();
     const AccounCode = $("#txtAccounCode").val();
@@ -486,6 +510,19 @@ function Save() {
     else if (getCheckedCount('chkIsDefault') == 0) {
         toastr.error("At least one default field is correctly checked!");
         return;
+    }
+    else if ($("#txtIsClient").is(":checked")) {
+        $("#txtClientType").prop("disabled", false);
+        const ClientType = $("#txtClientType").val();
+        if (!ClientType) {
+            toastr.error("Please select  Client Type!");
+            $("#txtClientType").focus();
+            return;
+        }
+        else {
+            $("#txtClientType").prop("disabled", true);
+           
+        }
     }
     let validationFailed = false;
     $("#tblorderbooking tbody tr").each(function () {
@@ -556,10 +593,12 @@ function Save() {
         Code: $("#hfCode").val(),
         AccountCode: $("#txtAccounCode").val(),
         AccountName: AccountName,
+        ClientType: $("#txtClientType").val(),
         DisplayName: DisplayName,
         PANNo: $("#txtPANNo").val(),
         IsClient: $("#txtIsClient").is(":checked") ? "Y" : "N", 
         IsVendor: $("#txtIsVendor").is(":checked") ? "Y" : "N", 
+       
     }];
     // Collect Address Details Data
     const addressData = [];
@@ -629,7 +668,7 @@ function addNewRowEdit(index, address) {
         <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTINby_${rowCount}" autocomplete="off"  maxlength="20"/></td>
         <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPersonby_${rowCount}" autocomplete="off" maxlength="50" /></td>
         <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhoneby_${rowCount}" autocomplete="off"  maxlength="15"/></td>
-        <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}" autocomplete="off" maxlength="15" /></td>
+        <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}" autocomplete="off" maxlength="10" /></td>
         <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off"maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}" autocomplete="off" /></td>
         <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
@@ -752,7 +791,7 @@ function addNewRow() {
         <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTINby_${rowCount}"autocomplete="off" maxlength="15" /></td>
         <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPersonby_${rowCount}" autocomplete="off" maxlength="200" /></td>
         <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhoneby_${rowCount}" autocomplete="off"maxlength="15" /></td>
-        <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}"autocomplete="off" maxlength="15" /></td>
+        <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}"autocomplete="off" maxlength="10" /></td>
         <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off" maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
             
@@ -774,7 +813,7 @@ function addNewRow() {
         <td><input type="text" class="txtGSTIN box_border form-control form-control-sm" id="txtGSTIN_${rowCount}"autocomplete="off" maxlength="15" /></td>
         <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPersonby_${rowCount}" autocomplete="off" maxlength="200" /></td>
         <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhoneby_${rowCount}" autocomplete="off"maxlength="15" /></td>
-        <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}"autocomplete="off" maxlength="15" /></td>
+        <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}"autocomplete="off" maxlength="10" /></td>
         <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off" maxlength="100" /></td>
         <td><input type="checkbox" checked class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
         <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
@@ -1024,7 +1063,6 @@ function FillValue(element) {
 
     }
 }
-
 function getCheckedRows(element) {
     var value = $(element).val();
     var inputid = element.id;
@@ -1155,6 +1193,7 @@ async function View(code) {
                     $("#txtIsMSME").val(accountMaster.IsMSME || "").prop("disabled", true);
                     $("#txtIsClient").prop("disabled", true);
                     $("#txtIsVendor").prop("disabled", true);
+                    $("#txtClientType").prop("disabled", true);
                     $("#txtsave").prop("disabled", true);
                     $("#tdsAddressCode1").prop("disabled", true);
                     $("#tdsAddressLine1").prop("disabled", true);
@@ -1198,7 +1237,6 @@ async function View(code) {
 function disableFields(disable) {
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
-
 function DataExport() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMaster`,
@@ -1233,7 +1271,6 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "Client/VendorMaster.xlsx");
 }
-
 function ChangecolorTr() {
     const rows = document.querySelectorAll('#table-body tr');
     rows.forEach((row) => {

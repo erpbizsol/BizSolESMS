@@ -414,15 +414,20 @@ function GetDispatchOrderLists(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Total Order Qty", "Total Balance Qty"];
-                const DateFilterColumn = ["Order Date"];
+                const NumericFilterColumn = ["TOQ", "TBQ"];
+                const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code"];
+                let hiddenColumns = [];
+                if (UserType == "A") {
+                    hiddenColumns = ["Code"];
+                } else {
+                    hiddenColumns = ["Code", "Order Date"];
+                }
                 const ColumnAlignment = {
-                    "Total Order Qty": 'right',
-                    "Total Balance Qty": 'right'
+                    "TOQ": 'right',
+                    "TBQ": 'right'
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
@@ -625,7 +630,19 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
                     } else if (All == 1) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
                     }
-                } else if (G_Tab == 3){
+                } else if (G_Tab == 3) {
+                    StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+                }
+                G_IDFORTRCOLOR = 'GET';
+            } else {
+                showToast(response[0].Msg);
+                if (G_Tab == 2) {
+                    if (All == 0) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+                    } else if (All == 1) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+                    }
+                } else if (G_Tab == 3) {
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
                 }
                 G_IDFORTRCOLOR = 'GET';
@@ -664,6 +681,10 @@ function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         success: function (response) {
             if (response[0].Status == 'Y') {
                 G_DispatchMaster_Code = response[0].DispatchMaster_Code;
+                StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+                G_IDFORTRCOLOR = 'GET';
+            } else {
+                showToast(response[0].Msg);
                 StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                 G_IDFORTRCOLOR = 'GET';
             }
@@ -748,12 +769,12 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
     $("#hfCode").val(Code);
     var Code1 = Code;
     $("#btnShowAll").show();
-    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("NEW");
+    $("#tab1").text("Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
@@ -894,14 +915,19 @@ function GetDespatchTransitOrderList(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Total Dispatch Qty"];
+                const NumericFilterColumn = ["Order Qty", "TDQty"];
                 const DateFilterColumn = ["Despatch Date"];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code", "D_Code"];
+                let hiddenColumns = [];
+                if (UserType == "A") {
+                    hiddenColumns = ["Code", "D_Code"];
+                } else {
+                    hiddenColumns = ["Code", "D_Code", "Dispatch Date"];
+                }
                 const ColumnAlignment = {
-                    "Total Dispatch Qty": 'right'
+                    "TDQ": 'right'
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
@@ -935,14 +961,20 @@ function GetCompletedDespatchOrderList(Mode) {
             if (response.length > 0) {
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
-                const NumericFilterColumn = ["Order Qty", "Total Dispatch Qty"];
-                const DateFilterColumn = ["Despatch Date"];
+                const NumericFilterColumn = ["Order Qty", "TDQ"];
+                const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code", "D_Code"];
+ 
+                let hiddenColumns = [];
+                if (UserType == "A") {
+                    hiddenColumns = ["Code", "D_Code"];
+                } else {
+                    hiddenColumns = ["Code", "D_Code","Dispatch Date"];
+                }
                 const ColumnAlignment = {
-                    "Total Dispatch Qty": 'right'
+                    "TDQ": 'right'
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
@@ -968,12 +1000,12 @@ async function StartDispatchCompleteTransit(Code, Mode) {
     G_DispatchMaster_Code = Code;
     G_Tab = 3;
     $("#btnShowAll").hide();
-    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("NEW");
+    $("#tab1").text("Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
@@ -1143,12 +1175,12 @@ function GetOrderNoList1() {
 }
 async function ViewDespatchTransit(Code, Mode) {
     G_DispatchMaster_Code = Code;
-    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("NEW");
+    $("#tab1").text("View");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
@@ -1165,7 +1197,7 @@ async function ViewDespatchTransit(Code, Mode) {
                 if (response.OrderMaster && response.OrderMaster.length > 0) {
                     const OrderMaster = response.OrderMaster[0];
                     $("#hfCode").val(OrderMaster.Code || "");
-                    $("#txtOrderNo").val(OrderMaster.OrderNo || "");
+                    SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");

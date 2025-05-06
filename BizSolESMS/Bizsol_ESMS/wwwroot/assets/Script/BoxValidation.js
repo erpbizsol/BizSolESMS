@@ -89,10 +89,10 @@ function BoxValidationDetail() {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code", "Item Bar Code"];
                     let hiddenColumns = [];
                     if (UserType == "A") {
-                        hiddenColumns = ["Msg", "Status", "Code"];
+                        hiddenColumns = ["Msg", "Status", "Code","BoxNo"];
                         $("#btnAutoUpdate").show();
                     } else {
-                        hiddenColumns = ["Msg", "Status", "Code", "Manual Qty"];
+                        hiddenColumns = ["Msg", "Status", "Code", "Manual Qty","BoxNo"];
                         $("#btnAutoUpdate").hide();
                     }
                     const ColumnAlignment = {
@@ -108,7 +108,7 @@ function BoxValidationDetail() {
                         <input type="text" id="txtReceivedQty_${item.Code}" value="${item["Received Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Received Qty..">`
                     }));
                     BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-                    
+                    $("#txtCaseNo").text(updatedResponse[0].BoxNo);
                 } else {
                     $("#txtBoxNo").focus();
                     $("#txtBoxNo").val("");
@@ -121,6 +121,7 @@ function BoxValidationDetail() {
                 $("#txtBoxNo").val("");
                 $("#txtScanProduct").prop("disabled", true);
                 $("#UnloadingTable").hide();
+                $("#txtCaseNo").text(0);
                 toastr.error("Record not found...!");
             }
         },
@@ -130,6 +131,7 @@ function BoxValidationDetail() {
             $("#txtScanProduct").prop("disabled", true);
             showToast("INVALID BOX NO !");
             $("#UnloadingTable").hide();
+            $("#txtCaseNo").text(0);
         }
     });
 
@@ -412,6 +414,7 @@ function Back() {
     $("#txtVehicleNo").val("");
     $("#txtCode").val("0");
     $("#txtBoxNo").val("");
+    $("#txtCaseNo").text(0);
     G_IDFORTRCOLOR = '';
 }
 function GetModuleMasterCode() {

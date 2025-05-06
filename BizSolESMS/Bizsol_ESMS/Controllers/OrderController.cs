@@ -48,5 +48,13 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion  SalesReturnMaster 
+
+        #region  StockAudit 
+        public IActionResult StockAudit()
+        {
+            return View();
+        }
+        #endregion  StockAudit 
+
     }
 }

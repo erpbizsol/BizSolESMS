@@ -320,15 +320,19 @@
                             <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label>
                             <input type="text" id="txtVehicleNo" disabled class="box_border form-control form-control-sm" autocomplete="off">
                         </div>
-                        <div class="col-md-1 without-label-field">
-                        <label for="txtIsManual"></label>
-                        <input type="checkbox" id="txtIsManual" name="txtIsManual" class="box_border" />
-                        <label for="txtIsManual">Manual</label>
+                        <div class="col-md-1 without-label-field" style="display:none;">
+                            <label for="txtIsManual"></label>
+                            <input type="checkbox" id="txtIsManual" name="txtIsManual" class="box_border" />
+                            <label for="txtIsManual">Manual</label>
                         </div>
                         <div class="col-md-3 col-sm-6">
                             <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No</label><span class="text-danger">*</span>
                             <datalist id="txtBoxNoList"></datalist>
                             <input list="txtBoxNoList" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No.." onfocus="this.select()">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <label for="txtBoxQty" class="col-form-label-sm fw-bold">Total Box/Scanned Box</label><br/>
+                            <span for="txtBoxQty" id="txtBoxQty" class="col-form-label-sm" style="font-size: 18px;font-weight:bold;">0/0</span>
                         </div>
                         @* <div class="col-md-3 col-sm-6" style="margin-top: 33px !important;">
                             <button class="btn btn-danger btn-height" onclick="Back()">Back</button>

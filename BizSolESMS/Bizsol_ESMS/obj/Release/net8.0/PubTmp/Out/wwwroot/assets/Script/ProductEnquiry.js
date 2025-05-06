@@ -126,7 +126,7 @@ function GetReportList() {
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Location_information");
+    const result = Data.find(item => item.ModuleDesp === "Product Enquiry");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
