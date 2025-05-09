@@ -166,7 +166,7 @@ function ManualAudit(Code) {
             },
             success: function (response) {
                 if (response[0].Status == 'Y') {
-                    toastr.error(response[0].Msg);
+                    toastr.success(response[0].Msg);
                     ShowStockAuditlist("Get");
                 }
             },

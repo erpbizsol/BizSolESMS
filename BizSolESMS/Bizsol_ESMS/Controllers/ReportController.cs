@@ -24,9 +24,11 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion Location
-
-        
-
-
+        #region TATReport
+        public IActionResult TATReport()
+        {
+            return View();
+        }
+        #endregion TATReport
     }
 }
