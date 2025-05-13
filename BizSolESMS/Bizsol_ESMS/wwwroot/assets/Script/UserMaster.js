@@ -9,6 +9,7 @@ $(document).ready(function () {
     UserGroupList();
     DesignationList();
     UserMasterList('Load');
+    DefaultPageList();
     $('#btnBrowse').on('click', function (e) {
         $("#txtUserImg").click();
     });
@@ -180,6 +181,30 @@ function DesignationList() {
         }
     });
 }
+function DefaultPageList() {
+    $.ajax({
+        url: `${appBaseURL}/api/UserMaster/GetUserModuleMasterList`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                const select = $('#ddlDefaultPage');
+                response.forEach(item => {
+                    if (item.MasterModuleCode != 0) {
+                        select.append(`<option value="${item.Code}">${item.ModuleDesp}</option>`);
+                    }
+                });
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
 function UserMasterList(Type) {
     $.ajax({
         url: `${appBaseURL}/api/UserMaster/GetUserMasterList?UserMaster_Code=${UserMaster_Code}`,
@@ -247,6 +272,7 @@ async function Create() {
     $("#txtMobileNo").prop('disabled', false);
     $("#txtPassword").prop('disabled', false);
     $("#txtConfirmPassword").prop('disabled', false);
+    $("#ddlDefaultPage").prop('disabled', false);
     $("#txtEmailId").prop('disabled', false);
     $("#ddlGroupName").prop('disabled', false);
     $("#ddlDesignation").prop('disabled', false);
@@ -268,6 +294,7 @@ function Back() {
     $("#txtConfirmPassword").prop('disabled', false);
     $("#txtEmailId").prop('disabled', false);
     $("#ddlGroupName").prop('disabled', false);
+    $("#ddlDefaultPage").prop('disabled', false);
     $("#ddlDesignation").prop('disabled', false);
     $("#txtAddress").prop('disabled', false);
     $("#txtSystemName").prop('disabled', false);
@@ -335,6 +362,7 @@ async function Edit(Code) {
     $("#txtPassword").prop('disable', false);
     $("#txtConfirmPassword").prop('disable', false);
     $("#txtEmailId").prop('disable', false);
+    $("#ddlDefaultPage").prop('disable', false);
     $("#ddlGroupName").prop('disable', false);
     $("#ddlDesignation").prop('disable', false);
     $("#txtAddress").prop('disable', false);
@@ -357,7 +385,7 @@ function UserMasterByCode(Code) {
                 $("#txtConfirmPassword").val('');
                 $("#txtEmailId").val(response.EmailID);
                 $("#ddlGroupName").val(response.GroupMaster_Code);
-                $("#ddlDefaultCompany").val(response.FixedParameter_Code);
+                $("#ddlDefaultPage").val(response.DefaultPage);
                 $("#ddlDesignation").val(response.DesignationMaster_Code);
                 $("#txtAddress").val(response.UserLocation);
                 $("#txtSystemName").val(response.LoginAllowFromSystem);
@@ -487,7 +515,8 @@ function SaveUserMaster(){
     const ConfirmPassword = $("#txtConfirmPassword").val();
     const EmailId = $("#txtEmailId").val();
     const GroupName = $("#ddlGroupName").val();
-    const DefaultCompany = $("#ddlDefaultCompany").val();
+    const DefaultCompany = 0;
+    const DefaultPage = $("#ddlDefaultPage").val();
     const Designation = $("#ddlDesignation").val();
     const Address = $("#txtAddress").val();
     const SystemName = $("#txtSystemName").val();
@@ -537,6 +566,7 @@ function SaveUserMaster(){
            EmailId:EmailId ,
            GroupMaster_Code: GroupName,
            FixedParameter_Code: DefaultCompany == null ? 0 : DefaultCompany,
+           DefaultPage: DefaultPage ,
            DesignationMaster_Code:Designation ,
            UserLocation:Address, 
            LoginAllowFromSystem:SystemName ,
@@ -603,7 +633,7 @@ function ClearData()
     $("#txtConfirmPassword").val('');
     $("#txtEmailId").val("");
     $("#ddlGroupName").val("");
-    $("#ddlDefaultCompany").val("");
+    $("#ddlDefaultPage").val("0");
     $("#ddlDesignation").val();
     $("#txtAddress").val("");
     $("#txtSystemName").val("");
@@ -625,7 +655,6 @@ function IsMobileNumber(txtMobId) {
     }
     return true;
 }
-
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "User Master");
@@ -633,7 +662,6 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
-
 async function View(code) {
  
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
@@ -662,6 +690,7 @@ async function View(code) {
                 $("#txtEmailId").val(response.EmailID).prop('disabled', true);
                 $("#ddlGroupName").val(response.GroupMaster_Code).prop('disabled', true);
                 $("#ddlDesignation").val(response.DesignationMaster_Code).prop('disabled', true);
+                $("#ddlDefaultPage").val(response.DefaultPage).prop('disabled', true);
                 $("#txtAddress").val(response.UserLocation).prop('disabled', true);
                 $("#txtSystemName").val(response.LoginAllowFromSystem).prop('disabled', true);
                 disableFields(true);

@@ -69,13 +69,16 @@ function BoxUnloading() {
                     $("#SuccessVoice")[0].play();
                     GetDataByPicklist('Res');
                     CaseNo = response[0].CaseNo;
+                   $("#txtBoxNo").val("");
                    $("#txtBoxNo").focus();
                 } else {
                     CaseNo = 0;
+                    $("#txtBoxNo").val("");
                     $("#txtBoxNo").focus();
                     showToast(response[0].Msg);
                 }
             } else {
+                $("#txtBoxNo").val("");
                 $("#txtBoxNo").focus();
                 toastr.error("Record not found...!");
                 CaseNo = 0;

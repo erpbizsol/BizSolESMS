@@ -74,8 +74,33 @@
     
 
 </div>
+<script>
+    var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+    let UserMaster_Code = '@ViewBag.UserMaster_Code';
 
+        $(document).ready(function () {
+            $.ajax({
+                url: `@ViewBag.AppBaseURL/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${UserMaster_Code}`,
+                type: 'GET',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Auth-Key', authKeyData);
+                },
+                success: function (value) {
+                    if (value.length > 0) {
+                    let matchedItems = value.filter(item => item.Code == '@ViewBag.DefaultPage');
+                    if (matchedItems.length > 0) {
+                                location.href = "@ViewBag.AppBaseURLMenu/@ViewBag.FormToOpen"
+                        }
+                    } else {
+                        console.warn("No data returned.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    toastr.error("Failed to fetch item data. Please try again.");
+                }
+            });
+        });
 
-
-
+</script>
 
