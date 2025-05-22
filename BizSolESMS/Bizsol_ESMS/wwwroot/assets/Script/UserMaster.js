@@ -501,12 +501,10 @@ function fileToBase64(file) {
     });
 }
 function removeBase64Prefix(base64String) {
-
-    // Regex to match the prefix 'data:image/*;base64,' and remove it
     var regex = /^data:image\/[a-zA-Z]*;base64,/;
     return base64String.replace(regex, '');
 }
-function SaveUserMaster(){
+function SaveUserMaster() {
     const UserID = $("#txtUserID").val();
     const UserName = $("#txtUserName").val();
     const Code = $("#hfCode").val();

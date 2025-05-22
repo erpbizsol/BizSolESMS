@@ -6,17 +6,24 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let JsonData = [];
 let G_IsCheck = 'N';
 $(document).ready(function () {
-    DatePicker();
     $("#ERPHeading").text("TAT Report");
     GetModuleMasterCode();
     $("#txtExcelFile").on("change", function (e) {
         Import(e);
     });
+    MonthAndYearDropDown();
+    $("#ddlMonth").on("change", function (e) {
+        var Month = $(this).val();
+        GetTATReportList('Get', Month, $("#ddlYear").val());
+    });
+    $("#ddlYear").on("change", function (e) {
+        var Year = $(this).val();
+        GetTATReportList('Get', $("#ddlMonth").val(), Year);
+    });
 });
-function GetTATReportList(Type, Date) {
-    var TATDate = convertDateFormat(Date);
+function GetTATReportList(Type,Month,Year) {
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetTATReportList?TATDate=${TATDate}&Type=GET`,
+        url: `${appBaseURL}/api/OrderMaster/GetTATReportList?Month=${Month}&Year=${Year}&Type=GET`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -36,14 +43,17 @@ function GetTATReportList(Type, Date) {
                     "Reorder Qty": 'right',
                     "REMARK": 'left;width:100px;',
                 };
-                const updatedResponse = response.map(item => ({
-                    ...item,
-                    POD: `<input type="date" class="box_border form-control form-control-sm" value="${item.POD}" id="txtPODDate_${item.Code}" onchange="SaveData(this);" autocompleted="off"/>`,
-                    "REDISPATCH": `<input type="date" class="box_border form-control form-control-sm" value="${item.REDISPATCH}" id="txtRedispatch_${item.Code}" onchange="SaveData(this);" autocompleted="off"/>`,
-                    "VEHICLE NO": `<input type="text" maxlength="10" class="box_border form-control form-control-sm" value="${item["VEHICLE NO"]}" id="txtVehicleNo_${item.Code}" onfocusout="SaveData(this);" autocompleted="off"/>`,
-                    "REMARK": `<input type="text" maxlength="100" class="box_border form-control form-control-sm" value="${item.REMARK}" id="txtRemark_${item.Code}" onfocusout="SaveData(this);" autocompleted="off"/>
-                  `
-                }));
+                const updatedResponse = response.map(item => {
+                    const isDisabled = item["DISPATCH DATE"] === '' ? 'disabled' : '';
+
+                    return {
+                        ...item,
+                        POD: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.POD}" id="txtPODDate_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                        REDISPATCH: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REDISPATCH}" id="txtRedispatch_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                        "VEHICLE NO": `<input type="text" maxlength="10" class="box_border form-control form-control-sm" ${isDisabled} value="${item["VEHICLE NO"]}" id="txtVehicleNo_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`,
+                        REMARK: `<input type="text" maxlength="100" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REMARK}" id="txtRemark_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`
+                    };
+                });
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
@@ -86,7 +96,8 @@ function convertDateFormat(dateString) {
 }
 function ClearData() {
     $("#txtExcelFile").val("");
-    DatePicker();
+    MonthAndYearDropDown();
+    GetTATReportList('Get', $("#ddlMonth").val(), $("#ddlYear").val());
 }
 function GetImportFile() {
     if (JsonData.length == 0) {
@@ -123,18 +134,24 @@ function GetImportFile() {
     });
 }
 function SaveImportFile() {
-    var TATDate = convertDateFormat($("#txtTATDate").val())
-    if ($("#txtTATDate").val() == '') {
-        toastr.error("Please select TAT date !");
-        $("#txtTATDate").focus();
+    var Month = $("#ddlTATMonth").val();
+    var Year = $("#ddlTATYear").val();
+    if (Month == '') {
+        toastr.error("Please select month !");
+        $("#ddlTATMonth").focus();
         return;
-    }else if (JsonData.length == 0) {
+    } if (Year == '') {
+        toastr.error("Please select year !");
+        $("#ddlTATYear").focus();
+        return;
+    } else if (JsonData.length == 0) {
         toastr.error("Please select xlx file !");
         $("#txtExcelFile").focus();
         return;
     }
     const requestData = {
-        TATDate: TATDate,
+        Month: Month,
+        Year: Year,
         IsCheck: G_IsCheck,
         JsonData: JsonData,
         UserMaster_Code: UserMaster_Code
@@ -153,7 +170,7 @@ function SaveImportFile() {
                 G_IsCheck = 'N';
                 toastr.success(response.Msg);
                 BackImport();
-                GetTATReportList('Get',$("#txtDate").val());
+                GetTATReportList('Get', $("#ddlMonth").val(), $("#ddlYear").val());
             } else if (response.Status === "N") {
                 if (confirm(`${response.Msg} Do you want to replace.!`)) {
                     G_IsCheck = 'Y';
@@ -418,180 +435,76 @@ function validateCSV(event, callback) {
 
     reader.readAsText(file);
 }
-function convertDateFormat(dateString) {
-    const [day, month, year] = dateString.split('/');
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthAbbreviation = monthNames[parseInt(month) - 1];
-    return `${day} -${monthAbbreviation} -${year}`;
-}
-function setupDateInputFormatting() {
-    $('#txtTATDate').on('input', function () {
-        let value = $(this).val().replace(/[^\d]/g, '');
-        if (value.length >= 2 && value.length < 4) {
-            value = value.slice(0, 2) + '/' + value.slice(2);
-        } else if (value.length >= 4) {
-            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
-        }
-        $(this).val(value);
-        if (value.length === 10) {
-            validateTATDate(value);
-        } else {
-            $(this).val(value);
-        }
-    });
-    $('#txtDate').on('input', function () {
-        let value = $(this).val().replace(/[^\d]/g, '');
-        if (value.length >= 2 && value.length < 4) {
-            value = value.slice(0, 2) + '/' + value.slice(2);
-        } else if (value.length >= 4) {
-            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
-        }
-        $(this).val(value);
-        if (value.length === 10) {
-            validateDate(value);
-        } else {
-            $(this).val(value);
-        }
-    });
-}
-function validateDate(value) {
-    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-    let isValidFormat = regex.test(value);
-
-    if (isValidFormat) {
-        let parts = value.split('/');
-        let day = parseInt(parts[0], 10);
-        let month = parseInt(parts[1], 10);
-        let year = parseInt(parts[2], 10);
-
-        let date = new Date(year, month - 1, day);
-
-        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
-
-            $(this).val(value);
-        } else {
-            $('#txtDate').val('');
-
-        }
-    } else {
-        $('#txtDate').val('');
-
-    }
-}
-function validateTATDate(value) {
-    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-    let isValidFormat = regex.test(value);
-
-    if (isValidFormat) {
-        let parts = value.split('/');
-        let day = parseInt(parts[0], 10);
-        let month = parseInt(parts[1], 10);
-        let year = parseInt(parts[2], 10);
-
-        let date = new Date(year, month - 1, day);
-
-        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
-
-            $(this).val(value);
-        } else {
-            $('#txtTATDate').val('');
-
-        }
-    } else {
-        $('#txtTATDate').val('');
-
-    }
-}
-function DatePicker() {
-    $.ajax({
-        url: `${appBaseURL}/api/Master/GetCurrentDate`,
-        method: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            let apiDate = response[0].Date;
-            $('#txtTATDate,#txtDate').val(apiDate);
-            GetTATReportList('Load', apiDate)
-            $('#txtTATDate,#txtDate').datepicker({
-                format: 'dd/mm/yyyy',
-                autoclose: true,
-            })
-            $('#txtDate').on('change', function () {
-                let selectedDate = $(this).val();
-                GetTATReportList('GET', selectedDate);
-            });
-        },
-        error: function () {
-            console.error('Failed to fetch the date from the API.');
-        }
-    });
-}
-
 async function SaveData(element) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
-        GetTATReportList('Get', $("#txtDate").val());
+        GetTATReportList('Get', $("#ddlMonth").val(), $("#ddlYear").val());
         return;
     }
     Save(element);
 }
 function Save(element) {
-   
-    let id = element.id;
-    let Code = id.split('_')[1];
-    let POD = $("#txtPODDate_" + Code).val();
-    if (POD != '') {
-        POD = convertDateFormat3($("#txtPODDate_" + Code).val());
-    }
-    let Redispatch = $("#txtRedispatch_" + Code).val()
-    if (Redispatch != '') {
-        Redispatch = convertDateFormat3($("#txtRedispatch_" + Code).val());
-    }
-    var VehicleNo = $("#txtVehicleNo_" + Code).val();
-    var Remark = $("#txtRemark_" + Code).val();
+    if ($(element).val() !== '') {
+        let id = element.id;
+        let Code = id.split('_')[1];
+        let POD = $("#txtPODDate_" + Code).val();
+        if (POD != '') {
+            POD = convertDateFormat3($("#txtPODDate_" + Code).val());
+        }
+        let Redispatch = $("#txtRedispatch_" + Code).val()
+        if (Redispatch != '') {
+            Redispatch = convertDateFormat3($("#txtRedispatch_" + Code).val());
+        }
+        var VehicleNo = $("#txtVehicleNo_" + Code).val();
+        var Remark = $("#txtRemark_" + Code).val();
 
-    const requestData = {
-        Code: Code,
-        POD: POD,
-        Redispatch: Redispatch,
-        VehicleNo: VehicleNo,
-        Remark: Remark,
-        UserMaster_Code: UserMaster_Code
-    };
-    $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/SaveTATDetails`,
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify(requestData),
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Auth-Key", authKeyData);
-        },
-        success: function (response) {
-            if (response.Status === "Y") {
-                toastr.success(response.Msg);
-                GetTATReportList('Get',$("#txtDate").val());
-            }else {
-                toastr.error(response.Msg);
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", xhr.responseText);
-            toastr.error("An error occurred while saving the data.");
-        },
-    });
+        const requestData = {
+            Code: Code,
+            POD: POD,
+            Redispatch: Redispatch,
+            VehicleNo: VehicleNo,
+            Remark: Remark,
+            UserMaster_Code: UserMaster_Code
+        };
+        $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/SaveTATDetails`,
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(requestData),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Auth-Key", authKeyData);
+            },
+            success: function (response) {
+                if (response.Status === "Y") {
+                    toastr.success(response.Msg);
+                    GetTATReportList('Get', $("#ddlMonth").val(), $("#ddlYear").val());
+                } else {
+                    toastr.error(response.Msg);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText);
+                toastr.error("An error occurred while saving the data.");
+            },
+        });
+    }
 }
 function DataExport() {
-    var TATDate = convertDateFormat($("#txtDate").val());
-    if ($("#txtDate").val() == '') {
-        toastr.error("Please select date !");
-        $("#txtDate").focus();
+    var Month = $("#ddlMonth").val();
+    var Year = $("#ddlYear").val();
+    if (Month == '') {
+        toastr.error("Please select month !");
+        $("#ddlMonth").focus();
+        return;
+    } else if (Year == '') {
+        toastr.error("Please select year !");
+        $("#ddlYear").focus();
         return;
     }
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/GetTATReportList?TATDate=${TATDate}&Type=EXPORT`,
+        url: `${appBaseURL}/api/OrderMaster/GetTATReportList?Month=${Month}&Year=${Year}&Type=EXPORT`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -615,4 +528,38 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "TATReport_" + date + ".xlsx");
 }
+function MonthAndYearDropDown() {
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    let qntYears = 5;
+    let selectTATMonth = $("#ddlTATMonth");
+    let selectTATYear = $("#ddlTATYear");
+    let selectMonth = $("#ddlMonth");
+    let selectYear = $("#ddlYear");
+    let currentYear = new Date().getFullYear();
+    for (let y = 0; y < qntYears; y++) {
+        let yearValue = currentYear - y;
 
+        let yearElem1 = $("<option>").val(yearValue).text(yearValue);
+        let yearElem2 = $("<option>").val(yearValue).text(yearValue);
+
+        selectYear.append(yearElem1);
+        selectTATYear.append(yearElem2);
+    }
+    for (let m = 0; m < 12; m++) {
+        let monthName = monthNames[m];
+
+        let monthElem1 = $("<option>").val(m).text(monthName);
+        let monthElem2 = $("<option>").val(m).text(monthName);
+
+        selectMonth.append(monthElem1);
+        selectTATMonth.append(monthElem2);
+    }
+    let now = new Date();
+    selectYear.val(now.getFullYear());
+    selectTATYear.val(now.getFullYear());
+    selectMonth.val(now.getMonth());
+    selectTATMonth.val(now.getMonth());
+    GetTATReportList('Get', $("#ddlMonth").val(), $("#ddlYear").val());
+}

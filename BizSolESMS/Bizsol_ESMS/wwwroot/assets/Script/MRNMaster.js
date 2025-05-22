@@ -174,7 +174,7 @@ function ShowMRNMasterlist(Type) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item,
-                    "Unloading Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code})>${item["Unloading Status"]}</a>`,
+                    "Unloading Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code},${item["PickList No"]})>${item["Unloading Status"]}</a>`,
                     "Validation Status": `<a style="cursor:pointer;" onclick=ShowCaseNoDataQty(${item.Code})>${item["Validation Status"]}</a>`
                     ,Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
@@ -811,18 +811,6 @@ $(document).on("click", ".deleteRow", function () {
         alert("At least one row is required.");
     }
 });
-
-
-//$(document).on("click", ".deleteRow", function () {
-
-//    const table = document.getElementById("tblorderbooking").querySelector("tbody");
-//    if (table.querySelectorAll("tr").length > 1) {
-//        $(this).closest("tr").remove();
-//    } else {
-//        alert("At least one row is required.");
-//    }
-   
-//});
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Material Receipt Note");
@@ -1587,6 +1575,21 @@ function DatePicker(date) {
     $('#txtMRNDate, #txtChallanDate,#txtToDate').datepicker({
         format: 'dd/mm/yyyy',
         autoclose: true,
+        orientation: 'bottom auto',
+        todayHighlight: true
+    }).on('show', function () {
+        let $input = $(this);
+        let inputOffset = $input.offset();
+        let inputHeight = $input.outerHeight();
+        let inputWidth = $input.outerWidth();
+        setTimeout(function () {
+            let $datepicker = $('.datepicker-dropdown');
+            $datepicker.css({
+                width: inputWidth + 'px',
+                top: (inputOffset.top + inputHeight) + 'px',
+                left: inputOffset.left + 'px'
+            });
+        }, 10);
     });
 }
 function FromDatePicker(dateStr) {
@@ -1607,6 +1610,21 @@ function FromDatePicker(dateStr) {
     $('#txtFromDate').datepicker({
         format: 'dd/mm/yyyy',
         autoclose: true,
+        orientation: 'bottom auto',
+        todayHighlight: true
+    }).on('show', function () {
+        let $input = $(this);
+        let inputOffset = $input.offset();
+        let inputHeight = $input.outerHeight();
+        let inputWidth = $input.outerWidth();
+        setTimeout(function () {
+            let $datepicker = $('.datepicker-dropdown');
+            $datepicker.css({
+                width: inputWidth + 'px',
+                top: (inputOffset.top + inputHeight) + 'px',
+                left: inputOffset.left + 'px'
+            });
+        }, 10);
     });
 }
 function convertDateFormat2(dateString) {
@@ -1760,7 +1778,9 @@ function ChangecolorTr() {
 }
 
 setInterval(ChangecolorTr, 100);
-function ShowCaseNoData(Code) {
+function ShowCaseNoData(Code, PickListNo) {
+    $("#hfMRNMaster_Code").val(Code);
+    $("#hfPicklistNo").val(PickListNo)
     openSavePopup();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + Code,
@@ -1772,13 +1792,13 @@ function ShowCaseNoData(Code) {
             if (response) {
                 if (response.MRNDetails && response.MRNDetails.length > 0) {
                         $("#MRNTable").show();
-                        const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
+                        const StringFilterColumn = ["CaseNo", "ItemCode", "ItemName"];
                         const NumericFilterColumn = [];
                         const DateFilterColumn = [];
                         const Button = false;
                         const showButtons = [];
                         const StringdoubleFilterColumn = [];
-                        const hiddenColumns = ["Code", "BillQtyBox","Status", "ReceivedQtyBox", "BillQty", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName","LocationName","WarehouseName"];
+                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox","ItemBarCode", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName","LocationName","WarehouseName"];
                         const ColumnAlignment = {
                         };
                     BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", response.MRNDetails, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment,false);
@@ -1871,3 +1891,132 @@ function ChangecolorTrQty() {
 }
 setInterval(ChangecolorTrQty, 100);
 
+//function DownloadInExcel() {
+//    var Code = $("#hfMRNMaster_Code").val();
+//    $.ajax({
+//        url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=${Code}`,
+//        type: 'GET',
+//        beforeSend: function (xhr) {
+//            xhr.setRequestHeader('Auth-Key', authKeyData);
+//        },
+//        success: function (response) {
+//            if (response.length > 0) {
+//                Export(response);
+//            } else {
+//                toastr.error("Record not found...!");
+//            }
+//        },
+//        error: function (xhr, status, error) {
+//            console.error("Error:", error);
+//        }
+//    });
+//}
+//function Export(jsonData) {
+//    var Picklist = $("#hfPicklistNo").val();
+//    var ws = XLSX.utils.json_to_sheet(jsonData);
+//    var wb = XLSX.utils.book_new();
+//    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+//    XLSX.writeFile(wb, "UnloadingReport_" + Picklist +".xlsx");
+//}
+
+async function DownloadInExcel() {
+    try {
+        const Code = $("#hfMRNMaster_Code").val();
+        const response = await getDataWithAjax(Code);
+
+        if (response.length > 0) {
+            await Export(response);
+        } else {
+            alert("Record not found...!");
+        }
+    } catch (error) {
+        console.error("AJAX error:", error);
+    }
+}
+function getDataWithAjax(Code) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=${Code}`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                resolve(response);
+            },
+            error: function (xhr, status, error) {
+                reject(error);
+            }
+        });
+    });
+}
+function convertToArray(data) {
+    const headers = Object.keys(data[0]);
+    const rows = data.map(obj => headers.map(key => obj[key]));
+    return [headers, ...rows];
+}
+async function Export(Data) {
+    var Picklist = $("#hfPicklistNo").val();
+    var data = convertToArray(Data);
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Data");
+
+    data.forEach((row, index) => {
+        const addedRow = sheet.addRow(row);
+
+        addedRow.eachCell(cell => {
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+
+        if (index === 0) {
+            addedRow.eachCell(cell => {
+                cell.font = { bold: true, color: { argb: "FF000000" } };
+                cell.fill = {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: "FFD9E1F2" }
+                };
+            });
+
+            sheet.autoFilter = {
+                from: 'A1',
+                to: String.fromCharCode(65 + row.length - 1) + '1'
+            };
+        } else {
+            const Status = row[5];
+
+            if (Status == 'Y') {
+                addedRow.eachCell(cell => {
+                    cell.fill = {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "FF9EF3A5" }
+                    };
+                });
+            } else {
+                addedRow.eachCell(cell => {
+                    cell.fill = {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "FFF5C0BF" }
+                    };
+                });
+            }
+        }
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Unloading_" + Picklist+".xlsx";
+    link.click();
+}

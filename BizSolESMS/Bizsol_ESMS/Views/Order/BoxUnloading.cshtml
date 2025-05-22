@@ -3,7 +3,7 @@
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 <script src="~/assets/script/BoxUnloading.js"></script>
 <style>
     .tabs {
@@ -288,8 +288,17 @@
     </div>
 </section>
 <div class="container">
-<div class="row m-3" sstyle="display:none" id="UnloadingTable1">
-    <div class="card-body mt-2">
+    <div class="row" style="margin-left:-6px;margin-top:10px;display:block;" id="dvSearch">
+        <div class="col-md-3  col-sm-6">
+            <label for="txSearch" class="col-form-label-sm fw-bold">
+                Search
+            </label>
+            <input type="text" id="txtSearch" name="txtSearch" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Search.." maxlength="50">
+        </div>
+    </div>
+    <div class="row m-1" sstyle="display:none" id="UnloadingTable1">
+       
+    <div class="card-body">
         <div class="table-wrapper fixed-height-table">
             <table id="table1" class="fixed-width-table table ssm-table">
                 <thead id="table-header1">
@@ -312,8 +321,8 @@
                     <div class="row">
                         <div class="col-md-3 col-sm-6">
                         <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
-                        <label for="txtPickListNo" class="col-form-label-sm fw-bold">PickList No</label>
-                            <input type="text" id="txtPickListNo" disabled class="box_border form-control form-control-sm" autocomplete="off">
+                        <label for="txtMRNDate" class="col-form-label-sm fw-bold">MRN Date</label>
+                            <input type="text" id="txtMRNDate" disabled class="box_border form-control form-control-sm" autocomplete="off">
                             <input type="text" id="txtCode" class="box_border form-control form-control-sm d-none" autocomplete="off">
                         </div>
                         <div class="col-md-3 col-sm-6">
@@ -331,6 +340,10 @@
                             <input list="txtBoxNoList" id="txtBoxNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Box No.." onfocus="this.select()">
                         </div>
                         <div class="col-md-3 col-sm-6">
+                            <label for="txtPicklistNo" class="col-form-label-sm fw-bold">PicklistNo</label><span class="text-danger">*</span>
+                            <input type="text" disabled id="txtPicklistNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Picklist No..">
+                        </div>
+                        <div class="col-md-3 col-sm-6">
                             <label for="txtBoxQty" class="col-form-label-sm fw-bold">Total Box/Scanned Box</label><br/>
                             <span for="txtBoxQty" id="txtBoxQty" class="col-form-label-sm" style="font-size: 18px;font-weight:bold;">0/0</span>
                         </div>
@@ -343,7 +356,7 @@
         </div>
     </div>
     <div>
-    <div class="row ps-4" sstyle="display:none" id="UnloadingTable">
+    <div class="row p-2" sstyle="display:none" id="UnloadingTable">
         <div class="card-body">
             <div class="table-wrapper fixed-height-table">
             <table id="table" class="fixed-width-table table ssm-table">
@@ -357,6 +370,39 @@
             </div>
         </div>
     </div>
+    </div>
+    <div class="modal position-absolute" id="staticBackdrop" style="padding-top: 101px;" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header tab-header" style="background-color:#033764">
+                    <level style="color:white">MRN PickList Status Details</level>
+                    <button type="button" class="close modal-close btn-sm" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                    <input type="hidden" id="hfMRNMaster_Code" value="0" />
+                    <input type="hidden" id="hfPicklistNo" value="0" />
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin:0;">
+                        <div class="card-body">
+                            <div class="table-wrapper fixed-height-table">
+                                <table id="ModalTable" class="fixed-width-table table">
+                                    <thead id="ModalTable-header">
+                                    </thead>
+                                    <tbody id="ModalTable-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Paginator -->
+                            <div class="paginator" id="paginator-ModalTable">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-primary btn-height" onclick="DownloadInExcel()">Download</button>
+                        <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>

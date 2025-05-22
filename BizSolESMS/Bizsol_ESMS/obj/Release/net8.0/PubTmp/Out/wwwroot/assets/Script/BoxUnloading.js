@@ -29,7 +29,7 @@ $(document).ready(function () {
             setTimeout(function () {
                 inputElement.setAttribute('inputmode', '');
             }, 2);
-            ShowBoxNumberList($("#txtPickListNo").val());
+            ShowBoxNumberList($("#txtMRNDate").val());
         } else {
             var inputElement = this;
             setTimeout(function () {
@@ -39,8 +39,19 @@ $(document).ready(function () {
         }
     });
     GetModuleMasterCode();
+    $("#txtSearch").on("input", function () {
+        G_Value = $(this).val().toLowerCase().trim();
+        $("#table1 tbody tr").each(function () {
+            var matched = false;
+            $(this).find("td").each(function () {
+                if ($(this).text().toLowerCase().includes(G_Value)) {
+                    matched = true;
+                }
+            });
+            $(this).toggle(matched);
+        });
+    });
 });
-
 function BoxUnloading() {
     if ($("#txtBoxNo").val() == '') {
         toastr.error("Please enter a Box No !");
@@ -50,9 +61,9 @@ function BoxUnloading() {
     var Code = parseInt($("#txtCode").val())
     const payload = {
         BoxNo: $("#txtBoxNo").val(),
-        PickListNo: $("#txtPickListNo").val(),
-        IsManual: $("#txtIsManual").is(":checked") ? 'Y' :'N',
-        Code: Code
+        MRNDate: convertDateFormat($("#txtMRNDate").val()),
+        VehicleNo: $("#txtVehicleNo").val(),
+        IsManual: $("#txtIsManual").is(":checked") ? 'Y' :'N'
     }
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/BoxUnloading`,
@@ -68,17 +79,18 @@ function BoxUnloading() {
                 if (response[0].Status == 'Y') {
                     $("#SuccessVoice")[0].play();
                     GetDataByPicklist('Res');
-                    CaseNo = response[0].CaseNo;
-                   $("#txtBoxNo").focus();
+                   $("#txtBoxNo").val("");
+                    $("#txtBoxNo").focus();
+                    $("#txtPicklistNo").val(response[0].PickListNo);
                 } else {
-                    CaseNo = 0;
+                    $("#txtBoxNo").val("");
                     $("#txtBoxNo").focus();
                     showToast(response[0].Msg);
                 }
             } else {
+                $("#txtBoxNo").val("");
                 $("#txtBoxNo").focus();
                 toastr.error("Record not found...!");
-                CaseNo = 0;
             }
         },
         error: function (xhr, status, error) {
@@ -123,17 +135,17 @@ function MRNDetail() {
         success: function (response) {
             if (response.length > 0) {
                     $("#UnloadingTable1").show();
-                    const StringFilterColumn = ["PickList No", "Vehicle No"];
+                    const StringFilterColumn = ["Vehicle No"];
                     const NumericFilterColumn = [];
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = [];
-                    const hiddenColumns = ["Code","Status"];
+                const hiddenColumns = ["Code", "Status", "Total Box"];
                     const ColumnAlignment = {
                 };
                 const updatedResponse = response.map(item => ({
-                    ...item, Action: `<button class="btn btn-success icon-height mb-1"  title="Start Un-Loading" onclick="StartUnloading('${item["PickList No"]}','${item["Vehicle No"]}','${item.Code}')"><i class="fa fa-hourglass-start"></i></button>
+                    ...item, Action: `<button class="btn btn-success icon-height mb-1"  title="Start Un-Loading" onclick="StartUnloading('${item["MRN Date"]}','${item["Vehicle No"]}')"><i class="fa fa-hourglass-start"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header1", "table-body1", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -148,7 +160,7 @@ function MRNDetail() {
     });
 
 }
-async function StartUnloading(PickListNo, VehicleNo, Code) {
+async function StartUnloading(MRNDate, VehicleNo) {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -157,9 +169,9 @@ async function StartUnloading(PickListNo, VehicleNo, Code) {
     $("#UnloadingForm").show();
     $("#txtheaderdiv").show();
     $("#UnloadingTable1").hide();
-    $("#txtPickListNo").val(PickListNo);
+    $("#dvSearch").hide();
+    $("#txtMRNDate").val(MRNDate);
     $("#txtVehicleNo").val(VehicleNo);
-    $("#txtCode").val(Code);
     $('#txtBoxNo').focus();
     GetDataByPicklist('Load');
 }
@@ -167,17 +179,19 @@ function Back() {
     $("#UnloadingTable1").show();
     $("#UnloadingTable").hide();
     $("#UnloadingForm").hide();
-    $("#txtPickListNo").val("");
+    $("#txtMRNDate").val("");
     $("#txtVehicleNo").val("");
     $("#txtCode").val("0");
     $("#txtBoxNo").val("");
+    $("#txtPicklistNo").val("");
     $("#txtheaderdiv").hide();
-    CaseNo = 0;
+    $("#dvSearch").show();
 }
 function GetDataByPicklist(Orderby) {
-    var Code = $("#txtCode").val();
+    var MRNDate = convertDateFormat($("#txtMRNDate").val());
+    var VehicleNo = $("#txtVehicleNo").val();
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/MRNDetailsByCode?Code=` + Code,
+        url: `${appBaseURL}/api/MRNMaster/MRNDetailsByVehicleNo?MRNDate=${MRNDate}&VehicleNo=${VehicleNo}`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -191,27 +205,16 @@ function GetDataByPicklist(Orderby) {
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = [];
-                    const hiddenColumns = ["SNo","Code", "BillQtyBox", "Status", "TotalBox","ScannedQty"];
+                    const hiddenColumns = ["SNo", "Code","SummaryCaseNo"];
                     const ColumnAlignment = {
                 };
-                var value = [];
-                if (Orderby == 'Load') {
-                    var response1 = {
-                        desc: true,
-                        field: "CaseNo",
-                        data: response
-                    };
-                     value = response1.data.sort((a, b) => {
-                        return response1.asc
-                            ? b[response1.field] - a[response1.field]  // Descending order
-                            : a[response1.field] - b[response1.field]; // Ascending order
-                    });
-                } else {
-                    value = response;
-                }
+                const updatedResponse = response.map(item => ({
+                    ...item,
+                    "Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code},${item["PickList No"]})>${item["Status"]}</a>`,
+                }));
                 
-                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", value, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, true);
-                $("#txtBoxQty").text(response[0].TotalBox+'/'+response[0].ScannedQty)
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, true);
+                $("#txtBoxQty").text(response[0].SummaryCaseNo);
                 
             } else {
                 toastr.error("Record not found...!");
@@ -224,26 +227,25 @@ function GetDataByPicklist(Orderby) {
         }
     });
 }
-function ChangecolorTr1() {
-    const rows = $('#table-body tr');
-    rows.each(function () {
-        const columnValue = $(this).find('td').eq(2).text().trim();
-        const columnValue1 = $(this).find('td').eq(1).text().trim();
-        if (parseInt(columnValue1) !== parseInt(CaseNo)) {
-            if (columnValue === 'Y') {
-                $(this).css('background-color', '#c3f1c7');
-            } else {
-                $(this).css('background-color', '');
-            }
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#table-body tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = tds[3]?.textContent.trim();
+        if (columnValue === 'FULLY UNLOADED') {
+            row.style.backgroundColor = '#07bb72';
+
+        } else if (columnValue === 'PARTIAL UNLOADED') {
+            row.style.backgroundColor = '#ebb861';
+
+        } else {
+            row.style.backgroundColor = '#f5c0bf';
+
         }
     });
-    if (parseInt(CaseNo) > 0) {
-            const firstTr = document.querySelector("#table-body > tr");
-            firstTr.style.backgroundColor = "#2be399";
-    }
 }
 
-setInterval(ChangecolorTr1, 100);
+setInterval(ChangecolorTr, 100);
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
     const result = Data.find(item => item.ModuleDesp === "Box Unloading");
@@ -276,5 +278,91 @@ function ShowBoxNumberList(PickListNo) {
         }
     });
 }
+function convertDateFormat(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${year}-${month}-${day}`;
+}
+function ShowCaseNoData(Code, PickListNo) {
+    $("#hfMRNMaster_Code").val(Code);
+    $("#hfPicklistNo").val(PickListNo)
+    openSavePopup();
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + Code,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.MRNDetails && response.MRNDetails.length > 0) {
+                    $("#MRNTable").show();
+                    const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
+                    const NumericFilterColumn = [];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = [];
+                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
+                    const ColumnAlignment = {
+                    };
+                    BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", response.MRNDetails, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+                } else {
+                    toastr.error("Record not found...!");
+                }
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
+}
+function openSavePopup() {
+    var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
+    saveModal.show();
+}
+function ChangecolorTr1() {
+    const rows = document.querySelectorAll('#ModalTable-body tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = tds[9]?.textContent.trim();
+        if (columnValue === 'Y') {
+            row.style.backgroundColor = '#9ef3a5';
+        } else {
+            row.style.backgroundColor = '#f5c0bf';
+        }
+    });
+}
 
-
+setInterval(ChangecolorTr1, 100);
+function DownloadInExcel() {
+    var Code = $("#hfMRNMaster_Code").val();
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=${Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+function Export(jsonData) {
+    var Picklist = $("#hfPicklistNo").val();
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "UnloadingReport_" + Picklist +".xlsx");
+}

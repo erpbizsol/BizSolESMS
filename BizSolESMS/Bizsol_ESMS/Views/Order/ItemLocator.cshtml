@@ -1,0 +1,103 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="~/assets/script/ItemLocator.js"></script>
+<script src="~/assets/js/autosuggestion.js"></script>
+<style>
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d35950;
+        color: white;
+        padding: 35px 55px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10000;
+        font-size: 18px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+</style>
+<div class="container">
+    <div class="card shadow-sm textCreatepage" id="ValidateFrom">
+        <div class="tabs">
+            <div class="row p-2">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <input type="radio" id="txtScan" checked name="txtScan" value="1"> <label for="txtScan" class="col-form-label-sm fw-bold"> Scan Box</label><br>
+                            <input type="radio" id="txtScan1" name="txtScan" value="2"> <label for="txtScan1" class="col-form-label-sm fw-bold"> Scan Item</label>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
+                            <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan</label><span class="text-danger">*</span>
+                            <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Scan Product.." onfocus="this.select()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row m-2" style="display:none" id="UnloadingTable">
+        <div class="card-body mt-2 ">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table ssm-table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-table">
+            </div>
+        </div>
+    </div>
+    <div id="overlay" class="overlay"></div>
+    <div id="toast" class="toast-container"></div>
+</div>
+<div class="modal fade" id="LocationModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modal-content-width-sm mt-5" style="max-width: 400px;">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Location (Bin)</h5>
+                <button type="button" class="close modal-close" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-12">
+                        <label for="txtLocationName" class="fw-bold">Location Name</label><span class="text-danger">*</span>
+                        <input type="text" id="txtLocationName" name="txtLocationName" class="box_border form-control mb-0 form-control-sm" value="" autocomplete="off" placeholder="please enter location..." />
+                        <input type="hidden" id="hfItemCode" name="hfItemCode" class="box_border form-control form-control-sm mb-0" value="0" autocomplete="off" />
+                        <ul id="txtLocationNameList" class="AutoSuggestion-list"></ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer pt-0">
+                <button type="button" class="btn btn-success btn-height" id="btnSaveLocation">Save</button>
+                <button type="button" class="btn btn-danger btn-height" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/filter.js"></script>

@@ -703,6 +703,21 @@ function DatePicker() {
             $('#txtOrderDate, #txtBuyerPODate').datepicker({
                 format: 'dd/mm/yyyy',
                 autoclose: true,
+                orientation: 'bottom auto',
+                todayHighlight: true
+            }).on('show', function () {
+                let $input = $(this);
+                let inputOffset = $input.offset();
+                let inputHeight = $input.outerHeight();
+                let inputWidth = $input.outerWidth();
+                setTimeout(function () {
+                    let $datepicker = $('.datepicker-dropdown');
+                    $datepicker.css({
+                        width: inputWidth + 'px',
+                        top: (inputOffset.top + inputHeight) + 'px',
+                        left: inputOffset.left + 'px'
+                    });
+                }, 10);
             });
         },
         error: function () {

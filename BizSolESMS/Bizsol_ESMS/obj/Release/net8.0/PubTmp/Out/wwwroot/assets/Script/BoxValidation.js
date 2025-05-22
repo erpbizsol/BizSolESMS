@@ -10,7 +10,7 @@ $(document).ready(function () {
     $("#ERPHeading").text("Box-Validation");
     $('#txtBoxNo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            BoxValidationDetail();
+            BoxValidationDetail('N');
         }
     });
     $('#txtScanProduct').on('keydown', function (e) {
@@ -51,7 +51,7 @@ $(document).ready(function () {
     });
     GetModuleMasterCode();
 });
-function BoxValidationDetail() {
+function BoxValidationDetail(Check) {
     if ($("#txtBoxNo").val() == '') {
         toastr.error("Please enter a Box No !");
         $("#txtBoxNo").focus();
@@ -78,7 +78,12 @@ function BoxValidationDetail() {
                 Data = response;
                 if (response[0].Status == 'Y') {
                     $("#SuccessVoice")[0].play();
-                    $("#txtScanProduct").focus();
+                    if (Check == 'N') {
+                        $("#txtScanProduct").focus();
+                    } else {
+                        $("#txtBoxNo").val("");
+                        $("#txtBoxNo").focus();
+                    }
                     $("#txtScanProduct").prop("disabled",false);
                     $("#UnloadingTable").show();
                     const StringFilterColumn = [];
@@ -89,7 +94,7 @@ function BoxValidationDetail() {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code", "Item Bar Code"];
                     let hiddenColumns = [];
                     if (UserType == "A") {
-                        hiddenColumns = ["Msg", "Status", "Code","BoxNo"];
+                        hiddenColumns = ["Msg", "Status", "Code", "BoxNo","Manual Qty"];
                         $("#btnAutoUpdate").show();
                     } else {
                         hiddenColumns = ["Msg", "Status", "Code", "Manual Qty","BoxNo"];
@@ -258,7 +263,7 @@ function SaveManualValidationDetail(Code,ScanQty,ManualQty,ReceivedQty) {
         },
         success: function (response) {
             if (response[0].Status=='Y') {
-                BoxValidationDetail();
+                BoxValidationDetail('N');
                 G_IDFORTRCOLOR = 'GET';
             }
         },
@@ -300,15 +305,23 @@ function SaveScanValidationDetail() {
         success: function (response) {
             if (response[0].Status == 'Y') {
                 $("#SuccessVoice")[0].play();
-                BoxValidationDetail();
-                $("#txtScanProduct").focus();
+                
+                $("#txtScanProduct").val("");
                 G_IDFORTRCOLOR = 'GET';
+                if (response[0].BillQty == response[0].ReceivedQty) {
+                    BoxValidationDetail('Y');
+                } else {
+                    $("#txtScanProduct").focus();
+                    BoxValidationDetail('N');
+                }
             } else if (response[0].Status == 'N') {
                 showToast(response[0].Msg);
+                $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
                 G_IDFORTRCOLOR = '';
             } else {
                 showToast(response[0].Msg);
+                $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
                 G_IDFORTRCOLOR = '';
             }
@@ -345,7 +358,7 @@ function AutoUpdateReceivedQty() {
             },
             success: function (response) {
                 if (response[0].Status == 'Y') {
-                    BoxValidationDetail();
+                    BoxValidationDetail('N');
                 }
             },
             error: function (xhr, status, error) {

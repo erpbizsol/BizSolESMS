@@ -490,7 +490,7 @@ async function StartDispatchPanding(Code, Mode) {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
                     let hiddenColumns = [];
                     if (UserType == "A") {
-                        hiddenColumns = ["Code", "ROWSTATUS"];
+                        hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
                     } else {
                         hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
                     }
@@ -810,7 +810,7 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
                     let hiddenColumns = [];
                     if (UserType == "A") {
-                        hiddenColumns = ["Code", "ROWSTATUS"];
+                        hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
                     } else {
                         hiddenColumns = ["Code", "Manual Qty","ROWSTATUS"];
                     }
@@ -981,7 +981,8 @@ function GetCompletedDespatchOrderList(Mode) {
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="Report('${item.D_Code}','CDETAILS')"><i class="fa fa-download" aria-hidden="true"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="Report('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -1040,7 +1041,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
                     let hiddenColumns = [];
                     if (UserType == "A") {
-                        hiddenColumns = ["Code", "ROWSTATUS"];
+                        hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
                     } else {
                         hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
                     }
@@ -1216,7 +1217,7 @@ async function ViewDespatchTransit(Code, Mode) {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code"];
                     let hiddenColumns = [];
                     if (UserType == "A") {
-                        hiddenColumns = ["Code", "ROWSTATUS"];
+                        hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
                     } else {
                         hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
                     }
@@ -1329,7 +1330,7 @@ function Report(C_Code) {
             ReportType: "PDF",
             newConnectionString: authKeyData,
             p_Code: C_Code,
-            UserName: UserName
+            UserName: G_UserName
         },
         xhrFields: {
             responseType: 'blob'
@@ -1375,3 +1376,28 @@ function ChangecolorTr() {
 }
 
 setInterval(ChangecolorTr, 100);
+function DispatchReport(Code) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetDispatchReport?Code=${Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                Export(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+function Export(jsonData) {
+    var ws = XLSX.utils.json_to_sheet(jsonData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "Dispatch_" + jsonData[0]["Order No"] + ".xlsx");
+}

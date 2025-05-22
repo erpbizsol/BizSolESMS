@@ -94,7 +94,7 @@ function BoxValidationDetail(Check) {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code", "Item Bar Code"];
                     let hiddenColumns = [];
                     if (UserType == "A") {
-                        hiddenColumns = ["Msg", "Status", "Code","BoxNo"];
+                        hiddenColumns = ["Msg", "Status", "Code", "BoxNo","Manual Qty"];
                         $("#btnAutoUpdate").show();
                     } else {
                         hiddenColumns = ["Msg", "Status", "Code", "Manual Qty","BoxNo"];

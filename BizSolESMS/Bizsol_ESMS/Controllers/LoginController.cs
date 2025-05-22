@@ -97,7 +97,7 @@ namespace Bizsol_ESMS.Controllers
             {
 
                 connections.Open();
-                string query = "SELECT * FROM usermaster WHERE UserID=@UserID And Status='Y'";
+                string query = "SELECT usermaster.Code, UserID, UserName, Password, UserType, GroupMaster_Code, Status,ShowClientInProductionReport, FixedParameter_Code, CreatedBy, CreateDate,UpdatedBy, UpdateDate, ChangePasswordForNextLogIn, ShowRatesInQuotation,\r\nUserImage, UserMobileNo,DesignationMaster_Code, UserLocation, LoginAllowFromSystem,OTPApplicable, InActiveDate, NoOfSessionAllowed, IsBizSolUser, EmailID, DefaultPage, usermodulemaster.FormToOpen FROM usermaster\r\nLEFT JOIN UserModuleMaster ON usermodulemaster.Code=usermaster.DefaultPage WHERE UserID=@UserID And Status='Y' LIMIT 1";
                 using (var command = new MySqlCommand(query, connections))
                 {
                     command.Parameters.AddWithValue("@UserID", model.UserID.Trim());
@@ -112,6 +112,8 @@ namespace Bizsol_ESMS.Controllers
                                 var UserID = reader["UserID"].ToString();
                                 var UserType = reader["UserType"].ToString();
                                 var UserName = reader["UserName"].ToString();
+                                var DefaultPage = reader["DefaultPage"].ToString();
+                                var FormToOpen = reader["FormToOpen"].ToString();
                                 var Data=CommonFunction.DecryptPasswordAsync(reader["Password"].ToString());
                                 if (Data.Result == model.Password)
                                 {
@@ -119,6 +121,8 @@ namespace Bizsol_ESMS.Controllers
                                     HttpContext.Session.SetString("UserID", UserID);
                                     HttpContext.Session.SetString("UserName", UserName);
                                     HttpContext.Session.SetString("UserType", UserType);
+                                    HttpContext.Session.SetString("DefaultPage", DefaultPage);
+                                    HttpContext.Session.SetString("FormToOpen", FormToOpen);
                                     ViewBag.AppBaseURL = _configuration["AppBaseURL"];
                                     ViewBag.AppBaseURLMenu = _configuration["AppBaseURLMenu"];
                                     return Ok(new { success = true, message = "Login successful!" });

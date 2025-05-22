@@ -5,8 +5,7 @@
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-@* <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> *@
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 <script src="~/assets/script/MRNMaster.js"></script>
 
 <style>
@@ -18,8 +17,6 @@
         overflow: hidden;
         padding: 0.7rem;
     }
-
-
     .tabSec {
         color: white;
         width: 117px;
@@ -33,11 +30,6 @@
         margin-top: -8px;
         background: #1d4b7d;
     }
-
-
-    /*  .tab-header {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-    } */
 
     .tab-content {
         display: none;
@@ -64,12 +56,6 @@
         height: 16px !important;
     }
 
-    /*
-    .container-fluid {
-    overflow: auto;
-    height: 81vh;
-    } */
-
     .datepicker table tfoot {
         display: none;
     }
@@ -78,18 +64,6 @@
     .page-content {
         display: block;
     }
-
-    .textCreatepage .tabs .fix-header {
-        position: sticky;
-        top: 0;
-        background-color: #dddde4;
-        z-index: 1000;
-        padding: 8px 0 8px 9px;
-        transition: background 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-        height: 36px;
-    }
-
 
     .shadow-sm {
         border-top-right-radius: 5px;
@@ -127,53 +101,22 @@
         background-color: #275481;
         color: #fff;
     }
-
-    .container-fluid {
+     .container-fluid {
         padding-right: 0;
         padding-left: 0;
-        /*  overflow: hidden;
-        height: auto; */
     }
-
-    .container {
-        overflow: auto;
-        height: 81vh;
-        /* overflow: hidden; */
-    }
-    /* .breadcrumbs .container-fluid .fix-header {
-    position: sticky;
-    top: 0;
-    background-color: #dddde4;
-    z-index: 1000;
-    padding: 8px 0 8px 9px;
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-    height: 36px;
-    } */
-
     .breadcrumbs1 {
         position: sticky;
         top: 0;
         background-color: #eff7ff;
         z-index: 1000;
         padding: 8px 0px 0px 9px;
-        /* border-top-right-radius: 5px;
-        border-top-left-radius: 5px; */
         box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
-        /* height: 36px; */
         box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
     }
 
     .page-content {
         padding: 3px 0;
-    }
-
-    .datepicker {
-        top: 157.766px !important;
-        left: 262px;
-        z-index: 10;
-        display: block;
     }
 
    
@@ -461,6 +404,8 @@
                 <div class="modal-header tab-header" style="background-color:#033764">
                     <div id="tab1" class="tab active" style="color:white">MRN PickList Status Details</div>
                     <button type="button" class="close modal-close btn-sm" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                    <input type="hidden" id="hfMRNMaster_Code" value="0"/>
+                    <input type="hidden" id="hfPicklistNo" value="0"/>
                 </div>
                 <div class="modal-body">
                     <div class="row" style="margin:0;">
@@ -479,6 +424,7 @@
                         </div>
                     </div>
                     <div class="text-right">
+                        <button type="button" class="btn btn-primary btn-height" onclick="DownloadInExcel()">Download</button>
                         <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>

@@ -30,5 +30,17 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion TATReport
+        #region StockLedger
+        public IActionResult StockLedger()
+        {
+            return View();
+        }
+        #endregion StockLedger
+        #region DispatchReport
+        public IActionResult DispatchReport()
+        {
+            return View();
+        }
+        #endregion DispatchReport
     }
 }

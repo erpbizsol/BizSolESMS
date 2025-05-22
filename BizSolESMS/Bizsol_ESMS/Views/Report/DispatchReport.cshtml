@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-<script src="~/assets/script/TATReport.js"></script>
+<script src="~/assets/script/DispatchReport.js"></script>
 <script src="~/assets/js/xlsx.full.min.js"></script>
 <style>
     .tabs {
@@ -111,7 +111,7 @@
         overflow: auto;
         height: 81vh;
     }
-   
+
     .breadcrumbs1 {
         position: sticky;
         top: 0;
@@ -174,15 +174,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-2 col-sm-6">
-                <label for="ddlMonth" class="col-form-label-sm fw-bold">Month</label><span class="text-danger">*</span>
-                <select id="ddlMonth" class="box_border form-control form-control-sm">
-                </select>
-            </div>
-            <div class="col-md-2 col-sm-6">
-                <label for="ddlYear" class="col-form-label-sm fw-bold">Year</label><span class="text-danger">*</span>
-                <select id="ddlYear" class="box_border form-control form-control-sm">
-                </select>
+            <div class="col-md-3 col-sm-6">
+                <label for="txtDate" class="col-form-label-sm fw-bold">Date</label><span class="text-danger">*</span>
+                <input type="text" id="txtDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Date">
             </div>
         </div>
         <div class="card-body mt-2" id="txtTATTable">
@@ -204,15 +198,9 @@
                 <div class="row p-2">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-md-2 col-sm-6">
-                                <label for="ddlTATMonth" class="col-form-label-sm fw-bold">Month</label><span class="text-danger">*</span>
-                                <select id="ddlTATMonth" class="box_border form-control form-control-sm">
-                                </select>
-                            </div>
-                            <div class="col-md-2 col-sm-6">
-                                <label for="ddlTATYear" class="col-form-label-sm fw-bold">Year</label><span class="text-danger">*</span>
-                                <select id="ddlTATYear" class="box_border form-control form-control-sm">
-                                </select>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtMonth" class="col-form-label-sm fw-bold">Month</label><span class="text-danger">*</span>
+                                <input type="text" id="txtTATDate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Date">
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtExcelFile" class="col-form-label-sm fw-bold">Choose File</label><span class="text-danger">*</span>
@@ -239,4 +227,5 @@
 </div>
 
 <script src="~/assets/js/filter.js"></script>
+
 
