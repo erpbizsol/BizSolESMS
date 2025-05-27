@@ -5,7 +5,6 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let Data = [];
-let G_IDFORTRCOLOR = '';
 $(document).ready(function () {
     $("#ERPHeading").text("Item Locator");
     $('#txtScanProduct').on('keydown', function (e) {
@@ -23,6 +22,9 @@ $(document).ready(function () {
         $(this).attr('inputmode', '');
     });
     GetModuleMasterCode();
+    $("#btnCreateNew").on("click", function () {
+        CreateNewlocation();
+    });
     $("#btnSaveLocation").on("click", function () {
         Savelocation();
     });
@@ -63,10 +65,10 @@ function BoxValidationDetail() {
                     };
                     const updatedResponse = response.map(item => ({
                         ...item,
-                        "Item Location": item["Item Location"] == '' ? `<button class="btn btn-primary icon-height mb-1"  title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>` : `${item["Item Location"]}`,
+                        "Item Location": item["Item Location"] == '' ? `<button class="btn btn-primary icon-height mb-1"  title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>` : `${item["Item Location"]} <button class="btn btn-primary icon-height mb-1"  title="Edit location" onclick="EditLocation('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`,
                       }));
                     BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-                   
+                    $("#txtScanProduct").focus();
                 } else {
                     $("#txtScanProduct").focus();
                     $("#txtScanProduct").val("");
@@ -114,12 +116,17 @@ function showToast(Msg) {
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Box Validation");
+    const result = Data.find(item => item.ModuleDesp === "Location Master (Bin)");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
 }
-function CreateLocation(Code) {
+async function CreateLocation(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     LocationList();
     $("#hfItemCode").val(Code);
     $("#LocationModal").modal({
@@ -127,44 +134,26 @@ function CreateLocation(Code) {
     });
     $('#LocationModal').modal('show');
 }
-function LocationList() {
-    $.ajax({
-        url: `${appBaseURL}/api/Master/ShowLocationMaster`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response && response.length > 0) {
-                SetUpAutoSuggestion($('#txtLocationName'), $('#txtLocationNameList'), response.map((item) => ({ Desp: item["Location Name"] })), 'StartWith');
-            } else {
-                $('#txtLocationNameList').empty();
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-        }
-    });
-
-}
 function ClearLocationData() {
     G_IsCheckExists = 'N';
     $("#hfItemCode").val('0'),
         $("#txtLocationName").val('')
     $('#LocationModal').modal('hide');
+    LocationList();
 }
 
 let G_IsCheckExists = 'N';
 function Savelocation() {
-    var LocationName = $("#txtLocationName").val();
+    var LocationName = $("#mySelect2").val().join(", ");
     if (LocationName === '') {
-        toastr.error('Please enter location name !');
-        $("#txtLocationName").focus();
+        toastr.error('Please select location name !');
+        $("#mySelect2").focus();
     }
     else {
         const payload = {
             Code: $("#hfItemCode").val(),
-            LocationName: $("#txtLocationName").val()
+            LocationName: $("#mySelect2").val().join(", "),
+            Mode: "EDIT"
         };
         $.ajax({
             url: `${appBaseURL}/api/Master/CreateLocationFromItemMaster?UserMaster_Code=${UserMaster_Code}&IsCheckExists=${G_IsCheckExists}`,
@@ -182,9 +171,14 @@ function Savelocation() {
                     ClearLocationData();
                     BoxValidationDetail();
                 } else if (response[0].Status === 'N') {
-                    if (confirm(`${response[0].Msg}`)) {
+                    if (response[0].Msg == null) {
                         G_IsCheckExists = 'Y';
                         Savelocation();
+                    } else {
+                        if (confirm(`${response[0].Msg}`)) {
+                            G_IsCheckExists = 'Y';
+                            Savelocation();
+                        }
                     }
                 }
                 else {
@@ -197,5 +191,117 @@ function Savelocation() {
             }
         });
 
+    }
+}
+async function LocationList() {
+    try {
+        const response = await $.ajax({
+            url: `${appBaseURL}/api/Master/ShowLocationMaster`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            }
+        });
+
+        const $select = $('#mySelect2');
+        $select.empty();
+
+        if (response.length > 0) {
+            $.each(response, function (key, val) {
+                $select.append(new Option(val["Location Name"], val.Code));
+            });
+
+            $select.select2({
+                width: '100%',
+                closeOnSelect: false,
+                placeholder: "Select location...",
+                allowClear: true
+            });
+        } else {
+            $select.empty();
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+function GetLocationCodes() {
+    var Code = $("#hfItemCode").val();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetItemLocationMaster_Code?Code=${Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                let codesRaw = response[0].Codes;
+
+                if (typeof codesRaw === "string") {
+                    let fixed = codesRaw.trim().replace(/^\[|\]$/g, '').replace(/'/g, '"');
+                    let finalJson = "[" + fixed + "]";
+                    let codes = JSON.parse(finalJson);
+                    $('#mySelect2').val(codes).trigger('change');
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+async function EditLocation(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    await LocationList();
+    $("#hfItemCode").val(Code);
+    $("#LocationModal").modal({
+        backdrop: 'static',
+    });
+    $('#LocationModal').modal('show');
+    GetLocationCodes();
+}
+async function CreateNewlocation() {
+    const LocationName = $("#txtLocationName").val();
+
+    if (LocationName === '') {
+        toastr.error('Please enter location name !');
+        $("#txtLocationName").focus();
+        return;
+    }
+
+    const payload = {
+        Code: $("#hfItemCode").val(),
+        LocationName: LocationName,
+        Mode: "NEW"
+    };
+
+    try {
+        const response = await $.ajax({
+            url: `${appBaseURL}/api/Master/CreateLocationFromItemMaster?UserMaster_Code=${UserMaster_Code}&IsCheckExists=${G_IsCheckExists}`,
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            }
+        });
+
+        if (response[0].Status === 'Y') {
+            toastr.success(response[0].Msg);
+            await LocationList(); // ✅ Await this
+            GetLocationCodes();   // 🟡 You can await this too if it’s async
+        } else {
+            toastr.error(response[0].Msg);
+        }
+
+    } catch (error) {
+        console.error("Error:", error.responseText || error);
+        toastr.error("An error occurred while saving the data.");
     }
 }

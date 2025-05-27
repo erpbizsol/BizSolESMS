@@ -13,10 +13,8 @@ $(document).ready(function () {
             inputElement.setAttribute('inputmode', isManual ? '' : 'none');
         }, 2);
     });
-    $('#txtScanProduct').on('keydown', function (e) {
-        if (e.key === "Enter") {
+    $('#txtScanProduct').on('input', function (e) {
             SaveScanValidationDetail();
-        }
     });
     $('#txtScanProduct').on('blur', function () {
         $(this).attr('inputmode', '');

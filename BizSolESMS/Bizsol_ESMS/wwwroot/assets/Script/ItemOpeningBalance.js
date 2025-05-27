@@ -90,6 +90,7 @@ $(document).ready(function () {
     });
 });
 function ShowItemOpeningBalancelist() {
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetItemOpeningBalance`,
         type: 'GET',
@@ -98,6 +99,7 @@ function ShowItemOpeningBalancelist() {
         },
         success: function (response) {
             if (response.length > 0) {
+                unblockUI();
                 const StringFilterColumn = [];
                 const NumericFilterColumn = ["Opening Balance"];
                 const DateFilterColumn = [];
@@ -126,10 +128,12 @@ function ShowItemOpeningBalancelist() {
                     addNewRow();
                 }
             } else {
+                unblockUI();
                 toastr.error("Record not found...!");
             }
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", error);
         }
     });

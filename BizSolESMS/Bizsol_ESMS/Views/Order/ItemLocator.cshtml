@@ -52,6 +52,7 @@
                             <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan</label><span class="text-danger">*</span>
                             <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Scan Product.." onfocus="this.select()">
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -84,17 +85,21 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12 col-12">
-                        <label for="txtLocationName" class="fw-bold">Location Name</label><span class="text-danger">*</span>
-                        <input type="text" id="txtLocationName" name="txtLocationName" class="box_border form-control mb-0 form-control-sm" value="" autocomplete="off" placeholder="please enter location..." />
-                        <input type="hidden" id="hfItemCode" name="hfItemCode" class="box_border form-control form-control-sm mb-0" value="0" autocomplete="off" />
-                        <ul id="txtLocationNameList" class="AutoSuggestion-list"></ul>
+                        <select id="mySelect2" class="form-control form-control-sm box_border" multiple style="width: 300px;" placeholder="Select locations..">
+                        </select>
                     </div>
                 </div>
-
-            </div>
-            <div class="modal-footer pt-0">
-                <button type="button" class="btn btn-success btn-height" id="btnSaveLocation">Save</button>
-                <button type="button" class="btn btn-danger btn-height" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal">Cancel</button>
+                <div class="row">
+                    <div class="col-md-6 col-12 pt-2">
+                        <input type="text" id="txtLocationName" name="txtLocationName" class="box_border form-control mb-0 form-control-sm" value="" autocomplete="off" placeholder="Create new location..." />
+                        <input type="hidden" id="hfItemCode" name="hfItemCode" class="box_border form-control form-control-sm mb-0" value="0" autocomplete="off" />
+                    </div>
+                    <div class="col-md-6 col-12 pt-2">
+                        <button type="button" title="Create new location" class="btn btn-primary btn-height" id="btnCreateNew">Create</button>
+                        <button type="button" title="Save" class="btn btn-success btn-height" id="btnSaveLocation">Save</button>
+                        <button type="button" title="Close" class="btn btn-danger btn-height" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

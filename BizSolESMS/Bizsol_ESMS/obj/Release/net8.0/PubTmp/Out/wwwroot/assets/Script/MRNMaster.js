@@ -141,6 +141,9 @@ $(document).ready(function () {
     $('#txtShow').on('click', function (e) {
             ShowMRNMasterlist('Get');
     });
+    $('#txtImportVehicleNo').on('focus', function () {
+        VehicleNoList();
+    });
 });
 function ShowMRNMasterlist(Type) {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
@@ -154,6 +157,7 @@ function ShowMRNMasterlist(Type) {
         $("#txtToDate").focus();
         return;
     }
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/GetMRNMasterList?FromDate=${FromDate}&ToDate=${ToDate}`,
         type: 'GET',
@@ -162,6 +166,7 @@ function ShowMRNMasterlist(Type) {
         },
         success: function (response) {
             if (response.length > 0) {
+                unblockUI();
                 $("#MRNTable").show();
                 const StringFilterColumn = ["Vender Name"];
                 const NumericFilterColumn = [];
@@ -184,6 +189,7 @@ function ShowMRNMasterlist(Type) {
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                 ChangecolorTr();
             } else {
+                unblockUI();
                 $("#MRNTable").hide();
                 if (Type != 'Load') {
                     toastr.error("Record not found...!");
@@ -191,6 +197,7 @@ function ShowMRNMasterlist(Type) {
             }
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", error);
         }
     });
@@ -1208,6 +1215,7 @@ function SaveImportFile() {
         VehicleNo: VehicleNo,
         UserMaster_Code: UserMaster_Code
     };
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ImportMRNMaster`,
         type: "POST",
@@ -1227,8 +1235,10 @@ function SaveImportFile() {
             } else {
                 toastr.error(response.Msg);
             }
+            unblockUI();
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", xhr.responseText);
             toastr.error("An error occurred while saving the data.");
         },
@@ -1386,6 +1396,7 @@ function GetImportFile() {
         VehicleNo: VehicleNo,
         UserMaster_Code: UserMaster_Code
     };
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ImportMRNMasterForTemp`,
         type: "POST",
@@ -1396,9 +1407,11 @@ function GetImportFile() {
             xhr.setRequestHeader("Auth-Key", authKeyData);
         },
         success: function (response) {
+                unblockUI();
                 CreateTable(response);
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", xhr.responseText);
             toastr.error("An error occurred while saving the data.");
         },
@@ -1701,7 +1714,12 @@ async function View(code) {
 
 }
 function disableFields(disabled) {
-    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
+    $("#txtsave").prop("disabled", disabled);
+    $("#tblorderbooking")
+        .find("input, select, textarea, button")
+        .not("#btnBack, .txtItemAddress, .txtUOM, .txtBillQtyBox, .txtReceivedQtyBox, .txtAmount")
+        .prop("disabled", disabled)
+        .css("pointer-events", disabled ? "none" : "auto");
 }
 function DataExport() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
@@ -1890,19 +1908,160 @@ function ChangecolorTrQty() {
     });
 }
 setInterval(ChangecolorTrQty, 100);
-function DownloadInExcel() {
-    var Code = $("#hfMRNMaster_Code").val();
+async function DownloadInExcel() {
+    try {
+        const Code = $("#hfMRNMaster_Code").val();
+        const response = await getDataWithAjax(Code);
+
+        if (response.length > 0) {
+            await Export(response);
+        } else {
+            alert("Record not found...!");
+        }
+    } catch (error) {
+        console.error("AJAX error:", error);
+    }
+}
+function getDataWithAjax(Code) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=${Code}`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                resolve(response);
+            },
+            error: function (xhr, status, error) {
+                reject(error);
+            }
+        });
+    });
+}
+function convertToArray(data) {
+    const headers = Object.keys(data[0]);
+    const rows = data.map(obj => headers.map(key => obj[key]));
+    return [headers, ...rows];
+}
+async function Export(Data) {
+    var Picklist = $("#hfPicklistNo").val();
+    var data = convertToArray(Data);
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Data");
+
+    data.forEach((row, index) => {
+        const addedRow = sheet.addRow(row);
+
+        addedRow.eachCell(cell => {
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+
+        if (index === 0) {
+            addedRow.eachCell(cell => {
+                cell.font = { bold: true, color: { argb: "FF000000" } };
+                cell.fill = {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: "FFD9E1F2" }
+                };
+            });
+
+            sheet.autoFilter = {
+                from: 'A1',
+                to: String.fromCharCode(65 + row.length - 1) + '1'
+            };
+        } else {
+            const Status = row[5];
+
+            if (Status == 'Y') {
+                addedRow.eachCell(cell => {
+                    cell.fill = {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "FF9EF3A5" }
+                    };
+                });
+            } else {
+                addedRow.eachCell(cell => {
+                    cell.fill = {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "FFF5C0BF" }
+                    };
+                });
+            }
+        }
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Unloading_" + Picklist+".xlsx";
+    link.click();
+}
+//function VehicleNoList() {
+//    $.ajax({
+//        url: `${appBaseURL}/api/MRNMaster/GetVehicleNoList`,
+//        type: 'GET',
+//        beforeSend: function (xhr) {
+//            xhr.setRequestHeader('Auth-Key', authKeyData);
+//        },
+//        success: function (response) {
+//            if (response && response.length > 0) {
+//                SetUpAutoSuggestion($('#txtImportVehicleNo'), $('#txtImportVehicleNoList'), response.map((item) => ({ Desp: item["VehicleNo"] })), 'StartWith');
+//            } else {
+//                $('#txtImportVehicleNoList').empty();
+//            }
+//        },
+//        error: function (xhr, status, error) {
+//            console.error("Error:", error);
+//        }
+//    });
+//}
+function VehicleNoList() {
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=${Code}`,
+        url: `${appBaseURL}/api/MRNMaster/GetVehicleNoList`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
-            if (response.length > 0) {
-                Export(response);
+            const $input = $('#txtImportVehicleNo');
+            let $list = $('#txtImportVehicleNoList');
+            if (!$list.parent().is('body')) {
+                $list.appendTo('body');
+            }
+
+            if (response && response.length > 0) {
+                const offset = $input.offset();
+
+                $list.css({
+                    position: 'absolute',
+                    top: offset.top + $input.outerHeight(),
+                    left: offset.left,
+                    width: $input.outerWidth(),
+                    zIndex: 99999,
+                    display: 'block'
+                });
+
+                SetUpAutoSuggestion(
+                    $input,
+                    $list,
+                    response.map(item => ({ Desp: item["VehicleNo"] })),
+                    'StartWith'
+                );
             } else {
-                toastr.error("Record not found...!");
+                $list.empty().hide();
             }
         },
         error: function (xhr, status, error) {
@@ -1910,11 +2069,3 @@ function DownloadInExcel() {
         }
     });
 }
-function Export(jsonData) {
-    var Picklist = $("#hfPicklistNo").val();
-    var ws = XLSX.utils.json_to_sheet(jsonData);
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    XLSX.writeFile(wb, "UnloadingReport_" + Picklist +".xlsx");
-}
-

@@ -231,16 +231,16 @@ function ChangecolorTr() {
     const rows = document.querySelectorAll('#table-body tr');
     rows.forEach((row) => {
         const tds = row.querySelectorAll('td');
-        const columnValue = tds[3]?.textContent.trim();
+        const td = tds[3];
+        if (!td) return;
+        const columnValue = td.textContent.trim();
+
         if (columnValue === 'FULLY UNLOADED') {
-            row.style.backgroundColor = '#07bb72';
-
+            td.style.backgroundColor = '#07bb72';
         } else if (columnValue === 'PARTIAL UNLOADED') {
-            row.style.backgroundColor = '#ebb861';
-
+            td.style.backgroundColor = '#ebb861';
         } else {
-            row.style.backgroundColor = '#f5c0bf';
-
+            td.style.backgroundColor = '#f5c0bf';
         }
     });
 }

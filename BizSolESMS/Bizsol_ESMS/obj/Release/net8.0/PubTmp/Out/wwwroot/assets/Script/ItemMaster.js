@@ -4,7 +4,7 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
-
+     LocationList();
     $("#ERPHeading").text("Item Master");
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
@@ -238,7 +238,9 @@ $(document).ready(function () {
             $("#txtQtyinBox").val("0");
         }
     });
-    
+    $("#btnCreateNew").on("click", function () {
+         CreateNewlocation();
+    });
     $("#btnSaveLocation").on("click", function () {
         Savelocation();
     });
@@ -313,6 +315,7 @@ function UpdateLabelforItemMaster() {
     });
 }
 function ShowItemMasterlist(Type) {
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemMaster`,
         type: 'GET',
@@ -321,6 +324,7 @@ function ShowItemMasterlist(Type) {
         },
         success: function (response) {
             if (response.length > 0) {
+                unblockUI();
                 $("#txtitemtable").show();
                
                 const StringFilterColumn = ["Item Code", "Category Name", "Brand Name", "Location Name"];
@@ -339,7 +343,7 @@ function ShowItemMasterlist(Type) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item,
-                    "Location Name": item["Location Name"] == '' ? `<button class="btn btn-primary icon-height mb-1"  title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>` : `${item["Location Name"]}`,
+                    "Location Name": item["Location Name"] == '' ?  ` <button class="btn btn-primary icon-height mb-1"  title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>` : `${item["Location Name"]}&nbsp;<button class="btn btn-primary icon-height mb-1"  title="Edit location" onclick="EditLocation('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`,
                     Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
@@ -348,6 +352,7 @@ function ShowItemMasterlist(Type) {
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                 ChangecolorTr();
             } else {
+                unblockUI();
                 $("#txtitemtable").hide();
                 if (Type != 'Load') {
                     toastr.error("Record not found...!");
@@ -357,6 +362,7 @@ function ShowItemMasterlist(Type) {
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+            unblockUI();
         }
     });
 
@@ -447,6 +453,7 @@ function Save() {
             maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N",
             QtyInBox: $("#txtQtyinBox").val()
         };
+        
         $.ajax({
             url: `${appBaseURL}/api/Master/InsertItemMaster?UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
@@ -963,28 +970,6 @@ function Export(jsonData) {
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "ItemMaster.xlsx");
 }
-//function Report() {
-//    $.ajax({
-//        url: '/Home/ItemMaster',
-//        type: 'POST',
-//        contentType: 'application/json',
-//        data: JSON.stringify({ ReportType: "PDF", newConnectionString: authKeyData}),
-//        xhrFields: {
-//            responseType: 'blob'
-//        },
-//        success: function (data) {
-//            let blob = new Blob([data], { type: 'application/pdf' });
-//            let url = window.URL.createObjectURL(blob);
-
-//            // Open the PDF in a new Chrome tab
-//            window.open(url, '_blank');
-
-//        },
-//        error: function (xhr, status, error) {
-//            console.error('Error:', xhr.responseText);
-//        }
-//    });
-//}
 function Report() {
     $.ajax({
         url: '/Home/OrderMaster',
@@ -1004,7 +989,12 @@ function Report() {
         }
     });
 }
-function CreateLocation(Code) {
+async function CreateLocation(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     LocationList();
     $("#hfItemCode").val(Code);
     $("#LocationModal").modal({
@@ -1012,44 +1002,26 @@ function CreateLocation(Code) {
     });
     $('#LocationModal').modal('show');
 }
-function LocationList() {
-    $.ajax({
-        url: `${appBaseURL}/api/Master/ShowLocationMaster`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response && response.length > 0) {
-                SetUpAutoSuggestion($('#txtLocationName'), $('#txtLocationNameList'), response.map((item) => ({ Desp: item["Location Name"] })), 'StartWith');
-            } else {
-                $('#txtLocationNameList').empty();
-            }
-        },  
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
-        }
-    });
-
-}
 function ClearLocationData() {
         G_IsCheckExists = 'N';
         $("#hfItemCode").val('0'),
         $("#txtLocationName").val('')
         $('#LocationModal').modal('hide');
+        LocationList();
 }
 
 let G_IsCheckExists = 'N';
 function Savelocation() {
-    var LocationName = $("#txtLocationName").val();
-    if (LocationName === '') {
-        toastr.error('Please enter location name !');
-        $("#txtLocationName").focus();
+    var LocationName = $("#mySelect2").val().join(", ");
+    if ( LocationName === '') {
+        toastr.error('Please select location name !');
+        $("#mySelect2").focus();
     }
     else {
         const payload = {
             Code : $("#hfItemCode").val(),
-            LocationName : $("#txtLocationName").val()
+            LocationName: $("#mySelect2").val().join(", "),
+            Mode: "EDIT"
         };
         $.ajax({
             url: `${appBaseURL}/api/Master/CreateLocationFromItemMaster?UserMaster_Code=${UserMaster_Code}&IsCheckExists=${G_IsCheckExists}`,
@@ -1067,9 +1039,14 @@ function Savelocation() {
                     ClearLocationData();
                     ShowItemMasterlist('Get');
                 } else if (response[0].Status === 'N') {
-                    if (confirm(`${response[0].Msg}`)) {
+                    if (response[0].Msg == null) {
                         G_IsCheckExists = 'Y';
                         Savelocation();
+                    } else {
+                        if (confirm(`${response[0].Msg}`)) {
+                            G_IsCheckExists = 'Y';
+                            Savelocation();
+                        }
                     }
                 }
                 else {
@@ -1082,5 +1059,117 @@ function Savelocation() {
             }
         });
 
+    }
+}
+async function LocationList() {
+    try {
+        const response = await $.ajax({
+            url: `${appBaseURL}/api/Master/ShowLocationMaster`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            }
+        });
+
+        const $select = $('#mySelect2');
+        $select.empty();
+
+        if (response.length > 0) {
+            $.each(response, function (key, val) {
+                $select.append(new Option(val["Location Name"], val.Code));
+            });
+
+            $select.select2({
+                width: '100%',
+                closeOnSelect: false,
+                placeholder: "Select location...",
+                allowClear: true
+            });
+        } else {
+            $select.empty();
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+function GetLocationCodes() {
+    var Code = $("#hfItemCode").val();
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetItemLocationMaster_Code?Code=${Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                let codesRaw = response[0].Codes;
+
+                if (typeof codesRaw === "string") {
+                    let fixed = codesRaw.trim().replace(/^\[|\]$/g, '').replace(/'/g, '"');
+                    let finalJson = "[" + fixed + "]";
+                    let codes = JSON.parse(finalJson);
+                    $('#mySelect2').val(codes).trigger('change');
+                } 
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+async function EditLocation(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    await LocationList();
+    $("#hfItemCode").val(Code);
+    $("#LocationModal").modal({
+        backdrop: 'static',
+    });
+    $('#LocationModal').modal('show');
+    GetLocationCodes();
+}
+async function CreateNewlocation() {
+    const LocationName = $("#txtLocationName").val();
+
+    if (LocationName === '') {
+        toastr.error('Please enter location name !');
+        $("#txtLocationName").focus();
+        return;
+    }
+
+    const payload = {
+        Code: $("#hfItemCode").val(),
+        LocationName: LocationName,
+        Mode: "NEW"
+    };
+
+    try {
+        const response = await $.ajax({
+            url: `${appBaseURL}/api/Master/CreateLocationFromItemMaster?UserMaster_Code=${UserMaster_Code}&IsCheckExists=${G_IsCheckExists}`,
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            }
+        });
+
+        if (response[0].Status === 'Y') {
+            toastr.success(response[0].Msg);
+            await LocationList(); // ✅ Await this
+            GetLocationCodes();   // 🟡 You can await this too if it’s async
+        } else {
+            toastr.error(response[0].Msg);
+        }
+
+    } catch (error) {
+        console.error("Error:", error.responseText || error);
+        toastr.error("An error occurred while saving the data.");
     }
 }

@@ -6092,7 +6092,7 @@ legend {
 }
 
 :is(.form-control:disabled, input.form-control[readonly]) {
-    background-color: #f1f1f5 !important;
+    background-color: #dedee1 !important;
     color: #000;
 }
 

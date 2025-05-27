@@ -231,16 +231,16 @@ function ChangecolorTr() {
     const rows = document.querySelectorAll('#table-body tr');
     rows.forEach((row) => {
         const tds = row.querySelectorAll('td');
-        const columnValue = tds[3]?.textContent.trim();
+        const td = tds[3];
+        if (!td) return;
+        const columnValue = td.textContent.trim();
+
         if (columnValue === 'FULLY UNLOADED') {
-            row.style.backgroundColor = '#07bb72';
-
+            td.style.backgroundColor = '#07bb72';
         } else if (columnValue === 'PARTIAL UNLOADED') {
-            row.style.backgroundColor = '#ebb861';
-
+            td.style.backgroundColor = '#ebb861';
         } else {
-            row.style.backgroundColor = '#f5c0bf';
-
+            td.style.backgroundColor = '#f5c0bf';
         }
     });
 }
@@ -337,32 +337,104 @@ function ChangecolorTr1() {
         }
     });
 }
-
 setInterval(ChangecolorTr1, 100);
-function DownloadInExcel() {
-    var Code = $("#hfMRNMaster_Code").val();
-    $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=${Code}`,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (response.length > 0) {
-                Export(response);
-            } else {
-                toastr.error("Record not found...!");
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", error);
+async function DownloadInExcel() {
+    try {
+        const Code = $("#hfMRNMaster_Code").val();
+        const response = await getDataWithAjax(Code);
+
+        if (response.length > 0) {
+            await Export(response);
+        } else {
+            alert("Record not found...!");
         }
+    } catch (error) {
+        console.error("AJAX error:", error);
+    }
+}
+function getDataWithAjax(Code) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=${Code}`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                resolve(response);
+            },
+            error: function (xhr, status, error) {
+                reject(error);
+            }
+        });
     });
 }
-function Export(jsonData) {
-    var Picklist = $("#hfPicklistNo").val();
-    var ws = XLSX.utils.json_to_sheet(jsonData);
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    XLSX.writeFile(wb, "UnloadingReport_" + Picklist +".xlsx");
+function convertToArray(data) {
+    const headers = Object.keys(data[0]);
+    const rows = data.map(obj => headers.map(key => obj[key]));
+    return [headers, ...rows]; 
+}
+async function Export(Data) {
+    var data = convertToArray(Data);
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Data");
+
+    data.forEach((row, index) => {
+        const addedRow = sheet.addRow(row);
+
+        addedRow.eachCell(cell => {
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+
+        if (index === 0) {
+            addedRow.eachCell(cell => {
+                cell.font = { bold: true, color: { argb: "FF000000" } };
+                cell.fill = {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: "FFD9E1F2" }
+                };
+            });
+
+            sheet.autoFilter = {
+                from: 'A1',
+                to: String.fromCharCode(65 + row.length - 1) + '1'
+            };
+        } else {
+            const Status = row[5];
+
+            if (Status == 'Y') {
+                addedRow.eachCell(cell => {
+                    cell.fill = {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "FF9EF3A5" }
+                    };
+                });
+            } else {
+                addedRow.eachCell(cell => {
+                    cell.fill = {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "FFF5C0BF" }
+                    };
+                });
+            }
+        }
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "ConditionalStyledExport.xlsx";
+    link.click();
 }

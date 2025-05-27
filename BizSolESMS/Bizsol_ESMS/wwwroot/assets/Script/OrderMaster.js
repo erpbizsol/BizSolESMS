@@ -81,8 +81,21 @@ $(document).ready(function () {
         $("#txtExcelFile").val('');
         JsonData = [];
     });
+    $("#txtSearch").on("input", function () {
+       var Value = $(this).val().toLowerCase().trim();
+        $("#table tbody tr").each(function () {
+            var matched = false;
+            $(this).find("td").each(function () {
+                if ($(this).text().toLowerCase().includes(Value)) {
+                    matched = true;
+                }
+            });
+            $(this).toggle(matched);
+        });
+    });
 });
 function ShowOrderMasterlist(Type) {
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowOrderMaster`,
         type: 'GET',
@@ -91,6 +104,7 @@ function ShowOrderMasterlist(Type) {
         },
         success: function (response) {
             if (response.length > 0) {
+                unblockUI();
                 $("#txtordertable").show();
                 const StringFilterColumn = ["Client Name"];
                 const NumericFilterColumn = [];
@@ -113,6 +127,7 @@ function ShowOrderMasterlist(Type) {
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
+                unblockUI();
                 $("#txtordertable").hide();
                 if (Type != 'Load') {
                     toastr.error("Record not found...!");
@@ -120,6 +135,7 @@ function ShowOrderMasterlist(Type) {
             }
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", error);
         }
     });
@@ -156,6 +172,7 @@ function BackMaster() {
     $("#txtBuyerPONo").prop("disabled", false);
     $("#txtBuyerPODate").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
+    $("#txtSearch").val("");
 }
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -934,6 +951,7 @@ async function View(code) {
                     $("#hfCode").val(OrderMaster.Code || "");
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtOrderDate").val(OrderMaster.OrderDate || "").prop("disabled", true);
+                    SelectOptionByText('txtClientName',OrderMaster.AccountName);
                     $("#txtClientName").val(OrderMaster.AccountName || "").prop("disabled", true);
                     $("#txtAddress").val(OrderMaster.Address || ""),
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "").prop("disabled", true);
@@ -1020,6 +1038,7 @@ function GetImportFile() {
         OrderNo: OrderNo,
         UserMaster_Code: UserMaster_Code
     };
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ImportOrderForTemp`,
         type: "POST",
@@ -1037,8 +1056,10 @@ function GetImportFile() {
             } else {
                 toastr.error(response.Msg);
             }
+            unblockUI();
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", xhr.responseText);
             toastr.error("An error occurred while saving the data.");
         },
@@ -1066,6 +1087,7 @@ function SaveImportFile() {
         ClientName: ClientName,
         UserMaster_Code: UserMaster_Code
     };
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ImportOrder`,
         type: "POST",
@@ -1086,8 +1108,10 @@ function SaveImportFile() {
             } else {
                 toastr.error(response.Msg);
             }
+            unblockUI();
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", xhr.responseText);
             toastr.error("An error occurred while saving the data.");
         },
@@ -1105,6 +1129,7 @@ function BackImport() {
     $("#txtImportPage").hide();
     $("#ImportTable").hide();
     $("#txtheaderdiv2").hide();
+    $("#txtSearch").val("");
     ClearDataImport();
 }
 function convertDateFormat1(dateString) {
@@ -1353,9 +1378,13 @@ function validateCSV(event, callback) {
     reader.readAsText(file);
 }
 function disableFields(disabled) {
-    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
+    $("#txtsave").prop("disabled", disabled);
+    $("#tblorderbooking")
+        .find("input, select, textarea, button")
+        .not("#btnBack, .txtItemAddress, .txtUOM, .txtBillQtyBox, .txtReceivedQtyBox, .txtAmount")
+        .prop("disabled", disabled)
+        .css("pointer-events", disabled ? "none" : "auto");
 }
-
 
 
    

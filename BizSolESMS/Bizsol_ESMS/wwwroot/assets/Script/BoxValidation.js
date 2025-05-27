@@ -8,15 +8,11 @@ let Data = [];
 let G_IDFORTRCOLOR = '';
 $(document).ready(function () {
     $("#ERPHeading").text("Box-Validation");
-    $('#txtBoxNo').on('keydown', function (e) {
-        if (e.key === "Enter") {
+    $('#txtBoxNo').on('input', function (e) {
             BoxValidationDetail('N');
-        }
     });
-    $('#txtScanProduct').on('keydown', function (e) {
-        if (e.key === "Enter") {
+    $('#txtScanProduct').on('input', function (e) {
             SaveScanValidationDetail();
-        }
     });
     $("#btnAutoUpdate").click(function () {
         AutoUpdateReceivedQty();

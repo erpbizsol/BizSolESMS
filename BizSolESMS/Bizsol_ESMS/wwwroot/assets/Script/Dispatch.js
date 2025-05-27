@@ -75,11 +75,8 @@ $(document).ready(function () {
       
     });
 
-    $('#txtScanProduct').on('keydown', function (e) {
-        if (e.key === "Enter") {
+    $('#txtScanProduct').on('input', function (e) {
             SaveScanQty();
-          
-        }
     });
    
     $("#txtOrderNo").on("change", function () {
@@ -982,6 +979,7 @@ function GetCompletedDespatchOrderList(Mode) {
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="Report('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
                        
                     `
                 }));
@@ -1321,35 +1319,35 @@ function MarkasCompete(code) {
 function disableFields(disable) {
     $("#txtCreatepage").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
-function Report(C_Code) {
-    $.ajax({
-        url: `${AppBaseURLMenu}/Home/OrderMaster`,
-        type: 'POST',
-        contentType: 'application/x-www-form-urlencoded',
-        data: {
-            ReportType: "PDF",
-            newConnectionString: authKeyData,
-            p_Code: C_Code,
-            UserName: G_UserName
-        },
-        xhrFields: {
-            responseType: 'blob'
-        },
-        success: function (data) {
-            let blob = new Blob([data], { type: 'application/pdf' });
-            let url = window.URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = "DispatchReport.pdf"; 
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        },
-        error: function (xhr, status, error) {
-            console.error('Error:', xhr.responseText);
-        }
-    });
-}
+//function Report(C_Code) {
+//    $.ajax({
+//        url: `${AppBaseURLMenu}/Home/OrderMaster`,
+//        type: 'POST',
+//        contentType: 'application/x-www-form-urlencoded',
+//        data: {
+//            ReportType: "PDF",
+//            newConnectionString: authKeyData,
+//            p_Code: C_Code,
+//            UserName: G_UserName
+//        },
+//        xhrFields: {
+//            responseType: 'blob'
+//        },
+//        success: function (data) {
+//            let blob = new Blob([data], { type: 'application/pdf' });
+//            let url = window.URL.createObjectURL(blob);
+//            let a = document.createElement('a');
+//            a.href = url;
+//            a.download = "DispatchReport.pdf"; 
+//            document.body.appendChild(a);
+//            a.click();
+//            document.body.removeChild(a);
+//        },
+//        error: function (xhr, status, error) {
+//            console.error('Error:', xhr.responseText);
+//        }
+//    });
+//}
 function changeValue(delta) {
     const input = document.getElementById('txtBoxNo');
     let value = parseInt(input.value) || 1;
@@ -1400,4 +1398,34 @@ function Export(jsonData) {
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "Dispatch_" + jsonData[0]["Order No"] + ".xlsx");
+}
+
+function Report(C_Code) {
+    $.ajax({
+        url: `${AppBaseURLMenu}/Home/OrderMaster`,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            ReportType: "PDF",
+            newConnectionString: authKeyData,
+            p_Code: C_Code,
+            UserName: G_UserName
+        }),
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "DispatchReport.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
 }

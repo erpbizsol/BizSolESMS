@@ -982,7 +982,7 @@ function GetCompletedDespatchOrderList(Mode) {
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="Report('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                       
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);

@@ -141,6 +141,9 @@ $(document).ready(function () {
     $('#txtShow').on('click', function (e) {
             ShowMRNMasterlist('Get');
     });
+    $('#txtImportVehicleNo').on('focus', function () {
+        VehicleNoList();
+    });
 });
 function ShowMRNMasterlist(Type) {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
@@ -154,6 +157,7 @@ function ShowMRNMasterlist(Type) {
         $("#txtToDate").focus();
         return;
     }
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/GetMRNMasterList?FromDate=${FromDate}&ToDate=${ToDate}`,
         type: 'GET',
@@ -162,6 +166,7 @@ function ShowMRNMasterlist(Type) {
         },
         success: function (response) {
             if (response.length > 0) {
+                unblockUI();
                 $("#MRNTable").show();
                 const StringFilterColumn = ["Vender Name"];
                 const NumericFilterColumn = [];
@@ -184,6 +189,7 @@ function ShowMRNMasterlist(Type) {
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                 ChangecolorTr();
             } else {
+                unblockUI();
                 $("#MRNTable").hide();
                 if (Type != 'Load') {
                     toastr.error("Record not found...!");
@@ -191,6 +197,7 @@ function ShowMRNMasterlist(Type) {
             }
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", error);
         }
     });
@@ -1208,6 +1215,7 @@ function SaveImportFile() {
         VehicleNo: VehicleNo,
         UserMaster_Code: UserMaster_Code
     };
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ImportMRNMaster`,
         type: "POST",
@@ -1227,8 +1235,10 @@ function SaveImportFile() {
             } else {
                 toastr.error(response.Msg);
             }
+            unblockUI();
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", xhr.responseText);
             toastr.error("An error occurred while saving the data.");
         },
@@ -1386,6 +1396,7 @@ function GetImportFile() {
         VehicleNo: VehicleNo,
         UserMaster_Code: UserMaster_Code
     };
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/ImportMRNMasterForTemp`,
         type: "POST",
@@ -1396,9 +1407,11 @@ function GetImportFile() {
             xhr.setRequestHeader("Auth-Key", authKeyData);
         },
         success: function (response) {
+                unblockUI();
                 CreateTable(response);
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", xhr.responseText);
             toastr.error("An error occurred while saving the data.");
         },
@@ -1701,7 +1714,12 @@ async function View(code) {
 
 }
 function disableFields(disabled) {
-    $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
+    $("#txtsave").prop("disabled", disabled);
+    $("#tblorderbooking")
+        .find("input, select, textarea, button")
+        .not("#btnBack, .txtItemAddress, .txtUOM, .txtBillQtyBox, .txtReceivedQtyBox, .txtAmount")
+        .prop("disabled", disabled)
+        .css("pointer-events", disabled ? "none" : "auto");
 }
 function DataExport() {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
@@ -1890,35 +1908,6 @@ function ChangecolorTrQty() {
     });
 }
 setInterval(ChangecolorTrQty, 100);
-
-//function DownloadInExcel() {
-//    var Code = $("#hfMRNMaster_Code").val();
-//    $.ajax({
-//        url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=${Code}`,
-//        type: 'GET',
-//        beforeSend: function (xhr) {
-//            xhr.setRequestHeader('Auth-Key', authKeyData);
-//        },
-//        success: function (response) {
-//            if (response.length > 0) {
-//                Export(response);
-//            } else {
-//                toastr.error("Record not found...!");
-//            }
-//        },
-//        error: function (xhr, status, error) {
-//            console.error("Error:", error);
-//        }
-//    });
-//}
-//function Export(jsonData) {
-//    var Picklist = $("#hfPicklistNo").val();
-//    var ws = XLSX.utils.json_to_sheet(jsonData);
-//    var wb = XLSX.utils.book_new();
-//    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-//    XLSX.writeFile(wb, "UnloadingReport_" + Picklist +".xlsx");
-//}
-
 async function DownloadInExcel() {
     try {
         const Code = $("#hfMRNMaster_Code").val();
@@ -2019,4 +2008,64 @@ async function Export(Data) {
     link.href = URL.createObjectURL(blob);
     link.download = "Unloading_" + Picklist+".xlsx";
     link.click();
+}
+//function VehicleNoList() {
+//    $.ajax({
+//        url: `${appBaseURL}/api/MRNMaster/GetVehicleNoList`,
+//        type: 'GET',
+//        beforeSend: function (xhr) {
+//            xhr.setRequestHeader('Auth-Key', authKeyData);
+//        },
+//        success: function (response) {
+//            if (response && response.length > 0) {
+//                SetUpAutoSuggestion($('#txtImportVehicleNo'), $('#txtImportVehicleNoList'), response.map((item) => ({ Desp: item["VehicleNo"] })), 'StartWith');
+//            } else {
+//                $('#txtImportVehicleNoList').empty();
+//            }
+//        },
+//        error: function (xhr, status, error) {
+//            console.error("Error:", error);
+//        }
+//    });
+//}
+function VehicleNoList() {
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/GetVehicleNoList`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            const $input = $('#txtImportVehicleNo');
+            let $list = $('#txtImportVehicleNoList');
+            if (!$list.parent().is('body')) {
+                $list.appendTo('body');
+            }
+
+            if (response && response.length > 0) {
+                const offset = $input.offset();
+
+                $list.css({
+                    position: 'absolute',
+                    top: offset.top + $input.outerHeight(),
+                    left: offset.left,
+                    width: $input.outerWidth(),
+                    zIndex: 99999,
+                    display: 'block'
+                });
+
+                SetUpAutoSuggestion(
+                    $input,
+                    $list,
+                    response.map(item => ({ Desp: item["VehicleNo"] })),
+                    'StartWith'
+                );
+            } else {
+                $list.empty().hide();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
 }
