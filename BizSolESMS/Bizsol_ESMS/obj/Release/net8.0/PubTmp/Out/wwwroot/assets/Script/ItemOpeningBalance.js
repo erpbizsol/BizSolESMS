@@ -1,4 +1,4 @@
-﻿
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -10,6 +10,7 @@ let ItemDetail = [];
 let JsonData = [];
 let ItemList = [];
 $(document).ready(function () {
+    UpdateLabelforItemMaster();
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
     });
@@ -89,7 +90,52 @@ $(document).ready(function () {
         $("#txtItemName").val("")
     });
 });
+function UpdateLabelforItemMaster() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowItemConfig`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (Array.isArray(response) && response.length > 0) {
+                response.forEach(function (item) {
+                    if (item.ItemNameHeader) {
+                        $("#txtItemNamelab").text(item.ItemNameHeader);
+                        $("#txtItemName").attr("placeholder", item.ItemNameHeader);
+                    } else {
+                        $("#txtItemNamelab").text("Item Name");
+                        $("#txtItemName").attr("placeholder", "Item Name");
+                    }
+                    if (item.ItembarcodeHeader) {
+                        $("#txtItembarcodelab").text(item.ItembarcodeHeader);
+                        $("#txtItembarcode").attr("placeholder", item.ItembarcodeHeader);
+                    } else {
+                        $("#txtItembarcodelab").text("Item Bar Code");
+                        $("#txtItembarcode").attr("placeholder", "Item Bar Code");
+                    }
+                    if (item.ItemCodeHeader) {
+                        $("#txtItemCodelab").text(item.ItemCodeHeader);
+                        $("#txtItemCode").attr("placeholder", item.ItemCodeHeader);
+                    }
+                    else {
+                        $("#txtItemCodelab").text("Item Code");
+                        $("#txtItemCode").attr("placeholder", "Item Code");
+                    }
+
+                });
+            } else {
+                $("#txtItemNamelab").text("Item Name");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $("#txtItemNamelab").text("Error fetching label data");
+        }
+    });
+}
 function ShowItemOpeningBalancelist() {
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetItemOpeningBalance`,
         type: 'GET',
@@ -98,38 +144,68 @@ function ShowItemOpeningBalancelist() {
         },
         success: function (response) {
             if (response.length > 0) {
-                const StringFilterColumn = [];
+                unblockUI();
+                const StringFilterColumn = [G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code'];
                 const NumericFilterColumn = ["Opening Balance"];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
-                const StringdoubleFilterColumn = ["Category", "Group", "Sub Group", "Brand", "Warehouse", "Item Code", "Item Name", "UOM"];
+                const StringdoubleFilterColumn = ["Category", "Group", "Sub Group", "Brand", "Warehouse",G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name', , "UOM"];
                 const hiddenColumns = ["Code"];
                 const ColumnAlignment = {
                     "Opening Balance": "right"
                 };
-                let updatedResponse = "";
-                if (response.length > 0 && response[0]["Item Code"] !== '') {
-                    updatedResponse = response.map(item => ({
-                        ...item, Action: `
+                //let updatedResponse = "";
+                //if (response.length > 0 && response[0]["Item Code"] !== '') {
+                //    updatedResponse = response.map(item => ({
+                //        ...item, Action: `
+                //        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Code`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>`
+                //    }));
+                //}
+                //else {
+                //    updatedResponse = response.map(item => ({
+                //        ...item, Action: `
+                //        <button id="btnSave" onclick="openSavePopup(this)" class="btn btn-success icon-height mb-1 Save" title="New-Entry"><i class="fa fa-plus" aria-hidden="true"></i></button>`
+                //    }));
+                //}
+                const renameMap = {
+                    "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                    "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    "Item Bar Code": G_ItemConfig[0].ItembarcodeHeader ? G_ItemConfig[0].ItembarcodeHeader : 'Item Bar Code',
+                };
+                const updatedResponse = response.map(item => {
+                    const renamedItem = {};
+
+                    for (const key in item) {
+                        if (renameMap.hasOwnProperty(key)) {
+                            renamedItem[renameMap[key]] = item[key];
+                        } else {
+                            renamedItem[key] = item[key];
+                        }
+                    }
+
+                    if (response.length > 0 && response[0]["Item Code"] !== '') {
+                        renamedItem["Action"] = `
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Code`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>`
-                    }));
-                }
-                else {
-                    updatedResponse = response.map(item => ({
-                        ...item, Action: `
-                        <button id="btnSave" onclick="openSavePopup(this)" class="btn btn-success icon-height mb-1 Save" title="New-Entry"><i class="fa fa-plus" aria-hidden="true"></i></button>`
-                    }));
-                }
+                       ;
+                    } else {
+                        renamedItem["Action"] = `
+                             <button id="btnSave" onclick="openSavePopup(this)" class="btn btn-success icon-height mb-1 Save" title="New-Entry"><i class="fa fa-plus" aria-hidden="true"></i></button>`;
+                    }
+                     return renamedItem;
+                });
+
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, true);
                 if (response.length > 0 && response[0]["Item Code"] !== '') {
                     addNewRow();
                 }
             } else {
+                unblockUI();
                 toastr.error("Record not found...!");
             }
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", error);
         }
     });

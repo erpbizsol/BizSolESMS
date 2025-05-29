@@ -2,6 +2,7 @@
     UserMenuRightsList();
     GetPerPageSize();
     WarehouseNameForDefault();
+    ItemMasterConfig();
 });
 var authKeyData1 = JSON.parse(sessionStorage.getItem('authKey'));
 var authKeyData = sessionStorage.getItem('authKey');
@@ -173,6 +174,23 @@ async function WarehouseNameForDefault() {
         error: function (xhr, status, error) {
             console.error("Error:", error);
             toastr.error("Failed to fetch item data. Please try again.");
+        }
+    });
+}
+function ItemMasterConfig() {
+    $.ajax({
+        url: `${baseUrl1}/api/Master/ShowItemConfig`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                sessionStorage.setItem('ItemConfig', JSON.stringify(response));
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error('Error Api/ShowItemConfig');
         }
     });
 }

@@ -1,10 +1,11 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
-     LocationList();
+    LocationList();
     $("#ERPHeading").text("Item Master");
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
@@ -257,29 +258,47 @@ function UpdateLabelforItemMaster() {
                 response.forEach(function (item) {
                     if (item.ItemNameHeader) {
                         $("#txtItemNamelab").text(item.ItemNameHeader);
+                        $("#txtItemName").attr("placeholder", item.ItemNameHeader);
                     } else {
                         $("#txtItemNamelab").text("Item Name");
+                        $("#txtItemName").attr("placeholder", "Item Name");
                     }
                     if (item.ItembarcodeHeader) {
                         $("#txtItembarcodelab").text(item.ItembarcodeHeader);
+                        $("#txtItembarcode").attr("placeholder", item.ItembarcodeHeader);
                     } else {
                         $("#txtItembarcodelab").text("Item Bar Code");
+                        $("#txtItembarcode").attr("placeholder", "Item Bar Code");
                     }
                     if (item.GroupItemHeader) {
                         $("#GroupItemHeaderlab").text(item.GroupItemHeader);
+                        $("#txtGroupItem").attr("placeholder", item.GroupItemHeader);
                     } else {
                         $("#GroupItemHeaderlab").text("Group Item");
+                        $("#txtGroupItem").attr("placeholder", "Group Item");
                     }
                     if (item.SubGroupItemHeader) {
                         $("#SubGroupItemHeaderlab").text(item.SubGroupItemHeader);
+                        $("#txtSubGroupItem").attr("placeholder", item.SubGroupItemHeader);
                     } else {
                         $("#SubGroupItemHeaderlab").text("Sub Group Item");
+                        $("#txtSubGroupItem").attr("placeholder", "Sub Group Item");
                     }
                     if (item.SubLocationItemHeader) {
                         $("#SubLocationItemHeaderlab").text(item.SubLocationItemHeader);
+                        $("#txtItemLocation").attr("placeholder", item.SubLocationItemHeader);
                     }
                     else {
                         $("#SubLocationItemHeaderlab").text("Location Item");
+                        $("#txtItemLocation").attr("placeholder", "Location Item");
+                    }
+                    if (item.ItemCodeHeader) {
+                        $("#txtItemCodelab").text(item.ItemCodeHeader);
+                        $("#txtItemCode").attr("placeholder", item.ItemCodeHeader);
+                    }
+                    else {
+                        $("#txtItemCodelab").text("Item Code");
+                        $("#txtItemCode").attr("placeholder", "Item Code");
                     }
                     if (item.ItemCode) {
                         const escapedItemCode = item.ItemCode.replace("[\/\\^$*+?.()|[\]{}]/g, ''");
@@ -305,7 +324,7 @@ function UpdateLabelforItemMaster() {
 
                 });
             } else {
-                $("#txtItemNamelab").text("Static Label for Item Name");
+                $("#txtItemNamelab").text("Item Name");
             }
         },
         error: function (xhr, status, error) {
@@ -327,12 +346,12 @@ function ShowItemMasterlist(Type) {
                 unblockUI();
                 $("#txtitemtable").show();
                
-                const StringFilterColumn = ["Item Code", "Category Name", "Brand Name", "Location Name"];
+                const StringFilterColumn = [G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code', "Category Name", "Brand Name", "Location Name"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
-                const StringdoubleFilterColumn = ["Item Name"];
+                const StringdoubleFilterColumn = [G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name'];
                 const hiddenColumns = ["Group Name","Sub Group Name","Display Name","Code", "DataImported", "Reorder Level", "Reorder Qty","Box Packing","Batch Applicable","Maintain Expiry","Qty In Box"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
@@ -341,14 +360,34 @@ function ShowItemMasterlist(Type) {
                     "Action": 'left;width:140px;',
                     "Location Name":'center'
                 };
-                const updatedResponse = response.map(item => ({
-                    ...item,
-                    "Location Name": item["Location Name"] == '' ?  ` <button class="btn btn-primary icon-height mb-1"  title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>` : `${item["Location Name"]}&nbsp;<button class="btn btn-primary icon-height mb-1"  title="Edit location" onclick="EditLocation('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`,
-                    Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
-                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Item Name`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
-                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
-                    `
-                }));
+                const renameMap = {
+                    "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                    "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    "Item Bar Code": G_ItemConfig[0].ItembarcodeHeader ? G_ItemConfig[0].ItembarcodeHeader : 'Item Bar Code',
+                };
+                const updatedResponse = response.map(item => {
+                    const renamedItem = {};
+
+                    for (const key in item) {
+                        if (renameMap.hasOwnProperty(key)) {
+                            renamedItem[renameMap[key]] = item[key];  
+                        } else {
+                            renamedItem[key] = item[key];          
+                        }
+                    }
+
+                    renamedItem["Location Name"] = item["Location Name"] === ''
+                        ? `<button class="btn btn-primary icon-height mb-1" title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>`
+                        : `${item["Location Name"]}&nbsp;<button class="btn btn-primary icon-height mb-1" title="Edit location" onclick="EditLocation('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`;
+
+                    renamedItem["Action"] = `
+                            <button class="btn btn-primary icon-height mb-1" title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
+                            <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${renamedItem["Part Name"]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                            <button class="btn btn-primary icon-height mb-1" title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                        `;
+                    return renamedItem;
+                });
+
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                 ChangecolorTr();
             } else {
@@ -398,26 +437,26 @@ function Save() {
         toastr.error('Please select a UOM Name!');
         $("#txtUOM").focus();
     }
-    else if (Category === "") {
-        toastr.error('Please select a Category!');
-        $("#txtCategory").focus();
-    }
-    else if (GroupItem === "") {
-        toastr.error('Please select a Group Item!');
-        $("#txtGroupItem").focus();
-    }
-    else if (SubGroupItem === "") {
-        toastr.error('Please select a Sub Group Item!');
-        $("#txtSubGroupItem").focus();
-    }
-    else if (Brand === "") {
-        toastr.error('Please select a Brand!');
-        $("#txtBrand").focus();
-    }
-    else if (ReorderLevel === "" || isNaN(ReorderLevel) || parseInt(ReorderLevel) < 0) {
-        toastr.error('Please enter a valid digit after decimal is 0.');
-        $("#txtReorderLevel").focus();
-    }
+    //else if (Category === "") {
+    //    toastr.error('Please select a Category!');
+    //    $("#txtCategory").focus();
+    //}
+    //else if (GroupItem === "") {
+    //    toastr.error('Please select a Group Item!');
+    //    $("#txtGroupItem").focus();
+    //}
+    //else if (SubGroupItem === "") {
+    //    toastr.error('Please select a Sub Group Item!');
+    //    $("#txtSubGroupItem").focus();
+    //}
+    //else if (Brand === "") {
+    //    toastr.error('Please select a Brand!');
+    //    $("#txtBrand").focus();
+    //}
+    //else if (ReorderLevel === "" || isNaN(ReorderLevel) || parseInt(ReorderLevel) < 0) {
+    //    toastr.error('Please enter a valid digit after decimal is 0.');
+    //    $("#txtReorderLevel").focus();
+    //}
     else if (ItemLocation === "") {
         toastr.error('Please select a Item Location!');
         $("#ItemLocation").focus();
@@ -958,14 +997,31 @@ function DataExport() {
 }
 function Export(jsonData) {
     const columnsToRemove = ["Code"];
+    const renameMap = {
+        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader :'Item Name',
+        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+        "Item Bar Code": G_ItemConfig[0].ItembarcodeHeader ? G_ItemConfig[0].ItembarcodeHeader : 'Item Bar Code',
+    };
+
     if (!Array.isArray(columnsToRemove)) {
         console.error("columnsToRemove should be an array");
         return;
     }
-    const filteredData = jsonData.map(row =>
-        Object.fromEntries(Object.entries(row).filter(([key]) => !columnsToRemove.includes(key)))
-    );
-    const ws = XLSX.utils.json_to_sheet(filteredData);
+
+    const filteredAndRenamedData = jsonData.map(row => {
+        const newRow = {};
+
+        for (const [key, value] of Object.entries(row)) {
+            if (!columnsToRemove.includes(key)) {
+                const newKey = renameMap[key] || key;
+                newRow[newKey] = value;
+            }
+        }
+
+        return newRow;
+    });
+
+    const ws = XLSX.utils.json_to_sheet(filteredAndRenamedData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "ItemMaster.xlsx");

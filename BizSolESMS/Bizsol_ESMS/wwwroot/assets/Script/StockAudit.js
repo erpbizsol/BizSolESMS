@@ -1,8 +1,8 @@
-﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
-
 $(document).ready(function () {
     $("#ERPHeading").text("Stock Audit");
     ShowStockAuditlist('Load');
@@ -46,13 +46,26 @@ function ShowStockAuditlist(Type) {
                     "Stock Qty": "right;width:25px;",
                     "Scan Qty": "right;width:25px;"
                 };
-                
-                const updatedResponse = response.map(item => ({
-                    ...item,
-                    Action: `<button class="btn btn-success icon-height mb-1"  title="Complete audit" onclick="ManualAudit('${item.Code}')"><i class="fa fa-check"></i></button>`,
-                    'Scan Qty': `<input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right" autocomplete="off" placeholder="Scan Qty..">
-                    `
-                }));
+                const renameMap = {
+                    "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                    "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                };
+                const updatedResponse = response.map(item => {
+                    const renamedItem = {};
+
+                    for (const key in item) {
+                        if (renameMap.hasOwnProperty(key)) {
+                            renamedItem[renameMap[key]] = item[key];
+                        } else {
+                            renamedItem[key] = item[key];
+                        }
+                    }
+                    
+                    renamedItem["Action"]= `<button class="btn btn-success icon-height mb-1"  title="Complete audit" onclick="ManualAudit('${item.Code}')"><i class="fa fa-check"></i></button>`,
+                    renamedItem["Scan Qty"]= `<input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right" autocomplete="off" placeholder="Scan Qty..">
+                    `;
+                    return renamedItem;
+                });
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {

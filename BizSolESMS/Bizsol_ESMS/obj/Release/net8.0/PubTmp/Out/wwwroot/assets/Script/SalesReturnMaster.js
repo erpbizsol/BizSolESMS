@@ -1,4 +1,5 @@
-﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
@@ -602,15 +603,28 @@ async function StartSalesValidation(Code) {
                     $("#txthfCode").val(response[0]["Code"]);
                     $("#txtSalesClientName").val(response[0]["Client Name"]);
                     $("#txtSalesReason").val(response[0]["ReasonDesp"]);
-                    const updatedResponse = response.map(item => ({
-                        ...item,
-                        "Scan Qty": `
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+                        renamedItem["Scan Qty"]= `
                         <input type="text" id="txtScanQty_${item.SalesReturnDetailMaster_Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                        "Recived Qty": `
+                            renamedItem["Recived Qty"] = `
                         <input type="text" id="txtRecivedQty_${item.SalesReturnDetailMaster_Code}" value="${item["Recived Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Recived Qty..">`,
-                        "Reason": `<select onchange="UpdateReason(this);" value="${item.ReasonMaster_Code}" id="txtReason_${item.SalesReturnDetailMaster_Code}" class="txtReason box_border form-control form-control-sm">
-                                </select>`
-                    }));
+                            renamedItem["Reason"]= `<select onchange="UpdateReason(this);" value="${item.ReasonMaster_Code}" id="txtReason_${item.SalesReturnDetailMaster_Code}" class="txtReason box_border form-control form-control-sm">
+                                </select>`;
+                        return renamedItem;
+                    });
                     BizsolCustomFilterGrid.CreateDataTable("SalesTable-header", "SalesTable-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                     GetReasonMasterListForTable();
 

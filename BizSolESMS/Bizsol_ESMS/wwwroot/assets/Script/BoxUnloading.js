@@ -1,4 +1,4 @@
-﻿
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -210,7 +210,7 @@ function GetDataByPicklist(Orderby) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item,
-                    "Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code},${item["PickList No"]})>${item["Status"]}</a>`,
+                    "Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code},${item["PicklistNo"]})>${item["Status"]}</a>`,
                 }));
                 
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, true);
@@ -289,28 +289,40 @@ function ShowCaseNoData(Code, PickListNo) {
     $("#hfPicklistNo").val(PickListNo)
     openSavePopup();
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + Code,
+        url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=` + Code,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response) {
-                if (response.MRNDetails && response.MRNDetails.length > 0) {
                     $("#MRNTable").show();
-                    const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
+                    const StringFilterColumn = ["CaseNo", G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name', G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code'];
                     const NumericFilterColumn = [];
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = [];
-                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
+                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox", "ItemBarCode", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
                     const ColumnAlignment = {
                     };
-                    BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", response.MRNDetails, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
-                } else {
-                    toastr.error("Record not found...!");
-                }
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+                        return renamedItem;
+                    });
+                BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -321,6 +333,7 @@ function ShowCaseNoData(Code, PickListNo) {
         }
     });
 }
+
 function openSavePopup() {
     var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
     saveModal.show();
@@ -329,7 +342,7 @@ function ChangecolorTr1() {
     const rows = document.querySelectorAll('#ModalTable-body tr');
     rows.forEach((row) => {
         const tds = row.querySelectorAll('td');
-        const columnValue = tds[9]?.textContent.trim();
+        const columnValue = tds[7]?.textContent.trim();
         if (columnValue === 'Y') {
             row.style.backgroundColor = '#9ef3a5';
         } else {
@@ -375,11 +388,44 @@ function convertToArray(data) {
     return [headers, ...rows]; 
 }
 async function Export(Data) {
-    var data = convertToArray(Data);
+    const Picklist = $("#hfPicklistNo").val();
+    const renameMap = {
+        "Item Name": G_ItemConfig[0].ItemNameHeader || 'Item Name',
+        "Item Code": G_ItemConfig[0].ItemCodeHeader || 'Item Code',
+    };
+
+    const originalHeaders = Object.keys(Data[0] || {});
+    const newHeaders = originalHeaders.map(key => renameMap[key] || key);
+
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Data");
 
-    data.forEach((row, index) => {
+    // Add custom header row
+    const headerRow = sheet.addRow(newHeaders);
+    headerRow.eachCell(cell => {
+        cell.font = { bold: true, color: { argb: "FF000000" } };
+        cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFD9E1F2" }
+        };
+        cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+    });
+
+    // Set AutoFilter for header row
+    sheet.autoFilter = {
+        from: 'A1',
+        to: String.fromCharCode(65 + newHeaders.length - 1) + '1'
+    };
+
+    // Add data rows
+    Data.forEach(rowObj => {
+        const row = originalHeaders.map(key => rowObj[key]); // Keep column order consistent
         const addedRow = sheet.addRow(row);
 
         addedRow.eachCell(cell => {
@@ -391,43 +437,17 @@ async function Export(Data) {
             };
         });
 
-        if (index === 0) {
-            addedRow.eachCell(cell => {
-                cell.font = { bold: true, color: { argb: "FF000000" } };
-                cell.fill = {
-                    type: "pattern",
-                    pattern: "solid",
-                    fgColor: { argb: "FFD9E1F2" }
-                };
-            });
+        const status = rowObj["Scan Status"]; // Use original key name
+        const fillColor = status === 'Y' ? "FF9EF3A5" : "FFF5C0BF";
 
-            sheet.autoFilter = {
-                from: 'A1',
-                to: String.fromCharCode(65 + row.length - 1) + '1'
+        addedRow.eachCell(cell => {
+            cell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: fillColor }
             };
-        } else {
-            const Status = row[5];
-
-            if (Status == 'Y') {
-                addedRow.eachCell(cell => {
-                    cell.fill = {
-                        type: "pattern",
-                        pattern: "solid",
-                        fgColor: { argb: "FF9EF3A5" }
-                    };
-                });
-            } else {
-                addedRow.eachCell(cell => {
-                    cell.fill = {
-                        type: "pattern",
-                        pattern: "solid",
-                        fgColor: { argb: "FFF5C0BF" }
-                    };
-                });
-            }
-        }
+        });
     });
-
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -435,6 +455,6 @@ async function Export(Data) {
 
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "ConditionalStyledExport.xlsx";
+    link.download = `Unloading_${Picklist}.xlsx`;
     link.click();
 }

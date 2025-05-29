@@ -1,4 +1,4 @@
-﻿
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -8,15 +8,11 @@ let Data = [];
 let G_IDFORTRCOLOR = '';
 $(document).ready(function () {
     $("#ERPHeading").text("Box-Validation");
-    $('#txtBoxNo').on('keydown', function (e) {
-        if (e.key === "Enter") {
+    $('#txtBoxNo').on('input', function (e) {
             BoxValidationDetail('N');
-        }
     });
-    $('#txtScanProduct').on('keydown', function (e) {
-        if (e.key === "Enter") {
+    $('#txtScanProduct').on('input', function (e) {
             SaveScanValidationDetail();
-        }
     });
     $("#btnAutoUpdate").click(function () {
         AutoUpdateReceivedQty();
@@ -103,15 +99,30 @@ function BoxValidationDetail(Check) {
                     const ColumnAlignment = {
                         Qty: "right"
                     };
-                    const updatedResponse = response.map(item => ({
-                        ...item, 
-                        "Scan Qty": `
+
+                    const renameMap = {
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+
+                        renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                        "Manual Qty": `
+                            renamedItem["Manual Qty"]= `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Received Qty":`
+                            renamedItem["Received Qty"]=`
                         <input type="text" id="txtReceivedQty_${item.Code}" value="${item["Received Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Received Qty..">`
-                    }));
+                        return renamedItem;
+
+                    });
                     BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                     $("#txtCaseNo").text(updatedResponse[0].BoxNo);
                 } else {

@@ -1,4 +1,4 @@
-﻿
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -43,7 +43,6 @@ $(document).ready(function () {
         addNewRow();
     });
     GetModuleMasterCode();
-   
     $("#txtClientName").on("change", function () {
 
         let value = $(this).val();
@@ -93,6 +92,10 @@ $(document).ready(function () {
             $(this).toggle(matched);
         });
     });
+    $("#thItemBarcode").text(G_ItemConfig[0].ItembarcodeHeader ? G_ItemConfig[0].ItembarcodeHeader : 'Item Barcode');
+    $("#thItemCode").text(G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code');
+    $("#thItemName").text(G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name');
+
 });
 function ShowOrderMasterlist(Type) {
     blockUI();

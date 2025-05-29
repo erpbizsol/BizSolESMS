@@ -1,4 +1,5 @@
-﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
@@ -144,6 +145,9 @@ $(document).ready(function () {
     $('#txtImportVehicleNo').on('focus', function () {
         VehicleNoList();
     });
+    $("#thItemBarcode").text(G_ItemConfig[0].ItembarcodeHeader ? G_ItemConfig[0].ItembarcodeHeader : 'Item Barcode');
+    $("#thItemCode").text(G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code');
+    $("#thItemName").text(G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name');
 });
 function ShowMRNMasterlist(Type) {
     var FromDate = convertDateFormat2($("#txtFromDate").val());
@@ -1741,7 +1745,7 @@ function DataExport() {
         },
         success: function (response) {
             if (response.length > 0) {
-                Export(response);
+                ExportMRN(response);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -1752,11 +1756,47 @@ function DataExport() {
     });
 
 }
-function Export(jsonData) {
-    var ws = XLSX.utils.json_to_sheet(jsonData);
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    XLSX.writeFile(wb, "MRNMaster.xlsx");
+async function ExportMRN(jsonData) {
+    const columnsToRemove = ["Code"];
+    const renameMap = {
+        "ItemName": G_ItemConfig[0].ItemNameHeader || 'Item Name',
+        "ItemCode": G_ItemConfig[0].ItemCodeHeader || 'Item Code',
+    };
+
+    if (!Array.isArray(columnsToRemove)) {
+        console.error("columnsToRemove should be an array");
+        return;
+    }
+
+    const filteredAndRenamedData = jsonData.map(row => {
+        const newRow = {};
+        for (const [key, value] of Object.entries(row)) {
+            if (!columnsToRemove.includes(key)) {
+                const newKey = renameMap[key] || key;
+                newRow[newKey] = value;
+            }
+        }
+        return newRow;
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
+    const headers = Object.keys(filteredAndRenamedData[0] || {});
+    const headerRow = worksheet.addRow(headers);
+    headerRow.eachCell(cell => {
+        cell.font = { bold: true };
+    });
+    filteredAndRenamedData.forEach(data => {
+        worksheet.addRow(Object.values(data));
+    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "MRNMaster.xlsx";
+    link.click();
 }
 function ExportExcel() {
     DataExport();
@@ -1801,28 +1841,41 @@ function ShowCaseNoData(Code, PickListNo) {
     $("#hfPicklistNo").val(PickListNo)
     openSavePopup();
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/ShowMRNMasterByCode?Code=` + Code,
+        url: `${appBaseURL}/api/MRNMaster/GetExportBoxUnloading?Code=` + Code,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
-            if (response) {
-                if (response.MRNDetails && response.MRNDetails.length > 0) {
+            if (response.length > 0) {
                         $("#MRNTable").show();
-                        const StringFilterColumn = ["CaseNo", "ItemCode", "ItemName"];
+                        const StringFilterColumn = ["CaseNo", G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name', G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code'];
                         const NumericFilterColumn = [];
                         const DateFilterColumn = [];
                         const Button = false;
                         const showButtons = [];
                         const StringdoubleFilterColumn = [];
-                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox","ItemBarCode", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName","LocationName","WarehouseName"];
+                        const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox","ItemBarCode", "ReceivedQty", "ItemRate", "Amount", "Remarks", "UOMName","LocationName","WarehouseName"];
                         const ColumnAlignment = {
-                        };
-                    BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", response.MRNDetails, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment,false);
-                } else {
-                    toastr.error("Record not found...!");
-                } 
+                };
+                const renameMap = {
+                    "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                    "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                };
+                const updatedResponse = response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+                        return renamedItem;
+                    });
+                BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment,false);
+                 
             } else {
                 toastr.error("Record not found...!");
             }
@@ -1841,7 +1894,7 @@ function ChangecolorTr1() {
     const rows = document.querySelectorAll('#ModalTable-body tr');
     rows.forEach((row) => {
         const tds = row.querySelectorAll('td');
-        const columnValue = tds[9]?.textContent.trim();
+        const columnValue = tds[7]?.textContent.trim();
         if (columnValue === 'Y') {
             row.style.backgroundColor = '#9ef3a5';
         } else {
@@ -1863,18 +1916,34 @@ function ShowCaseNoDataQty(Code) {
             if (response) {
                 if (response.MRNDetails && response.MRNDetails.length > 0) {
                     $("#MRNTable").show();
-                    const StringFilterColumn = ["CaseNo", "ItemBarCode", "ItemCode", "ItemName"];
+                    const StringFilterColumn = ["CaseNo", G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code', G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name'];
                     const NumericFilterColumn = ["BillQty", "ReceivedQty"];
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
                     const StringdoubleFilterColumn = [];
-                    const hiddenColumns = ["Code", "BillQtyBox", "Status", "ReceivedQtyBox","ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
+                    const hiddenColumns = ["Code", "BillQtyBox", "ItemBarCode", "Status", "ReceivedQtyBox","ItemRate", "Amount", "Remarks", "UOMName", "LocationName", "WarehouseName"];
                     const ColumnAlignment = {
                         BillQty:"right",
                         ReceivedQty:"right"
                     };
-                    BizsolCustomFilterGrid.CreateDataTable("ModalTable-headerQty", "ModalTable-bodyQty", response.MRNDetails, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
+                    const renameMap = {
+                        "ItemName": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "ItemCode": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = response.MRNDetails.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+                        return renamedItem;
+                    });
+                    BizsolCustomFilterGrid.CreateDataTable("ModalTable-headerQty", "ModalTable-bodyQty", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
                 } else {
                     toastr.error("Record not found...!");
                 }
@@ -1944,90 +2013,6 @@ function convertToArray(data) {
     const rows = data.map(obj => headers.map(key => obj[key]));
     return [headers, ...rows];
 }
-async function Export(Data) {
-    var Picklist = $("#hfPicklistNo").val();
-    var data = convertToArray(Data);
-    const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet("Data");
-
-    data.forEach((row, index) => {
-        const addedRow = sheet.addRow(row);
-
-        addedRow.eachCell(cell => {
-            cell.border = {
-                top: { style: 'thin' },
-                left: { style: 'thin' },
-                bottom: { style: 'thin' },
-                right: { style: 'thin' }
-            };
-        });
-
-        if (index === 0) {
-            addedRow.eachCell(cell => {
-                cell.font = { bold: true, color: { argb: "FF000000" } };
-                cell.fill = {
-                    type: "pattern",
-                    pattern: "solid",
-                    fgColor: { argb: "FFD9E1F2" }
-                };
-            });
-
-            sheet.autoFilter = {
-                from: 'A1',
-                to: String.fromCharCode(65 + row.length - 1) + '1'
-            };
-        } else {
-            const Status = row[5];
-
-            if (Status == 'Y') {
-                addedRow.eachCell(cell => {
-                    cell.fill = {
-                        type: "pattern",
-                        pattern: "solid",
-                        fgColor: { argb: "FF9EF3A5" }
-                    };
-                });
-            } else {
-                addedRow.eachCell(cell => {
-                    cell.fill = {
-                        type: "pattern",
-                        pattern: "solid",
-                        fgColor: { argb: "FFF5C0BF" }
-                    };
-                });
-            }
-        }
-    });
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    });
-
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "Unloading_" + Picklist+".xlsx";
-    link.click();
-}
-//function VehicleNoList() {
-//    $.ajax({
-//        url: `${appBaseURL}/api/MRNMaster/GetVehicleNoList`,
-//        type: 'GET',
-//        beforeSend: function (xhr) {
-//            xhr.setRequestHeader('Auth-Key', authKeyData);
-//        },
-//        success: function (response) {
-//            if (response && response.length > 0) {
-//                SetUpAutoSuggestion($('#txtImportVehicleNo'), $('#txtImportVehicleNoList'), response.map((item) => ({ Desp: item["VehicleNo"] })), 'StartWith');
-//            } else {
-//                $('#txtImportVehicleNoList').empty();
-//            }
-//        },
-//        error: function (xhr, status, error) {
-//            console.error("Error:", error);
-//        }
-//    });
-//}
 function VehicleNoList() {
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/GetVehicleNoList`,
@@ -2069,3 +2054,75 @@ function VehicleNoList() {
         }
     });
 }
+async function Export(Data) {
+    const Picklist = $("#hfPicklistNo").val();
+    const renameMap = {
+        "Item Name": G_ItemConfig[0].ItemNameHeader || 'Item Name',
+        "Item Code": G_ItemConfig[0].ItemCodeHeader || 'Item Code',
+    };
+
+    const originalHeaders = Object.keys(Data[0] || {});
+    const newHeaders = originalHeaders.map(key => renameMap[key] || key);
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Data");
+
+    // Add custom header row
+    const headerRow = sheet.addRow(newHeaders);
+    headerRow.eachCell(cell => {
+        cell.font = { bold: true, color: { argb: "FF000000" } };
+        cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFD9E1F2" }
+        };
+        cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+    });
+
+    // Set AutoFilter for header row
+    sheet.autoFilter = {
+        from: 'A1',
+        to: String.fromCharCode(65 + newHeaders.length - 1) + '1'
+    };
+
+    // Add data rows
+    Data.forEach(rowObj => {
+        const row = originalHeaders.map(key => rowObj[key]); // Keep column order consistent
+        const addedRow = sheet.addRow(row);
+
+        addedRow.eachCell(cell => {
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+
+        const status = rowObj["Scan Status"]; // Use original key name
+        const fillColor = status === 'Y' ? "FF9EF3A5" : "FFF5C0BF";
+
+        addedRow.eachCell(cell => {
+            cell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: fillColor }
+            };
+        });
+    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Unloading_${Picklist}.xlsx`;
+    link.click();
+}
+

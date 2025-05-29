@@ -1,4 +1,4 @@
-﻿
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -6,7 +6,7 @@ let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let Data = [];
 $(document).ready(function () {
-    $("#ERPHeading").text("Item Locator");
+    $("#ERPHeading").text("Product Rack Information");
     $('#txtScanProduct').on('input', function (e) {
             BoxValidationDetail();
     });
@@ -61,10 +61,24 @@ function BoxValidationDetail() {
                     let hiddenColumns = ["Code","Msg","Status"];
                     const ColumnAlignment = {
                     };
-                    const updatedResponse = response.map(item => ({
-                        ...item,
-                        "Item Location": item["Item Location"] == '' ? `<button class="btn btn-primary icon-height mb-1"  title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>` : `${item["Item Location"]} <button class="btn btn-primary icon-height mb-1"  title="Edit location" onclick="EditLocation('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`,
-                      }));
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                        "Item Bar Code": G_ItemConfig[0].ItembarcodeHeader ? G_ItemConfig[0].ItembarcodeHeader : 'Item Bar Code',
+                    };
+                    const updatedResponse = response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+                        renamedItem["Item Location"] = item["Item Location"] == '' ? `<button class="btn btn-primary icon-height mb-1"  title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>` : `${item["Item Location"]} <button class="btn btn-primary icon-height mb-1"  title="Edit location" onclick="EditLocation('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`;
+                      return renamedItem;
+                    });
                     BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                     $("#txtScanProduct").focus();
                 } else {

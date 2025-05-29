@@ -86,7 +86,8 @@ async function Save() {
             GroupItemHeader: $("#txtGroupItem").val(),
             SubGroupItemHeader: $("#txtSubGroupItem").val(),
             LocationItemHeader: $("#txtItemLocation").val(),
-            itemCode: $("#txtItemCode").val()
+            itemCode: $("#txtItemCode").val(),
+            itemCodeHeader: $("#txtItemCodeHeader").val(),
         };
         $.ajax({
             url: `${appBaseURL}/api/Master/SaveConfig`,
@@ -136,6 +137,7 @@ async function Edit() {
                         $("#txtSubGroupItem").val(item.SubGroupItemHeader || "");
                         $("#txtItemLocation").val(item.SubLocationItemHeader || "");
                         $("#txtItemCode").val(item.ItemCode);
+                        $("#txtItemCodeHeader").val(item.ItemCodeHeader);
                     } 
                 });
             } else {

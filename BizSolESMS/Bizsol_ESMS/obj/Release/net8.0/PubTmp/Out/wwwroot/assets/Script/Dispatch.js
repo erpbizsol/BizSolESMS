@@ -1,4 +1,5 @@
-﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
@@ -15,11 +16,10 @@ let All = 0;
 let G_IDFORTRCOLOR = '';
 
 $(document).ready(function () {
-   
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
     GetOrderNoList1();
-    $("#ERPHeading").text("Dispatch Entry");
+    $("#ERPHeading").text("Order Packing");
     $('#txtChallanDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtClientName").focus();
@@ -75,11 +75,8 @@ $(document).ready(function () {
       
     });
 
-    $('#txtScanProduct').on('keydown', function (e) {
-        if (e.key === "Enter") {
+    $('#txtScanProduct').on('input', function (e) {
             SaveScanQty();
-          
-        }
     });
    
     $("#txtOrderNo").on("change", function () {
@@ -227,7 +224,7 @@ function BizSolhandleEnterKey(event) {
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Dispatch");
+    const result = Data.find(item => item.ModuleDesp === "Order Packing");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
@@ -501,15 +498,28 @@ async function StartDispatchPanding(Code, Mode) {
                         "Packing Qty":"right;width:70px;",
                         "Manual Qty":"right;width:70px;",
                     };
-                    const updatedResponse = Response.map(item => ({
-                        ...item,
-                        "Scan Qty": `
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = Response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+                        renamedItem["Scan Qty"]= `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                        "Manual Qty": `
+                            renamedItem["Manual Qty"]=`
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Packing Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
-                    }));
+                            renamedItem["Packing Qty"]= `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
+                        return renamedItem;
+                    });
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
                 } else {
@@ -807,7 +817,7 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
-                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    const StringdoubleFilterColumn = [];
                     let hiddenColumns = [];
                     if (UserType == "A") {
                         hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
@@ -821,15 +831,38 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                         "Packing Qty": "right;width:70px;",
                         "Manual Qty": "right;width:70px;",
                     };
-                    const updatedResponse = Response.map(item => ({
-                        ...item,
-                        "Scan Qty": `
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = Response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+
+                        renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                        "Manual Qty": `
-                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Packing Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
-                    }));
+                            renamedItem["Manual Qty"] = `
+                        <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                            renamedItem["Packing Qty"] = `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
+                        return renamedItem;
+
+                        //const updatedResponse = Response.map(item => ({
+                        //    ...item,
+                        //    "Scan Qty": `
+                        //    <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        //    "Manual Qty": `
+                        //    <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                        //    "Packing Qty": `
+                        //    <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
+                    });
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
                 } else {
@@ -1052,15 +1085,29 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                         "Packing Qty": "right;width:70px;",
                         "Manual Qty": "right;width:70px;",
                     };
-                    const updatedResponse = Response.map(item => ({
-                        ...item,
-                        "Scan Qty": `
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = Response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+
+                        renamedItem["Scan Qty"]=`
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                        "Manual Qty": `
+                            renamedItem["Manual Qty"]= `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyCompleteTransit(this,${item.Code});" onfocusout="checkValidateqtyCompleteTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Packing Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
-                    }));
+                            renamedItem["Packing Qty"]= `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
+                        return renamedItem;
+                    });
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
                 } else {
@@ -1228,15 +1275,29 @@ async function ViewDespatchTransit(Code, Mode) {
                         "Packing Qty": "right;width:70px;",
                         "Manual Qty": "right;width:70px;",
                     };
-                    const updatedResponse = Response.map(item => ({
-                        ...item,
-                        "Scan Qty": `
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = Response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+                        renamedItem["Scan Qty"]= `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                        "Manual Qty": `
+                            renamedItem["Manual Qty"]=`
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" disabled value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        "Packing Qty": `
-                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`,
-                    }));
+                        renamedItem["Packing Qty"]= `
+                        <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
+                        return renamedItem;
+
+                    });
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
                 } else {
@@ -1321,35 +1382,35 @@ function MarkasCompete(code) {
 function disableFields(disable) {
     $("#txtCreatepage").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
-function Report(C_Code) {
-    $.ajax({
-        url: `${AppBaseURLMenu}/Home/OrderMaster`,
-        type: 'POST',
-        contentType: 'application/x-www-form-urlencoded',
-        data: {
-            ReportType: "PDF",
-            newConnectionString: authKeyData,
-            p_Code: C_Code,
-            UserName: G_UserName
-        },
-        xhrFields: {
-            responseType: 'blob'
-        },
-        success: function (data) {
-            let blob = new Blob([data], { type: 'application/pdf' });
-            let url = window.URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = "DispatchReport.pdf"; 
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        },
-        error: function (xhr, status, error) {
-            console.error('Error:', xhr.responseText);
-        }
-    });
-}
+//function Report(C_Code) {
+//    $.ajax({
+//        url: `${AppBaseURLMenu}/Home/OrderMaster`,
+//        type: 'POST',
+//        contentType: 'application/x-www-form-urlencoded',
+//        data: {
+//            ReportType: "PDF",
+//            newConnectionString: authKeyData,
+//            p_Code: C_Code,
+//            UserName: G_UserName
+//        },
+//        xhrFields: {
+//            responseType: 'blob'
+//        },
+//        success: function (data) {
+//            let blob = new Blob([data], { type: 'application/pdf' });
+//            let url = window.URL.createObjectURL(blob);
+//            let a = document.createElement('a');
+//            a.href = url;
+//            a.download = "DispatchReport.pdf"; 
+//            document.body.appendChild(a);
+//            a.click();
+//            document.body.removeChild(a);
+//        },
+//        error: function (xhr, status, error) {
+//            console.error('Error:', xhr.responseText);
+//        }
+//    });
+//}
 function changeValue(delta) {
     const input = document.getElementById('txtBoxNo');
     let value = parseInt(input.value) || 1;
@@ -1395,9 +1456,74 @@ function DispatchReport(Code) {
         }
     });
 }
-function Export(jsonData) {
-    var ws = XLSX.utils.json_to_sheet(jsonData);
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    XLSX.writeFile(wb, "Dispatch_" + jsonData[0]["Order No"] + ".xlsx");
+async function Export(jsonData) {
+    const columnsToRemove = ["Code"];
+    const renameMap = {
+        "Item Name": G_ItemConfig[0].ItemNameHeader || 'Item Name',
+        "Item Code": G_ItemConfig[0].ItemCodeHeader || 'Item Code',
+    };
+
+    if (!Array.isArray(columnsToRemove)) {
+        console.error("columnsToRemove should be an array");
+        return;
+    }
+
+    const filteredAndRenamedData = jsonData.map(row => {
+        const newRow = {};
+        for (const [key, value] of Object.entries(row)) {
+            if (!columnsToRemove.includes(key)) {
+                const newKey = renameMap[key] || key;
+                newRow[newKey] = value;
+            }
+        }
+        return newRow;
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
+    const headers = Object.keys(filteredAndRenamedData[0] || {});
+    const headerRow = worksheet.addRow(headers);
+    headerRow.eachCell(cell => {
+        cell.font = { bold: true };
+    });
+    filteredAndRenamedData.forEach(data => {
+        worksheet.addRow(Object.values(data));
+    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Dispatch_" + jsonData[0]["Order No"] + ".xlsx";
+    link.click();
+}
+function Report(C_Code) {
+    $.ajax({
+        url: `${AppBaseURLMenu}/Home/OrderMaster`,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            ReportType: "PDF",
+            newConnectionString: authKeyData,
+            p_Code: C_Code,
+            UserName: G_UserName
+        }),
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "DispatchReport.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
 }
