@@ -7,12 +7,14 @@ let CaseNo = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
     $("#ERPHeading").text("Box-Unloading");
-    $('#txtBoxNo').on('keydown', function (e) {
-        if (e.key === "Enter") {
+    $('#txtBoxNo').on('input', function (e) {
+        const value = $(this).val();
+        if (value !== "") {
             BoxUnloading();
-            $("#txtBoxNo").focus();
         }
+        $(this).focus();
     });
+
     MRNDetail();
     $('#txtBoxNo').on('focus', function (e) {
         var inputElement = this;
@@ -29,7 +31,7 @@ $(document).ready(function () {
             setTimeout(function () {
                 inputElement.setAttribute('inputmode', '');
             }, 2);
-            ShowBoxNumberList($("#txtMRNDate").val());
+            //ShowBoxNumberList($("#txtMRNDate").val());
         } else {
             var inputElement = this;
             setTimeout(function () {
@@ -95,6 +97,7 @@ function BoxUnloading() {
         },
         error: function (xhr, status, error) {
             showToast("INVALID BOX NO !");
+            $("#txtBoxNo").val("");
             CaseNo = 0;
         }
     });
@@ -333,7 +336,6 @@ function ShowCaseNoData(Code, PickListNo) {
         }
     });
 }
-
 function openSavePopup() {
     var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
     saveModal.show();

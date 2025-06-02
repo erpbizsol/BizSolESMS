@@ -283,6 +283,10 @@
                             <label for="txtBuyerPODate" class="col-form-label-sm fw-bold">Buyer PO Date</label><span class="text-danger">*</span>
                             <input type="text" id="txtBuyerPODate" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200">
                         </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtRemark" class="col-form-label-sm fw-bold">Remark</label>
+                                <input type="text" id="txtRemark" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Please enter remark..">
+                            </div>
                     </div>
                 </div>
             </div>
@@ -298,15 +302,15 @@
                                                 <table id="tblorderbooking" class="table fixed-width-table">
                                                 <thead role="rowgroup" class="text-sm-center">
                                                     <tr role="row">
-                                                            <th class="lead-Date width_cust" role="columnheader" id="thItemBarcode">Item Barcode<span class="text-danger">*</span></th>
-                                                            <th class="lead-Date width_cust" role="columnheader" id="thItemCode">Item Code<span class="text-danger">*</span></th>
-                                                            <th class="lead-text width_cust" role="columnheader" id="thItemName">Item Name<span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader" id="thItemBarcode">Item Barcode<span class="text-danger">*</span></th>
+                                                        <th class="lead-Date width_cust" role="columnheader" id="thItemCode">Item Code<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader" id="thItemName">Item Name<span class="text-danger">*</span></th>
                                                         <th class="lead-text width_cust" role="columnheader">Location</th>
                                                         <th class="lead-text width_cust" role="columnheader">UOM</th>
                                                         <th class="lead-Date width_cust" role="columnheader">Qty Box</th>
                                                         <th class="lead-Date width_cust" role="columnheader">Order Qty<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Rate<span class="text-danger">*</span></th>
-                                                        <th class="lead-text width_cust" role="columnheader">Amount<span class="text-danger">*</span></th>
+                                                        <th class="lead-text width_cust" role="columnheader">Rate</th>
+                                                        <th class="lead-text width_cust" role="columnheader">Amount</th>
                                                         <th class="lead-text width_cust" role="columnheader">Remarks</th>
                                                         <th class="lead-text width_cust" role="columnheader">Delete</th>
                                                     </tr>
@@ -380,13 +384,17 @@
                                 <label for="txtClientName" class="col-form-label-sm fw-bold">Client Name</label><span class="text-danger">*</span>
                                @*  <datalist id="txtClientNameList"></datalist>
                                 <input list="txtClientNameList" id="txtImportClientName" name="txtClientName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Name">
-                                *@<select id="txtImportClientName" class="form-control form-control-sm box_border" onchange="GetEmployeeRateDetails(this)">
+                                *@<select id="txtImportClientName" class="form-control form-control-sm box_border">
                                 </select>
                             </div>
                             
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtExcelFile" class="col-form-label-sm fw-bold">Choose File</label><span class="text-danger">*</span>
                                 <input type="file" id="txtExcelFile" class="box_border form-control form-control-sm" autocomplete="off" accept=".xlsx, .xls, .csv">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtImportRemark" class="col-form-label-sm fw-bold">Remark</label>
+                                <input type="text" id="txtImportRemark" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Please enter remark..">
                             </div>
                         </div>
                     </div>

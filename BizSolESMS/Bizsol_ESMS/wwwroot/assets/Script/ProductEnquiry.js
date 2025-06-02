@@ -78,7 +78,7 @@ async function ShowProductlist() {
             if (response.length > 0) {
                 G_Value = response;
 
-                const StringFilterColumn = ["Item Product Code", "Location"];
+                const StringFilterColumn = ["Part Code", "Location"];
                 const NumericFilterColumn = ["QTY"];
                 const DateFilterColumn = [];
                 const Button = false;
