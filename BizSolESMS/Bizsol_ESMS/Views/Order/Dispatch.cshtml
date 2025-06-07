@@ -8,6 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 <script src="~/assets/script/Dispatch.js"></script>
 <style>
+    
     .tabs {
         width: 100%;
         max-width: 2000px;
@@ -249,6 +250,14 @@
                 <button type="button" class="btn btn-success btn-height" title="Create Despatch" onclick="StartDispatchOrderNo('0')">CREATE NEW</button>
             </div>
         </div>
+        <div class="row" style="margin-left:-6px;margin-top:10px;display:block;" id="dvSearch">
+            <div class="col-md-3  col-sm-6">
+                <label for="txSearch" class="col-form-label-sm fw-bold">
+                    Search
+                </label>
+                <input type="text" id="txtSearch" name="txtSearch" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Search.." maxlength="50">
+            </div>
+        </div>
         <section class="breadcrumbs2 mt-3">
             <div class="container-fluid" style="">
                 <div class="fix-header">
@@ -305,6 +314,7 @@
                         <div class="row">
                             <div class="col-md-3 col-sm-6">
                                 <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
+                                <audio id="BoxNoVoice" style="display: none;"><source src="~/assets/audio/BoxNoVoice.mp3" type="audio/mpeg" /></audio>
                                 <label for="txtOrderNo" class="col-form-label-sm fw-bold">Order No<span class="text-danger">*</span></label>
                                 @* <input type="text" id="txtOrderNo" list="txtOrderNoList" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled>
                                 <datalist id="txtOrderNoList"></datalist> *@
@@ -339,12 +349,17 @@
                                 <input type="checkbox" id="txtIsManual" name="txtIsManual" class="box_border" />
                                 <label for="txtIsManual"><nobr>Show Keyboard</nobr></label>
                             </div>
-                            <div class="col-md-3 col-sm-6">
+                            <div class="col-md-2 col-sm-6">
                                 <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No<span class="text-danger">*</span></label>
                                  <br/><button onclick="changeValue(-1)" style="border: 1px solid #275481;border-radius:4px;">➖</button>
                                 <input type="text" id="txtBoxNo" class="Number" style="border: 1px solid #275481;width:45px;border-radius:4px;text-align:center;" value="1" min="1">
                                 <button onclick="changeValue(1)" style="border: 1px solid #275481;border-radius:4px;">➕</button>
                             </div>
+                            @* <div class="col-md-1 without-label-field" id="dvIsDelete" style="display:none">
+                                <label for="chkIsDelete"></label>
+                                <input type="checkbox" id="chkIsDelete" name="chkIsDelete" class="box_border" />
+                                <label for="chkIsDelete"><nobr>Delete</nobr></label>
+                            </div> *@
                         </div>
                     </div>
                 </div>
@@ -389,6 +404,43 @@
             </div>
         </div>
     </div>
+    <div class="modal position-absolute" id="staticBackdrop" style="padding-top: 101px;" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-header tab-header" style="background-color:#033764">
+                        <level style="color:white">Manual</level>
+                        <button type="button" class="close modal-close btn-sm" aria-label="Close" onclick="CloseManualModal()"><span aria-hidden="true">x</span></button>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <span id="txtManualItemCode" style="display:inline;font-weight:bold"></span>
+                        <span id="txtManualBalanceQuantity" style="display:inline;font-weight:bold"></span>
+                        <div class="col-md-12 col-sm-12">
+                            <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No <span class="text-danger">*</span></label>
+                            <br /><button onclick="ManualChangeValue(-1)" style="border: 1px solid #275481;border-radius:4px;">➖</button>
+                            <input type="text" id="txtManualBoxNo" class="Number" style="border: 1px solid #275481;width:45px;border-radius:4px;text-align:center;" value="1" min="1">
+                            <button onclick="ManualChangeValue(1)" style="border: 1px solid #275481;border-radius:4px;">➕</button>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <label for="txtManualProductQuantity" class="col-form-label-sm fw-bold">Manual Product Quantity <span class="text-danger">*</span></label>
+                            <input type="text" id="txtManualProductQuantity" class="box_border form-control form-control-sm Number" autocomplete="off" maxlength="10" placeholder="Manual Product Quantity..">
+                            <input type="hidden" id="hfManualProductCode" class="box_border form-control form-control-sm" autocomplete="off" placeholder="">
+                            <input type="hidden" id="hfManualProductQuantity" class="box_border form-control form-control-sm" autocomplete="off" placeholder="">
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <label for="txtManualProductMRP" class="col-form-label-sm fw-bold">Manual Product MRP <span class="text-danger">*</span></label>
+                            <input type="text" id="txtManualProductMRP" class="box_border form-control form-control-sm Amount" autocomplete="off" maxlength="10" placeholder="Manual Product MRP..">
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-primary btn-height" onclick="SaveManual()">Save</button>
+                        <button type="button" class="btn btn-danger btn-height" onclick="CloseManualModal()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="overlay" class="overlay"></div>
     <div id="toast" class="toast-container"></div>
 </div>
