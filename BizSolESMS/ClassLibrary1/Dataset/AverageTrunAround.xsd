@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="AverageTrunAround" targetNamespace="http://tempuri.org/AverageTrunAround.xsd" xmlns:mstns="http://tempuri.org/AverageTrunAround.xsd" xmlns="http://tempuri.org/AverageTrunAround.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="AverageTrunAround" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="AverageTrunAround" msprop:Generator_DataSetName="AverageTrunAround">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="AverageTrunAround" msprop:Generator_RowEvHandlerName="AverageTrunAroundRowChangeEventHandler" msprop:Generator_RowDeletedName="AverageTrunAroundRowDeleted" msprop:Generator_RowDeletingName="AverageTrunAroundRowDeleting" msprop:Generator_RowEvArgName="AverageTrunAroundRowChangeEvent" msprop:Generator_TablePropName="_AverageTrunAround" msprop:Generator_RowChangedName="AverageTrunAroundRowChanged" msprop:Generator_RowChangingName="AverageTrunAroundRowChanging" msprop:Generator_TableClassName="AverageTrunAroundDataTable" msprop:Generator_RowClassName="AverageTrunAroundRow" msprop:Generator_TableVarName="tableAverageTrunAround" msprop:Generator_UserTableName="AverageTrunAround">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="AvgOrdTime" msprop:Generator_ColumnPropNameInRow="AvgOrdTime" msprop:Generator_ColumnPropNameInTable="AvgOrdTimeColumn" msprop:Generator_ColumnVarNameInTable="columnAvgOrdTime" msprop:Generator_UserColumnName="AvgOrdTime" type="xs:string" minOccurs="0" />
+              <xs:element name="DistinctPrdCount" msprop:Generator_ColumnPropNameInRow="DistinctPrdCount" msprop:Generator_ColumnPropNameInTable="DistinctPrdCountColumn" msprop:Generator_ColumnVarNameInTable="columnDistinctPrdCount" msprop:Generator_UserColumnName="DistinctPrdCount" type="xs:string" minOccurs="0" />
+              <xs:element name="TotalQty" msprop:Generator_ColumnPropNameInRow="TotalQty" msprop:Generator_ColumnPropNameInTable="TotalQtyColumn" msprop:Generator_ColumnVarNameInTable="columnTotalQty" msprop:Generator_UserColumnName="TotalQty" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

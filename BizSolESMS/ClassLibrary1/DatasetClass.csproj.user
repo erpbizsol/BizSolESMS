@@ -2,13 +2,28 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <None Update="Dataset\DataSet1.xsd">
+    <None Update="Dataset\AverageTrunAround.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Update="Dataset\ItemMaster.xsd">
+    <None Update="Dataset\DailyOrderReport.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Update="Dataset\OrderDataset.xsd">
+    <None Update="Dataset\DeadStock.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Dataset\LossOrderReport.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Dataset\MonthWiseSale.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Dataset\PsrDetailData.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Dataset\PsrTabledata.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Dataset\TopCustomers.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

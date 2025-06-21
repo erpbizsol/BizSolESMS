@@ -1,8 +1,7 @@
-﻿
-using Devart.Data.MySql;
-using Microsoft.Reporting.NETCore;
+﻿using Microsoft.Reporting.NETCore;
 using Microsoft.ReportingServices.Interfaces;
 using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
+using MySqlConnector;
 using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
@@ -70,10 +69,45 @@ namespace Bizsol_ESMS.Models
             }
         }
 
+        //public static void OrderReport(LocalReport Report, ReportRequest request)
+        //{
+        //    DataTable dt = new DataTable();
+        //    string query = "CALL bizsolesms_test.USP_Order1()";
+
+        //    try
+        //    {
+        //        using (var conn = new MySqlConnection(request.newConnectionString))
+        //        {
+        //            using (var command = new MySqlCommand(query, conn))
+        //            {
+        //                // command.Parameters.AddWithValue("@p_Code", request.p_Code);
+        //                //command.Parameters.AddWithValue("@p1_Code", request.p1_Code);
+        //                conn.Open();
+
+        //                using (MySqlDataReader reader = command.ExecuteReader())
+        //                {
+        //                    dt.Load(reader);
+        //                }
+        //            }
+        //        }
+
+        //        Report.DataSources.Clear();
+        //        Report.DataSources.Add(new ReportDataSource("OrderDataset", dt));
+        //        string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "Order.rdlc");
+        //        using (var fs = new FileStream(reportPath, FileMode.Open, FileAccess.Read))
+        //        {
+        //            Report.LoadReportDefinition(fs);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Error generating report: " + ex.Message, ex);
+        //    }
+        //}
         public static void OrderReport(LocalReport Report, ReportRequest request)
         {
             DataTable dt = new DataTable();
-            string query = "CALL bizsolesms_test.USP_Order1()";
+            string query = "CALL bizsolesms_test.USP_CDispatch(@p_Code)"; // Update the procedure and use a parameter
 
             try
             {
@@ -81,8 +115,9 @@ namespace Bizsol_ESMS.Models
                 {
                     using (var command = new MySqlCommand(query, conn))
                     {
-                        // command.Parameters.AddWithValue("@p_Code", request.p_Code);
-                        //command.Parameters.AddWithValue("@p1_Code", request.p1_Code);
+                        // Add the required parameter
+                        command.Parameters.AddWithValue("@p_Code", request.p_Code); // Make sure request.p_Code has value
+
                         conn.Open();
 
                         using (MySqlDataReader reader = command.ExecuteReader())

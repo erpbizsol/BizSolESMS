@@ -440,6 +440,38 @@
             </div>
         </div>
     </div>
+    <div class="modal position-absolute" id="DownloadModal" style="padding-top: 101px;" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-header tab-header" style="background-color:#033764">
+                        <level style="color:white">Download</level>
+                        <button type="button" class="close modal-close btn-sm" aria-label="Close" onclick="CloseDownloadModal()"><span aria-hidden="true">x</span></button>
+                        <input type="hidden" id="hfDownloadCode" value="0"/>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <div class="col-sm-6 text-center">
+                            <div style="width:120px; height:120px; margin: 0 auto;">
+                                <img src="~/assets/images/microsoft_office_excel.png" style="width:100%; height:100%;" />
+                            </div>
+                            <button type="button" class="btn btn-success form-control mt-2" onclick="DispatchReport()">Download Excel</button>
+                        </div>
+
+                        <div class="col-sm-6 text-center">
+                            <div style="width:120px; height:120px; margin: 0 auto;">
+                                <img src="~/assets/images/pdf icon.jpg" style="width:100%; height:100%;" />
+                            </div>
+                            <button type="button" class="btn btn-danger form-control mt-2" onclick="DownloadReportPdf()">Download Pdf</button>
+                        </div>
+                    </div>
+
+                    @* <div class="text-right">
+                        <button type="button" class="btn btn-danger btn-height" onclick="CloseDownloadModal()">Close</button>
+                    </div> *@
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="overlay" class="overlay"></div>
     <div id="toast" class="toast-container"></div>

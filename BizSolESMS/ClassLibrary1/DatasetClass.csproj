@@ -7,18 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Reports\UomReport.rdlc" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Reports\UomReport.rdlc">
-      <CopyToOutputDirectory>
-   presreveNewest
-      </CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
   </ItemGroup>
 
@@ -27,36 +15,80 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Dataset\DataSet1.Designer.cs">
-      <DependentUpon>DataSet1.xsd</DependentUpon>
+    <Compile Update="Dataset\AverageTrunAround.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+      <DependentUpon>AverageTrunAround.xsd</DependentUpon>
     </Compile>
-    <Compile Update="Dataset\ItemMaster.Designer.cs">
-      <DependentUpon>ItemMaster.xsd</DependentUpon>
+    <Compile Update="Dataset\DailyOrderReport.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+      <DependentUpon>DailyOrderReport.xsd</DependentUpon>
     </Compile>
-    <Compile Update="Dataset\OrderDataset.Designer.cs">
+    <Compile Update="Dataset\DeadStock.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>OrderDataset.xsd</DependentUpon>
+      <DependentUpon>DeadStock.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\LossOrderReport.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LossOrderReport.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\MonthWiseSale.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MonthWiseSale.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\PsrDetailData.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PsrDetailData.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\PsrTabledata.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PsrTabledata.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="Dataset\TopCustomers.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TopCustomers.xsd</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Dataset\DataSet1.xsd">
-      <LastGenOutput>DataSet1.Designer.cs</LastGenOutput>
+    <None Update="Dataset\AverageTrunAround.xsd">
       <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AverageTrunAround.Designer.cs</LastGenOutput>
     </None>
-    <None Update="Dataset\ItemMaster.xsd">
-      <LastGenOutput>ItemMaster.Designer.cs</LastGenOutput>
+    <None Update="Dataset\DailyOrderReport.xsd">
       <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DailyOrderReport.Designer.cs</LastGenOutput>
     </None>
-    <None Update="Dataset\OrderDataset.xsd">
+    <None Update="Dataset\DeadStock.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>OrderDataset.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
+      <LastGenOutput>DeadStock.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\LossOrderReport.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>LossOrderReport.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\MonthWiseSale.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>MonthWiseSale.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\PsrDetailData.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PsrDetailData.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\PsrTabledata.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PsrTabledata.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\TopCustomers.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>TopCustomers.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

@@ -7,6 +7,7 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let JsonData = [];
 let AccountList = [];
 let ItemDetail = [];
+let G_OrderData = [];
 $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("Order Entry");
@@ -81,16 +82,33 @@ $(document).ready(function () {
         JsonData = [];
     });
     $("#txtSearch").on("input", function () {
-       var Value = $(this).val().toLowerCase().trim();
-        $("#table tbody tr").each(function () {
-            var matched = false;
-            $(this).find("td").each(function () {
-                if ($(this).text().toLowerCase().includes(Value)) {
-                    matched = true;
-                }
-            });
-            $(this).toggle(matched);
-        });
+        const searchValue = $(this).val().toLowerCase().trim();
+        filteredData = G_OrderData.filter(item =>
+            Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+        );
+        const StringFilterColumn = ["Client Name"];
+        const NumericFilterColumn = [];
+        const DateFilterColumn = ["Order Date", "Buyer PO Date"];
+        const Button = false;
+        const showButtons = [];
+        const StringdoubleFilterColumn = [];
+        const hiddenColumns = ["Code"];
+        const ColumnAlignment = {
+            "Reorder Level": 'right',
+            "Reorder Qty": 'right',
+            "Qty In Box": 'right',
+        };
+        const updatedResponse = filteredData.map(item => ({
+            ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Order Date`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
+        }));
+        if (filteredData.length === 0) {
+            $("#table-body").html("<tr><td colspan='10' style='text-align:center;'>No matching records found</td></tr>");
+            return;
+        }
+        BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
     });
     $("#thItemBarcode").text(G_ItemConfig[0].ItembarcodeHeader ? G_ItemConfig[0].ItembarcodeHeader : 'Item Barcode');
     $("#thItemCode").text(G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code');
@@ -107,6 +125,7 @@ function ShowOrderMasterlist(Type) {
         },
         success: function (response) {
             if (response.length > 0) {
+                G_OrderData = response;
                 unblockUI();
                 $("#txtordertable").show();
                 const StringFilterColumn = ["Client Name"];
@@ -162,7 +181,9 @@ async function Create() {
     $("#txtClientName").prop("disabled", false);
     $("#txtBuyerPONo").prop("disabled", false);
     $("#txtBuyerPODate").prop("disabled", false);
+    $("#txtRemark").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
+    $("#txtsave").show();
 }
 function BackMaster() {
     $("#txtListpage").show();
@@ -174,8 +195,11 @@ function BackMaster() {
     $("#txtClientName").prop("disabled", false);
     $("#txtBuyerPONo").prop("disabled", false);
     $("#txtBuyerPODate").prop("disabled", false);
+    $("#txtRemark").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     $("#txtSearch").val("");
+    ShowOrderMasterlist('Load');
+    $("#txtsave").show();
 }
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -205,6 +229,7 @@ async function Edit(code) {
                     $("#txtAddress").val(OrderMaster.Address || "");
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
+                    $("#txtRemark").val(OrderMaster.Remark || "");
                     disableFields(false);
                     $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
@@ -354,6 +379,7 @@ function ClearData() {
     $("#txtOrderNo").val("");
     $("#txtAddress").val("");
     $("#txtBuyerPONo").val("");
+    $("#txtRemark").val("");
     $("#Orderdata").empty();
     SelectOptionByText('txtClientName','Select');
 }
@@ -363,6 +389,7 @@ function Save() {
     var ClientName = $("#txtClientName").val();
     var BuyerPONo = $("#txtBuyerPONo").val();
     var BuyerPODate = $("#txtBuyerPODate").val();
+    var Remark = $("#txtRemark").val();
 
     if (!OrderDate) {
         toastr.error("Please Select an Order Date!");
@@ -417,11 +444,6 @@ function Save() {
                 row.find(".txtOrderQty").focus();
                 validationFailed = true;
                 return;
-            } else if (row.find(".txtRate").val() == '') {
-                toastr.error("Please enter Rate !");
-                row.find(".txtRate").focus();
-                validationFailed = true;
-                return;
             }
         }
     });
@@ -434,7 +456,8 @@ function Save() {
         OrderDate: convertDateFormat($("#txtOrderDate").val()),
         ClientName: $("#txtClientName").val(),
         BuyerPONo: $("#txtBuyerPONo").val(),
-        BuyerPODate: convertDateFormat($("#txtBuyerPODate").val())
+        BuyerPODate: convertDateFormat($("#txtBuyerPODate").val()),
+        Remark: Remark
     }];
     const addressData = [];
     $("#tblorderbooking tbody tr").each(function () {
@@ -444,8 +467,8 @@ function Save() {
                 ItemCode: row.find(".txtItemCode").val(),
                 QtyBox: row.find(".txtQtyBox").val() || 0,
                 OrderQty: row.find(".txtOrderQty").val(),
-                Rate: row.find(".txtRate").val(),
-                Amount: row.find(".txtAmount").val(),
+                Rate: row.find(".txtRate").val()||0,
+                Amount: row.find(".txtAmount").val()||0,
                 Remarks: row.find(".txtRemarks").val(),
             };
             addressData.push(addressRow);
@@ -456,7 +479,7 @@ function Save() {
         OrderMaster: accountPayload,
         OrderDetial: addressData,
     };
-
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/InsertOrderMaster?UserMaster_Code=${UserMaster_Code}`,
         type: "POST",
@@ -468,16 +491,19 @@ function Save() {
         },
         success: function (response) {
             if (response.Status === "Y") {
+                unblockUI();
                 setTimeout(() => {
                     toastr.success(response.Msg);
                     ShowOrderMasterlist('Get');
                     BackMaster();
                 }, 1000);
             } else {
+                unblockUI();
                 toastr.error(response.Msg);
             }
         },
         error: function (xhr, status, error) {
+            unblockUI();
             console.error("Error:", xhr.responseText);
             toastr.error("An error occurred while saving the data.");
         },
@@ -495,8 +521,8 @@ function addNewRowEdit(index, address) {
             <td><input type="text" class="txtUOM box_border form-control form-control-sm" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueBillQtyBox(this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled/></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled/></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
               <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
     `;
@@ -576,8 +602,8 @@ function addNewRow() {
             <td><input type="text" class="txtUOM box_border form-control form-control-sm" id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueBillQtyBox(this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled/></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled/></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
       `;
@@ -593,8 +619,8 @@ function addNewRow() {
             <td><input type="text" class="txtUOM box_border form-control form-control-sm " id="txtUOM_${rowCount}"  autocomplete="off" disabled/></td>
             <td><input type="text" class="txtQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"oninput="SetvalueBillQtyBox(this);" id="txtQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" class="txtOrderQty box_border form-control form-control-sm text-right mandatory" onkeypress="return OnKeyDownPressFloatTextBox(event, this);"  oninput="CalculateAmount(this);" id="txtOrderQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
-            <td><input type="text" class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled/></td>
+            <td><input type="text" class="txtRate box_border form-control form-control-sm  text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);"  id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
+            <td><input type="text" class="txtAmount box_border form-control form-control-sm  text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" disabled/></td>
             <td><input type="text" class="txtRemarks box_border form-control form-control-sm" id="txtRemarks_${rowCount}" autocomplete="off" maxlength="200" /></td>
             <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
       `;
@@ -937,6 +963,7 @@ async function View(code) {
         toastr.error(msg);
         return;
     }
+    $("#txtsave").hide();
     $("#tab1").text("VIEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -959,6 +986,8 @@ async function View(code) {
                     $("#txtAddress").val(OrderMaster.Address || ""),
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "").prop("disabled", true);
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "").prop("disabled", true);
+                    $("#txtRemark").val(OrderMaster.Remark || "").prop("disabled", true);
+                    
                     const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
                     if (!item) {
                         var newData = { Code: 0, AccountName: OrderMaster.AccountName, Address: OrderMaster.Address }
@@ -996,6 +1025,7 @@ function ClearDataImport() {
     $("#txtExcelFile").val("");
     $("#txtImportOrderNo").val("");
     $("#Orderdata").empty();
+    $("#txtImportRemark").val("");
     GetCurrentDate();
     GetAccountMasterList();
 }
@@ -1017,6 +1047,7 @@ function GetImportFile() {
     const ClientType = $("#txtClientType").val();
     const ClientName = $("#txtImportClientName").val();
     const OrderNo = $("#txtImportOrderNo").val();
+    const Remark = $("#txtImportRemark").val();
     if (ClientType == '') {
         toastr.error("Please select client type !");
         $("#txtClientType").focus();
@@ -1039,6 +1070,7 @@ function GetImportFile() {
         ClientType: ClientType,
         ClientName: ClientName,
         OrderNo: OrderNo,
+        Remark: Remark,
         UserMaster_Code: UserMaster_Code
     };
     blockUI();
@@ -1071,6 +1103,8 @@ function GetImportFile() {
 function SaveImportFile() {
     const ClientType = $("#txtClientType").val();
     const ClientName = $("#txtImportClientName").val();
+    const OrderNo = $("#txtImportOrderNo").val();
+    const Remark = $("#txtImportRemark").val();
     if (ClientType == '') {
         toastr.error("Please select client type !");
         $("#txtClientType").focus();
@@ -1088,6 +1122,8 @@ function SaveImportFile() {
         JsonData: JsonData,
         ClientType: ClientType,
         ClientName: ClientName,
+        OrderNo: OrderNo,
+        Remark: Remark,
         UserMaster_Code: UserMaster_Code
     };
     blockUI();
@@ -1134,6 +1170,7 @@ function BackImport() {
     $("#txtheaderdiv2").hide();
     $("#txtSearch").val("");
     ClearDataImport();
+    ShowOrderMasterlist('Load');
 }
 function convertDateFormat1(dateString) {
     const [day, month, year] = dateString.split('/');

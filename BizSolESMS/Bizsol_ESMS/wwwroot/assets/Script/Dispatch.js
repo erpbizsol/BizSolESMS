@@ -15,7 +15,9 @@ let G_Tab = 1;
 let All = 0;
 let G_IDFORTRCOLOR = '';
 let G_UPDATEBOX = 'N';
-
+let originalDispatchData = [];
+let originalTransitData = [];
+let originalCompletedData = [];
 $(document).ready(function () {
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
@@ -123,16 +125,87 @@ $(document).ready(function () {
         $(this).attr('inputmode', '');
     });
     $("#txtSearch").on("input", function () {
-        G_Value = $(this).val().toLowerCase().trim();
-        $("#table-body tr").each(function () {
-            var matched = false;
-            $(this).find("td").each(function () {
-                if ($(this).text().toLowerCase().includes(G_Value)) {
-                    matched = true;
-                }
-            });
-            $(this).toggle(matched);
-        });
+        const searchValue = $(this).val().toLowerCase().trim();
+        let filteredData = [];
+        let updatedResponse = [];
+        let StringFilterColumn = [];
+        let NumericFilterColumn = [];
+        let DateFilterColumn = [];
+        const Button = false;
+        const showButtons = [];
+        const StringdoubleFilterColumn = [];
+        let hiddenColumns = [];
+        let ColumnAlignment = {};
+        if (G_Tab === 1) {
+            filteredData = originalDispatchData.filter(item =>
+                Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+            );
+            StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+            NumericFilterColumn = ["TOQ", "TBQ"];
+            DateFilterColumn = [];
+            hiddenColumns = (UserType === "A") ? ["Code"] : ["Code", "Order Date"];
+            ColumnAlignment = {
+                "TOQ": 'right',
+                "TBQ": 'right'
+            };
+
+            updatedResponse = filteredData.map(item => ({
+                ...item
+                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Create Dispatch" onclick="StartDispatchPanding('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`
+            }));
+
+        } else if (G_Tab === 2) {
+            filteredData = originalTransitData.filter(item =>
+                Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+            );
+            StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+            NumericFilterColumn = ["Order Qty", "TDQty"];
+            DateFilterColumn = ["Despatch Date"];
+            hiddenColumns = (UserType === "A") ? ["Code", "D_Code"] : ["Code", "D_Code", "Dispatch Date"];
+            ColumnAlignment = {
+                "TDQ": 'right'
+            };
+
+            updatedResponse = filteredData.map(item => ({   
+                ...item
+                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
+                        <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
+                    `
+            }));
+
+        } else if (G_Tab === 3) {
+            filteredData = originalCompletedData.filter(item =>
+                Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+            );
+
+            StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+            NumericFilterColumn = ["Order Qty", "TDQ"];
+            DateFilterColumn = [];
+            hiddenColumns = (UserType === "A") ? ["Code", "D_Code"] : ["Code", "D_Code", "Dispatch Date"];
+            ColumnAlignment = {
+                "TDQ": 'right'
+            };
+
+            updatedResponse = filteredData.map(item => ({
+                ...item
+                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
+                    `
+            }));
+
+        }
+        if (filteredData.length === 0) {
+            $("#table-body").html("<tr><td colspan='10' style='text-align:center;'>No matching records found</td></tr>");
+            return;
+        }
+        BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment
+        );
     });
     $('#txtManualProductQuantity').on('keydown', function (e) {
         if (e.key === "Enter") {
@@ -420,6 +493,7 @@ function showToast(Msg) {
     }, 3000);
 }
 function GetDispatchOrderLists(Mode) {
+    $("#txtSearch").val("");
     G_Tab = 1;
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
@@ -429,6 +503,7 @@ function GetDispatchOrderLists(Mode) {
         },
         success: function (response) {
             if (response.length > 0) {
+                originalDispatchData = response;
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
                 const NumericFilterColumn = ["TOQ", "TBQ"];
@@ -454,10 +529,12 @@ function GetDispatchOrderLists(Mode) {
             } else {
                 $("#DataTable").hide();
                 toastr.error("Record not found...!");
+                originalDispatchData = [];
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+            originalDispatchData = [];
         }
     });
 
@@ -495,6 +572,7 @@ async function StartDispatchPanding(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtPackedBy").val(G_UserName);
+                    $("#txtBoxNo").val(OrderMaster.BoxNo);
                     
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -830,6 +908,7 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    $("#txtBoxNo").val(OrderMaster.BoxNo);
                     $("#txtScanProduct").prop("disabled", false);
                     disableFields(false);
                 }
@@ -963,6 +1042,7 @@ function checkValidateqtyTransit1(element, Code) {
     }
 }
 function GetDespatchTransitOrderList(Mode) {
+    $("#txtSearch").val("");
     G_Tab = 2;
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
@@ -972,6 +1052,7 @@ function GetDespatchTransitOrderList(Mode) {
         },
         success: function (response) {
             if (response.length > 0) {
+                originalTransitData = response;
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
                 const NumericFilterColumn = ["Order Qty", "TDQty"];
@@ -999,6 +1080,7 @@ function GetDespatchTransitOrderList(Mode) {
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
+                originalTransitData = [];
                 $("#DataTable").hide();
                 toastr.error("Record not found...!");
             }
@@ -1010,6 +1092,7 @@ function GetDespatchTransitOrderList(Mode) {
 
 }
 function GetCompletedDespatchOrderList(Mode) {
+    $("#txtSearch").val("");
     G_Tab = 3;
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
@@ -1019,6 +1102,7 @@ function GetCompletedDespatchOrderList(Mode) {
         },
         success: function (response) {
             if (response.length > 0) {
+                originalCompletedData = response;
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
                 const NumericFilterColumn = ["Order Qty", "TDQ"];
@@ -1041,12 +1125,13 @@ function GetCompletedDespatchOrderList(Mode) {
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="Report('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
                         <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
+                originalCompletedData = [];
                 $("#DataTable").hide();
                 toastr.error("Record not found...!");
             }
@@ -1089,6 +1174,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtScanProduct").prop("disabled", false);
+                    $("#txtBoxNo").val(OrderMaster.BoxNo);
                     disableFields(false);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -1282,6 +1368,7 @@ async function ViewDespatchTransit(Code, Mode) {
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    $("#txtBoxNo").val(OrderMaster.BoxNo);
                     $("#txtScanProduct").prop("disabled", true);
                     disableFields(true);
                 }
@@ -1390,7 +1477,12 @@ async function DeleteItem(code, Order, button) {
         $('tr').removeClass('highlight');
     }
 }
-function MarkasCompete(code) {
+async function MarkasCompete(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Complete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetMarkasCompeteByOrderNo?Code=${code}`,
         type: 'POST',
@@ -1415,35 +1507,6 @@ function MarkasCompete(code) {
 function disableFields(disable) {
     $("#txtCreatepage").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
-//function Report(C_Code) {
-//    $.ajax({
-//        url: `${AppBaseURLMenu}/Home/OrderMaster`,
-//        type: 'POST',
-//        contentType: 'application/x-www-form-urlencoded',
-//        data: {
-//            ReportType: "PDF",
-//            newConnectionString: authKeyData,
-//            p_Code: C_Code,
-//            UserName: G_UserName
-//        },
-//        xhrFields: {
-//            responseType: 'blob'
-//        },
-//        success: function (data) {
-//            let blob = new Blob([data], { type: 'application/pdf' });
-//            let url = window.URL.createObjectURL(blob);
-//            let a = document.createElement('a');
-//            a.href = url;
-//            a.download = "DispatchReport.pdf"; 
-//            document.body.appendChild(a);
-//            a.click();
-//            document.body.removeChild(a);
-//        },
-//        error: function (xhr, status, error) {
-//            console.error('Error:', xhr.responseText);
-//        }
-//    });
-//}
 function changeValue(delta) {
     $("#BoxNoVoice")[0].play();
     const input = document.getElementById('txtBoxNo');
@@ -1480,7 +1543,8 @@ function ChangecolorTr() {
 }
 
 setInterval(ChangecolorTr, 100);
-function DispatchReport(Code) {
+function DispatchReport() {
+    var Code = $("#hfDownloadCode").val();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetDispatchReport?Code=${Code}`,
         type: 'GET',
@@ -1496,29 +1560,6 @@ function DispatchReport(Code) {
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-        }
-    });
-}
-function Report() {
-    $.ajax({
-        url: `${AppBaseURLMenu}/RDLC/OrderReport?Date='2025-05-15'`, 
-        type: 'GET',
-        xhrFields: {
-        responseType: 'blob'
-    },
-        success: function (data, status, xhr) {
-            let blob = new Blob([data], { type: 'application/pdf' });
-            let url = window.URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = "EmployeeReport.pdf";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        },
-        error: function (xhr, status, error) {
-            console.error('Error downloading report:', xhr.responseText);
         }
     });
 }
@@ -1930,4 +1971,88 @@ function CloseManualModal() {
     if (modal) {
         modal.hide();
     }
+}
+function GetDispatchReport() {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetTATReportList?Month=${Month}&Year=${Year}&Type=GET`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $("#txtTATTable").show();
+                const StringFilterColumn = ["INVOICE NO", "RETAILER CODE", "PARTY NAME", "SALES ORDER NO", "INVOICE VALUE", "ORDER TYPE", "PD NAME"];
+                const NumericFilterColumn = [];
+                const DateFilterColumn = ["INVOICE DATE", "ORDER DATE"];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = ["Code"];
+                const ColumnAlignment = {
+                    "Reorder Level": 'right',
+                    "Reorder Qty": 'right',
+                    "REMARK": 'left;width:100px;',
+                };
+                const updatedResponse = response.map(item => {
+                    const isDisabled = item["DISPATCH DATE"] === '' ? 'disabled' : '';
+
+                    return {
+                        ...item,
+                        POD: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.POD}" id="txtPODDate_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                        REDISPATCH: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REDISPATCH}" id="txtRedispatch_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                        "VEHICLE NO": `<input type="text" maxlength="10" class="box_border form-control form-control-sm" ${isDisabled} value="${item["VEHICLE NO"]}" id="txtVehicleNo_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`,
+                        REMARK: `<input type="text" maxlength="100" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REMARK}" id="txtRemark_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`
+                    };
+                });
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+            } else {
+                $("#txtTATTable").hide();
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+
+function Report(Code) {
+    $("#hfDownloadCode").val(Code);
+        var saveModal = new bootstrap.Modal(document.getElementById("DownloadModal"));
+        saveModal.show();
+}
+function CloseDownloadModal() {
+    var modal = bootstrap.Modal.getInstance(document.getElementById('DownloadModal'));
+    if (modal) {
+        modal.hide();
+    }
+}
+function DownloadReportPdf() {
+    var Code = $("#hfDownloadCode").val();
+    $.ajax({
+        url: `${AppBaseURLMenu}/RDLC/PSRReport?Code=${Code}&AuthKey=${authKeyData}`,
+        type: 'GET',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data, status, xhr) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "Report.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error downloading report:', xhr.responseText);
+        }
+    });
 }

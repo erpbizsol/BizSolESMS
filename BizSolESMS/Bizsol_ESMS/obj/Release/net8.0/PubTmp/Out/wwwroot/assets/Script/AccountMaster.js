@@ -493,21 +493,31 @@ function Save() {
         toastr.error("Please enter  Account Code!");
         $("#txtAccounCode").focus();
         return;
-    }
-    else if (!AccountName) {
+    }else if (!AccountName) {
         toastr.error("Please enter an Account Name!");
         $("#txtAccountName").focus();
         return;
-    } else if (!DisplayName) {
-        toastr.error("Please enter a Display Name!");
-        $("#txtDisplayName").focus();
-        return;
-    } else if (!isValidPAN($("#txtPANNo").val())) {
+    }else if (!isValidPAN($("#txtPANNo").val()) && $("#txtPANNo").val() !== '') {
         toastr.error("Please enter valid PAN No!");
         $("#txtPANNo").focus();
         return;
-    }
-    else if (getCheckedCount('chkIsDefault') == 0) {
+    } else if ($("#tdsAddressLine1").val() == '') {
+        toastr.error("Please enter Address Line1!");
+        $("#tdsAddressLine1").focus();
+        return;
+    } else if ($("#tdsCitysList").val() == '') {
+        toastr.error("Please select city !");
+        $("#tdsCitysList").focus();
+        return;
+    } else if ($("#tdsGSTIN").val() == '') {
+        toastr.error("Please enter GSTIN !");
+        $("#tdsGSTIN").focus();
+        return;
+    } else if ($("#tdsMobile").val() == '') {
+        toastr.error("Please enter Mobile No !");
+        $("#tdsMobile").focus();
+        return;
+    } else if (getCheckedCount('chkIsDefault') == 0) {
         toastr.error("At least one default field is correctly checked!");
         return;
     }
@@ -527,12 +537,13 @@ function Save() {
     let validationFailed = false;
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
-        if (row.find(".txtAddressCode").val() == '') {
-            toastr.error("Please enter Address Code !");
-            row.find(".txtAddressCode").focus();
-            validationFailed = true;
-            return;
-        } else if (row.find(".txtAddressLine1").val() == '') {
+        //if (row.find(".txtAddressCode").val() == '') {
+        //    toastr.error("Please enter Address Code !");
+        //    row.find(".txtAddressCode").focus();
+        //    validationFailed = true;
+        //    return;
+        //} else
+         if (row.find(".txtAddressLine1").val() == '') {
             toastr.error("Please enter Address Line1 !");
             row.find(".txtAddressLine1").focus();
             validationFailed = true;
@@ -563,7 +574,13 @@ function Save() {
             row.find(".txtPIN").focus();
             validationFailed = true;
             return;
-        }
+         }
+         else if (row.find(".txtGSTIN").val() == '') {
+             toastr.error("Please enter GSTIN !");
+             row.find(".txtGSTIN").focus();
+             validationFailed = true;
+             return;
+         }
         else if (row.find(".txtMobile").val() == '') {
             toastr.error("Please enter Mobile No!");
             row.find(".txtMobile").focus();
@@ -574,12 +591,13 @@ function Save() {
             row.find(".txtMobile").focus();
             validationFailed = true;
             return;
-        } else if (row.find(".txtEmail").val()=='') {
-            toastr.error("Please enter Email !");
-            row.find(".txtEmail").focus();
-            validationFailed = true;
-            return;
-        } else if (!isEmail(row.find(".txtEmail").val())) {
+         }
+        //    else if (row.find(".txtEmail").val() == '') {
+        //    toastr.error("Please enter Email !");
+        //    row.find(".txtEmail").focus();
+        //    validationFailed = true;
+        //    return;
+            else if (!isEmail(row.find(".txtEmail").val()) && row.find(".txtEmail").val() !== '') {
             toastr.error("Please enter valid Email !");
             row.find(".txtEmail").focus();
             validationFailed = true;
@@ -658,7 +676,7 @@ function addNewRowEdit(index, address) {
     const table = document.getElementById("Orderdata");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-        <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCodeby_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+        <td><input type="text" class="txtAddressCode box_border form-control form-control-sm" id="txtAddressCodeby_${rowCount}" autocomplete="off" required maxlength="20" /></td>
         <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1by_${rowCount}" autocomplete="off"  maxlength="225"/></td>
         <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2by_${rowCount}" autocomplete="off" maxlength="225" /></td>
         <td><input type="text" list="txtCityList" onchange="FillallItemfield(this);" class="txtCity box_border form-control form-control-sm mandatory" id="txtCityby_${rowCount}" autocomplete="off" /></td>
@@ -669,7 +687,7 @@ function addNewRowEdit(index, address) {
         <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPersonby_${rowCount}" autocomplete="off" maxlength="50" /></td>
         <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhoneby_${rowCount}" autocomplete="off"  maxlength="15"/></td>
         <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}" autocomplete="off" maxlength="10" /></td>
-        <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off"maxlength="100" /></td>
+        <td><input type="text" class="txtEmail box_border form-control form-control-sm" id="txtEmailby_${rowCount}" autocomplete="off"maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}" autocomplete="off" /></td>
         <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
     `;
@@ -781,7 +799,7 @@ function addNewRow() {
             rowCount = rows.length;
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
-        <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCodeby_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+        <td><input type="text" class="txtAddressCode box_border form-control form-control-sm" id="txtAddressCodeby_${rowCount}" autocomplete="off" required maxlength="20" /></td>
         <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1by_${rowCount}" autocomplete="off" maxlength="200" /></td>
         <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2by_${rowCount}" autocomplete="off" maxlength="200"/></td>
         <td><input type="text" list="txtCityList" onchange="FillallItemfield(this);" class="txtCity box_border form-control form-control-sm mandatory" id="txtCityby_${rowCount}" autocomplete="off"  /></td>
@@ -792,7 +810,7 @@ function addNewRow() {
         <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPersonby_${rowCount}" autocomplete="off" maxlength="200" /></td>
         <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhoneby_${rowCount}" autocomplete="off"maxlength="15" /></td>
         <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}"autocomplete="off" maxlength="10" /></td>
-        <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off" maxlength="100" /></td>
+        <td><input type="text" class="txtEmail box_border form-control form-control-sm" id="txtEmailby_${rowCount}" autocomplete="off" maxlength="100" /></td>
         <td><input type="checkbox" class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
             
         <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
@@ -803,7 +821,7 @@ function addNewRow() {
     } else {
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
-        <td><input type="text" class="txtAddressCode box_border form-control form-control-sm mandatory" id="txtAddressCodeby_${rowCount}" autocomplete="off" required maxlength="20" /></td>
+        <td><input type="text" class="txtAddressCode box_border form-control form-control-sm" id="txtAddressCodeby_${rowCount}" autocomplete="off" required maxlength="20" /></td>
         <td><input type="text" class="txtAddressLine1 box_border form-control form-control-sm mandatory" id="txtAddressLine1by_${rowCount}" autocomplete="off" maxlength="200" /></td>
         <td><input type="text" class="txtAddressLine2 box_border form-control form-control-sm" id="txtAddressLine2by_${rowCount}" autocomplete="off" maxlength="200"/></td>
         <td><input type="text" list="txtCityList" onchange="FillallItemfield(this);" class="txtCity box_border form-control form-control-sm mandatory" id="txtCityby_${rowCount}" autocomplete="off"  /></td>
@@ -814,7 +832,7 @@ function addNewRow() {
         <td><input type="text" class="txtContactPerson box_border form-control form-control-sm" id="txtContactPersonby_${rowCount}" autocomplete="off" maxlength="200" /></td>
         <td><input type="text" class="txtPhone box_border form-control form-control-sm" onkeypress="return OnChangeNumericTextBox(this);" id="txtPhoneby_${rowCount}" autocomplete="off"maxlength="15" /></td>
         <td><input type="text" class="txtMobile box_border form-control form-control-sm mandatory" onkeypress="return OnChangeNumericTextBox(this);" id="txtMobileby_${rowCount}"autocomplete="off" maxlength="10" /></td>
-        <td><input type="text" class="txtEmail box_border form-control form-control-sm mandatory" id="txtEmailby_${rowCount}" autocomplete="off" maxlength="100" /></td>
+        <td><input type="text" class="txtEmail box_border form-control form-control-sm" id="txtEmailby_${rowCount}" autocomplete="off" maxlength="100" /></td>
         <td><input type="checkbox" checked class="chkIsDefault" id="chkIsDefault_${rowCount}"autocomplete="off"  /></td>
         <td><button class="btn btn-danger icon-height mb-1 deleteRow" title="Delete"><i class="fa-regular fa-circle-xmark"></i></button></td>
     `;

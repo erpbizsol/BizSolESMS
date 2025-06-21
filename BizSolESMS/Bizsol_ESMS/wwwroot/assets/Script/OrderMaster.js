@@ -7,6 +7,7 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let JsonData = [];
 let AccountList = [];
 let ItemDetail = [];
+let G_OrderData = [];
 $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("Order Entry");
@@ -81,16 +82,33 @@ $(document).ready(function () {
         JsonData = [];
     });
     $("#txtSearch").on("input", function () {
-       var Value = $(this).val().toLowerCase().trim();
-        $("#table tbody tr").each(function () {
-            var matched = false;
-            $(this).find("td").each(function () {
-                if ($(this).text().toLowerCase().includes(Value)) {
-                    matched = true;
-                }
-            });
-            $(this).toggle(matched);
-        });
+        const searchValue = $(this).val().toLowerCase().trim();
+        filteredData = G_OrderData.filter(item =>
+            Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+        );
+        const StringFilterColumn = ["Client Name"];
+        const NumericFilterColumn = [];
+        const DateFilterColumn = ["Order Date", "Buyer PO Date"];
+        const Button = false;
+        const showButtons = [];
+        const StringdoubleFilterColumn = [];
+        const hiddenColumns = ["Code"];
+        const ColumnAlignment = {
+            "Reorder Level": 'right',
+            "Reorder Qty": 'right',
+            "Qty In Box": 'right',
+        };
+        const updatedResponse = filteredData.map(item => ({
+            ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
+                    <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Order Date`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
+                    <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    `
+        }));
+        if (filteredData.length === 0) {
+            $("#table-body").html("<tr><td colspan='10' style='text-align:center;'>No matching records found</td></tr>");
+            return;
+        }
+        BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
     });
     $("#thItemBarcode").text(G_ItemConfig[0].ItembarcodeHeader ? G_ItemConfig[0].ItembarcodeHeader : 'Item Barcode');
     $("#thItemCode").text(G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code');
@@ -107,6 +125,7 @@ function ShowOrderMasterlist(Type) {
         },
         success: function (response) {
             if (response.length > 0) {
+                G_OrderData = response;
                 unblockUI();
                 $("#txtordertable").show();
                 const StringFilterColumn = ["Client Name"];

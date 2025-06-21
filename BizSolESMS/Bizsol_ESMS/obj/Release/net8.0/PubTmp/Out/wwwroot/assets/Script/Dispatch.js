@@ -14,7 +14,10 @@ let G_DispatchMaster_Code = 0;
 let G_Tab = 1;
 let All = 0;
 let G_IDFORTRCOLOR = '';
-
+let G_UPDATEBOX = 'N';
+let originalDispatchData = [];
+let originalTransitData = [];
+let originalCompletedData = [];
 $(document).ready(function () {
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
@@ -30,7 +33,6 @@ $(document).ready(function () {
             $("#txtPackedBy").focus();
         }
     });
-    
     $('#txtVehicleNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
@@ -56,29 +58,28 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
-   
     $("#pendingOrder").click(function () {
       
         GetDispatchOrderLists('GETCLIENT');
    
     });
-
     $("#despatchTransit").click(function () {
         
         GetDespatchTransitOrderList('DespatchTransit');
        
     });
-
     $("#completedDespatch").click(function () {
         
         GetCompletedDespatchOrderList('CompletedDespatch');
       
     });
-
     $('#txtScanProduct').on('input', function (e) {
+        if (G_UPDATEBOX == 'N') {
             SaveScanQty();
+        } else {
+            ScanUpdateBoxNo();
+        }
     });
-   
     $("#txtOrderNo").on("change", function () {
         let value = $(this).val();
         let isValid = false;
@@ -99,7 +100,6 @@ $(document).ready(function () {
         All = 1;
         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
     });
-  
     //$('#txtScanProduct').on('focus', function (e) {
     //    if ($("#txtIsManual").is(':checked')) {
     //        var inputElement = this;
@@ -114,7 +114,6 @@ $(document).ready(function () {
     //        }, 2);
     //    }
     //});
-    $("#txtPackedBy").val(G_UserName);
     $('#txtScanProduct').on('focus', function () {
         const inputElement = this;
         const isManual = $("#txtIsManual").is(':checked');
@@ -125,9 +124,102 @@ $(document).ready(function () {
     $('#txtScanProduct').on('blur', function () {
         $(this).attr('inputmode', '');
     });
-    //GetUserNameList();
+    $("#txtSearch").on("input", function () {
+        const searchValue = $(this).val().toLowerCase().trim();
+        let filteredData = [];
+        let updatedResponse = [];
+        let StringFilterColumn = [];
+        let NumericFilterColumn = [];
+        let DateFilterColumn = [];
+        const Button = false;
+        const showButtons = [];
+        const StringdoubleFilterColumn = [];
+        let hiddenColumns = [];
+        let ColumnAlignment = {};
+        if (G_Tab === 1) {
+            filteredData = originalDispatchData.filter(item =>
+                Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+            );
+            StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+            NumericFilterColumn = ["TOQ", "TBQ"];
+            DateFilterColumn = [];
+            hiddenColumns = (UserType === "A") ? ["Code"] : ["Code", "Order Date"];
+            ColumnAlignment = {
+                "TOQ": 'right',
+                "TBQ": 'right'
+            };
+
+            updatedResponse = filteredData.map(item => ({
+                ...item
+                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Create Dispatch" onclick="StartDispatchPanding('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`
+            }));
+
+        } else if (G_Tab === 2) {
+            filteredData = originalTransitData.filter(item =>
+                Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+            );
+            StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+            NumericFilterColumn = ["Order Qty", "TDQty"];
+            DateFilterColumn = ["Despatch Date"];
+            hiddenColumns = (UserType === "A") ? ["Code", "D_Code"] : ["Code", "D_Code", "Dispatch Date"];
+            ColumnAlignment = {
+                "TDQ": 'right'
+            };
+
+            updatedResponse = filteredData.map(item => ({   
+                ...item
+                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
+                        <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
+                    `
+            }));
+
+        } else if (G_Tab === 3) {
+            filteredData = originalCompletedData.filter(item =>
+                Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+            );
+
+            StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+            NumericFilterColumn = ["Order Qty", "TDQ"];
+            DateFilterColumn = [];
+            hiddenColumns = (UserType === "A") ? ["Code", "D_Code"] : ["Code", "D_Code", "Dispatch Date"];
+            ColumnAlignment = {
+                "TDQ": 'right'
+            };
+
+            updatedResponse = filteredData.map(item => ({
+                ...item
+                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
+                    `
+            }));
+
+        }
+        if (filteredData.length === 0) {
+            $("#table-body").html("<tr><td colspan='10' style='text-align:center;'>No matching records found</td></tr>");
+            return;
+        }
+        BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment
+        );
+    });
+    $('#txtManualProductQuantity').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtManualProductMRP").focus();
+        }
+    });
+    $('#txtManualProductMRP').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            SaveManual();
+        }
+    });
 });
 function BackMaster() {
+    G_UPDATEBOX = 'N';
     G_IDFORTRCOLOR = '';
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
@@ -136,6 +228,7 @@ function BackMaster() {
     disableFields(false);
     $("#btnShowAll").hide();
     $("#txtOrderNo").prop("disabled", true);
+    $("#txtScanProduct").prop("disabled", false);
     if (G_Tab == 3) {
         GetCompletedDespatchOrderList('CompletedDespatch');
     }
@@ -400,6 +493,7 @@ function showToast(Msg) {
     }, 3000);
 }
 function GetDispatchOrderLists(Mode) {
+    $("#txtSearch").val("");
     G_Tab = 1;
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
@@ -409,6 +503,7 @@ function GetDispatchOrderLists(Mode) {
         },
         success: function (response) {
             if (response.length > 0) {
+                originalDispatchData = response;
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
                 const NumericFilterColumn = ["TOQ", "TBQ"];
@@ -434,10 +529,12 @@ function GetDispatchOrderLists(Mode) {
             } else {
                 $("#DataTable").hide();
                 toastr.error("Record not found...!");
+                originalDispatchData = [];
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+            originalDispatchData = [];
         }
     });
 
@@ -457,6 +554,7 @@ async function StartDispatchPanding(Code, Mode) {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
+    $("#dvIsDelete").hide();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -473,6 +571,8 @@ async function StartDispatchPanding(Code, Mode) {
                     SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+                    $("#txtPackedBy").val(G_UserName);
+                    $("#txtBoxNo").val(OrderMaster.BoxNo);
                     
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -513,11 +613,12 @@ async function StartDispatchPanding(Code, Mode) {
                             }
                         }
                         renamedItem["Scan Qty"]= `
-                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                            renamedItem["Manual Qty"]=`
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" readonly onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`;
+                        renamedItem["Manual Qty"]=`
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                            renamedItem["Packing Qty"]= `
+                        renamedItem["Packing Qty"]= `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
+                        renamedItem["Action"] = item["ROWSTATUS"] == 'RED' ? '' : `<button class="btn btn-danger icon-height mb-1"  title="Delete item qty" onclick="DeleteItemQty('${item.Code}')"><i class="fa-solid fa-trash"></i></button>`;
                         return renamedItem;
                     });
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -788,6 +889,7 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
+    $("#dvIsDelete").hide();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code1}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -805,6 +907,8 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
+                    $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    $("#txtBoxNo").val(OrderMaster.BoxNo);
                     $("#txtScanProduct").prop("disabled", false);
                     disableFields(false);
                 }
@@ -847,11 +951,12 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                         }
 
                         renamedItem["Scan Qty"] = `
-                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" readonly class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Manual Qty"] = `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
                             renamedItem["Packing Qty"] = `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
+                        renamedItem["Action"] = item["ROWSTATUS"] == 'RED' ? '' : `<button class="btn btn-danger icon-height mb-1"  title="Delete item qty" onclick="DeleteItemQty('${item.Code}')"><i class="fa-solid fa-trash"></i></button>`;
                         return renamedItem;
 
                         //const updatedResponse = Response.map(item => ({
@@ -937,6 +1042,7 @@ function checkValidateqtyTransit1(element, Code) {
     }
 }
 function GetDespatchTransitOrderList(Mode) {
+    $("#txtSearch").val("");
     G_Tab = 2;
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
@@ -946,6 +1052,7 @@ function GetDespatchTransitOrderList(Mode) {
         },
         success: function (response) {
             if (response.length > 0) {
+                originalTransitData = response;
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
                 const NumericFilterColumn = ["Order Qty", "TDQty"];
@@ -968,10 +1075,12 @@ function GetDespatchTransitOrderList(Mode) {
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
+                        <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
+                originalTransitData = [];
                 $("#DataTable").hide();
                 toastr.error("Record not found...!");
             }
@@ -983,6 +1092,7 @@ function GetDespatchTransitOrderList(Mode) {
 
 }
 function GetCompletedDespatchOrderList(Mode) {
+    $("#txtSearch").val("");
     G_Tab = 3;
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
@@ -992,6 +1102,7 @@ function GetCompletedDespatchOrderList(Mode) {
         },
         success: function (response) {
             if (response.length > 0) {
+                originalCompletedData = response;
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
                 const NumericFilterColumn = ["Order Qty", "TDQ"];
@@ -1015,11 +1126,12 @@ function GetCompletedDespatchOrderList(Mode) {
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
-                       
+                        <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
+                originalCompletedData = [];
                 $("#DataTable").hide();
                 toastr.error("Record not found...!");
             }
@@ -1043,6 +1155,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
+    $("#dvIsDelete").hide();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -1059,7 +1172,9 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+                    $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtScanProduct").prop("disabled", false);
+                    $("#txtBoxNo").val(OrderMaster.BoxNo);
                     disableFields(false);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -1101,11 +1216,12 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                         }
 
                         renamedItem["Scan Qty"]=`
-                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" readonly class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Manual Qty"]= `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyCompleteTransit(this,${item.Code});" onfocusout="checkValidateqtyCompleteTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
                             renamedItem["Packing Qty"]= `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
+                        renamedItem["Action"] = item["ROWSTATUS"] == 'RED' ? '' : `<button class="btn btn-danger icon-height mb-1"  title="Delete item qty" onclick="DeleteItemQty('${item.Code}')"><i class="fa-solid fa-trash"></i></button>`;
                         return renamedItem;
                     });
                     BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -1182,6 +1298,7 @@ async function StartDispatchOrderNo() {
     $("#txtheaderdiv").show();
     $("#txtOrderNo").prop("disabled", false);
     $("#txtScanProduct").prop("disabled", false);
+    $("#dvIsDelete").hide();
     disableFields(false);
 }
 function CreateOrderNo(Code) {
@@ -1232,6 +1349,7 @@ async function ViewDespatchTransit(Code, Mode) {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
+    $("#dvIsDelete").hide();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -1249,6 +1367,8 @@ async function ViewDespatchTransit(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
+                    $("#txtPackedBy").val(OrderMaster.PackedBy);
+                    $("#txtBoxNo").val(OrderMaster.BoxNo);
                     $("#txtScanProduct").prop("disabled", true);
                     disableFields(true);
                 }
@@ -1357,7 +1477,12 @@ async function DeleteItem(code, Order, button) {
         $('tr').removeClass('highlight');
     }
 }
-function MarkasCompete(code) {
+async function MarkasCompete(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Complete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetMarkasCompeteByOrderNo?Code=${code}`,
         type: 'POST',
@@ -1382,37 +1507,17 @@ function MarkasCompete(code) {
 function disableFields(disable) {
     $("#txtCreatepage").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
 }
-//function Report(C_Code) {
-//    $.ajax({
-//        url: `${AppBaseURLMenu}/Home/OrderMaster`,
-//        type: 'POST',
-//        contentType: 'application/x-www-form-urlencoded',
-//        data: {
-//            ReportType: "PDF",
-//            newConnectionString: authKeyData,
-//            p_Code: C_Code,
-//            UserName: G_UserName
-//        },
-//        xhrFields: {
-//            responseType: 'blob'
-//        },
-//        success: function (data) {
-//            let blob = new Blob([data], { type: 'application/pdf' });
-//            let url = window.URL.createObjectURL(blob);
-//            let a = document.createElement('a');
-//            a.href = url;
-//            a.download = "DispatchReport.pdf"; 
-//            document.body.appendChild(a);
-//            a.click();
-//            document.body.removeChild(a);
-//        },
-//        error: function (xhr, status, error) {
-//            console.error('Error:', xhr.responseText);
-//        }
-//    });
-//}
 function changeValue(delta) {
+    $("#BoxNoVoice")[0].play();
     const input = document.getElementById('txtBoxNo');
+    let value = parseInt(input.value) || 1;
+    value += delta;
+    if (value < 1) value = 1;
+    input.value = value;
+}
+function ManualChangeValue(delta) {
+    $("#BoxNoVoice")[0].play();
+    const input = document.getElementById('txtManualBoxNo');
     let value = parseInt(input.value) || 1;
     value += delta;
     if (value < 1) value = 1;
@@ -1420,20 +1525,21 @@ function changeValue(delta) {
 }
 function ChangecolorTr() {
     const rows = document.querySelectorAll('#DispatchTable-Body tr');
-    rows.forEach((row) => {
-        const tds = row.querySelectorAll('td');
-        const columnValue = tds[11]?.textContent.trim();
-        if (columnValue === 'GREEN') {
-            row.style.backgroundColor = '#07bb72';
-            
-        } else if (columnValue === 'YELLOW') {
-            row.style.backgroundColor = '#ebb861';
-           
-        } else {
-            row.style.backgroundColor = '#f5c0bf';
-            
-        }
-    });
+    if (G_UPDATEBOX == 'N') {
+        rows.forEach((row) => {
+            const tds = row.querySelectorAll('td');
+            const columnValue = tds[11]?.textContent.trim();
+            if (columnValue === 'GREEN') {
+                row.style.backgroundColor = '#07bb72';
+
+            } else if (columnValue === 'YELLOW') {
+                row.style.backgroundColor = '#ebb861';
+
+            } else {
+                row.style.backgroundColor = '#f5c0bf';
+            }
+        });
+    }
 }
 
 setInterval(ChangecolorTr, 100);
@@ -1456,6 +1562,179 @@ function DispatchReport(Code) {
         }
     });
 }
+async function ShowUpdateBoxNo(Code, Mode) {
+    G_DispatchMaster_Code = Code;
+    G_Tab = 3;
+    $("#btnShowAll").hide();
+    const { hasPermission, msg } = await CheckOptionPermission('EDITBOXNO', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    G_UPDATEBOX = 'Y';
+    $("#tab1").text("Edit BoxNo");
+    $("#txtListpage").hide();
+    $("#txtCreatepage").show();
+    $("#txtheaderdiv").show();
+    $("#dvIsDelete").show();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || "");
+                    SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
+                    $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
+                    $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
+                    $("#txtScanProduct").prop("disabled", false);
+                    disableFields(false);
+                }
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    $("#tblDispatchData").show();
+                    var Response = response.OrderDetial;
+                    Data = response.OrderDetial;
+                    const StringFilterColumn = [];
+                    const NumericFilterColumn = ["Ord Qty", "Bal Qty"];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    let hiddenColumns = [];
+                    if (UserType == "A") {
+                        hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
+                    } else {
+                        hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
+                    }
+                    const ColumnAlignment = {
+                        "Box No": "right;width:70px;",
+                        "Scan Qty": "right;width:70px;",
+                    };
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = Response.map(item => {
+                        const renamedItem = {};
+
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+
+                        renamedItem["Scan Qty"] = `
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`;
+                        renamedItem["Box No"] = `
+                        <input type="text" onfocusout="UpdateBoxNo(this,${item.Code})" oninput="NumericValue(this)" id="txtBoxNo_${item.Code}" value="${item["Box No"]}" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Box No..">`;
+                        return renamedItem;
+                    });
+                    BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+                } else {
+                    $("#tblDispatchData").hide();
+                }
+            } else {
+                toastr.error("Record not found...!");
+                $("#tblDispatchData").hide();
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Record not found...!");
+            $("#tblDispatchData").hide();
+        }
+    });
+}
+function NumericValue(e) {
+    if (/\D/g.test(e.value)) e.value = e.value.replace(/[^0-9]/g, '')
+}
+function UpdateBoxNo(e, Code) {
+    var value = $("#txtBoxNo_" + Code).val();
+    if (value == '0' || value == '') {
+        toastr.error("please enter valid box no.");
+        return;
+    }
+    const payload = {
+        Code: Code,
+        ScanNo: "",
+        BoxNo: value
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/UpdateBoxNo?Mode=Manual`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                toastr.success(response[0].Msg);
+                ShowUpdateBoxNo(G_DispatchMaster_Code, "BOXDETAILS");
+            } else {
+
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Error in Api/UpdateBoxNo");
+        }
+    });
+}
+function ScanUpdateBoxNo() {
+    if ($("#txtScanProduct").val() == '') {
+        toastr.error("Please scan product !");
+        $("#txtScanProduct").focus();
+        return;
+    } else if ($("#txtBoxNo").val() === '') {
+        toastr.error("Please enter box no..!");
+        return;
+    }
+    const payload = {
+        Code: G_DispatchMaster_Code,
+        ScanNo: $("#txtScanProduct").val(),
+        BoxNo: $("#txtBoxNo").val()
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/UpdateBoxNo?Mode=SCAN`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                $("#SuccessVoice")[0].play();
+                ShowUpdateBoxNo(G_DispatchMaster_Code, "BOXDETAILS");
+                $("#txtScanProduct").val("");
+                $("#txtScanProduct").focus();
+            } else if (response[0].Status == 'N') {
+                showToast(response[0].Msg);
+                $("#txtScanProduct").val("");
+                $("#txtScanProduct").focus();
+            } else {
+                showToast(response[0].Msg);
+                $("#txtScanProduct").val("");
+                $("#txtScanProduct").focus();
+            }
+        },
+        error: function (xhr, status, error) {
+            showToast("INVALID SCAN NO !");
+            $("#txtScanProduct").val("");
+            $("#txtScanProduct").focus();
+        }
+    });
+}
 async function Export(jsonData) {
     const columnsToRemove = ["Code"];
     const renameMap = {
@@ -1468,12 +1747,16 @@ async function Export(jsonData) {
         return;
     }
 
+    let totalMRP = 0;
+
     const filteredAndRenamedData = jsonData.map(row => {
         const newRow = {};
         for (const [key, value] of Object.entries(row)) {
             if (!columnsToRemove.includes(key)) {
                 const newKey = renameMap[key] || key;
                 newRow[newKey] = value;
+
+                if (key === "Total Value" && !isNaN(value)) totalMRP += Number(value);
             }
         }
         return newRow;
@@ -1481,49 +1764,210 @@ async function Export(jsonData) {
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet1');
+
     const headers = Object.keys(filteredAndRenamedData[0] || {});
     const headerRow = worksheet.addRow(headers);
+
     headerRow.eachCell(cell => {
         cell.font = { bold: true };
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFB0C4DE' }
+        };
     });
+
     filteredAndRenamedData.forEach(data => {
-        worksheet.addRow(Object.values(data));
+        const rowValues = headers.map(key => {
+            const val = data[key];
+            if (key === "Total Value" && !isNaN(val)) return Number(val).toFixed(2);
+            return val;
+        });
+        const row = worksheet.addRow(rowValues);
+        const mrpIndex = headers.indexOf("Total Value");
+        if (mrpIndex !== -1) row.getCell(mrpIndex + 1).numFmt = '0.00';
     });
+
+    const totalRow = Array(headers.length).fill("");
+    const mrpIndex = headers.indexOf("Total Value");
+
+    if (mrpIndex !== -1) {
+        totalRow[0] = "Total :";
+        totalRow[mrpIndex] = totalMRP.toFixed(2);
+    }
+
+    const totalExcelRow = worksheet.addRow(totalRow);
+    totalExcelRow.font = { bold: true };
+    totalExcelRow.eachCell(cell => {
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFFFE4B5' } // Light orange
+        };
+    });
+
+    // Format total MRP cell
+    if (mrpIndex !== -1) {
+        totalExcelRow.getCell(mrpIndex + 1).numFmt = '0.00';
+    }
+
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     });
+
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "Dispatch_" + jsonData[0]["Order No"] + ".xlsx";
+    link.download = "Dispatch_" + (jsonData[0]["Order No"] || "Export") + ".xlsx";
     link.click();
 }
-function Report(C_Code) {
+async function DeleteItemQty(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    if (confirm(`Are you sure you want to delete this item qty.?`)) {
+        $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/DeleteDispatchItemQty?Code=${code}`,
+            type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                if (response.Status === 'Y') {
+                    toastr.success(response.Msg);
+                    if (G_Tab == 1) {
+                        StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+                    }
+                    else if (G_Tab == 2) {
+                        if (All == 0) {
+                            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+                        } else if (All == 1) {
+                            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+                        }
+                    } else if (G_Tab == 3) {
+                        StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+                    }
+                } else {
+                    toastr.error("Unexpected response format.");
+                }
+
+            },
+            error: function (xhr, status, error) {
+                toastr.error("Error deleting item:", Msg);
+
+            }
+        });
+    }
+}
+async function ManualUpdateQtyAndMRP(ItemCode, BalanceQty, MRP) {
+    const { hasPermission, msg } = await CheckOptionPermission('Manual', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $("#txtManualItemCode").text("PRODUCT NAME : " +ItemCode);
+    $("#hfManualProductCode").val (ItemCode);
+    $("#hfManualProductQuantity").val(BalanceQty);
+    $("#txtManualBalanceQuantity").text("EXPECTED QUANTITY : "+BalanceQty)
+    $("#txtManualProductMRP").val(MRP)
+    openSavePopup();
+}
+function openSavePopup() {
+    var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
+    saveModal.show();
+}
+function SaveManual() {
+    var orderNo = $("#txtOrderNo").val();
+    var boxNo = $("#txtManualBoxNo").val();
+    var quantity = $("#txtManualProductQuantity").val();
+    var mrp = $("#txtManualProductMRP").val();
+    var itemCode = $("#hfManualProductCode").val();
+    var availableQty = $("#hfManualProductQuantity").val();
+    var quantityInt = parseInt(quantity);
+    var availableQtyInt = parseInt(availableQty);
+    if (!quantity || isNaN(quantityInt) || quantityInt <= 0) {
+        toastr.error("Please enter a valid quantity!");
+        return;
+    }
+    if (quantityInt > availableQtyInt) {
+        toastr.error("Entered quantity exceeds available balance!");
+        $("#txtManualProductQuantity").focus();
+        return;
+    }
+    if (!mrp || isNaN(parseFloat(mrp))) {
+        toastr.error("Please enter a valid MRP!");
+        $("#txtManualProductMRP").focus();
+        return;
+    }
+    if (!boxNo || isNaN(parseInt(boxNo)) || parseInt(boxNo) < 1) {
+        toastr.error("Please enter a valid box number!");
+        return;
+    }
+    const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == orderNo);
+    
+    const payload = {
+        DispatchMaster_Code: G_DispatchMaster_Code,
+        ManualQty: quantity,
+        UserMaster_Code: UserMaster_Code,
+        ItemCode: itemCode,
+        OrderMaster_Code: item.Code || 0,
+        Mrp: mrp,
+        BoxNo: boxNo
+    }
     $.ajax({
-        url: `${AppBaseURLMenu}/Home/OrderMaster`,
+        url: `${appBaseURL}/api/OrderMaster/SaveManualRateAndQty`,
         type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            ReportType: "PDF",
-            newConnectionString: authKeyData,
-            p_Code: C_Code,
-            UserName: G_UserName
-        }),
-        xhrFields: {
-            responseType: 'blob'
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
         },
-        success: function (data) {
-            let blob = new Blob([data], { type: 'application/pdf' });
-            let url = window.URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = "DispatchReport.pdf";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                G_DispatchMaster_Code = response[0].DispatchMaster_Code;
+                if (G_Tab == 1) {
+                    StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+                }
+                else if (G_Tab == 2) {
+                    if (All == 0) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+                    } else if (All == 1) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+                    }
+                } else if (G_Tab == 3) {
+                    StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+                }
+                CloseManualModal();
+            } else if (response[0].Status == 'N') {
+                showToast(response[0].Msg);
+                G_DispatchMaster_Code = response[0].DispatchMaster_Code;
+                if (G_Tab == 1) {
+                    StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+                }
+                else if (G_Tab == 2) {
+                    if (All == 0) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+                    } else if (All == 1) {
+                        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+                    }
+                } else if (G_Tab == 3) {
+                    StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+                }
+            }
         },
         error: function (xhr, status, error) {
-            console.error('Error:', xhr.responseText);
+            showToast("Error in api/OrderMaster/SaveManualRateAndQty");
         }
     });
+}
+function CloseManualModal() {
+    $('#txtManualProductQuantity').val("");
+    $('#txtManualProductMRP').val("");
+    var modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
+    if (modal) {
+        modal.hide();
+    }
 }

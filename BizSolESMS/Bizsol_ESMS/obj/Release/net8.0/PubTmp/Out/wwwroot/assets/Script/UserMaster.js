@@ -543,7 +543,7 @@ function SaveUserMaster() {
     } else if (ConfirmPassword !== Password) {
         toastr.error('Your password and confirmation password do not match.');
         $("#txtPassword").focus();
-    }else if (!isEmail(EmailId)) {
+    } else if (!isEmail(EmailId) && EmailId !== '') {
         toastr.error('Please enter valid Email !.');
         $("#txtEmailId").focus();
     }else if (GroupName === "") {
