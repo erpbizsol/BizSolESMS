@@ -2020,7 +2020,6 @@ function GetDispatchReport() {
     });
 
 }
-
 function Report(Code) {
     $("#hfDownloadCode").val(Code);
         var saveModal = new bootstrap.Modal(document.getElementById("DownloadModal"));
@@ -2046,6 +2045,73 @@ function DownloadReportPdf() {
             let a = document.createElement('a');
             a.href = url;
             a.download = "Report.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error downloading report:', xhr.responseText);
+        }
+    });
+}
+async function DownloadDispatchQR() {
+    var Code = $("#hfDownloadCode").val();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetDispatchQRDetail?Code=${Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: async function (response) {
+            if (response.length > 0) {
+                $("#qrcodeview").html("");
+
+                for (let i = 0; i < response.length; i++) {
+                    const item = response[i];
+                    const textValue = item.QRCode;
+                    const divId = `qrcode_${i}`;
+                    $("#qrcodeview").append(`<div id="${divId}" style="display:none;"></div>`);
+
+                    new QRCode(document.getElementById(divId), {
+                        text: textValue,
+                        width: 100,
+                        height: 100,
+                    });
+
+                    await new Promise(resolve => setTimeout(resolve, 300));
+
+                    const canvas = $(`#${divId} canvas`)[0];
+                    if (canvas) {
+                        const base64Image = canvas.toDataURL('image/png');
+                        response[i].QRCode = base64Image;
+                    }
+                }
+                DownloadQRPdf(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+function DownloadQRPdf(response) {
+    $.ajax({
+        url: `${AppBaseURLMenu}/RDLC/PrintDispatchQR`,
+        type: 'POST',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        contentType: 'application/json',
+        data: JSON.stringify(response),
+        success: function (data, status, xhr) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "DispatchQR_" + response[0]["OrderNo"]+".pdf";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

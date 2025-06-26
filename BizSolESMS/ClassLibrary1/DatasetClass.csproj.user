@@ -11,6 +11,9 @@
     <None Update="Dataset\DeadStock.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Update="Dataset\DispatchQRData.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Update="Dataset\LossOrderReport.xsd">
       <SubType>Designer</SubType>
     </None>

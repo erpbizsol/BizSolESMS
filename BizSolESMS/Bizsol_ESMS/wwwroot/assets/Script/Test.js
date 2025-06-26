@@ -5,7 +5,9 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 let CaseNo = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
+    DownloadDispatchQR(70)
     $("#ERPHeading").text("Box-Unloading");
     $('#txtBoxNo').on('keydown', function (e) {
         if (e.key === "Enter") {
@@ -26,6 +28,17 @@ $(document).ready(function () {
         $(this).attr('inputmode', '');
     });
     //MRNDetail();
+    $("#txtCode").on('change keydown paste input', function () {
+
+        let textValue = $("#txtCode").val();
+        $("#qrcodeview").html("");
+
+        var qrcode = new QRCode("qrcodeview", {
+            text: textValue,
+            width: 100,
+            height: 100,
+        });
+    });
 
 });
 //function BoxUnloading() {
@@ -264,5 +277,165 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
+//function DownloadDispatchQR(Code) {
+//    $.ajax({
+//        url: `${appBaseURL}/api/OrderMaster/GetDispatchQRDetail?Code=${Code}`,
+//        type: 'GET',
+//        beforeSend: function (xhr) {
+//            xhr.setRequestHeader('Auth-Key', authKeyData);
+//        },
+//        success: function (response) {
+//            if (response.length > 0) {
+//                $("#qrcodeview").html("");
+//                response.forEach(function (item, index) {
+//                    var textValue = item.QRCode ;
+//                    var divId = `qrcode_${index}`;
+//                    $("#qrcodeview").append(`<div id="${divId}" style="display:inline-block; margin:10px;"></div><br/>`);
 
+//                    new QRCode(document.getElementById(divId), {
+//                        text: textValue,
+//                        width: 100,
+//                        height: 100,
+//                    });
+//                });
+//            } else {
+//                toastr.error("Record not found...!");
+//            }
+//        },
+//        error: function (xhr, status, error) {
+//            console.error("Error:", error);
+//        }
+//    });
+//}
+//async function DownloadDispatchQR(Code) {
+//    $.ajax({
+//        url: `${appBaseURL}/api/OrderMaster/GetDispatchQRDetail?Code=${Code}`,
+//        type: 'GET',
+//        beforeSend: function (xhr) {
+//            xhr.setRequestHeader('Auth-Key', authKeyData);
+//        },
+//        success: async function (response) {
+//            if (response.length > 0) {
+//                $("#qrcodeview").html("");
+
+//                for (let i = 0; i < response.length; i++) {
+//                    const item = response[i];
+//                    const textValue = item.QRCode;
+//                    const divId = `qrcode_${i}`;
+//                    $("#qrcodeview").append(`<div id="${divId}" style="display:none;"></div>`);
+
+//                    new QRCode(document.getElementById(divId), {
+//                        text: textValue,
+//                        width: 100,
+//                        height: 100,
+//                    });
+//                    await new Promise(resolve => setTimeout(resolve, 300));
+//                    const canvas = $(`#${divId} canvas`)[0];
+//                    if (canvas) {
+//                        const base64Image = canvas.toDataURL('image/png');
+//                        response[i].QRCode = base64Image;
+//                    }
+//                }
+//                DownloadReportPdf(response);
+//            } else {
+//                toastr.error("Record not found...!");
+//            }
+//        },
+//        error: function (xhr, status, error) {
+//            console.error("Error:", error);
+//        }
+//    });
+//}
+//function DownloadReportPdf(response) {
+//    var Code = $("#hfDownloadCode").val();
+//    $.ajax({
+//        url: `${AppBaseURLMenu}/RDLC/PSRReport?Code=${Code}&AuthKey=${authKeyData}`,
+//        type: 'GET',
+//        xhrFields: {
+//            responseType: 'blob'
+//        },
+//        data: JSON.stringify(response),
+//        success: function (data, status, xhr) {
+//            let blob = new Blob([data], { type: 'application/pdf' });
+//            let url = window.URL.createObjectURL(blob);
+//            let a = document.createElement('a');
+//            a.href = url;
+//            a.download = "Report.pdf";
+//            document.body.appendChild(a);
+//            a.click();
+//            document.body.removeChild(a);
+//            window.URL.revokeObjectURL(url);
+//        },
+//        error: function (xhr, status, error) {
+//            console.error('Error downloading report:', xhr.responseText);
+//        }
+//    });
+//}
+
+async function DownloadDispatchQR(Code) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetDispatchQRDetail?Code=${Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: async function (response) {
+            if (response.length > 0) {
+                $("#qrcodeview").html("");
+
+                for (let i = 0; i < response.length; i++) {
+                    const item = response[i];
+                    const textValue = item.QRCode;
+                    const divId = `qrcode_${i}`;
+                    $("#qrcodeview").append(`<div id="${divId}" style="display:none;"></div>`);
+
+                    new QRCode(document.getElementById(divId), {
+                        text: textValue,
+                        width: 100,
+                        height: 100,
+                    });
+
+                    await new Promise(resolve => setTimeout(resolve, 300));
+
+                    const canvas = $(`#${divId} canvas`)[0];
+                    if (canvas) {
+                        const base64Image = canvas.toDataURL('image/png');
+                        response[i].QRCode = base64Image;
+                    }
+                }
+                DownloadReportPdf(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+function DownloadReportPdf(response) {
+    $.ajax({
+        url: `${AppBaseURLMenu}/RDLC/PrintDispatchQR`,
+        type: 'POST',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        contentType: 'application/json',
+        data: JSON.stringify(response),
+        success: function (data, status, xhr) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "DispatchReport.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error downloading report:', xhr.responseText);
+        }
+    });
+}
 

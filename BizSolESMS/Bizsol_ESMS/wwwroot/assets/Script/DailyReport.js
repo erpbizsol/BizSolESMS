@@ -5,6 +5,7 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 $(document).ready(function () {
+    $("#ERPHeading").text("Daily Health Report");
     GetCurrentDate();
 });
 function GetCurrentDate() {

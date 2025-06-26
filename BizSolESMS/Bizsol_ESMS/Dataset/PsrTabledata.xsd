@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="PsrTabledata" targetNamespace="http://tempuri.org/PsrTabledata.xsd" xmlns:mstns="http://tempuri.org/PsrTabledata.xsd" xmlns="http://tempuri.org/PsrTabledata.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="PsrTabledata" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="PsrTabledata" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="PsrTabledata">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="PsrTabledata" msprop:Generator_RowClassName="PsrTabledataRow" msprop:Generator_RowEvHandlerName="PsrTabledataRowChangeEventHandler" msprop:Generator_RowDeletedName="PsrTabledataRowDeleted" msprop:Generator_RowDeletingName="PsrTabledataRowDeleting" msprop:Generator_RowEvArgName="PsrTabledataRowChangeEvent" msprop:Generator_TablePropName="_PsrTabledata" msprop:Generator_RowChangedName="PsrTabledataRowChanged" msprop:Generator_UserTableName="PsrTabledata" msprop:Generator_RowChangingName="PsrTabledataRowChanging" msprop:Generator_TableClassName="PsrTabledataDataTable" msprop:Generator_TableVarName="tablePsrTabledata">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="SrNo" msprop:Generator_UserColumnName="SrNo" msprop:Generator_ColumnPropNameInTable="SrNoColumn" msprop:Generator_ColumnPropNameInRow="SrNo" msprop:Generator_ColumnVarNameInTable="columnSrNo" type="xs:string" minOccurs="0" />
+              <xs:element name="ItemCode" msprop:Generator_UserColumnName="ItemCode" msprop:Generator_ColumnPropNameInTable="ItemCodeColumn" msprop:Generator_ColumnPropNameInRow="ItemCode" msprop:Generator_ColumnVarNameInTable="columnItemCode" type="xs:string" minOccurs="0" />
+              <xs:element name="BoxNo" msprop:Generator_UserColumnName="BoxNo" msprop:Generator_ColumnPropNameInTable="BoxNoColumn" msprop:Generator_ColumnPropNameInRow="BoxNo" msprop:Generator_ColumnVarNameInTable="columnBoxNo" type="xs:string" minOccurs="0" />
+              <xs:element name="ScannedQty" msprop:Generator_UserColumnName="ScannedQty" msprop:Generator_ColumnPropNameInTable="ScannedQtyColumn" msprop:Generator_ColumnPropNameInRow="ScannedQty" msprop:Generator_ColumnVarNameInTable="columnScannedQty" type="xs:string" minOccurs="0" />
+              <xs:element name="OrderedQty" msprop:Generator_UserColumnName="OrderedQty" msprop:Generator_ColumnPropNameInTable="OrderedQtyColumn" msprop:Generator_ColumnPropNameInRow="OrderedQty" msprop:Generator_ColumnVarNameInTable="columnOrderedQty" type="xs:string" minOccurs="0" />
+              <xs:element name="MRP" msprop:Generator_UserColumnName="MRP" msprop:Generator_ColumnPropNameInTable="MRPColumn" msprop:Generator_ColumnPropNameInRow="MRP" msprop:Generator_ColumnVarNameInTable="columnMRP" type="xs:string" minOccurs="0" />
+              <xs:element name="OrgMRP" msprop:Generator_UserColumnName="OrgMRP" msprop:Generator_ColumnPropNameInTable="OrgMRPColumn" msprop:Generator_ColumnPropNameInRow="OrgMRP" msprop:Generator_ColumnVarNameInTable="columnOrgMRP" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

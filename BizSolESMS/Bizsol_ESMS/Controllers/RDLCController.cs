@@ -1,10 +1,12 @@
 ﻿
+using Bizsol_ESMS.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
 using Microsoft.VisualBasic;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
 
@@ -159,5 +161,31 @@ namespace Bizsol_ESMS.Controllers
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "OrderReport.pdf");
         }
+        [HttpPost]
+        public IActionResult PrintDispatchQR([FromBody] List<DispatchModel> model)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("QRCode", typeof(byte[]));
+            dt.Columns.Add("OrderNo");
+            dt.Columns.Add("BoxNo");
+            dt.Columns.Add("AccountName");
+            dt.Columns.Add("Address");
+
+            foreach (var item in model)
+            {
+                var img = Convert.FromBase64String(item.QRCode.Replace("data:image/png;base64,", ""));
+                dt.Rows.Add(img, item.OrderNo, item.BoxNo,item.AccountName,item.Address);
+            }
+
+            LocalReport report = new LocalReport();
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "DispatchQR.rdlc");
+            report.ReportPath = reportPath;
+
+            report.DataSources.Add(new ReportDataSource("DispatchQRData", dt));
+
+            byte[] pdf = report.Render("PDF");
+            return File(pdf, "application/pdf", "DispatchQR.pdf");
+        }
+
     }
 } 

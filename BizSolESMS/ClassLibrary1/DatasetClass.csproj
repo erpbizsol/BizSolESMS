@@ -30,6 +30,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DeadStock.xsd</DependentUpon>
     </Compile>
+    <Compile Update="Dataset\DispatchQRData.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DispatchQRData.xsd</DependentUpon>
+    </Compile>
     <Compile Update="Dataset\LossOrderReport.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -69,6 +74,10 @@
     <None Update="Dataset\DeadStock.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>DeadStock.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Dataset\DispatchQRData.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DispatchQRData.Designer.cs</LastGenOutput>
     </None>
     <None Update="Dataset\LossOrderReport.xsd">
       <Generator>MSDataSetGenerator</Generator>

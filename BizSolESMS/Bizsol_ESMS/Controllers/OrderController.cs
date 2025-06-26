@@ -63,5 +63,11 @@ namespace Bizsol_ESMS.Controllers
         }
         #endregion  StockAudit 
 
+        #region  DispatchBoxValidation 
+        public IActionResult DispatchBoxValidation()
+        {
+            return View();
+        }
+        #endregion  DispatchBoxValidation 
     }
 }

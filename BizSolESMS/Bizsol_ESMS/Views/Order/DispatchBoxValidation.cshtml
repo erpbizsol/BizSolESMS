@@ -1,0 +1,383 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+<script src="~/assets/script/DispatchBoxValidation.js"></script>
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+    .tab-header {
+        display: flex;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+    .tab-header div {
+        flex: 0.1;
+        text-align: center;
+        padding: 7px 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        border-bottom-right-radius: 40px;
+        border-top-left-radius: 40px;
+        font-weight: bold;
+    }
+
+    .tab-header div:hover {
+        background: #586e87;
+        color: white;
+    }
+
+    .tab-header .active {
+        background: #1d4b7d;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d35950;
+        color: white;
+        padding: 35px 55px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10000;
+        font-size: 18px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .toggle-handle {
+        position: relative;
+        margin: 0 auto;
+        padding-top: 0;
+        padding-bottom: 0;
+        height: 100%;
+        width: 0;
+        border-width: 0 1px;
+        background-color: #fff !important;
+    }
+
+    .toggle.btn {
+        min-width: 59px;
+        min-height: 28px !important;
+    }
+
+    .fixed-height {
+        min-height: 10px !important;
+    }
+
+    .toggle-off {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 44%;
+        right: 0;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .col-md-2 {
+        width: 120px !important;
+    }
+
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+    .tabSec {
+        color: white;
+        width: 117px;
+        height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        margin-top: -8px;
+        background: #1d4b7d;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
+    }
+
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
+    .datepicker table tfoot {
+        display: none;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .fix-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0 8px 9px;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+
+    .shadow-sm {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+        margin-top: 15px;
+        border-top: 1px solid #c9cae7;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 50%;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 20px;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-danger {
+        background-color: #ab1624;
+    }
+
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
+
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .container {
+        overflow: auto;
+        height: 81vh;
+    }
+    
+
+    .breadcrumbs1 {
+        background: #dddde4;
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
+    }
+
+    .page-content {
+        padding: 3px 0;
+    }
+</style>
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="Back()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="row" style="margin-left:-6px;margin-top:10px;display:block;" id="dvSearch">
+        <div class="col-md-3  col-sm-6">
+            <label for="txSearch" class="col-form-label-sm fw-bold">
+                Search
+            </label>
+            <input type="text" id="txtSearch" name="txtSearch" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Search.." maxlength="50">
+        </div>
+    </div>
+    <div class="row m-1" sstyle="display:none" id="UnloadingTable1">
+
+        <div class="card-body">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table1" class="fixed-width-table table">
+                    <thead id="table-header1">
+                    </thead>
+                    <tbody id="table-body1">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-table1">
+            </div>
+        </div>
+    </div>
+    <div id="UnloadingForm" style="display:none">
+        <div class="card shadow-sm textCreatepage"  style="background-color:#e9e9ef;">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtOrderNo" class="col-form-label-sm fw-bold">Order No</label>
+                                <input type="text" id="txtOrderNo" disabled class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtPartyName" class="col-form-label-sm fw-bold">Party Name</label>
+                                <input type="text" disabled id="txtPartyName" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Party Name..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtAddress" class="col-form-label-sm fw-bold">Address</label>
+                                <input type="text" disabled id="txtAddress" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Address..">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-table">
+            </div>
+        </div>
+    </div>
+    <div id="EditForm" style="display:none">
+        <div class="card shadow-sm" style="background-color:#e9e9ef;">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
+                                <audio id="BoxNoVoice" style="display: none;"><source src="~/assets/audio/BoxNoVoice.mp3" type="audio/mpeg" /></audio>
+                                <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No.</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtVehicleNo" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Vehicle No..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtInvoiceNo" class="col-form-label-sm fw-bold">Invoice No</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtInvoiceNo" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Invoice No..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtDriverName" class="col-form-label-sm fw-bold">Driver Name</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtDriverName" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Driver Name..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtDriverNumber" class="col-form-label-sm fw-bold">Driver Contact Number</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtDriverNumber" class="box_border form-control form-control-sm Phone" maxlength="10" autocomplete="off" placeholder="Driver Contact Number..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtLorryMeter" class="col-form-label-sm fw-bold">Lorry Meter Reading</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtLorryMeter" class="box_border form-control form-control-sm Phone" maxlength="5" autocomplete="off" placeholder="Lorry Meter Reading..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtUserName" class="col-form-label-sm fw-bold">Scan By</label> 
+                                <input type="text" disabled id="txtUserName" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Scan By..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product.." onfocus="this.select()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrapper fixed-height-table">
+                <table id="EditTable" class="fixed-width-table table">
+                    <thead id="EditTable-header">
+                    </thead>
+                    <tbody id="EditTable-body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-EditTable">
+            </div>
+        </div>
+    </div>
+    </div>
+<div id="overlay" class="overlay"></div>
+<div id="toast" class="toast-container"></div>
+<script src="~/assets/js/filter.js"></script>

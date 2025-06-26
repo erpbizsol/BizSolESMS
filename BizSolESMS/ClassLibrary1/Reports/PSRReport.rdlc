@@ -302,7 +302,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Org MRN : </Value>
+                <Value>Org MRP : </Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -340,7 +340,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Scan MRN : </Value>
+                <Value>Scan MRP : </Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -953,7 +953,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>MRP</Value>
+                              <Value>Scanned MRP</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1281,7 +1281,7 @@
         <Top>10.10391cm</Top>
         <Left>0.29103cm</Left>
         <Height>1.2cm</Height>
-        <Width>19.53791cm</Width>
+        <Width>19.5379cm</Width>
         <ZIndex>14</ZIndex>
         <Style>
           <Border>

@@ -1125,7 +1125,7 @@ function GetCompletedDespatchOrderList(Mode) {
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="Report('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
                         <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
                     `
                 }));
@@ -1543,7 +1543,8 @@ function ChangecolorTr() {
 }
 
 setInterval(ChangecolorTr, 100);
-function DispatchReport(Code) {
+function DispatchReport() {
+    var Code = $("#hfDownloadCode").val();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetDispatchReport?Code=${Code}`,
         type: 'GET',
@@ -1970,4 +1971,154 @@ function CloseManualModal() {
     if (modal) {
         modal.hide();
     }
+}
+function GetDispatchReport() {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetTATReportList?Month=${Month}&Year=${Year}&Type=GET`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $("#txtTATTable").show();
+                const StringFilterColumn = ["INVOICE NO", "RETAILER CODE", "PARTY NAME", "SALES ORDER NO", "INVOICE VALUE", "ORDER TYPE", "PD NAME"];
+                const NumericFilterColumn = [];
+                const DateFilterColumn = ["INVOICE DATE", "ORDER DATE"];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = ["Code"];
+                const ColumnAlignment = {
+                    "Reorder Level": 'right',
+                    "Reorder Qty": 'right',
+                    "REMARK": 'left;width:100px;',
+                };
+                const updatedResponse = response.map(item => {
+                    const isDisabled = item["DISPATCH DATE"] === '' ? 'disabled' : '';
+
+                    return {
+                        ...item,
+                        POD: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.POD}" id="txtPODDate_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                        REDISPATCH: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REDISPATCH}" id="txtRedispatch_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                        "VEHICLE NO": `<input type="text" maxlength="10" class="box_border form-control form-control-sm" ${isDisabled} value="${item["VEHICLE NO"]}" id="txtVehicleNo_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`,
+                        REMARK: `<input type="text" maxlength="100" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REMARK}" id="txtRemark_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`
+                    };
+                });
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+            } else {
+                $("#txtTATTable").hide();
+                if (Type != 'Load') {
+                    toastr.error("Record not found...!");
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Report(Code) {
+    $("#hfDownloadCode").val(Code);
+        var saveModal = new bootstrap.Modal(document.getElementById("DownloadModal"));
+        saveModal.show();
+}
+function CloseDownloadModal() {
+    var modal = bootstrap.Modal.getInstance(document.getElementById('DownloadModal'));
+    if (modal) {
+        modal.hide();
+    }
+}
+function DownloadReportPdf() {
+    var Code = $("#hfDownloadCode").val();
+    $.ajax({
+        url: `${AppBaseURLMenu}/RDLC/PSRReport?Code=${Code}&AuthKey=${authKeyData}`,
+        type: 'GET',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data, status, xhr) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "Report.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error downloading report:', xhr.responseText);
+        }
+    });
+}
+async function DownloadDispatchQR() {
+    var Code = $("#hfDownloadCode").val();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetDispatchQRDetail?Code=${Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: async function (response) {
+            if (response.length > 0) {
+                $("#qrcodeview").html("");
+
+                for (let i = 0; i < response.length; i++) {
+                    const item = response[i];
+                    const textValue = item.QRCode;
+                    const divId = `qrcode_${i}`;
+                    $("#qrcodeview").append(`<div id="${divId}" style="display:none;"></div>`);
+
+                    new QRCode(document.getElementById(divId), {
+                        text: textValue,
+                        width: 100,
+                        height: 100,
+                    });
+
+                    await new Promise(resolve => setTimeout(resolve, 300));
+
+                    const canvas = $(`#${divId} canvas`)[0];
+                    if (canvas) {
+                        const base64Image = canvas.toDataURL('image/png');
+                        response[i].QRCode = base64Image;
+                    }
+                }
+                DownloadQRPdf(response);
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+function DownloadQRPdf(response) {
+    $.ajax({
+        url: `${AppBaseURLMenu}/RDLC/PrintDispatchQR`,
+        type: 'POST',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        contentType: 'application/json',
+        data: JSON.stringify(response),
+        success: function (data, status, xhr) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "DispatchQR_" + response[0]["OrderNo"]+".pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error downloading report:', xhr.responseText);
+        }
+    });
 }

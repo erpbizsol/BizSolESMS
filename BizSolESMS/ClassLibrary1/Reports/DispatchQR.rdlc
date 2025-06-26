@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Body>
+    <ReportItems>
+      <Tablix Name="Tablix8">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>9.30953cm</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>5.25391cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Rectangle Name="Rectangle8">
+                      <ReportItems>
+                        <Textbox Name="Textbox32">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>MG Corporation</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontSize>18pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox32</rd:DefaultName>
+                          <Top>0cm</Top>
+                          <Left>0.26141cm</Left>
+                          <Height>0.6762cm</Height>
+                          <Width>9.02166cm</Width>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="Textbox34">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Ayodhaya Road, Chinhat, Lucknow, Uttar Pradesh</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox34</rd:DefaultName>
+                          <Top>0.74676cm</Top>
+                          <Left>0.26141cm</Left>
+                          <Height>0.53799cm</Height>
+                          <Width>9.02166cm</Width>
+                          <ZIndex>1</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Line Name="Line1">
+                          <Top>1.58432cm</Top>
+                          <Left>0.26141cm</Left>
+                          <Height>0cm</Height>
+                          <Width>9.02166cm</Width>
+                          <ZIndex>2</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                          </Style>
+                        </Line>
+                        <Textbox Name="OrderNo">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>OrderNo. </Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=First(Fields!OrderNo.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>OrderNo</rd:DefaultName>
+                          <Top>1.76071cm</Top>
+                          <Left>0.26141cm</Left>
+                          <Height>0.70583cm</Height>
+                          <Width>9.02166cm</Width>
+                          <ZIndex>3</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="AccountName">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!AccountName.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>AccountName</rd:DefaultName>
+                          <Top>2.64294cm</Top>
+                          <Left>0.26141cm</Left>
+                          <Height>0.6cm</Height>
+                          <Width>5.96604cm</Width>
+                          <ZIndex>4</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="Address">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!Address.Value)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Address</rd:DefaultName>
+                          <Top>3.41932cm</Top>
+                          <Left>0.26141cm</Left>
+                          <Height>0.59063cm</Height>
+                          <Width>5.96604cm</Width>
+                          <ZIndex>5</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Tablix Name="Tablix9">
+                          <TablixBody>
+                            <TablixColumns>
+                              <TablixColumn>
+                                <Width>5.96604cm</Width>
+                              </TablixColumn>
+                            </TablixColumns>
+                            <TablixRows>
+                              <TablixRow>
+                                <Height>0.71819cm</Height>
+                                <TablixCells>
+                                  <TablixCell>
+                                    <CellContents>
+                                      <Rectangle Name="Rectangle9">
+                                        <ReportItems>
+                                          <Textbox Name="BoxNo">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>Box Serial No.</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                  <TextRun>
+                                                    <Value>=Fields!BoxNo.Value</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style>
+                                                  <TextAlign>Left</TextAlign>
+                                                </Style>
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>BoxNo</rd:DefaultName>
+                                            <Top>0cm</Top>
+                                            <Left>0cm</Left>
+                                            <Height>0.71819cm</Height>
+                                            <Width>5.96604cm</Width>
+                                            <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
+                                              <VerticalAlign>Middle</VerticalAlign>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </ReportItems>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                        </Style>
+                                      </Rectangle>
+                                    </CellContents>
+                                  </TablixCell>
+                                </TablixCells>
+                              </TablixRow>
+                            </TablixRows>
+                          </TablixBody>
+                          <TablixColumnHierarchy>
+                            <TablixMembers>
+                              <TablixMember />
+                            </TablixMembers>
+                          </TablixColumnHierarchy>
+                          <TablixRowHierarchy>
+                            <TablixMembers>
+                              <TablixMember>
+                                <Group Name="Details1" />
+                              </TablixMember>
+                            </TablixMembers>
+                          </TablixRowHierarchy>
+                          <DataSetName>DispatchQRData</DataSetName>
+                          <Top>4.15106cm</Top>
+                          <Left>0.26141cm</Left>
+                          <Height>0.71819cm</Height>
+                          <Width>5.96604cm</Width>
+                          <ZIndex>6</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Tablix>
+                        <Tablix Name="Tablix10">
+                          <TablixBody>
+                            <TablixColumns>
+                              <TablixColumn>
+                                <Width>2.71708cm</Width>
+                              </TablixColumn>
+                            </TablixColumns>
+                            <TablixRows>
+                              <TablixRow>
+                                <Height>2.22632cm</Height>
+                                <TablixCells>
+                                  <TablixCell>
+                                    <CellContents>
+                                      <Rectangle Name="Rectangle10">
+                                        <ReportItems>
+                                          <Image Name="Image3">
+                                            <Source>Database</Source>
+                                            <Value>=Fields!QRCode.Value</Value>
+                                            <MIMEType>image/png</MIMEType>
+                                            <Sizing>FitProportional</Sizing>
+                                            <Top>0cm</Top>
+                                            <Left>0cm</Left>
+                                            <Height>2.22632cm</Height>
+                                            <Width>2.71708cm</Width>
+                                            <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
+                                            </Style>
+                                          </Image>
+                                        </ReportItems>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                        </Style>
+                                      </Rectangle>
+                                    </CellContents>
+                                  </TablixCell>
+                                </TablixCells>
+                              </TablixRow>
+                            </TablixRows>
+                          </TablixBody>
+                          <TablixColumnHierarchy>
+                            <TablixMembers>
+                              <TablixMember />
+                            </TablixMembers>
+                          </TablixColumnHierarchy>
+                          <TablixRowHierarchy>
+                            <TablixMembers>
+                              <TablixMember>
+                                <Group Name="Details2" />
+                              </TablixMember>
+                            </TablixMembers>
+                          </TablixRowHierarchy>
+                          <Top>2.64294cm</Top>
+                          <Left>6.58495cm</Left>
+                          <Height>2.22632cm</Height>
+                          <Width>2.71708cm</Width>
+                          <ZIndex>7</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Tablix>
+                      </ReportItems>
+                      <KeepTogether>true</KeepTogether>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </Rectangle>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="Details">
+                <GroupExpressions>
+                  <GroupExpression>=Fields!BoxNo.Value</GroupExpression>
+                </GroupExpressions>
+                <PageBreak>
+                  <BreakLocation>Between</BreakLocation>
+                </PageBreak>
+              </Group>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>DispatchQRData</DataSetName>
+        <Top>0cm</Top>
+        <Left>0cm</Left>
+        <Height>5.25391cm</Height>
+        <Width>9.30953cm</Width>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
+    </ReportItems>
+    <Height>5.3862cm</Height>
+    <Style />
+  </Body>
+  <Width>9.41537cm</Width>
+  <Page>
+    <PageHeight>7cm</PageHeight>
+    <PageWidth>10cm</PageWidth>
+    <LeftMargin>0.1cm</LeftMargin>
+    <RightMargin>0.1cm</RightMargin>
+    <TopMargin>0.1cm</TopMargin>
+    <BottomMargin>0.1cm</BottomMargin>
+    <ColumnSpacing>1.27cm</ColumnSpacing>
+    <Style />
+  </Page>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DispatchQRData">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>ac52796b-902e-4977-8b03-e9054d2da809</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DispatchQRData">
+      <Query>
+        <DataSourceName>DispatchQRData</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="QRCode">
+          <DataField>QRCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BoxNo">
+          <DataField>BoxNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="OrderNo">
+          <DataField>OrderNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AccountName">
+          <DataField>AccountName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address">
+          <DataField>Address</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>DispatchQRData</rd:DataSetName>
+        <rd:SchemaPath>D:\All Project\BizSolESMS\BizSolESMS\ClassLibrary1\Dataset\DispatchQRData.xsd</rd:SchemaPath>
+        <rd:TableName>DispatchQRData</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <EmbeddedImages>
+    <EmbeddedImage Name="ExampleCode">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>6618f559-4ec4-4fcc-a5ae-61f7f6ce1c04</rd:ReportID>
+</Report>
