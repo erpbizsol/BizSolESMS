@@ -5,6 +5,7 @@
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 <script src="~/assets/script/DispatchBoxValidation.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <style>
     .tabs {
         width: 100%;
@@ -246,6 +247,11 @@
     .page-content {
         padding: 3px 0;
     }
+
+    .active {
+        background-color: #275481;
+        color: #fff;
+    }
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
@@ -273,7 +279,9 @@
         </div>
     </div>
     <div class="row m-1" sstyle="display:none" id="UnloadingTable1">
-
+        <div class="col-sm-12 text-end m-2">
+            <button type="button" class="btn btn-primary btn-height" title="Print Gate Pass" onclick="GetGatePass()">GATE PASS</button>
+        </div>
         <div class="card-body">
             <div class="table-wrapper fixed-height-table">
                 <table id="table1" class="fixed-width-table table">
@@ -333,7 +341,7 @@
                                 <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
                                 <audio id="BoxNoVoice" style="display: none;"><source src="~/assets/audio/BoxNoVoice.mp3" type="audio/mpeg" /></audio>
                                 <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No.</label> <span class="text-danger">*</span>
-                                <input type="text" id="txtVehicleNo" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Vehicle No..">
+                                <input type="text" id="txtVehicleNo" onkeyup="convertToUppercase(this)" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Vehicle No..">
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtInvoiceNo" class="col-form-label-sm fw-bold">Invoice No</label> <span class="text-danger">*</span>
@@ -374,6 +382,51 @@
                 </table>
             </div>
             <div class="paginator" id="paginator-EditTable">
+            </div>
+        </div>
+    </div>
+    <div class="modal position-absolute" id="staticBackdrop" style="padding-top:30px;" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-header tab-header" style="background-color:#033764">
+                        <level style="color:white">Print Gate Pass</level>
+                        <button type="button" class="close modal-close btn-sm" aria-label="Close" onclick="CloseModal()"><span aria-hidden="true">x</span></button>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <label for="txtModalVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label> <span class="text-danger">*</span>
+                                    <input type="text" id="txtModalVehicleNo" onkeyup="convertToUppercase(this)" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Vehicle No..">
+                                </div>
+                                <div class="col-md-6 col-sm-6">
+                                    <label for="txtDate" class="col-form-label-sm fw-bold">Date</label> <span class="text-danger">*</span>
+                                    <input type="text"  id="txtDate" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Date..">
+                                </div> 
+                                <div class="col-md-2 col-sm-6">
+                                    <button type="button" class="btn btn-primary btn-height" title="Show" onclick="ShowData()">
+                                        Show
+                                    </button>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="card-body">
+                            <div class="table-wrapper fixed-height-table">
+                                <table id="PrintTable" class="fixed-width-table table">
+                                    <thead id="PrintTable-header">
+                                    </thead>
+                                    <tbody id="PrintTable-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="paginator" id="paginator-PrintTable">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
