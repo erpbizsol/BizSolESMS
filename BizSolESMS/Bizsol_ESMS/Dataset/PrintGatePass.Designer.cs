@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace DatasetClass.Dataset {
+namespace Bizsol_ESMS.Dataset {
     
     
     /// <summary>
@@ -20,17 +20,17 @@ namespace DatasetClass.Dataset {
     [global::System.ComponentModel.DesignerCategoryAttribute("code")]
     [global::System.ComponentModel.ToolboxItem(true)]
     [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
-    [global::System.Xml.Serialization.XmlRootAttribute("LossOrderReport")]
+    [global::System.Xml.Serialization.XmlRootAttribute("PrintGatePass")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
-    public partial class LossOrderReport : global::System.Data.DataSet {
+    public partial class PrintGatePass : global::System.Data.DataSet {
         
-        private LossOrderReportDataTable tableLossOrderReport;
+        private PrintGatePassDataTable tablePrintGatePass;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public LossOrderReport() {
+        public PrintGatePass() {
             this.BeginInit();
             this.InitClass();
             global::System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new global::System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
@@ -43,7 +43,7 @@ namespace DatasetClass.Dataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [System.ObsoleteAttribute("This API supports obsolete formatter-based serialization. It should not be called" +
             " or extended by application code.", DiagnosticId="SYSLIB0051")]
-        protected LossOrderReport(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+        protected PrintGatePass(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                 base(info, context, false) {
             if ((this.IsBinarySerialized(info, context) == true)) {
                 this.InitVars(false);
@@ -56,8 +56,8 @@ namespace DatasetClass.Dataset {
             if ((this.DetermineSchemaSerializationMode(info, context) == global::System.Data.SchemaSerializationMode.IncludeSchema)) {
                 global::System.Data.DataSet ds = new global::System.Data.DataSet();
                 ds.ReadXmlSchema(new global::System.Xml.XmlTextReader(new global::System.IO.StringReader(strSchema)));
-                if ((ds.Tables["LossOrderReport"] != null)) {
-                    base.Tables.Add(new LossOrderReportDataTable(ds.Tables["LossOrderReport"]));
+                if ((ds.Tables["PrintGatePass"] != null)) {
+                    base.Tables.Add(new PrintGatePassDataTable(ds.Tables["PrintGatePass"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -81,9 +81,9 @@ namespace DatasetClass.Dataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public LossOrderReportDataTable _LossOrderReport {
+        public PrintGatePassDataTable _PrintGatePass {
             get {
-                return this.tableLossOrderReport;
+                return this.tablePrintGatePass;
             }
         }
         
@@ -129,7 +129,7 @@ namespace DatasetClass.Dataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public override global::System.Data.DataSet Clone() {
-            LossOrderReport cln = ((LossOrderReport)(base.Clone()));
+            PrintGatePass cln = ((PrintGatePass)(base.Clone()));
             cln.InitVars();
             cln.SchemaSerializationMode = this.SchemaSerializationMode;
             return cln;
@@ -154,8 +154,8 @@ namespace DatasetClass.Dataset {
                 this.Reset();
                 global::System.Data.DataSet ds = new global::System.Data.DataSet();
                 ds.ReadXml(reader);
-                if ((ds.Tables["LossOrderReport"] != null)) {
-                    base.Tables.Add(new LossOrderReportDataTable(ds.Tables["LossOrderReport"]));
+                if ((ds.Tables["PrintGatePass"] != null)) {
+                    base.Tables.Add(new PrintGatePassDataTable(ds.Tables["PrintGatePass"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -190,10 +190,10 @@ namespace DatasetClass.Dataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         internal void InitVars(bool initTable) {
-            this.tableLossOrderReport = ((LossOrderReportDataTable)(base.Tables["LossOrderReport"]));
+            this.tablePrintGatePass = ((PrintGatePassDataTable)(base.Tables["PrintGatePass"]));
             if ((initTable == true)) {
-                if ((this.tableLossOrderReport != null)) {
-                    this.tableLossOrderReport.InitVars();
+                if ((this.tablePrintGatePass != null)) {
+                    this.tablePrintGatePass.InitVars();
                 }
             }
         }
@@ -201,18 +201,18 @@ namespace DatasetClass.Dataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private void InitClass() {
-            this.DataSetName = "LossOrderReport";
+            this.DataSetName = "PrintGatePass";
             this.Prefix = "";
-            this.Namespace = "http://tempuri.org/LossOrderReport.xsd";
+            this.Namespace = "http://tempuri.org/PrintGatePass.xsd";
             this.EnforceConstraints = true;
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
-            this.tableLossOrderReport = new LossOrderReportDataTable();
-            base.Tables.Add(this.tableLossOrderReport);
+            this.tablePrintGatePass = new PrintGatePassDataTable();
+            base.Tables.Add(this.tablePrintGatePass);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private bool ShouldSerialize_LossOrderReport() {
+        private bool ShouldSerialize_PrintGatePass() {
             return false;
         }
         
@@ -227,7 +227,7 @@ namespace DatasetClass.Dataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-            LossOrderReport ds = new LossOrderReport();
+            PrintGatePass ds = new PrintGatePass();
             global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
             global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
             global::System.Xml.Schema.XmlSchemaAny any = new global::System.Xml.Schema.XmlSchemaAny();
@@ -272,31 +272,39 @@ namespace DatasetClass.Dataset {
         }
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public delegate void LossOrderReportRowChangeEventHandler(object sender, LossOrderReportRowChangeEvent e);
+        public delegate void PrintGatePassRowChangeEventHandler(object sender, PrintGatePassRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class LossOrderReportDataTable : global::System.Data.TypedTableBase<LossOrderReportRow> {
+        public partial class PrintGatePassDataTable : global::System.Data.TypedTableBase<PrintGatePassRow> {
             
-            private global::System.Data.DataColumn columnTotalItems;
-            
-            private global::System.Data.DataColumn columnQtyGreaterThanZero;
-            
-            private global::System.Data.DataColumn columnQtyEqualToZero;
+            private global::System.Data.DataColumn columnAccountName;
             
             private global::System.Data.DataColumn columnDate;
             
-            private global::System.Data.DataColumn columnMonth;
+            private global::System.Data.DataColumn columnVehicleNo;
             
-            private global::System.Data.DataColumn columnQtyLessThanZero;
+            private global::System.Data.DataColumn columnDriverName;
+            
+            private global::System.Data.DataColumn columnDriverContactNo;
+            
+            private global::System.Data.DataColumn columnLorryMeter;
+            
+            private global::System.Data.DataColumn columnBuyerPONo;
+            
+            private global::System.Data.DataColumn columnBoxCount;
+            
+            private global::System.Data.DataColumn columnInvoiceNo;
+            
+            private global::System.Data.DataColumn columnTotalRate;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public LossOrderReportDataTable() {
-                this.TableName = "LossOrderReport";
+            public PrintGatePassDataTable() {
+                this.TableName = "PrintGatePass";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -304,7 +312,7 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            internal LossOrderReportDataTable(global::System.Data.DataTable table) {
+            internal PrintGatePassDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -323,32 +331,16 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [System.ObsoleteAttribute("This API supports obsolete formatter-based serialization. It should not be called" +
                 " or extended by application code.", DiagnosticId="SYSLIB0051")]
-            protected LossOrderReportDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected PrintGatePassDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn TotalItemsColumn {
+            public global::System.Data.DataColumn AccountNameColumn {
                 get {
-                    return this.columnTotalItems;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn QtyGreaterThanZeroColumn {
-                get {
-                    return this.columnQtyGreaterThanZero;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn QtyEqualToZeroColumn {
-                get {
-                    return this.columnQtyEqualToZero;
+                    return this.columnAccountName;
                 }
             }
             
@@ -362,17 +354,65 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn MonthColumn {
+            public global::System.Data.DataColumn VehicleNoColumn {
                 get {
-                    return this.columnMonth;
+                    return this.columnVehicleNo;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn QtyLessThanZeroColumn {
+            public global::System.Data.DataColumn DriverNameColumn {
                 get {
-                    return this.columnQtyLessThanZero;
+                    return this.columnDriverName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn DriverContactNoColumn {
+                get {
+                    return this.columnDriverContactNo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn LorryMeterColumn {
+                get {
+                    return this.columnLorryMeter;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn BuyerPONoColumn {
+                get {
+                    return this.columnBuyerPONo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn BoxCountColumn {
+                get {
+                    return this.columnBoxCount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn InvoiceNoColumn {
+                get {
+                    return this.columnInvoiceNo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn TotalRateColumn {
+                get {
+                    return this.columnTotalRate;
                 }
             }
             
@@ -387,50 +427,54 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public LossOrderReportRow this[int index] {
+            public PrintGatePassRow this[int index] {
                 get {
-                    return ((LossOrderReportRow)(this.Rows[index]));
+                    return ((PrintGatePassRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event LossOrderReportRowChangeEventHandler LossOrderReportRowChanging;
+            public event PrintGatePassRowChangeEventHandler PrintGatePassRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event LossOrderReportRowChangeEventHandler LossOrderReportRowChanged;
+            public event PrintGatePassRowChangeEventHandler PrintGatePassRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event LossOrderReportRowChangeEventHandler LossOrderReportRowDeleting;
+            public event PrintGatePassRowChangeEventHandler PrintGatePassRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public event LossOrderReportRowChangeEventHandler LossOrderReportRowDeleted;
+            public event PrintGatePassRowChangeEventHandler PrintGatePassRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void AddLossOrderReportRow(LossOrderReportRow row) {
+            public void AddPrintGatePassRow(PrintGatePassRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public LossOrderReportRow AddLossOrderReportRow(string TotalItems, string QtyGreaterThanZero, string QtyEqualToZero, string Date, string Month, string QtyLessThanZero) {
-                LossOrderReportRow rowLossOrderReportRow = ((LossOrderReportRow)(this.NewRow()));
+            public PrintGatePassRow AddPrintGatePassRow(string AccountName, string Date, string VehicleNo, string DriverName, string DriverContactNo, string LorryMeter, string BuyerPONo, string BoxCount, string InvoiceNo, string TotalRate) {
+                PrintGatePassRow rowPrintGatePassRow = ((PrintGatePassRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        TotalItems,
-                        QtyGreaterThanZero,
-                        QtyEqualToZero,
+                        AccountName,
                         Date,
-                        Month,
-                        QtyLessThanZero};
-                rowLossOrderReportRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowLossOrderReportRow);
-                return rowLossOrderReportRow;
+                        VehicleNo,
+                        DriverName,
+                        DriverContactNo,
+                        LorryMeter,
+                        BuyerPONo,
+                        BoxCount,
+                        InvoiceNo,
+                        TotalRate};
+                rowPrintGatePassRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowPrintGatePassRow);
+                return rowPrintGatePassRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                LossOrderReportDataTable cln = ((LossOrderReportDataTable)(base.Clone()));
+                PrintGatePassDataTable cln = ((PrintGatePassDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -438,63 +482,75 @@ namespace DatasetClass.Dataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new LossOrderReportDataTable();
+                return new PrintGatePassDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             internal void InitVars() {
-                this.columnTotalItems = base.Columns["TotalItems"];
-                this.columnQtyGreaterThanZero = base.Columns["QtyGreaterThanZero"];
-                this.columnQtyEqualToZero = base.Columns["QtyEqualToZero"];
+                this.columnAccountName = base.Columns["AccountName"];
                 this.columnDate = base.Columns["Date"];
-                this.columnMonth = base.Columns["Month"];
-                this.columnQtyLessThanZero = base.Columns["QtyLessThanZero"];
+                this.columnVehicleNo = base.Columns["VehicleNo"];
+                this.columnDriverName = base.Columns["DriverName"];
+                this.columnDriverContactNo = base.Columns["DriverContactNo"];
+                this.columnLorryMeter = base.Columns["LorryMeter"];
+                this.columnBuyerPONo = base.Columns["BuyerPONo"];
+                this.columnBoxCount = base.Columns["BoxCount"];
+                this.columnInvoiceNo = base.Columns["InvoiceNo"];
+                this.columnTotalRate = base.Columns["TotalRate"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             private void InitClass() {
-                this.columnTotalItems = new global::System.Data.DataColumn("TotalItems", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTotalItems);
-                this.columnQtyGreaterThanZero = new global::System.Data.DataColumn("QtyGreaterThanZero", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnQtyGreaterThanZero);
-                this.columnQtyEqualToZero = new global::System.Data.DataColumn("QtyEqualToZero", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnQtyEqualToZero);
+                this.columnAccountName = new global::System.Data.DataColumn("AccountName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnAccountName);
                 this.columnDate = new global::System.Data.DataColumn("Date", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnDate);
-                this.columnMonth = new global::System.Data.DataColumn("Month", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnMonth);
-                this.columnQtyLessThanZero = new global::System.Data.DataColumn("QtyLessThanZero", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnQtyLessThanZero);
-                this.ExtendedProperties.Add("Generator_TablePropName", "_LossOrderReport");
-                this.ExtendedProperties.Add("Generator_UserTableName", "LossOrderReport");
+                this.columnVehicleNo = new global::System.Data.DataColumn("VehicleNo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnVehicleNo);
+                this.columnDriverName = new global::System.Data.DataColumn("DriverName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDriverName);
+                this.columnDriverContactNo = new global::System.Data.DataColumn("DriverContactNo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDriverContactNo);
+                this.columnLorryMeter = new global::System.Data.DataColumn("LorryMeter", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnLorryMeter);
+                this.columnBuyerPONo = new global::System.Data.DataColumn("BuyerPONo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnBuyerPONo);
+                this.columnBoxCount = new global::System.Data.DataColumn("BoxCount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnBoxCount);
+                this.columnInvoiceNo = new global::System.Data.DataColumn("InvoiceNo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnInvoiceNo);
+                this.columnTotalRate = new global::System.Data.DataColumn("TotalRate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTotalRate);
+                this.ExtendedProperties.Add("Generator_TablePropName", "_PrintGatePass");
+                this.ExtendedProperties.Add("Generator_UserTableName", "PrintGatePass");
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public LossOrderReportRow NewLossOrderReportRow() {
-                return ((LossOrderReportRow)(this.NewRow()));
+            public PrintGatePassRow NewPrintGatePassRow() {
+                return ((PrintGatePassRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new LossOrderReportRow(builder);
+                return new PrintGatePassRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(LossOrderReportRow);
+                return typeof(PrintGatePassRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.LossOrderReportRowChanged != null)) {
-                    this.LossOrderReportRowChanged(this, new LossOrderReportRowChangeEvent(((LossOrderReportRow)(e.Row)), e.Action));
+                if ((this.PrintGatePassRowChanged != null)) {
+                    this.PrintGatePassRowChanged(this, new PrintGatePassRowChangeEvent(((PrintGatePassRow)(e.Row)), e.Action));
                 }
             }
             
@@ -502,8 +558,8 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.LossOrderReportRowChanging != null)) {
-                    this.LossOrderReportRowChanging(this, new LossOrderReportRowChangeEvent(((LossOrderReportRow)(e.Row)), e.Action));
+                if ((this.PrintGatePassRowChanging != null)) {
+                    this.PrintGatePassRowChanging(this, new PrintGatePassRowChangeEvent(((PrintGatePassRow)(e.Row)), e.Action));
                 }
             }
             
@@ -511,8 +567,8 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.LossOrderReportRowDeleted != null)) {
-                    this.LossOrderReportRowDeleted(this, new LossOrderReportRowChangeEvent(((LossOrderReportRow)(e.Row)), e.Action));
+                if ((this.PrintGatePassRowDeleted != null)) {
+                    this.PrintGatePassRowDeleted(this, new PrintGatePassRowChangeEvent(((PrintGatePassRow)(e.Row)), e.Action));
                 }
             }
             
@@ -520,14 +576,14 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.LossOrderReportRowDeleting != null)) {
-                    this.LossOrderReportRowDeleting(this, new LossOrderReportRowChangeEvent(((LossOrderReportRow)(e.Row)), e.Action));
+                if ((this.PrintGatePassRowDeleting != null)) {
+                    this.PrintGatePassRowDeleting(this, new PrintGatePassRowChangeEvent(((PrintGatePassRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void RemoveLossOrderReportRow(LossOrderReportRow row) {
+            public void RemovePrintGatePassRow(PrintGatePassRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -536,7 +592,7 @@ namespace DatasetClass.Dataset {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                LossOrderReport ds = new LossOrderReport();
+                PrintGatePass ds = new PrintGatePass();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -554,7 +610,7 @@ namespace DatasetClass.Dataset {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "LossOrderReportDataTable";
+                attribute2.FixedValue = "PrintGatePassDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -598,62 +654,30 @@ namespace DatasetClass.Dataset {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class LossOrderReportRow : global::System.Data.DataRow {
+        public partial class PrintGatePassRow : global::System.Data.DataRow {
             
-            private LossOrderReportDataTable tableLossOrderReport;
+            private PrintGatePassDataTable tablePrintGatePass;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            internal LossOrderReportRow(global::System.Data.DataRowBuilder rb) : 
+            internal PrintGatePassRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableLossOrderReport = ((LossOrderReportDataTable)(this.Table));
+                this.tablePrintGatePass = ((PrintGatePassDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string TotalItems {
+            public string AccountName {
                 get {
                     try {
-                        return ((string)(this[this.tableLossOrderReport.TotalItemsColumn]));
+                        return ((string)(this[this.tablePrintGatePass.AccountNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'TotalItems\' in table \'LossOrderReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'AccountName\' in table \'PrintGatePass\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableLossOrderReport.TotalItemsColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string QtyGreaterThanZero {
-                get {
-                    try {
-                        return ((string)(this[this.tableLossOrderReport.QtyGreaterThanZeroColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'QtyGreaterThanZero\' in table \'LossOrderReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLossOrderReport.QtyGreaterThanZeroColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string QtyEqualToZero {
-                get {
-                    try {
-                        return ((string)(this[this.tableLossOrderReport.QtyEqualToZeroColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'QtyEqualToZero\' in table \'LossOrderReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLossOrderReport.QtyEqualToZeroColumn] = value;
+                    this[this.tablePrintGatePass.AccountNameColumn] = value;
                 }
             }
             
@@ -662,119 +686,263 @@ namespace DatasetClass.Dataset {
             public string Date {
                 get {
                     try {
-                        return ((string)(this[this.tableLossOrderReport.DateColumn]));
+                        return ((string)(this[this.tablePrintGatePass.DateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Date\' in table \'LossOrderReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Date\' in table \'PrintGatePass\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableLossOrderReport.DateColumn] = value;
+                    this[this.tablePrintGatePass.DateColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string Month {
+            public string VehicleNo {
                 get {
                     try {
-                        return ((string)(this[this.tableLossOrderReport.MonthColumn]));
+                        return ((string)(this[this.tablePrintGatePass.VehicleNoColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Month\' in table \'LossOrderReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'VehicleNo\' in table \'PrintGatePass\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableLossOrderReport.MonthColumn] = value;
+                    this[this.tablePrintGatePass.VehicleNoColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string QtyLessThanZero {
+            public string DriverName {
                 get {
                     try {
-                        return ((string)(this[this.tableLossOrderReport.QtyLessThanZeroColumn]));
+                        return ((string)(this[this.tablePrintGatePass.DriverNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'QtyLessThanZero\' in table \'LossOrderReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'DriverName\' in table \'PrintGatePass\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableLossOrderReport.QtyLessThanZeroColumn] = value;
+                    this[this.tablePrintGatePass.DriverNameColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsTotalItemsNull() {
-                return this.IsNull(this.tableLossOrderReport.TotalItemsColumn);
+            public string DriverContactNo {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.DriverContactNoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'DriverContactNo\' in table \'PrintGatePass\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.DriverContactNoColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetTotalItemsNull() {
-                this[this.tableLossOrderReport.TotalItemsColumn] = global::System.Convert.DBNull;
+            public string LorryMeter {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.LorryMeterColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'LorryMeter\' in table \'PrintGatePass\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.LorryMeterColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsQtyGreaterThanZeroNull() {
-                return this.IsNull(this.tableLossOrderReport.QtyGreaterThanZeroColumn);
+            public string BuyerPONo {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.BuyerPONoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'BuyerPONo\' in table \'PrintGatePass\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.BuyerPONoColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetQtyGreaterThanZeroNull() {
-                this[this.tableLossOrderReport.QtyGreaterThanZeroColumn] = global::System.Convert.DBNull;
+            public string BoxCount {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.BoxCountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'BoxCount\' in table \'PrintGatePass\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.BoxCountColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsQtyEqualToZeroNull() {
-                return this.IsNull(this.tableLossOrderReport.QtyEqualToZeroColumn);
+            public string InvoiceNo {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.InvoiceNoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'InvoiceNo\' in table \'PrintGatePass\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.InvoiceNoColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetQtyEqualToZeroNull() {
-                this[this.tableLossOrderReport.QtyEqualToZeroColumn] = global::System.Convert.DBNull;
+            public string TotalRate {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.TotalRateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'TotalRate\' in table \'PrintGatePass\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.TotalRateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsAccountNameNull() {
+                return this.IsNull(this.tablePrintGatePass.AccountNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetAccountNameNull() {
+                this[this.tablePrintGatePass.AccountNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsDateNull() {
-                return this.IsNull(this.tableLossOrderReport.DateColumn);
+                return this.IsNull(this.tablePrintGatePass.DateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetDateNull() {
-                this[this.tableLossOrderReport.DateColumn] = global::System.Convert.DBNull;
+                this[this.tablePrintGatePass.DateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsMonthNull() {
-                return this.IsNull(this.tableLossOrderReport.MonthColumn);
+            public bool IsVehicleNoNull() {
+                return this.IsNull(this.tablePrintGatePass.VehicleNoColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetMonthNull() {
-                this[this.tableLossOrderReport.MonthColumn] = global::System.Convert.DBNull;
+            public void SetVehicleNoNull() {
+                this[this.tablePrintGatePass.VehicleNoColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsQtyLessThanZeroNull() {
-                return this.IsNull(this.tableLossOrderReport.QtyLessThanZeroColumn);
+            public bool IsDriverNameNull() {
+                return this.IsNull(this.tablePrintGatePass.DriverNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetQtyLessThanZeroNull() {
-                this[this.tableLossOrderReport.QtyLessThanZeroColumn] = global::System.Convert.DBNull;
+            public void SetDriverNameNull() {
+                this[this.tablePrintGatePass.DriverNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsDriverContactNoNull() {
+                return this.IsNull(this.tablePrintGatePass.DriverContactNoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetDriverContactNoNull() {
+                this[this.tablePrintGatePass.DriverContactNoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsLorryMeterNull() {
+                return this.IsNull(this.tablePrintGatePass.LorryMeterColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetLorryMeterNull() {
+                this[this.tablePrintGatePass.LorryMeterColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsBuyerPONoNull() {
+                return this.IsNull(this.tablePrintGatePass.BuyerPONoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetBuyerPONoNull() {
+                this[this.tablePrintGatePass.BuyerPONoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsBoxCountNull() {
+                return this.IsNull(this.tablePrintGatePass.BoxCountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetBoxCountNull() {
+                this[this.tablePrintGatePass.BoxCountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsInvoiceNoNull() {
+                return this.IsNull(this.tablePrintGatePass.InvoiceNoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetInvoiceNoNull() {
+                this[this.tablePrintGatePass.InvoiceNoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsTotalRateNull() {
+                return this.IsNull(this.tablePrintGatePass.TotalRateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetTotalRateNull() {
+                this[this.tablePrintGatePass.TotalRateColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -782,22 +950,22 @@ namespace DatasetClass.Dataset {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public class LossOrderReportRowChangeEvent : global::System.EventArgs {
+        public class PrintGatePassRowChangeEvent : global::System.EventArgs {
             
-            private LossOrderReportRow eventRow;
+            private PrintGatePassRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public LossOrderReportRowChangeEvent(LossOrderReportRow row, global::System.Data.DataRowAction action) {
+            public PrintGatePassRowChangeEvent(PrintGatePassRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public LossOrderReportRow Row {
+            public PrintGatePassRow Row {
                 get {
                     return this.eventRow;
                 }

@@ -281,15 +281,17 @@ namespace DatasetClass.Dataset {
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class LossOrderReportDataTable : global::System.Data.TypedTableBase<LossOrderReportRow> {
             
-            private global::System.Data.DataColumn columnTotalLineOfProduct;
+            private global::System.Data.DataColumn columnTotalItems;
             
-            private global::System.Data.DataColumn columnTotalProductQty;
+            private global::System.Data.DataColumn columnQtyGreaterThanZero;
             
-            private global::System.Data.DataColumn columnTotalAmount;
+            private global::System.Data.DataColumn columnQtyEqualToZero;
             
             private global::System.Data.DataColumn columnDate;
             
             private global::System.Data.DataColumn columnMonth;
+            
+            private global::System.Data.DataColumn columnQtyLessThanZero;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
@@ -328,25 +330,25 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn TotalLineOfProductColumn {
+            public global::System.Data.DataColumn TotalItemsColumn {
                 get {
-                    return this.columnTotalLineOfProduct;
+                    return this.columnTotalItems;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn TotalProductQtyColumn {
+            public global::System.Data.DataColumn QtyGreaterThanZeroColumn {
                 get {
-                    return this.columnTotalProductQty;
+                    return this.columnQtyGreaterThanZero;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn TotalAmountColumn {
+            public global::System.Data.DataColumn QtyEqualToZeroColumn {
                 get {
-                    return this.columnTotalAmount;
+                    return this.columnQtyEqualToZero;
                 }
             }
             
@@ -363,6 +365,14 @@ namespace DatasetClass.Dataset {
             public global::System.Data.DataColumn MonthColumn {
                 get {
                     return this.columnMonth;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn QtyLessThanZeroColumn {
+                get {
+                    return this.columnQtyLessThanZero;
                 }
             }
             
@@ -403,14 +413,15 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public LossOrderReportRow AddLossOrderReportRow(string TotalLineOfProduct, string TotalProductQty, string TotalAmount, string Date, string Month) {
+            public LossOrderReportRow AddLossOrderReportRow(string TotalItems, string QtyGreaterThanZero, string QtyEqualToZero, string Date, string Month, string QtyLessThanZero) {
                 LossOrderReportRow rowLossOrderReportRow = ((LossOrderReportRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        TotalLineOfProduct,
-                        TotalProductQty,
-                        TotalAmount,
+                        TotalItems,
+                        QtyGreaterThanZero,
+                        QtyEqualToZero,
                         Date,
-                        Month};
+                        Month,
+                        QtyLessThanZero};
                 rowLossOrderReportRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowLossOrderReportRow);
                 return rowLossOrderReportRow;
@@ -433,26 +444,29 @@ namespace DatasetClass.Dataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             internal void InitVars() {
-                this.columnTotalLineOfProduct = base.Columns["TotalLineOfProduct"];
-                this.columnTotalProductQty = base.Columns["TotalProductQty"];
-                this.columnTotalAmount = base.Columns["TotalAmount"];
+                this.columnTotalItems = base.Columns["TotalItems"];
+                this.columnQtyGreaterThanZero = base.Columns["QtyGreaterThanZero"];
+                this.columnQtyEqualToZero = base.Columns["QtyEqualToZero"];
                 this.columnDate = base.Columns["Date"];
                 this.columnMonth = base.Columns["Month"];
+                this.columnQtyLessThanZero = base.Columns["QtyLessThanZero"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             private void InitClass() {
-                this.columnTotalLineOfProduct = new global::System.Data.DataColumn("TotalLineOfProduct", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTotalLineOfProduct);
-                this.columnTotalProductQty = new global::System.Data.DataColumn("TotalProductQty", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTotalProductQty);
-                this.columnTotalAmount = new global::System.Data.DataColumn("TotalAmount", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTotalAmount);
+                this.columnTotalItems = new global::System.Data.DataColumn("TotalItems", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTotalItems);
+                this.columnQtyGreaterThanZero = new global::System.Data.DataColumn("QtyGreaterThanZero", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnQtyGreaterThanZero);
+                this.columnQtyEqualToZero = new global::System.Data.DataColumn("QtyEqualToZero", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnQtyEqualToZero);
                 this.columnDate = new global::System.Data.DataColumn("Date", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnDate);
                 this.columnMonth = new global::System.Data.DataColumn("Month", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnMonth);
+                this.columnQtyLessThanZero = new global::System.Data.DataColumn("QtyLessThanZero", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnQtyLessThanZero);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_LossOrderReport");
                 this.ExtendedProperties.Add("Generator_UserTableName", "LossOrderReport");
             }
@@ -597,49 +611,49 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string TotalLineOfProduct {
+            public string TotalItems {
                 get {
                     try {
-                        return ((string)(this[this.tableLossOrderReport.TotalLineOfProductColumn]));
+                        return ((string)(this[this.tableLossOrderReport.TotalItemsColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'TotalLineOfProduct\' in table \'LossOrderReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'TotalItems\' in table \'LossOrderReport\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableLossOrderReport.TotalLineOfProductColumn] = value;
+                    this[this.tableLossOrderReport.TotalItemsColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string TotalProductQty {
+            public string QtyGreaterThanZero {
                 get {
                     try {
-                        return ((string)(this[this.tableLossOrderReport.TotalProductQtyColumn]));
+                        return ((string)(this[this.tableLossOrderReport.QtyGreaterThanZeroColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'TotalProductQty\' in table \'LossOrderReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'QtyGreaterThanZero\' in table \'LossOrderReport\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableLossOrderReport.TotalProductQtyColumn] = value;
+                    this[this.tableLossOrderReport.QtyGreaterThanZeroColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string TotalAmount {
+            public string QtyEqualToZero {
                 get {
                     try {
-                        return ((string)(this[this.tableLossOrderReport.TotalAmountColumn]));
+                        return ((string)(this[this.tableLossOrderReport.QtyEqualToZeroColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'TotalAmount\' in table \'LossOrderReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'QtyEqualToZero\' in table \'LossOrderReport\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableLossOrderReport.TotalAmountColumn] = value;
+                    this[this.tableLossOrderReport.QtyEqualToZeroColumn] = value;
                 }
             }
             
@@ -677,38 +691,54 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsTotalLineOfProductNull() {
-                return this.IsNull(this.tableLossOrderReport.TotalLineOfProductColumn);
+            public string QtyLessThanZero {
+                get {
+                    try {
+                        return ((string)(this[this.tableLossOrderReport.QtyLessThanZeroColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'QtyLessThanZero\' in table \'LossOrderReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLossOrderReport.QtyLessThanZeroColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetTotalLineOfProductNull() {
-                this[this.tableLossOrderReport.TotalLineOfProductColumn] = global::System.Convert.DBNull;
+            public bool IsTotalItemsNull() {
+                return this.IsNull(this.tableLossOrderReport.TotalItemsColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsTotalProductQtyNull() {
-                return this.IsNull(this.tableLossOrderReport.TotalProductQtyColumn);
+            public void SetTotalItemsNull() {
+                this[this.tableLossOrderReport.TotalItemsColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetTotalProductQtyNull() {
-                this[this.tableLossOrderReport.TotalProductQtyColumn] = global::System.Convert.DBNull;
+            public bool IsQtyGreaterThanZeroNull() {
+                return this.IsNull(this.tableLossOrderReport.QtyGreaterThanZeroColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsTotalAmountNull() {
-                return this.IsNull(this.tableLossOrderReport.TotalAmountColumn);
+            public void SetQtyGreaterThanZeroNull() {
+                this[this.tableLossOrderReport.QtyGreaterThanZeroColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetTotalAmountNull() {
-                this[this.tableLossOrderReport.TotalAmountColumn] = global::System.Convert.DBNull;
+            public bool IsQtyEqualToZeroNull() {
+                return this.IsNull(this.tableLossOrderReport.QtyEqualToZeroColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetQtyEqualToZeroNull() {
+                this[this.tableLossOrderReport.QtyEqualToZeroColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -733,6 +763,18 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetMonthNull() {
                 this[this.tableLossOrderReport.MonthColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsQtyLessThanZeroNull() {
+                return this.IsNull(this.tableLossOrderReport.QtyLessThanZeroColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetQtyLessThanZeroNull() {
+                this[this.tableLossOrderReport.QtyLessThanZeroColumn] = global::System.Convert.DBNull;
             }
         }
         

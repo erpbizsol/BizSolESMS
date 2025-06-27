@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Bizsol_ESMS.Dataset {
+namespace DatasetClass.Dataset {
     
     
     /// <summary>
@@ -281,11 +281,15 @@ namespace Bizsol_ESMS.Dataset {
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class AverageTrunAroundDataTable : global::System.Data.TypedTableBase<AverageTrunAroundRow> {
             
-            private global::System.Data.DataColumn columnAvgOrdTime;
+            private global::System.Data.DataColumn columnItemCode;
             
-            private global::System.Data.DataColumn columnDistinctPrdCount;
+            private global::System.Data.DataColumn columnStockQTY;
             
-            private global::System.Data.DataColumn columnTotalQty;
+            private global::System.Data.DataColumn columnScanQty;
+            
+            private global::System.Data.DataColumn columnDifference;
+            
+            private global::System.Data.DataColumn columnIsAudit;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
@@ -324,25 +328,41 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn AvgOrdTimeColumn {
+            public global::System.Data.DataColumn ItemCodeColumn {
                 get {
-                    return this.columnAvgOrdTime;
+                    return this.columnItemCode;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn DistinctPrdCountColumn {
+            public global::System.Data.DataColumn StockQTYColumn {
                 get {
-                    return this.columnDistinctPrdCount;
+                    return this.columnStockQTY;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn TotalQtyColumn {
+            public global::System.Data.DataColumn ScanQtyColumn {
                 get {
-                    return this.columnTotalQty;
+                    return this.columnScanQty;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn DifferenceColumn {
+                get {
+                    return this.columnDifference;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn IsAuditColumn {
+                get {
+                    return this.columnIsAudit;
                 }
             }
             
@@ -383,12 +403,14 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public AverageTrunAroundRow AddAverageTrunAroundRow(string AvgOrdTime, string DistinctPrdCount, string TotalQty) {
+            public AverageTrunAroundRow AddAverageTrunAroundRow(string ItemCode, string StockQTY, string ScanQty, string Difference, string IsAudit) {
                 AverageTrunAroundRow rowAverageTrunAroundRow = ((AverageTrunAroundRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        AvgOrdTime,
-                        DistinctPrdCount,
-                        TotalQty};
+                        ItemCode,
+                        StockQTY,
+                        ScanQty,
+                        Difference,
+                        IsAudit};
                 rowAverageTrunAroundRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowAverageTrunAroundRow);
                 return rowAverageTrunAroundRow;
@@ -411,20 +433,26 @@ namespace Bizsol_ESMS.Dataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             internal void InitVars() {
-                this.columnAvgOrdTime = base.Columns["AvgOrdTime"];
-                this.columnDistinctPrdCount = base.Columns["DistinctPrdCount"];
-                this.columnTotalQty = base.Columns["TotalQty"];
+                this.columnItemCode = base.Columns["ItemCode"];
+                this.columnStockQTY = base.Columns["StockQTY"];
+                this.columnScanQty = base.Columns["ScanQty"];
+                this.columnDifference = base.Columns["Difference"];
+                this.columnIsAudit = base.Columns["IsAudit"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             private void InitClass() {
-                this.columnAvgOrdTime = new global::System.Data.DataColumn("AvgOrdTime", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnAvgOrdTime);
-                this.columnDistinctPrdCount = new global::System.Data.DataColumn("DistinctPrdCount", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnDistinctPrdCount);
-                this.columnTotalQty = new global::System.Data.DataColumn("TotalQty", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTotalQty);
+                this.columnItemCode = new global::System.Data.DataColumn("ItemCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnItemCode);
+                this.columnStockQTY = new global::System.Data.DataColumn("StockQTY", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnStockQTY);
+                this.columnScanQty = new global::System.Data.DataColumn("ScanQty", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnScanQty);
+                this.columnDifference = new global::System.Data.DataColumn("Difference", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDifference);
+                this.columnIsAudit = new global::System.Data.DataColumn("IsAudit", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnIsAudit);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_AverageTrunAround");
                 this.ExtendedProperties.Add("Generator_UserTableName", "AverageTrunAround");
             }
@@ -569,86 +597,142 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string AvgOrdTime {
+            public string ItemCode {
                 get {
                     try {
-                        return ((string)(this[this.tableAverageTrunAround.AvgOrdTimeColumn]));
+                        return ((string)(this[this.tableAverageTrunAround.ItemCodeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'AvgOrdTime\' in table \'AverageTrunAround\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'ItemCode\' in table \'AverageTrunAround\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableAverageTrunAround.AvgOrdTimeColumn] = value;
+                    this[this.tableAverageTrunAround.ItemCodeColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string DistinctPrdCount {
+            public string StockQTY {
                 get {
                     try {
-                        return ((string)(this[this.tableAverageTrunAround.DistinctPrdCountColumn]));
+                        return ((string)(this[this.tableAverageTrunAround.StockQTYColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'DistinctPrdCount\' in table \'AverageTrunAround\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'StockQTY\' in table \'AverageTrunAround\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableAverageTrunAround.DistinctPrdCountColumn] = value;
+                    this[this.tableAverageTrunAround.StockQTYColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string TotalQty {
+            public string ScanQty {
                 get {
                     try {
-                        return ((string)(this[this.tableAverageTrunAround.TotalQtyColumn]));
+                        return ((string)(this[this.tableAverageTrunAround.ScanQtyColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'TotalQty\' in table \'AverageTrunAround\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'ScanQty\' in table \'AverageTrunAround\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableAverageTrunAround.TotalQtyColumn] = value;
+                    this[this.tableAverageTrunAround.ScanQtyColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsAvgOrdTimeNull() {
-                return this.IsNull(this.tableAverageTrunAround.AvgOrdTimeColumn);
+            public string Difference {
+                get {
+                    try {
+                        return ((string)(this[this.tableAverageTrunAround.DifferenceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Difference\' in table \'AverageTrunAround\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAverageTrunAround.DifferenceColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetAvgOrdTimeNull() {
-                this[this.tableAverageTrunAround.AvgOrdTimeColumn] = global::System.Convert.DBNull;
+            public string IsAudit {
+                get {
+                    try {
+                        return ((string)(this[this.tableAverageTrunAround.IsAuditColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'IsAudit\' in table \'AverageTrunAround\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAverageTrunAround.IsAuditColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsDistinctPrdCountNull() {
-                return this.IsNull(this.tableAverageTrunAround.DistinctPrdCountColumn);
+            public bool IsItemCodeNull() {
+                return this.IsNull(this.tableAverageTrunAround.ItemCodeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetDistinctPrdCountNull() {
-                this[this.tableAverageTrunAround.DistinctPrdCountColumn] = global::System.Convert.DBNull;
+            public void SetItemCodeNull() {
+                this[this.tableAverageTrunAround.ItemCodeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsTotalQtyNull() {
-                return this.IsNull(this.tableAverageTrunAround.TotalQtyColumn);
+            public bool IsStockQTYNull() {
+                return this.IsNull(this.tableAverageTrunAround.StockQTYColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetTotalQtyNull() {
-                this[this.tableAverageTrunAround.TotalQtyColumn] = global::System.Convert.DBNull;
+            public void SetStockQTYNull() {
+                this[this.tableAverageTrunAround.StockQTYColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsScanQtyNull() {
+                return this.IsNull(this.tableAverageTrunAround.ScanQtyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetScanQtyNull() {
+                this[this.tableAverageTrunAround.ScanQtyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsDifferenceNull() {
+                return this.IsNull(this.tableAverageTrunAround.DifferenceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetDifferenceNull() {
+                this[this.tableAverageTrunAround.DifferenceColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsIsAuditNull() {
+                return this.IsNull(this.tableAverageTrunAround.IsAuditColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetIsAuditNull() {
+                this[this.tableAverageTrunAround.IsAuditColumn] = global::System.Convert.DBNull;
             }
         }
         

@@ -80,16 +80,16 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="TotalLineOfProduct">
-          <DataField>TotalLineOfProduct</DataField>
+        <Field Name="TotalItems">
+          <DataField>TotalItems</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="TotalProductQty">
-          <DataField>TotalProductQty</DataField>
+        <Field Name="QtyGreaterThanZero">
+          <DataField>QtyGreaterThanZero</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="TotalAmount">
-          <DataField>TotalAmount</DataField>
+        <Field Name="QtyEqualToZero">
+          <DataField>QtyEqualToZero</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Date">
@@ -98,6 +98,10 @@
         </Field>
         <Field Name="Month">
           <DataField>Month</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QtyLessThanZero">
+          <DataField>QtyLessThanZero</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -164,16 +168,24 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="AvgOrdTime">
-          <DataField>AvgOrdTime</DataField>
+        <Field Name="ItemCode">
+          <DataField>ItemCode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DistinctPrdCount">
-          <DataField>DistinctPrdCount</DataField>
+        <Field Name="StockQTY">
+          <DataField>StockQTY</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="TotalQty">
-          <DataField>TotalQty</DataField>
+        <Field Name="ScanQty">
+          <DataField>ScanQty</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Difference">
+          <DataField>Difference</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IsAudit">
+          <DataField>IsAudit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -486,13 +498,16 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>6.35882cm</Width>
+                  <Width>3.87512cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.20007cm</Width>
+                  <Width>5.17158cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.04132cm</Width>
+                  <Width>4.48365cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>5.04338cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -508,7 +523,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Total Line Of Product</Value>
+                                  <Value>Total Line Of Part</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -545,7 +560,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Total Product Qty</Value>
+                                  <Value>Total Part Where Qty &gt; 0</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -582,7 +597,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Total Amount</Value>
+                                  <Value>Total Part Where Qty = 0</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -610,91 +625,19 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>0.65292cm</Height>
-                  <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="TotalLineOfProduct">
+                        <Textbox Name="Textbox17">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!TotalLineOfProduct.Value</Value>
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>TotalLineOfProduct</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>Silver</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="TotalProductQty">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!TotalProductQty.Value</Value>
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>TotalProductQty</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>Silver</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="TotalAmount1">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!TotalAmount.Value</Value>
+                                  <Value>Total Part Where Qty &lt; 0</Value>
                                   <Style>
-                                    <Format>'$'0.00;('$'0.00)</Format>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -703,7 +646,46 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>TotalAmount1</rd:DefaultName>
+                          <rd:DefaultName>Textbox17</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.65292cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalItems">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalItems.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalItems</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -715,7 +697,108 @@
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
                             <PaddingBottom>2pt</PaddingBottom>
-                            <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="QtyGreaterThanZero">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!QtyGreaterThanZero.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>QtyGreaterThanZero</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="QtyEqualToZero">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!QtyEqualToZero.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>QtyEqualToZero</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="QtyLessThanZero">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!QtyLessThanZero.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>QtyLessThanZero</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -726,6 +809,7 @@
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -742,10 +826,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>LossOrderReport</DataSetName>
-            <Top>9.02794cm</Top>
-            <Left>0.57889cm</Left>
+            <Top>6.48794cm</Top>
+            <Left>0.57888cm</Left>
             <Height>1.27938cm</Height>
-            <Width>18.60021cm</Width>
+            <Width>18.57373cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -811,18 +895,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Sales Loss For- </Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Script MT Bold</FontFamily>
-                      <FontSize>22pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value>=First(Fields!Date.Value, "LossOrderReport")</Value>
+                    <Value>Part Line Summary </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Script MT Bold</FontFamily>
@@ -839,7 +912,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>7.63419cm</Top>
+            <Top>5.38523cm</Top>
             <Left>0.60536cm</Left>
             <Height>1.10271cm</Height>
             <Width>18.57375cm</Width>
@@ -1037,8 +1110,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DeadStock</DataSetName>
-            <Top>14.15203cm</Top>
-            <Left>0.60536cm</Left>
+            <Top>10.21857cm</Top>
+            <Left>3.30411cm</Left>
             <Height>1.3852cm</Height>
             <Width>12.54125cm</Width>
             <ZIndex>4</ZIndex>
@@ -1083,8 +1156,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>13.14634cm</Top>
-            <Left>0.60536cm</Left>
+            <Top>9.17759cm</Top>
+            <Left>3.30411cm</Left>
             <Height>0.97042cm</Height>
             <Width>12.51478cm</Width>
             <ZIndex>5</ZIndex>
@@ -1284,8 +1357,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>MonthWiseSale</DataSetName>
-            <Top>20.44913cm</Top>
-            <Left>0.60536cm</Left>
+            <Top>20.27274cm</Top>
+            <Left>3.27557cm</Left>
             <Height>1.2cm</Height>
             <Width>12.54125cm</Width>
             <ZIndex>6</ZIndex>
@@ -1320,7 +1393,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>19.30232cm</Top>
-            <Left>0.60536cm</Left>
+            <Left>3.30411cm</Left>
             <Height>0.97042cm</Height>
             <Width>12.54125cm</Width>
             <ZIndex>7</ZIndex>
@@ -1688,8 +1761,8 @@
               </Style>
             </ChartNoDataMessage>
             <DataSetName>MonthWiseSale</DataSetName>
-            <Top>23.43891cm</Top>
-            <Left>0.60536cm</Left>
+            <Top>22.83037cm</Top>
+            <Left>2.40453cm</Left>
             <Height>10.41604cm</Height>
             <Width>14.86957cm</Width>
             <ZIndex>8</ZIndex>
@@ -1709,7 +1782,18 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Average Turn Around Time For Operations</Value>
+                    <Value>Stock Audit -</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>script MT Bold</FontFamily>
+                      <FontSize>22pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!Date.Value, "LossOrderReport")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>script MT Bold</FontFamily>
@@ -1726,8 +1810,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>41.51549cm</Top>
-            <Left>0.57888cm</Left>
+            <Top>41.48406cm</Top>
+            <Left>0.60537cm</Left>
             <Height>0.97042cm</Height>
             <Width>18.57374cm</Width>
             <ZIndex>9</ZIndex>
@@ -1744,13 +1828,16 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>6.19125cm</Width>
+                  <Width>7.13022cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.19125cm</Width>
+                  <Width>4.21364cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.19125cm</Width>
+                  <Width>3.92262cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.30725cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1759,14 +1846,14 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox15">
+                        <Textbox Name="Textbox23">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Avg Ord Time</Value>
+                                  <Value>Item Code</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -1778,7 +1865,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox15</rd:DefaultName>
+                          <rd:DefaultName>Textbox23</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1803,7 +1890,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Distinct Prd Count</Value>
+                                  <Value>Stock Qty</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -1840,7 +1927,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Total Qty</Value>
+                                  <Value>Scan Qty</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -1868,6 +1955,43 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox27">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Difference</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox27</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#ffe86b</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -1875,14 +1999,14 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="AvgOrdTime">
+                        <Textbox Name="ItemCode">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!AvgOrdTime.Value</Value>
+                                  <Value>=Fields!ItemCode.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -1891,7 +2015,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>AvgOrdTime</rd:DefaultName>
+                          <rd:DefaultName>ItemCode</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1909,14 +2033,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="DistinctPrdCount">
+                        <Textbox Name="StockQTY">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!DistinctPrdCount.Value</Value>
+                                  <Value>=Fields!StockQTY.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -1925,7 +2049,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>DistinctPrdCount</rd:DefaultName>
+                          <rd:DefaultName>StockQTY</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1943,14 +2067,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="TotalQty">
+                        <Textbox Name="ScanQty">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!TotalQty.Value</Value>
+                                  <Value>=Fields!ScanQty.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -1959,7 +2083,41 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>TotalQty</rd:DefaultName>
+                          <rd:DefaultName>ScanQty</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#ffe699</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Difference">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Difference.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Difference</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1984,6 +2142,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1997,10 +2156,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>AverageTrunAround</DataSetName>
-            <Top>42.55647cm</Top>
-            <Left>0.57888cm</Left>
+            <Top>43.34524cm</Top>
+            <Left>0.60536cm</Left>
             <Height>1.3441cm</Height>
-            <Width>18.57375cm</Width>
+            <Width>18.57373cm</Width>
             <ZIndex>10</ZIndex>
             <Style>
               <Border>
@@ -2032,8 +2191,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>45.62536cm</Top>
-            <Left>0.57889cm</Left>
+            <Top>36.12682cm</Top>
+            <Left>3.48936cm</Left>
             <Height>0.97042cm</Height>
             <Width>12.38248cm</Width>
             <ZIndex>11</ZIndex>
@@ -2228,8 +2387,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>TopCustomers</DataSetName>
-            <Top>46.73689cm</Top>
-            <Left>0.57889cm</Left>
+            <Top>37.13252cm</Top>
+            <Left>3.48936cm</Left>
             <Height>1.50286cm</Height>
             <Width>12.38248cm</Width>
             <ZIndex>12</ZIndex>
@@ -2239,11 +2398,64 @@
               </Border>
             </Style>
           </Tablix>
+          <Textbox Name="Textbox29">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Audit Status - </Value>
+                    <Style>
+                      <FontFamily>Script MT Bold</FontFamily>
+                      <FontSize>14pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=IIf(
+  Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") = CountRows("AverageTrunAround"),
+  "Full (" &amp; Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") &amp; "/" &amp; CountRows("AverageTrunAround") &amp; ")",
+  IIf(
+    Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") = 0,
+    "Not Done (0/" &amp; CountRows("AverageTrunAround") &amp; ")",
+    "Partial (" &amp; Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") &amp; "/" &amp; CountRows("AverageTrunAround") &amp; ")"
+  )
+)</Value>
+                    <Style>
+                      <FontFamily>Script MT Bold</FontFamily>
+                      <FontSize>14pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox29</rd:DefaultName>
+            <Top>42.48975cm</Top>
+            <Left>0.60536cm</Left>
+            <Height>0.85549cm</Height>
+            <Width>11.37034cm</Width>
+            <ZIndex>13</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>49.18224cm</Height>
+        <Height>44.68934cm</Height>
         <Style />
       </Body>
-      <Width>19.4437cm</Width>
+      <Width>20cm</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>

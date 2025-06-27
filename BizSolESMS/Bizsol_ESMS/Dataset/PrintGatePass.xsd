@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="PrintGatePass" targetNamespace="http://tempuri.org/PrintGatePass.xsd" xmlns:mstns="http://tempuri.org/PrintGatePass.xsd" xmlns="http://tempuri.org/PrintGatePass.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="PrintGatePass" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="PrintGatePass" msprop:Generator_DataSetName="PrintGatePass">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="PrintGatePass" msprop:Generator_RowEvHandlerName="PrintGatePassRowChangeEventHandler" msprop:Generator_RowDeletedName="PrintGatePassRowDeleted" msprop:Generator_RowDeletingName="PrintGatePassRowDeleting" msprop:Generator_RowEvArgName="PrintGatePassRowChangeEvent" msprop:Generator_TablePropName="_PrintGatePass" msprop:Generator_RowChangedName="PrintGatePassRowChanged" msprop:Generator_RowChangingName="PrintGatePassRowChanging" msprop:Generator_TableClassName="PrintGatePassDataTable" msprop:Generator_RowClassName="PrintGatePassRow" msprop:Generator_TableVarName="tablePrintGatePass" msprop:Generator_UserTableName="PrintGatePass">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="AccountName" msprop:Generator_ColumnPropNameInRow="AccountName" msprop:Generator_ColumnPropNameInTable="AccountNameColumn" msprop:Generator_ColumnVarNameInTable="columnAccountName" msprop:Generator_UserColumnName="AccountName" type="xs:string" minOccurs="0" />
+              <xs:element name="Date" msprop:Generator_ColumnPropNameInRow="Date" msprop:Generator_ColumnPropNameInTable="DateColumn" msprop:Generator_ColumnVarNameInTable="columnDate" msprop:Generator_UserColumnName="Date" type="xs:string" minOccurs="0" />
+              <xs:element name="VehicleNo" msprop:Generator_ColumnPropNameInRow="VehicleNo" msprop:Generator_ColumnPropNameInTable="VehicleNoColumn" msprop:Generator_ColumnVarNameInTable="columnVehicleNo" msprop:Generator_UserColumnName="VehicleNo" type="xs:string" minOccurs="0" />
+              <xs:element name="DriverName" msprop:Generator_ColumnPropNameInRow="DriverName" msprop:Generator_ColumnPropNameInTable="DriverNameColumn" msprop:Generator_ColumnVarNameInTable="columnDriverName" msprop:Generator_UserColumnName="DriverName" type="xs:string" minOccurs="0" />
+              <xs:element name="DriverContactNo" msprop:Generator_ColumnPropNameInRow="DriverContactNo" msprop:Generator_ColumnPropNameInTable="DriverContactNoColumn" msprop:Generator_ColumnVarNameInTable="columnDriverContactNo" msprop:Generator_UserColumnName="DriverContactNo" type="xs:string" minOccurs="0" />
+              <xs:element name="LorryMeter" msprop:Generator_ColumnPropNameInRow="LorryMeter" msprop:Generator_ColumnPropNameInTable="LorryMeterColumn" msprop:Generator_ColumnVarNameInTable="columnLorryMeter" msprop:Generator_UserColumnName="LorryMeter" type="xs:string" minOccurs="0" />
+              <xs:element name="BuyerPONo" msprop:Generator_ColumnPropNameInRow="BuyerPONo" msprop:Generator_ColumnPropNameInTable="BuyerPONoColumn" msprop:Generator_ColumnVarNameInTable="columnBuyerPONo" msprop:Generator_UserColumnName="BuyerPONo" type="xs:string" minOccurs="0" />
+              <xs:element name="BoxCount" msprop:Generator_ColumnPropNameInRow="BoxCount" msprop:Generator_ColumnPropNameInTable="BoxCountColumn" msprop:Generator_ColumnVarNameInTable="columnBoxCount" msprop:Generator_UserColumnName="BoxCount" type="xs:string" minOccurs="0" />
+              <xs:element name="InvoiceNo" msprop:Generator_ColumnPropNameInRow="InvoiceNo" msprop:Generator_ColumnPropNameInTable="InvoiceNoColumn" msprop:Generator_ColumnVarNameInTable="columnInvoiceNo" msprop:Generator_UserColumnName="InvoiceNo" type="xs:string" minOccurs="0" />
+              <xs:element name="TotalRate" msprop:Generator_ColumnPropNameInRow="TotalRate" msprop:Generator_ColumnPropNameInTable="TotalRateColumn" msprop:Generator_ColumnVarNameInTable="columnTotalRate" msprop:Generator_UserColumnName="TotalRate" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
