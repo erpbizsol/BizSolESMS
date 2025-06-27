@@ -353,7 +353,7 @@
                                   <Style />
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!BoxNo.Value</Value>
+                                  <Value>=RowNumber(Nothing) &amp; "/" &amp; Count(Fields!BoxNo.Value, "DispatchQRData")</Value>
                                   <Style>
                                     <FontSize>12pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
