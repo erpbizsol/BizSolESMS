@@ -145,5 +145,12 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion  EmployeeMaster
+
+        #region TAT_Configuration
+        public IActionResult TATConfiguration()
+        {
+            return View();
+        }
+        #endregion TAT_Configuration
     }
 }
