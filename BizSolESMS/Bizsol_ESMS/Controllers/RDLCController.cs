@@ -9,6 +9,7 @@ using MySqlX.XDevAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Bizsol_ESMS.Controllers
 {
@@ -186,6 +187,40 @@ namespace Bizsol_ESMS.Controllers
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "DispatchQR.pdf");
         }
+        [HttpGet]
+        public IActionResult PrintGatePass(string Code, string AuthKey)
+        {
+            JObject data = JObject.Parse(AuthKey);
+            string connectionString = data["DefultMysqlTemp"]?.ToString();
 
+            DataSet ds = new DataSet();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand("USP_PrintGatePass", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_Mode", "GATEPASS");
+                    cmd.Parameters.AddWithValue("p_VehicleNo", "");
+                    cmd.Parameters.AddWithValue("p_Date", "");
+                    cmd.Parameters.AddWithValue("p_Codes", Code);
+
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PrintGatePass.rdlc");
+
+            LocalReport report = new LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PrintGatePass", ds.Tables[0]));
+
+            byte[] pdf = report.Render("PDF");
+            return File(pdf, "application/pdf", "PrintGatePass.pdf");
+        }
     }
 } 

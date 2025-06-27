@@ -7,6 +7,7 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let G_DispatchData = [];
 const G_UserName = sessionStorage.getItem('UserName');
 let G_DispatchMaster_Code = 0;
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 $(document).ready(function () {
     $("#ERPHeading").text("Dispatch Box Validation");
     GetModuleMasterCode();
@@ -379,3 +380,176 @@ function ChangecolorTr() {
 }
 
 setInterval(ChangecolorTr, 100);
+function GetGatePass() {
+    GetCurrentDate();
+    openSavePopup();
+    $("#txtModalVehicleNo").val("");
+}
+function openSavePopup() {
+    var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
+    saveModal.show();
+}
+function CloseModal() {
+    var modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
+    if (modal) {
+        modal.hide();
+    }
+    $("#PrintTable").hide();
+
+}
+function convertDateFormat(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${year}-${month}-${day}`;
+}
+function setupDateInputFormatting() {
+    $('#txtDate').on('input', function () {
+        let value = $(this).val().replace(/[^\d]/g, '');
+        if (value.length >= 2 && value.length < 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        } else if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+        }
+        $(this).val(value);
+        if (value.length === 10) {
+            validateDate(value);
+        } else {
+            $(this).val(value);
+        }
+    });
+}
+function validateDate(value) {
+    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    let isValidFormat = regex.test(value);
+
+    if (isValidFormat) {
+        let parts = value.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parseInt(parts[2], 10);
+
+        let date = new Date(year, month - 1, day);
+
+        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
+
+            $(this).val(value);
+        } else {
+            $('#txtDate').val('');
+        }
+    } else {
+        $('#txtDate').val('');
+    }
+}
+function GetCurrentDate() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetCurrentDate`,
+        method: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            let apiDate = response[0].Date;
+            DatePicker(apiDate)
+        },
+        error: function () {
+            console.error('Failed to fetch the date from the API.');
+        }
+    });
+}
+function DatePicker(date) {
+    $('#txtDate').val(date);
+    $('#txtDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        orientation: 'bottom auto',
+        todayHighlight: true
+    }).on('show', function () {
+        let $input = $(this);
+        let inputOffset = $input.offset();
+        let inputHeight = $input.outerHeight();
+        let inputWidth = $input.outerWidth();
+        setTimeout(function () {
+            let $datepicker = $('.datepicker-dropdown');
+            $datepicker.css({
+                width: inputWidth + 'px',
+                top: (inputOffset.top + inputHeight) + 'px',
+                left: inputOffset.left + 'px'
+            });
+        }, 10);
+    });
+}
+function convertToUppercase(element) {
+    element.value = element.value.toUpperCase();
+}
+function ShowData() {
+    var VehicleNo = $("#txtModalVehicleNo").val();
+    var Date = convertDateFormat($("#txtDate").val());
+    if ($("#txtModalVehicleNo").val() == '') {
+        toastr.error("Please enter vehicle no. !");
+        $("#txtModalVehicleNo").focus();
+        return;
+    }else if ($("#txtDate").val() == '') {
+        toastr.error("Please enter date. !");
+        $("#txtDate").focus();
+        return;
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetGatePassData?VehicleNo=${VehicleNo}&Date=${Date}`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $("#PrintTable").show();
+                const StringFilterColumn = ["Party Name"];
+                const NumericFilterColumn = ["Total Order"];
+                const DateFilterColumn = [];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = ["Codes", "vehicleNo"];
+                const ColumnAlignment = {
+                };
+                const updatedResponse = response.map(item => ({
+                    ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Print" onclick="Print('${item["Codes"]}')"><i class="fa fa-print"></i></button>`
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("PrintTable-header", "PrintTable-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+            } else {
+                G_DispatchData = [];
+                $("#PrintTable").hide();
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+
+}
+function Print(Code) {
+    $.ajax({
+        url: `${AppBaseURLMenu}/RDLC/PrintGatePass?Code=${Code}&AuthKey=${authKeyData}`,
+        type: 'GET',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data, status, xhr) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "PrintGatePass.pdf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error downloading report:', xhr.responseText);
+        }
+    });
+}
