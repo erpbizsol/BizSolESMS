@@ -217,6 +217,7 @@ async function Edit(ID) {
     });
 }
 
+
 async function Delete(code, group, button) {
     let tr = button.closest("tr");
     tr.classList.add("highlight");
@@ -292,7 +293,7 @@ async function View(code) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
-            console.log("View Response:", response); // ✅ Debug output
+            console.log("View Response:", response);
 
             if (response && response.ID) {
                 $("#hftxtCode").val(response.ID).prop("disabled", true);
@@ -301,8 +302,7 @@ async function View(code) {
                 $("#txtPacking").val(response.Packing).prop("disabled", true);
                 $("#txtDelivered").val(response.Delivered).prop("disabled", true);
                 $("#txtbtnSave").prop("disabled", true);
-
-                disableFields(true); // ✅ Optional: disables more fields
+                disableFields(true);
             } else {
                 toastr.error("Record not found...!");
             }
