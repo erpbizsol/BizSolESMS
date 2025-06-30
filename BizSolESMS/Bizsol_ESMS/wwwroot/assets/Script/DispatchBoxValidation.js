@@ -59,6 +59,41 @@ $(document).ready(function () {
 
         BizsolCustomFilterGrid.CreateDataTable("table-header1","table-body1",updatedResponse, Button,showButtons,StringFilterColumn,NumericFilterColumn,DateFilterColumn,StringdoubleFilterColumn,hiddenColumns,ColumnAlignment);
     });
+    $('#txtVehicleNo').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtInvoiceNo").focus();
+        }
+    });
+    $('#txtInvoiceNo').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtDriverName").focus();
+        }
+    });
+    $('#txtDriverName').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtDriverNumber").focus();
+        }
+    });
+    $('#txtDriverNumber').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtLorryMeter").focus();
+        }
+    });
+    $('#txtLorryMeter').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtScanProduct").focus();
+        }
+    });
+    $('#txtModalVehicleNo').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtDate").focus();
+        }
+    });
+    $('#txtDate').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#btnModelShow").focus();
+        }
+    });
 });
 function showToast(Msg) {
     let toast = document.getElementById("toast");
