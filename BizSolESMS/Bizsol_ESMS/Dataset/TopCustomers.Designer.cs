@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Bizsol_ESMS.Dataset {
+namespace DatasetClass.Dataset {
     
     
     /// <summary>
@@ -285,6 +285,8 @@ namespace Bizsol_ESMS.Dataset {
             
             private global::System.Data.DataColumn columnPoClientName;
             
+            private global::System.Data.DataColumn columnTotalOrder;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public TopCustomersDataTable() {
@@ -338,6 +340,14 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn TotalOrderColumn {
+                get {
+                    return this.columnTotalOrder;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -373,11 +383,12 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public TopCustomersRow AddTopCustomersRow(string TotalValue, string PoClientName) {
+            public TopCustomersRow AddTopCustomersRow(string TotalValue, string PoClientName, string TotalOrder) {
                 TopCustomersRow rowTopCustomersRow = ((TopCustomersRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         TotalValue,
-                        PoClientName};
+                        PoClientName,
+                        TotalOrder};
                 rowTopCustomersRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowTopCustomersRow);
                 return rowTopCustomersRow;
@@ -402,6 +413,7 @@ namespace Bizsol_ESMS.Dataset {
             internal void InitVars() {
                 this.columnTotalValue = base.Columns["TotalValue"];
                 this.columnPoClientName = base.Columns["PoClientName"];
+                this.columnTotalOrder = base.Columns["TotalOrder"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -411,6 +423,8 @@ namespace Bizsol_ESMS.Dataset {
                 base.Columns.Add(this.columnTotalValue);
                 this.columnPoClientName = new global::System.Data.DataColumn("PoClientName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnPoClientName);
+                this.columnTotalOrder = new global::System.Data.DataColumn("TotalOrder", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTotalOrder);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_TopCustomers");
                 this.ExtendedProperties.Add("Generator_UserTableName", "TopCustomers");
             }
@@ -587,6 +601,22 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string TotalOrder {
+                get {
+                    try {
+                        return ((string)(this[this.tableTopCustomers.TotalOrderColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'TotalOrder\' in table \'TopCustomers\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableTopCustomers.TotalOrderColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsTotalValueNull() {
                 return this.IsNull(this.tableTopCustomers.TotalValueColumn);
             }
@@ -607,6 +637,18 @@ namespace Bizsol_ESMS.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetPoClientNameNull() {
                 this[this.tableTopCustomers.PoClientNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsTotalOrderNull() {
+                return this.IsNull(this.tableTopCustomers.TotalOrderColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetTotalOrderNull() {
+                this[this.tableTopCustomers.TotalOrderColumn] = global::System.Convert.DBNull;
             }
         }
         

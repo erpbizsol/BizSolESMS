@@ -63,5 +63,38 @@
             </div>
         </div>
     </div>
+    <div class="modal position-absolute" id="staticBackdrop" style="padding-top: 101px;" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header tab-header" style="background-color:#033764">
+                    <level style="color:white">Stock Audit Details</level>
+                    <button type="button" class="close modal-close btn-sm" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                    <input type="hidden" id="hfDate" value="" />
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin:0;">
+                        <div class="card-body">
+                            <div class="table-wrapper fixed-height-table">
+                                <table id="ModalTable" class="fixed-width-table table">
+                                    <thead id="ModalTable-header">
+                                    </thead>
+                                    <tbody id="ModalTable-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Paginator -->
+                            <div class="paginator" id="paginator-ModalTable">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-primary btn-height" onclick="DownloadDetails()">Download</button>
+                        <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 <script src="~/assets/js/filter.js"></script>

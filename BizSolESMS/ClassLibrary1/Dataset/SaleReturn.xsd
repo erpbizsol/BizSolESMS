@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="SaleReturn" targetNamespace="http://tempuri.org/SaleReturn.xsd" xmlns:mstns="http://tempuri.org/SaleReturn.xsd" xmlns="http://tempuri.org/SaleReturn.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="SaleReturn" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="SaleReturn" msprop:Generator_DataSetName="SaleReturn">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="SaleReturn" msprop:Generator_RowEvHandlerName="SaleReturnRowChangeEventHandler" msprop:Generator_RowDeletedName="SaleReturnRowDeleted" msprop:Generator_RowDeletingName="SaleReturnRowDeleting" msprop:Generator_RowEvArgName="SaleReturnRowChangeEvent" msprop:Generator_TablePropName="_SaleReturn" msprop:Generator_RowChangedName="SaleReturnRowChanged" msprop:Generator_RowChangingName="SaleReturnRowChanging" msprop:Generator_TableClassName="SaleReturnDataTable" msprop:Generator_RowClassName="SaleReturnRow" msprop:Generator_TableVarName="tableSaleReturn" msprop:Generator_UserTableName="SaleReturn">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="PartyName" msprop:Generator_ColumnPropNameInRow="PartyName" msprop:Generator_ColumnPropNameInTable="PartyNameColumn" msprop:Generator_ColumnVarNameInTable="columnPartyName" msprop:Generator_UserColumnName="PartyName" type="xs:string" minOccurs="0" />
+              <xs:element name="OrderNo" msprop:Generator_ColumnPropNameInRow="OrderNo" msprop:Generator_ColumnPropNameInTable="OrderNoColumn" msprop:Generator_ColumnVarNameInTable="columnOrderNo" msprop:Generator_UserColumnName="OrderNo" type="xs:string" minOccurs="0" />
+              <xs:element name="Reason" msprop:Generator_ColumnPropNameInRow="Reason" msprop:Generator_ColumnPropNameInTable="ReasonColumn" msprop:Generator_ColumnVarNameInTable="columnReason" msprop:Generator_UserColumnName="Reason" type="xs:string" minOccurs="0" />
+              <xs:element name="Value" msprop:Generator_ColumnPropNameInRow="Value" msprop:Generator_ColumnPropNameInTable="ValueColumn" msprop:Generator_ColumnVarNameInTable="columnValue" msprop:Generator_UserColumnName="Value" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

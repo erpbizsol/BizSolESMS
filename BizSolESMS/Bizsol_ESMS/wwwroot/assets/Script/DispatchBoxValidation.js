@@ -255,6 +255,7 @@ async function EditData(Code) {
         toastr.error(msg);
         return;
     }
+    VehicleNoListEdit();
     $("#EditForm").show();
     $("#txtheaderdiv").show();
     $("#UnloadingTable1").hide();
@@ -416,6 +417,7 @@ function ChangecolorTr() {
 
 setInterval(ChangecolorTr, 100);
 function GetGatePass() {
+    VehicleNoList();
     GetCurrentDate();
     openSavePopup();
     $("#txtModalVehicleNo").val("");
@@ -567,7 +569,7 @@ function ShowData() {
 }
 function Print(Code) {
     $.ajax({
-        url: `${AppBaseURLMenu}/RDLC/PrintGatePass?Code=${Code}&AuthKey=${authKeyData}`,
+        url: `${AppBaseURLMenu}/RDLC/PrintGatePass?Code=${Code}&UserName=${G_UserName}&AuthKey=${authKeyData}`,
         type: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -585,6 +587,88 @@ function Print(Code) {
         },
         error: function (xhr, status, error) {
             console.error('Error downloading report:', xhr.responseText);
+        }
+    });
+}
+function VehicleNoList() {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetVehicleNoForDispatch`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            const $input = $('#txtModalVehicleNo');
+            let $list = $('#txtModalVehicleNoList');
+            if (!$list.parent().is('body')) {
+                $list.appendTo('body');
+            }
+
+            if (response && response.length > 0) {
+                const offset = $input.offset();
+
+                $list.css({
+                    position: 'absolute',
+                    top: offset.top + $input.outerHeight(),
+                    left: offset.left,
+                    width: $input.outerWidth(),
+                    zIndex: 99999,
+                    display: 'none'
+                });
+
+                SetUpAutoSuggestion(
+                    $input,
+                    $list,
+                    response.map(item => ({ Desp: item["VehicleNo"] })),
+                    'StartWith'
+                );
+            } else {
+                $list.empty().hide();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
+function VehicleNoListEdit() {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetVehicleNoForDispatch`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            const $input = $('#txtVehicleNo');
+            let $list = $('#txtVehicleNoList');
+            if (!$list.parent().is('body')) {
+                $list.appendTo('body');
+            }
+
+            if (response && response.length > 0) {
+                const offset = $input.offset();
+
+                $list.css({
+                    position: 'absolute',
+                    top: offset.top + $input.outerHeight(),
+                    left: offset.left,
+                    width: $input.outerWidth(),
+                    zIndex: 99999,
+                    display: 'none'
+                });
+
+                SetUpAutoSuggestion(
+                    $input,
+                    $list,
+                    response.map(item => ({ Desp: item["VehicleNo"] })),
+                    'StartWith'
+                );
+            } else {
+                $list.empty().hide();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
         }
     });
 }

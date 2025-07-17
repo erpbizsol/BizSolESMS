@@ -65,7 +65,8 @@ function BoxUnloading() {
         BoxNo: $("#txtBoxNo").val(),
         MRNDate: convertDateFormat($("#txtMRNDate").val()),
         VehicleNo: $("#txtVehicleNo").val(),
-        IsManual: $("#txtIsManual").is(":checked") ? 'Y' :'N'
+        IsManual: $("#txtIsManual").is(":checked") ? 'Y' : 'N',
+        UserMaster_Code: UserMaster_Code
     }
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/BoxUnloading`,
@@ -323,6 +324,7 @@ function ShowCaseNoData(Code, PickListNo) {
                                 renamedItem[key] = item[key];
                             }
                         }
+                        renamedItem["Box No"] = item["Scan Status"] == 'Y' ? `${item["Box No"]}` : `<a style="cursor:pointer;" onclick=OpenManualModel(${item["Box No"]},${item["Picklist No"]})>${item["Box No"]}</a>`
                         return renamedItem;
                     });
                 BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment, false);
@@ -344,7 +346,7 @@ function ChangecolorTr1() {
     const rows = document.querySelectorAll('#ModalTable-body tr');
     rows.forEach((row) => {
         const tds = row.querySelectorAll('td');
-        const columnValue = tds[7]?.textContent.trim();
+        const columnValue = tds[8]?.textContent.trim();
         if (columnValue === 'Y') {
             row.style.backgroundColor = '#9ef3a5';
         } else {
@@ -459,4 +461,49 @@ async function Export(Data) {
     link.href = URL.createObjectURL(blob);
     link.download = `Unloading_${Picklist}.xlsx`;
     link.click();
+}
+function OpenManualModel(BoxNo, PickListNo) {
+    $("#hfManualBoxNo").val(BoxNo);
+    $("#hfManualPicklistNo").val(PickListNo);
+    openManualPopup();
+}
+function openManualPopup() {
+    var saveModal = new bootstrap.Modal(document.getElementById("ModelManual"));
+    saveModal.show();
+}
+function SaveManualData() {
+    var BoxNo=$("#hfManualBoxNo").val();
+    var PicklistNo = $("#hfPicklistNo").val();
+    var Manual = $("#chkUnloadedBox").is(":checked");
+    var IsManual = Manual == true ? 'Y' : 'N';
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ManualBoxUnloading?BoxNo=${BoxNo}&PicklistNo=${PicklistNo}&IsManual=${IsManual}`,
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                toastr.success(response[0].Msg);
+                CloseDownloadModal();
+                ShowCaseNoData($("#hfMRNMaster_Code").val(), PicklistNo)
+                GetDataByPicklist("Get");
+            } else {
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Failed to fetch data. Please try again.");
+        }
+    });
+}
+function CloseDownloadModal() {
+    var modal = bootstrap.Modal.getInstance(document.getElementById('ModelManual'));
+    var modal1 = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
+    if (modal) {
+        modal.hide();
+    }
+    if (modal1) {
+        modal1.hide();
+    }
 }

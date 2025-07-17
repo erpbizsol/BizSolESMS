@@ -9,14 +9,15 @@
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="TopCustomers" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="TopCustomers" msprop:Generator_DataSetName="TopCustomers">
+  <xs:element name="TopCustomers" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="TopCustomers" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="TopCustomers">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="TopCustomers" msprop:Generator_RowEvHandlerName="TopCustomersRowChangeEventHandler" msprop:Generator_RowDeletedName="TopCustomersRowDeleted" msprop:Generator_RowDeletingName="TopCustomersRowDeleting" msprop:Generator_RowEvArgName="TopCustomersRowChangeEvent" msprop:Generator_TablePropName="_TopCustomers" msprop:Generator_RowChangedName="TopCustomersRowChanged" msprop:Generator_RowChangingName="TopCustomersRowChanging" msprop:Generator_TableClassName="TopCustomersDataTable" msprop:Generator_RowClassName="TopCustomersRow" msprop:Generator_TableVarName="tableTopCustomers" msprop:Generator_UserTableName="TopCustomers">
+        <xs:element name="TopCustomers" msprop:Generator_RowClassName="TopCustomersRow" msprop:Generator_RowEvHandlerName="TopCustomersRowChangeEventHandler" msprop:Generator_RowDeletedName="TopCustomersRowDeleted" msprop:Generator_RowDeletingName="TopCustomersRowDeleting" msprop:Generator_RowEvArgName="TopCustomersRowChangeEvent" msprop:Generator_TablePropName="_TopCustomers" msprop:Generator_RowChangedName="TopCustomersRowChanged" msprop:Generator_UserTableName="TopCustomers" msprop:Generator_RowChangingName="TopCustomersRowChanging" msprop:Generator_TableClassName="TopCustomersDataTable" msprop:Generator_TableVarName="tableTopCustomers">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="TotalValue" msprop:Generator_ColumnPropNameInRow="TotalValue" msprop:Generator_ColumnPropNameInTable="TotalValueColumn" msprop:Generator_ColumnVarNameInTable="columnTotalValue" msprop:Generator_UserColumnName="TotalValue" type="xs:string" minOccurs="0" />
-              <xs:element name="PoClientName" msprop:Generator_ColumnPropNameInRow="PoClientName" msprop:Generator_ColumnPropNameInTable="PoClientNameColumn" msprop:Generator_ColumnVarNameInTable="columnPoClientName" msprop:Generator_UserColumnName="PoClientName" type="xs:string" minOccurs="0" />
+              <xs:element name="TotalValue" msprop:Generator_UserColumnName="TotalValue" msprop:Generator_ColumnPropNameInTable="TotalValueColumn" msprop:Generator_ColumnPropNameInRow="TotalValue" msprop:Generator_ColumnVarNameInTable="columnTotalValue" type="xs:string" minOccurs="0" />
+              <xs:element name="PoClientName" msprop:Generator_UserColumnName="PoClientName" msprop:Generator_ColumnPropNameInTable="PoClientNameColumn" msprop:Generator_ColumnPropNameInRow="PoClientName" msprop:Generator_ColumnVarNameInTable="columnPoClientName" type="xs:string" minOccurs="0" />
+              <xs:element name="TotalOrder" msprop:Generator_ColumnPropNameInRow="TotalOrder" msprop:Generator_ColumnPropNameInTable="TotalOrderColumn" msprop:Generator_ColumnVarNameInTable="columnTotalOrder" msprop:Generator_UserColumnName="TotalOrder" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

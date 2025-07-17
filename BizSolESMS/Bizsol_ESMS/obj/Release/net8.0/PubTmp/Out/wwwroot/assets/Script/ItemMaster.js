@@ -490,7 +490,8 @@ function Save() {
             BoxPacking: $("#txtBoxPacking").is(":checked") ? "Y" : "N",
             batchApplicable: $("#txtBatchApplicable").is(":checked") ? "Y" : "N",
             maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N",
-            QtyInBox: $("#txtQtyinBox").val()
+            QtyInBox: $("#txtQtyinBox").val(),
+            IsActive: $("#txtIsActive").is(":checked") ? "Y" : "N",
         };
         
         $.ajax({
@@ -550,6 +551,7 @@ async function CreateItemMaster() {
     $("#txtBoxPacking").prop("disabled", false);
     //$("#txtQtyinBox").prop("disabled", false);
     $("#txtMaintainExpiry").prop("disabled", false);
+    $("#txtIsActive").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     disableFields(false);
 }
@@ -576,6 +578,7 @@ function BackMaster() {
    /* $("#txtQtyinBox").prop("disabled", false);*/
     $("#txtMaintainExpiry").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
+    $("#txtIsActive").prop("disabled", false);
     $("#txtheaderdiv").hide();
     disableFields(false);
 }
@@ -671,7 +674,9 @@ async function Edit(code) {
                 if (item.MaintainExpiry == 'N') {
                     $("#txtMaintainExpiry").prop("checked", false);
                 }
-
+                if (item.IsActive == 'N') {
+                    $("#txtIsActive").prop("checked", false);
+                }
                 $("#txtsave").prop("disabled", false);
                 disableFields(false);
             } else {
@@ -944,6 +949,7 @@ async function View(code) {
                 $("#txtBoxPacking").val(item.BoxPacking).prop("disabled", true);
               /*  $("#txtQtyinBox").val(item.QtyInBox).prop("disabled", true);*/
                 $("#txtMaintainExpiry").val(item.MaintainExpiry).prop("disabled", true);
+                $("#txtIsActive").val(item.IsActive).prop("disabled", true);
                 $("#txtsave").prop("disabled", true);
                 disableFields(true);
                 //$("#txtBoxPacking").val(item.BoxPacking);
@@ -962,7 +968,9 @@ async function View(code) {
                 if (item.MaintainExpiry == 'N') {
                     $("#txtMaintainExpiry").prop("checked", false);
                 }
-
+                if (item.IsActive == 'N') {
+                    $("#txtIsActive").prop("checked", false);
+                }
             } else {
                 toastr.error("Record not found...!");
             }

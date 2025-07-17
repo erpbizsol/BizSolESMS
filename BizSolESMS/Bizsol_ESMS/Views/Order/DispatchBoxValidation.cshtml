@@ -6,6 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 <script src="~/assets/script/DispatchBoxValidation.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="~/assets/js/autosuggestion.js"></script>
 <style>
     .tabs {
         width: 100%;
@@ -342,6 +343,7 @@
                                 <audio id="BoxNoVoice" style="display: none;"><source src="~/assets/audio/BoxNoVoice.mp3" type="audio/mpeg" /></audio>
                                 <label for="txtVehicleNo" class="col-form-label-sm fw-bold">Vehicle No.</label> <span class="text-danger">*</span>
                                 <input type="text" id="txtVehicleNo" onkeyup="convertToUppercase(this)" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Vehicle No..">
+                                <ul id="txtVehicleNoList" class="AutoSuggestion-list"></ul>
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtInvoiceNo" class="col-form-label-sm fw-bold">Invoice No</label> <span class="text-danger">*</span>
@@ -399,6 +401,7 @@
                                 <div class="col-md-6 col-sm-6">
                                     <label for="txtModalVehicleNo" class="col-form-label-sm fw-bold">Vehicle No</label> <span class="text-danger">*</span>
                                     <input type="text" id="txtModalVehicleNo" onkeyup="convertToUppercase(this)" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Vehicle No..">
+                                    <ul id="txtModalVehicleNoList" class="AutoSuggestion-list"></ul>
                                 </div>
                                 <div class="col-md-6 col-sm-6">
                                     <label for="txtDate" class="col-form-label-sm fw-bold">Date</label> <span class="text-danger">*</span>

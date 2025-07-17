@@ -9,7 +9,12 @@ using MySqlX.XDevAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text;
+using Google.Apis.Admin.Directory.directory_v1.Data;
 
 namespace Bizsol_ESMS.Controllers
 {
@@ -87,6 +92,9 @@ namespace Bizsol_ESMS.Controllers
             report.DataSources.Add(new ReportDataSource("MonthWiseSale", ds.Tables[3]));
             report.DataSources.Add(new ReportDataSource("AverageTrunAround", ds.Tables[4]));
             report.DataSources.Add(new ReportDataSource("TopCustomers", ds.Tables[5]));
+            report.DataSources.Add(new ReportDataSource("Employee", ds.Tables[6]));
+            report.DataSources.Add(new ReportDataSource("SaleLossOrder", ds.Tables[7]));
+            report.DataSources.Add(new ReportDataSource("SaleReturn", ds.Tables[8]));
 
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "OrderReport.pdf");
@@ -124,13 +132,16 @@ namespace Bizsol_ESMS.Controllers
             report.DataSources.Add(new ReportDataSource("MonthWiseSale", ds.Tables[3]));
             report.DataSources.Add(new ReportDataSource("AverageTrunAround", ds.Tables[4]));
             report.DataSources.Add(new ReportDataSource("TopCustomers", ds.Tables[5]));
+            report.DataSources.Add(new ReportDataSource("Employee", ds.Tables[6]));
+            report.DataSources.Add(new ReportDataSource("SaleLossOrder", ds.Tables[7]));
+            report.DataSources.Add(new ReportDataSource("SaleReturn", ds.Tables[8]));
 
             byte[] pdfBytes = report.Render("PDF");
 
             return pdfBytes;
         }
         [HttpGet]
-        public IActionResult PSRReport(int Code, string AuthKey)
+        public IActionResult PSRReport(int Code,string UserName, string AuthKey)
         {
             JObject data = JObject.Parse(AuthKey);
             string connectionString = data["DefultMysqlTemp"]?.ToString();
@@ -158,7 +169,12 @@ namespace Bizsol_ESMS.Controllers
             report.ReportPath = reportPath;
             report.DataSources.Add(new ReportDataSource("PsrDetailData", ds.Tables[0]));
             report.DataSources.Add(new ReportDataSource("PsrTabledata", ds.Tables[1]));
-
+            var reportParameters = new[]
+            {
+                new ReportParameter("PrintedBy", UserName),
+                new ReportParameter("PrintedOn", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"))
+            };
+            report.SetParameters(reportParameters);
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "OrderReport.pdf");
         }
@@ -188,7 +204,7 @@ namespace Bizsol_ESMS.Controllers
             return File(pdf, "application/pdf", "DispatchQR.pdf");
         }
         [HttpGet]
-        public IActionResult PrintGatePass(string Code, string AuthKey)
+        public IActionResult PrintGatePass(string Code,string UserName, string AuthKey)
         {
             JObject data = JObject.Parse(AuthKey);
             string connectionString = data["DefultMysqlTemp"]?.ToString();
@@ -218,7 +234,12 @@ namespace Bizsol_ESMS.Controllers
             LocalReport report = new LocalReport();
             report.ReportPath = reportPath;
             report.DataSources.Add(new ReportDataSource("PrintGatePass", ds.Tables[0]));
-
+            var reportParameters = new[]
+            {
+                new ReportParameter("PrintedBy", UserName),
+                new ReportParameter("PrintedOn", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"))
+            };
+            report.SetParameters(reportParameters);
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "PrintGatePass.pdf");
         }

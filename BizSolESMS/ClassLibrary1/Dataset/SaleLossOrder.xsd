@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="SaleLossOrder" targetNamespace="http://tempuri.org/SaleLossOrder.xsd" xmlns:mstns="http://tempuri.org/SaleLossOrder.xsd" xmlns="http://tempuri.org/SaleLossOrder.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="SaleLossOrder" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="SaleLossOrder" msprop:Generator_DataSetName="SaleLossOrder">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="SaleLossOrder" msprop:Generator_RowEvHandlerName="SaleLossOrderRowChangeEventHandler" msprop:Generator_RowDeletedName="SaleLossOrderRowDeleted" msprop:Generator_RowDeletingName="SaleLossOrderRowDeleting" msprop:Generator_RowEvArgName="SaleLossOrderRowChangeEvent" msprop:Generator_TablePropName="_SaleLossOrder" msprop:Generator_RowChangedName="SaleLossOrderRowChanged" msprop:Generator_RowChangingName="SaleLossOrderRowChanging" msprop:Generator_TableClassName="SaleLossOrderDataTable" msprop:Generator_RowClassName="SaleLossOrderRow" msprop:Generator_TableVarName="tableSaleLossOrder" msprop:Generator_UserTableName="SaleLossOrder">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="TotalLineOfProduct" msprop:Generator_ColumnPropNameInRow="TotalLineOfProduct" msprop:Generator_ColumnPropNameInTable="TotalLineOfProductColumn" msprop:Generator_ColumnVarNameInTable="columnTotalLineOfProduct" msprop:Generator_UserColumnName="TotalLineOfProduct" type="xs:string" minOccurs="0" />
+              <xs:element name="TotalProductQty" msprop:Generator_ColumnPropNameInRow="TotalProductQty" msprop:Generator_ColumnPropNameInTable="TotalProductQtyColumn" msprop:Generator_ColumnVarNameInTable="columnTotalProductQty" msprop:Generator_UserColumnName="TotalProductQty" type="xs:string" minOccurs="0" />
+              <xs:element name="TotalValue" msprop:Generator_ColumnPropNameInRow="TotalValue" msprop:Generator_ColumnPropNameInTable="TotalValueColumn" msprop:Generator_ColumnVarNameInTable="columnTotalValue" msprop:Generator_UserColumnName="TotalValue" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

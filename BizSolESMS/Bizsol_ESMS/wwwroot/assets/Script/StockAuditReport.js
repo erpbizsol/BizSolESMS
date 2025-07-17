@@ -42,6 +42,12 @@ function convertDateFormat(dateString) {
     const monthAbbreviation = monthNames[parseInt(month) - 1];
     return `${year}-${month}-${day}`;
 }
+function convertDateFormat1(dateString) {
+    const [day, month, year] = dateString.split('-');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${year}-${month}-${day}`;
+}
 function setupDateInputFormatting() {
     $('#txtFromDate').on('input', function () {
         let value = $(this).val().replace(/[^\d]/g, '');
@@ -193,7 +199,7 @@ function GetStockAuditMaster() {
     var ToDate = convertDateFormat($("#txtToDate").val());
     blockUI();
     $.ajax({
-        url: `${appBaseURL}/api/Report/GetStockAuditMaster?FromDate=${FromDate}&ToDate=${ToDate}`,
+        url: `${appBaseURL}/api/Report/GetStockAuditMaster?FromDate=${FromDate}&ToDate=${ToDate}&Mode=LOCATE`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -202,20 +208,63 @@ function GetStockAuditMaster() {
             if (response.length > 0) {
                 unblockUI();
                 $("#DataTable").show();
-                const StringFilterColumn = ["Part Code", "Location","Difference"];
+                const StringFilterColumn = ["STATUS"];
+                const NumericFilterColumn = ["Difference"   ];
+                const DateFilterColumn = ["Date"];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                const hiddenColumns = [];
+                const ColumnAlignment = {
+                    
+                };
+                const updatedResponse = response.map(item => ({
+                    ...item, Action: `<button class="btn btn-success icon-height mb-1"  title="Start Un-Loading" onclick="GetStockAuditMasterList('${item["Date"]}')"><i class="fa fa-hourglass-start"></i></button>
+                    `
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+            } else {
+                unblockUI();
+                $("#DataTable").hide();
+                toastr.error("Record not found...!");
+            }
+        },
+        error: function (xhr, status, error) {
+            unblockUI();
+            console.error("Error:", error);
+        }
+    });
+
+}
+function GetStockAuditMasterList(Date) {
+    $("#hfDate").val(Date);
+    var ToDate = convertDateFormat1(Date);
+    openSavePopup();
+    blockUI();
+    $.ajax({
+        url: `${appBaseURL}/api/Report/GetStockAuditMaster?FromDate=''&ToDate=${ToDate}&Mode=SHOWDATA`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                unblockUI();
+                $("#DataTable").show();
+                const StringFilterColumn = ["Part Code", "Location", "Difference"];
                 const NumericFilterColumn = ["Stock Qty", "Scan Qty"];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Status"];
-                
+
                 const ColumnAlignment = {
                     "Stock Qty": 'right',
                     "Scan Qty": 'right',
                     "Difference": 'right'
                 };
-                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+                BizsolCustomFilterGrid.CreateDataTable("ModalTable-header", "ModalTable-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
                 unblockUI();
                 $("#DataTable").hide();
@@ -233,9 +282,8 @@ async function Download() {
     const FromDate = convertDateFormat($("#txtFromDate").val());
     const ToDate = convertDateFormat($("#txtToDate").val());
     blockUI();
-
     $.ajax({
-        url: `${appBaseURL}/api/Report/GetStockAuditMaster?FromDate=${FromDate}&ToDate=${ToDate}`,
+        url: `${appBaseURL}/api/Report/GetStockAuditMaster?FromDate=${FromDate}&ToDate=${ToDate}&Mode=LOCATE`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -255,7 +303,6 @@ async function Download() {
 async function Export(Data) {
     const renameMap = {
     };
-
     const columnToRemove = "Status";
 
     const originalHeaders = Object.keys(Data[0] || {}).filter(key => key !== columnToRemove);
@@ -319,6 +366,93 @@ async function Export(Data) {
     link.download = `StockAuditReport.xlsx`;
     link.click();
 }
+async function DownloadDetails() {
+    const ToDate = convertDateFormat1($("#hfDate").val());
+    blockUI();
+    $.ajax({
+        url: `${appBaseURL}/api/Report/GetStockAuditMaster?FromDate=''&ToDate=${ToDate}&Mode=SHOWDATA`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: async function (response) {
+            if (response.length > 0) {
+                await ExportDetails(response);
+            }
+            unblockUI();
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            unblockUI();
+        }
+    });
+}
+async function ExportDetails(Data) {
+    const renameMap = {
+    };
+    const columnToRemove = "Status";
+
+    const originalHeaders = Object.keys(Data[0] || {}).filter(key => key !== columnToRemove);
+    const newHeaders = originalHeaders.map(key => renameMap[key] || key);
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Data");
+    const headerRow = sheet.addRow(newHeaders);
+    headerRow.eachCell(cell => {
+        cell.font = { bold: true, color: { argb: "FF000000" } };
+        cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFD9E1F2" }
+        };
+        cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+    });
+
+    sheet.autoFilter = {
+        from: 'A1',
+        to: String.fromCharCode(65 + newHeaders.length - 1) + '1'
+    };
+
+    Data.forEach(rowObj => {
+        const row = originalHeaders.map(key => rowObj[key]);
+        const addedRow = sheet.addRow(row);
+
+        addedRow.eachCell(cell => {
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+
+        const status = rowObj["Status"];
+        const fillColor = status === 'GREEN' ? "FF9EF3A5" : "FFF5C0BF";
+
+        addedRow.eachCell(cell => {
+            cell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: fillColor }
+            };
+        });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `StockAuditReportDetails.xlsx`;
+    link.click();
+}
 function ChangecolorTr() {
     const rows = document.querySelectorAll('#table-body tr');
     rows.forEach((row) => {
@@ -337,4 +471,7 @@ function ChangecolorTr() {
 }
 
 setInterval(ChangecolorTr, 100);
-
+function openSavePopup() {
+    var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
+    saveModal.show();
+}

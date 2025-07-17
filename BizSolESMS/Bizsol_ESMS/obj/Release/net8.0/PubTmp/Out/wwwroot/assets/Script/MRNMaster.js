@@ -1894,7 +1894,7 @@ function ChangecolorTr1() {
     const rows = document.querySelectorAll('#ModalTable-body tr');
     rows.forEach((row) => {
         const tds = row.querySelectorAll('td');
-        const columnValue = tds[7]?.textContent.trim();
+        const columnValue = tds[8]?.textContent.trim();
         if (columnValue === 'Y') {
             row.style.backgroundColor = '#9ef3a5';
         } else {

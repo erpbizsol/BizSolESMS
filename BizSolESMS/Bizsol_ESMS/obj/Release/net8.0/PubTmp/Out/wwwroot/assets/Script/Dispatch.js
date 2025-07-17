@@ -194,7 +194,7 @@ $(document).ready(function () {
                 , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="DispatchReport('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="Report('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
                         <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
                     `
             }));
@@ -383,6 +383,7 @@ function DatePicker() {
                 format: 'dd/mm/yyyy',
                 autoclose: true,
             });
+            DatePickerForDownloadDate(apiDate);
         },
         error: function () {
             console.error('Failed to fetch the date from the API.');
@@ -495,6 +496,7 @@ function showToast(Msg) {
 function GetDispatchOrderLists(Mode) {
     $("#txtSearch").val("");
     G_Tab = 1;
+    ShowHideDate();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -1044,6 +1046,7 @@ function checkValidateqtyTransit1(element, Code) {
 function GetDespatchTransitOrderList(Mode) {
     $("#txtSearch").val("");
     G_Tab = 2;
+    ShowHideDate();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -1094,6 +1097,7 @@ function GetDespatchTransitOrderList(Mode) {
 function GetCompletedDespatchOrderList(Mode) {
     $("#txtSearch").val("");
     G_Tab = 3;
+    ShowHideDate();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -2034,7 +2038,7 @@ function CloseDownloadModal() {
 function DownloadReportPdf() {
     var Code = $("#hfDownloadCode").val();
     $.ajax({
-        url: `${AppBaseURLMenu}/RDLC/PSRReport?Code=${Code}&AuthKey=${authKeyData}`,
+        url: `${AppBaseURLMenu}/RDLC/PSRReport?Code=${Code}&UserName=${G_UserName}&AuthKey=${authKeyData}`,
         type: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -2044,7 +2048,7 @@ function DownloadReportPdf() {
             let url = window.URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
-            a.download = "Report.pdf";
+            a.download = "PSRReport.pdf";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -2120,5 +2124,188 @@ function DownloadQRPdf(response) {
         error: function (xhr, status, error) {
             console.error('Error downloading report:', xhr.responseText);
         }
+    });
+}
+function ShowHideDate() {
+    if (G_Tab === 3) {
+        $("#dvDownloadButton").show();
+        $("#dvDownloadDate").show();
+    } else {
+        $("#dvDownloadButton").hide();
+        $("#dvDownloadDate").hide();
+    }
+}
+async function DownloadInExcel() {
+    try {
+        const DownloadDate = convertDateFormat1($("#txtDownloadDate").val());
+        if (DownloadDate === '' || DownloadDate === undefined || DownloadDate === null) {
+            toastr.error("Please enter a valid date !");
+            $("#txtDownloadDate").focus()
+            return;
+        }
+        const response = await getDataWithAjax(DownloadDate);
+
+        if (response.length > 0) {
+            await Export(response);
+        } else {
+            alert("Record not found...!");
+        }
+    } catch (error) {
+        console.error("AJAX error:", error);
+    }
+}
+function getDataWithAjax(Date) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/GetOrderPackedDetail?Date=${Date}`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                resolve(response);
+            },
+            error: function (xhr, status, error) {
+                reject(error);
+            }
+        });
+    });
+}
+async function Export(Data) {
+    const Picklist = $("#txtDownloadDate").val();
+    const renameMap = {
+        "Item Name": G_ItemConfig[0].ItemNameHeader || 'Item Name',
+        "Item Code": G_ItemConfig[0].ItemCodeHeader || 'Item Code',
+    };
+
+    const originalHeaders = Object.keys(Data[0] || {});
+    const newHeaders = originalHeaders.map(key => renameMap[key] || key);
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Data");
+    const headerRow = sheet.addRow(newHeaders);
+    headerRow.eachCell(cell => {
+        cell.font = { bold: true, color: { argb: "FF000000" } };
+        cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFD9E1F2" }
+        };
+        cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+    });
+
+    sheet.autoFilter = {
+        from: 'A1',
+        to: String.fromCharCode(65 + newHeaders.length - 1) + '1'
+    };
+
+    Data.forEach(rowObj => {
+        const row = originalHeaders.map(key => rowObj[key]); 
+        const addedRow = sheet.addRow(row);
+
+        addedRow.eachCell(cell => {
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+
+        const status = rowObj["Scan Status"]; // Use original key name
+        const fillColor = "FFFFFF";
+
+        addedRow.eachCell(cell => {
+            cell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: fillColor }
+            };
+        });
+    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `OrderPacked_${Picklist}.xlsx`;
+    link.click();
+}
+function convertDateFormat1(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${year}-${month}-${day}`;
+}
+function setupDateInputFormatting() {
+    $('#txtDownloadDate').on('input', function () {
+        let value = $(this).val().replace(/[^\d]/g, '');
+
+        if (value.length >= 2 && value.length < 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        } else if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+        }
+        $(this).val(value);
+
+        if (value.length === 10) {
+            validateChallanDate(value);
+        } else {
+            $(this).val(value);
+        }
+    });
+}
+function validateDate(value) {
+    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    let isValidFormat = regex.test(value);
+
+    if (isValidFormat) {
+        let parts = value.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parseInt(parts[2], 10);
+
+        let date = new Date(year, month - 1, day);
+
+        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
+
+            $(this).val(value);
+        } else {
+            $('#txtDownloadDate').val('');
+
+        }
+    } else {
+        $('#txtDownloadDate').val('');
+
+    }
+}
+function DatePickerForDownloadDate(date) {
+    $('#txtDownloadDate').val(date);
+    $('#txtDownloadDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        orientation: 'bottom auto',
+        todayHighlight: true
+    }).on('show', function () {
+        let $input = $(this);
+        let inputOffset = $input.offset();
+        let inputHeight = $input.outerHeight();
+        let inputWidth = $input.outerWidth();
+        setTimeout(function () {
+            let $datepicker = $('.datepicker-dropdown');
+            $datepicker.css({
+                width: inputWidth + 'px',
+                top: (inputOffset.top + inputHeight) + 'px',
+                left: inputOffset.left + 'px',
+                'z-index': '1000',
+            });
+        }, 10);
     });
 }

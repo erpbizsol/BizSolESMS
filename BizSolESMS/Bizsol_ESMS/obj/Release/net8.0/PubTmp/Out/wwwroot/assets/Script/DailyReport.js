@@ -5,7 +5,7 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 $(document).ready(function () {
-    $("#ERPHeading").text("Daily Health Report");
+    $("#ERPHeading").text("Daily Operation Summary");
     GetCurrentDate();
 });
 function GetCurrentDate() {
@@ -31,7 +31,7 @@ function GetCurrentDate() {
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Daily Health Report");
+    const result = Data.find(item => item.ModuleDesp === "Daily Operation Summary");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
@@ -92,11 +92,11 @@ function validateDate(value) {
 
             $(this).val(value);
         } else {
-            $('#txtMRNDate').val('');
+            $('#txtToDate').val('');
 
         }
     } else {
-        $('#txtMRNDate').val('');
+        $('#txtToDate').val('');
 
     }
 }
@@ -203,7 +203,7 @@ function Report() {
             let url = window.URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
-            a.download = "Daily Health Report.pdf";
+            a.download = "DailyOperationSummary_" + ToDate +".pdf";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Bizsol_ESMS.Dataset {
+namespace DatasetClass.Dataset {
     
     
     /// <summary>
@@ -301,6 +301,8 @@ namespace Bizsol_ESMS.Dataset {
             
             private global::System.Data.DataColumn columnTotalRate;
             
+            private global::System.Data.DataColumn columnCode;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public PrintGatePassDataTable() {
@@ -418,6 +420,14 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn CodeColumn {
+                get {
+                    return this.columnCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -453,7 +463,7 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public PrintGatePassRow AddPrintGatePassRow(string AccountName, string Date, string VehicleNo, string DriverName, string DriverContactNo, string LorryMeter, string BuyerPONo, string BoxCount, string InvoiceNo, string TotalRate) {
+            public PrintGatePassRow AddPrintGatePassRow(string AccountName, string Date, string VehicleNo, string DriverName, string DriverContactNo, string LorryMeter, string BuyerPONo, string BoxCount, string InvoiceNo, string TotalRate, string Code) {
                 PrintGatePassRow rowPrintGatePassRow = ((PrintGatePassRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         AccountName,
@@ -465,7 +475,8 @@ namespace Bizsol_ESMS.Dataset {
                         BuyerPONo,
                         BoxCount,
                         InvoiceNo,
-                        TotalRate};
+                        TotalRate,
+                        Code};
                 rowPrintGatePassRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowPrintGatePassRow);
                 return rowPrintGatePassRow;
@@ -498,6 +509,7 @@ namespace Bizsol_ESMS.Dataset {
                 this.columnBoxCount = base.Columns["BoxCount"];
                 this.columnInvoiceNo = base.Columns["InvoiceNo"];
                 this.columnTotalRate = base.Columns["TotalRate"];
+                this.columnCode = base.Columns["Code"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -523,6 +535,8 @@ namespace Bizsol_ESMS.Dataset {
                 base.Columns.Add(this.columnInvoiceNo);
                 this.columnTotalRate = new global::System.Data.DataColumn("TotalRate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnTotalRate);
+                this.columnCode = new global::System.Data.DataColumn("Code", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCode);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_PrintGatePass");
                 this.ExtendedProperties.Add("Generator_UserTableName", "PrintGatePass");
             }
@@ -827,6 +841,22 @@ namespace Bizsol_ESMS.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string Code {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.CodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Code\' in table \'PrintGatePass\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.CodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsAccountNameNull() {
                 return this.IsNull(this.tablePrintGatePass.AccountNameColumn);
             }
@@ -943,6 +973,18 @@ namespace Bizsol_ESMS.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetTotalRateNull() {
                 this[this.tablePrintGatePass.TotalRateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsCodeNull() {
+                return this.IsNull(this.tablePrintGatePass.CodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetCodeNull() {
+                this[this.tablePrintGatePass.CodeColumn] = global::System.Convert.DBNull;
             }
         }
         

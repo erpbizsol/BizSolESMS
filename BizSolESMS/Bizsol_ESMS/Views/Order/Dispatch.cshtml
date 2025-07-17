@@ -223,7 +223,10 @@
             background-color: #e6e9ff;
             color: #081a2c;
         }
-
+        .active{
+        background-color: #4a7aaa;
+        color:white;
+        }
     /* End Active tab styles */
 </style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
@@ -237,7 +240,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-6">
-                    <div id="tab1" class="tabSec tab active">NEW</div>
+                    <div id="tab1" class="tabSec tab">NEW</div>
                 </div>
             </div>
         </div>
@@ -251,12 +254,24 @@
                 <button type="button" class="btn btn-success btn-height" title="Create Despatch" onclick="StartDispatchOrderNo('0')">CREATE NEW</button>
             </div>
         </div>
-        <div class="row" style="margin-left:-6px;margin-top:10px;display:block;" id="dvSearch">
+        <div class="row" id="dvSearch">
             <div class="col-md-3  col-sm-6">
                 <label for="txSearch" class="col-form-label-sm fw-bold">
                     Search
                 </label>
                 <input type="text" id="txtSearch" name="txtSearch" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Search.." maxlength="50">
+            </div>
+            <div class="col-md-3  col-sm-6" style="display:none" id="dvDownloadDate">
+                <div>
+                    <label for="txtDownloadDate" class="col-form-label-sm fw-bold">
+                        Date <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="txtDownloadDate" name="txtDownloadDate" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Date.." maxlength="50">
+                </div>
+            </div>
+            <div class="col-md-3" style="margin-top:34px;display:none;" id="dvDownloadButton">
+                <label></label>
+                <button type="button" class="btn btn-primary btn-height" title="Download" onclick="DownloadInExcel()">Download</button>
             </div>
         </div>
         <section class="breadcrumbs2 mt-3">
@@ -381,7 +396,7 @@
         </div>
         <div class="row" id="divOrderBooking mb-2">
             <div class="accordion accordion-flush" id="accordionFlushOrder">
-                <div class="accordion-item tab active">
+                <div class="accordion-item tab">
                     <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
                         <div class="accordion-body-sec">
                             <div class="row" id="tblDispatchData" style="display:none;">

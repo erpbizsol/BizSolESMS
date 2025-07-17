@@ -137,6 +137,10 @@ namespace Bizsol_ESMS.Controllers
         {
             return View();
         }
+        public IActionResult StockAuditConfiguration()
+        {
+            return View();
+        }
         #endregion  PrefixConfiguration 
 
         #region  EmployeeMaster
@@ -152,5 +156,12 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion TAT_Configuration
+
+        #region HolidayMaster
+        public IActionResult HolidayMaster()
+        {
+            return View();
+        }
+        #endregion HolidayMaster
     }
 }

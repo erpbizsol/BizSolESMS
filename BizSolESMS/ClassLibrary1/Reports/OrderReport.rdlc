@@ -44,6 +44,27 @@
       </ConnectionProperties>
       <rd:DataSourceID>c290e679-0153-4433-b819-db7355a3167f</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="Employee">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>db8628f4-3b79-4729-a076-c49088074203</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SaleLossOrder">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>76a933d8-23e9-495f-814d-c17ccfca9bb3</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="SaleReturn">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>f67a9df7-4abb-4650-b9b1-3990c1bb7bb7</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DailyOrderReport">
@@ -212,11 +233,107 @@
           <DataField>PoClientName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="TotalOrder">
+          <DataField>TotalOrder</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>TopCustomers</rd:DataSetName>
         <rd:SchemaPath>D:\All Project\BizSolESMS\BizSolESMS\ClassLibrary1\Dataset\TopCustomers.xsd</rd:SchemaPath>
         <rd:TableName>TopCustomers</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="Employee">
+      <Query>
+        <DataSourceName>Employee</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Name">
+          <DataField>Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Unloaded">
+          <DataField>Unloaded</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NoOfOrderPacked">
+          <DataField>NoOfOrderPacked</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NoOfOrderDispatch">
+          <DataField>NoOfOrderDispatch</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Employee</rd:DataSetName>
+        <rd:SchemaPath>D:\All Project\BizSolESMS\BizSolESMS\ClassLibrary1\Dataset\Employee.xsd</rd:SchemaPath>
+        <rd:TableName>Employee</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="SaleLossOrder">
+      <Query>
+        <DataSourceName>SaleLossOrder</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="TotalLineOfProduct">
+          <DataField>TotalLineOfProduct</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalProductQty">
+          <DataField>TotalProductQty</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalValue">
+          <DataField>TotalValue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>SaleLossOrder</rd:DataSetName>
+        <rd:SchemaPath>D:\All Project\BizSolESMS\BizSolESMS\ClassLibrary1\Dataset\SaleLossOrder.xsd</rd:SchemaPath>
+        <rd:TableName>SaleLossOrder</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="SaleReturn">
+      <Query>
+        <DataSourceName>SaleReturn</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="PartyName">
+          <DataField>PartyName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="OrderNo">
+          <DataField>OrderNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Reason">
+          <DataField>Reason</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Value">
+          <DataField>Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>SaleReturn</rd:DataSetName>
+        <rd:SchemaPath>D:\All Project\BizSolESMS\BizSolESMS\ClassLibrary1\Dataset\SaleReturn.xsd</rd:SchemaPath>
+        <rd:TableName>SaleReturn</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
@@ -261,7 +378,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -298,7 +415,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -327,7 +444,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Total Amount</Value>
+                                  <Value>Total Amount ( INR )</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -335,7 +452,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -374,7 +491,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -408,7 +525,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -442,7 +559,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -484,8 +601,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DailyOrderReport</DataSetName>
-            <Top>0.80441in</Top>
-            <Left>0.23833in</Left>
+            <Top>1.40858in</Top>
+            <Left>0.36515in</Left>
             <Height>0.5in</Height>
             <Width>7.3125in</Width>
             <Style>
@@ -498,16 +615,16 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>3.87512cm</Width>
+                  <Width>3.85422cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>5.17158cm</Width>
+                  <Width>5.15068cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.48365cm</Width>
+                  <Width>4.46275cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>5.04338cm</Width>
+                  <Width>5.02248cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -531,7 +648,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -568,7 +685,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -605,7 +722,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -642,7 +759,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -681,7 +798,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -715,7 +832,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -749,7 +866,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -783,7 +900,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -826,10 +943,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>LossOrderReport</DataSetName>
-            <Top>6.48794cm</Top>
-            <Left>0.57888cm</Left>
+            <Top>29.91238cm</Top>
+            <Left>0.92749cm</Left>
             <Height>1.27938cm</Height>
-            <Width>18.57373cm</Width>
+            <Width>18.49012cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -844,7 +961,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Day Book Report For- </Value>
+                    <Value>Sales &amp; Inventory Snapshot For- </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Script MT Bold</FontFamily>
@@ -872,15 +989,13 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>0.84349cm</Top>
-            <Left>0.60536cm</Left>
+            <Top>2.34278cm</Top>
+            <Left>0.89893cm</Left>
             <Height>1.12917cm</Height>
             <Width>18.57375cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
+              <Border />
               <VerticalAlign>Middle</VerticalAlign>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
@@ -912,10 +1027,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>5.38523cm</Top>
-            <Left>0.60536cm</Left>
+            <Top>28.7744cm</Top>
+            <Left>0.89891cm</Left>
             <Height>1.10271cm</Height>
-            <Width>18.57375cm</Width>
+            <Width>18.51869cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -932,16 +1047,56 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>6.35cm</Width>
+                  <Width>3.73255cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.19125cm</Width>
+                  <Width>7.58255cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>7.4238cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
                   <Height>0.6926cm</Height>
                   <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox30">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>SNo.</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox30</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#ed7d31</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox9">
@@ -959,7 +1114,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -996,7 +1151,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1023,6 +1178,40 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox31">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber("DeadStock")</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox31</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("DeadStock") Mod 2 = 1, "#F8CBAD", "#FCE4D6")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="PartNo">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1035,7 +1224,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1069,7 +1258,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1097,6 +1286,7 @@
               <TablixMembers>
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1110,10 +1300,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DeadStock</DataSetName>
-            <Top>10.21857cm</Top>
-            <Left>3.30411cm</Left>
+            <Top>40.37093cm</Top>
+            <Left>0.76233cm</Left>
             <Height>1.3852cm</Height>
-            <Width>12.54125cm</Width>
+            <Width>18.7389cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -1128,7 +1318,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Top 10 Dead Stock - </Value>
+                    <Value>Top 10 Non-Moving Parts - </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Script MT Bold</FontFamily>
@@ -1156,10 +1346,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>9.17759cm</Top>
-            <Left>3.30411cm</Left>
-            <Height>0.97042cm</Height>
-            <Width>12.51478cm</Width>
+            <Top>39.43662cm</Top>
+            <Left>0.84386cm</Left>
+            <Height>0.89902cm</Height>
+            <Width>18.65737cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
               <Border>
@@ -1176,16 +1366,56 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>6.35cm</Width>
+                  <Width>3.65915cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.19125cm</Width>
+                  <Width>7.50915cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>7.3504cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
                   <Height>0.6cm</Height>
                   <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox33">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>SNo.</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox33</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#91bb5a</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox16">
@@ -1203,7 +1433,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1232,7 +1462,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Total Month Amount</Value>
+                                  <Value>Total Month Amount ( INR )</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -1240,7 +1470,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1267,6 +1497,40 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox35">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber("MonthWiseSale")</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox35</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("MonthWiseSale") Mod 2 = 1, "#C6E0B4", "#E2EFDA")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Month">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1279,7 +1543,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1315,7 +1579,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1344,6 +1608,7 @@
               <TablixMembers>
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1357,10 +1622,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>MonthWiseSale</DataSetName>
-            <Top>20.27274cm</Top>
-            <Left>3.27557cm</Left>
+            <Top>14.76059cm</Top>
+            <Left>0.89891cm</Left>
             <Height>1.2cm</Height>
-            <Width>12.54125cm</Width>
+            <Width>18.51869cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -1375,7 +1640,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Monthly Sale</Value>
+                    <Value>Monthly Sale Summary</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Script MT Bold</FontFamily>
@@ -1392,10 +1657,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>19.30232cm</Top>
-            <Left>3.30411cm</Left>
+            <Top>13.68433cm</Top>
+            <Left>0.89895cm</Left>
             <Height>0.97042cm</Height>
-            <Width>12.54125cm</Width>
+            <Width>18.60229cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -1594,9 +1859,7 @@
                         <Style>None</Style>
                       </Border>
                       <FontSize>8pt</FontSize>
-                      <Format>'$'#,0.00;('$'#,0.00)</Format>
                       <Color>#5c5c5c</Color>
-                      <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                     </Style>
                     <ChartAxisTitle>
                       <Caption />
@@ -1605,7 +1868,7 @@
                         <Color>#5c5c5c</Color>
                       </Style>
                     </ChartAxisTitle>
-                    <Interval>100000</Interval>
+                    <Interval>5000000</Interval>
                     <IntervalType>Number</IntervalType>
                     <ChartMajorGridLines>
                       <Style>
@@ -1639,8 +1902,8 @@
                       <Length>0.5</Length>
                     </ChartMinorTickMarks>
                     <CrossAt>NaN</CrossAt>
-                    <Minimum>0</Minimum>
-                    <Maximum>500000</Maximum>
+                    <Minimum>NaN</Minimum>
+                    <Maximum>50000000</Maximum>
                     <ChartAxisScaleBreak>
                       <Style />
                     </ChartAxisScaleBreak>
@@ -1761,10 +2024,10 @@
               </Style>
             </ChartNoDataMessage>
             <DataSetName>MonthWiseSale</DataSetName>
-            <Top>22.83037cm</Top>
-            <Left>2.40453cm</Left>
+            <Top>16.66558cm</Top>
+            <Left>0.89891cm</Left>
             <Height>10.41604cm</Height>
-            <Width>14.86957cm</Width>
+            <Width>18.51869cm</Width>
             <ZIndex>8</ZIndex>
             <Style>
               <Border>
@@ -1810,8 +2073,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>41.48406cm</Top>
-            <Left>0.60537cm</Left>
+            <Top>32.83219cm</Top>
+            <Left>0.84386cm</Left>
             <Height>0.97042cm</Height>
             <Width>18.57374cm</Width>
             <ZIndex>9</ZIndex>
@@ -1828,22 +2091,62 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>7.13022cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.21364cm</Width>
+                  <Width>3.39555cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>3.92262cm</Width>
+                  <Width>3.02304cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>3.30725cm</Width>
+                  <Width>2.57996cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
                   <Height>0.67205cm</Height>
                   <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox38">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>SNo.</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox38</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>DimGray</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox23">
@@ -1861,7 +2164,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1871,7 +2174,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>#ffe86b</BackgroundColor>
+                            <BackgroundColor>DimGray</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1898,7 +2201,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1908,7 +2211,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>#ffe86b</BackgroundColor>
+                            <BackgroundColor>DimGray</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1935,7 +2238,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1945,7 +2248,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>#ffe86b</BackgroundColor>
+                            <BackgroundColor>DimGray</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1972,7 +2275,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1982,7 +2285,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>#ffe86b</BackgroundColor>
+                            <BackgroundColor>DimGray</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1999,6 +2302,40 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox39">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber("AverageTrunAround")</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox39</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("AverageTrunAround") Mod 2 = 1, "#E3E2E2", "#C6C5C5")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="ItemCode">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -2011,7 +2348,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2021,7 +2358,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>#ffe699</BackgroundColor>
+                            <BackgroundColor>=IIf(RowNumber("AverageTrunAround") Mod 2 = 1, "#E3E2E2", "#C6C5C5")</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -2045,7 +2382,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2055,7 +2392,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>#ffe699</BackgroundColor>
+                            <BackgroundColor>=IIf(RowNumber("AverageTrunAround") Mod 2 = 1, "#E3E2E2", "#C6C5C5")</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -2079,7 +2416,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2089,7 +2426,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>#ffe699</BackgroundColor>
+                            <BackgroundColor>=IIf(RowNumber("AverageTrunAround") Mod 2 = 1, "#E3E2E2", "#C6C5C5")</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -2113,7 +2450,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2123,7 +2460,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>#ffe699</BackgroundColor>
+                            <BackgroundColor>=IIf(RowNumber("AverageTrunAround") Mod 2 = 1, "#E3E2E2", "#C6C5C5")</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -2143,6 +2480,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -2156,10 +2494,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>AverageTrunAround</DataSetName>
-            <Top>43.34524cm</Top>
-            <Left>0.60536cm</Left>
+            <Top>34.76393cm</Top>
+            <Left>0.84386cm</Left>
             <Height>1.3441cm</Height>
-            <Width>18.57373cm</Width>
+            <Width>18.62877cm</Width>
             <ZIndex>10</ZIndex>
             <Style>
               <Border>
@@ -2174,7 +2512,18 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Top 10 Customers By Sell</Value>
+                    <Value>Top 10 Customers - </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>script MT Bold</FontFamily>
+                      <FontSize>22pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!Month.Value, "LossOrderReport")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>script MT Bold</FontFamily>
@@ -2191,10 +2540,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>36.12682cm</Top>
-            <Left>3.48936cm</Left>
+            <Top>5.51069cm</Top>
+            <Left>0.89891cm</Left>
             <Height>0.97042cm</Height>
-            <Width>12.38248cm</Width>
+            <Width>18.57374cm</Width>
             <ZIndex>11</ZIndex>
             <Style>
               <Border />
@@ -2209,10 +2558,16 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>6.19124cm</Width>
+                  <Width>1.96749cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.19124cm</Width>
+                  <Width>6.15784cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>4.26782cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>6.1806cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -2221,14 +2576,14 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox24">
+                        <Textbox Name="Textbox42">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Total Value</Value>
+                                  <Value>SNo.</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -2236,11 +2591,85 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox24</rd:DefaultName>
+                          <rd:DefaultName>Textbox42</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#91bb5a</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox36">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Po Client Name</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox36</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#91bb5a</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox34">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total Order</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox34</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2265,7 +2694,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Po Client Name</Value>
+                                  <Value>Total Sale Value ( INR )</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
@@ -2273,7 +2702,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2300,23 +2729,23 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="TotalValue">
+                        <Textbox Name="Textbox43">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!TotalValue.Value</Value>
+                                  <Value>=RowNumber("TopCustomers")</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>TotalValue</rd:DefaultName>
+                          <rd:DefaultName>Textbox43</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2334,7 +2763,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="PoClientName">
+                        <Textbox Name="PoClientName1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2346,11 +2775,79 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>PoClientName</rd:DefaultName>
+                          <rd:DefaultName>PoClientName1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("TopCustomers") Mod 2 = 1, "#C6E0B4", "#E2EFDA")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalOrder">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalOrder.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalOrder</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("TopCustomers") Mod 2 = 1, "#C6E0B4", "#E2EFDA")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalValue">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalValue.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalValue</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2374,6 +2871,8 @@
               <TablixMembers>
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -2387,10 +2886,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>TopCustomers</DataSetName>
-            <Top>37.13252cm</Top>
-            <Left>3.48936cm</Left>
+            <Top>6.48111cm</Top>
+            <Left>0.89891cm</Left>
             <Height>1.50286cm</Height>
-            <Width>12.38248cm</Width>
+            <Width>18.57375cm</Width>
             <ZIndex>12</ZIndex>
             <Style>
               <Border>
@@ -2414,13 +2913,13 @@
                   </TextRun>
                   <TextRun>
                     <Value>=IIf(
-  Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") = CountRows("AverageTrunAround"),
-  "Full (" &amp; Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") &amp; "/" &amp; CountRows("AverageTrunAround") &amp; ")",
-  IIf(
-    Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") = 0,
+    Sum(Fields!ScanQty.Value, "AverageTrunAround") = 0,
     "Not Done (0/" &amp; CountRows("AverageTrunAround") &amp; ")",
-    "Partial (" &amp; Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") &amp; "/" &amp; CountRows("AverageTrunAround") &amp; ")"
-  )
+    IIf(
+        Sum(Fields!StockQTY.Value, "AverageTrunAround") &lt;= Sum(Fields!ScanQty.Value, "AverageTrunAround"),
+        "Full (" &amp; Count(IIf(Fields!IsAudit.Value = "Y", 1, Nothing), "AverageTrunAround") &amp; "/" &amp; CountRows("AverageTrunAround") &amp; ")",
+        "Partial (" &amp; Count(IIf(Fields!ScanQty.Value &gt; 0, 1, Nothing), "AverageTrunAround") &amp; "/" &amp; CountRows("AverageTrunAround") &amp; ")"
+    )
 )</Value>
                     <Style>
                       <FontFamily>Script MT Bold</FontFamily>
@@ -2435,8 +2934,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox29</rd:DefaultName>
-            <Top>42.48975cm</Top>
-            <Left>0.60536cm</Left>
+            <Top>33.83788cm</Top>
+            <Left>0.84386cm</Left>
             <Height>0.85549cm</Height>
             <Width>11.37034cm</Width>
             <ZIndex>13</ZIndex>
@@ -2451,11 +2950,1366 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Textbox Name="Textbox15">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Employee Work Records</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>script MT Bold</FontFamily>
+                      <FontSize>22pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox4</rd:DefaultName>
+            <Top>41.82668cm</Top>
+            <Left>0.84386cm</Left>
+            <Height>0.97042cm</Height>
+            <Width>18.70221cm</Width>
+            <ZIndex>14</ZIndex>
+            <Style>
+              <Border />
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Tablix Name="Tablix7">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.83058cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>5.85226cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.25257cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.66298cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>4.10381cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.67205cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox40">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>SNo.</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox40</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Maroon</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox25">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Name</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox23</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Maroon</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox20">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Unloaded</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox19</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Maroon</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox22">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>No Of Order Packed</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox21</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Maroon</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox28">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>No Of Order Dispatch</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox27</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Maroon</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.67205cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox41">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber("Employee")</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox41</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("Employee") Mod 2 = 1, "#D6CACA", "#987272")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ItemCode2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Name.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ItemCode</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("Employee") Mod 2 = 1, "#D6CACA", "#987272")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="StockQTY2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Unloaded.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>StockQTY</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("Employee") Mod 2 = 1, "#D6CACA", "#987272")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ScanQty2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!NoOfOrderPacked.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ScanQty</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("Employee") Mod 2 = 1, "#D6CACA", "#987272")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Difference2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!NoOfOrderDispatch.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Difference</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIf(RowNumber("Employee") Mod 2 = 1, "#D6CACA", "#987272")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details6" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>Employee</DataSetName>
+            <Top>42.93821cm</Top>
+            <Left>0.84386cm</Left>
+            <Height>1.3441cm</Height>
+            <Width>18.70221cm</Width>
+            <ZIndex>15</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Image Name="Image1">
+            <Source>Embedded</Source>
+            <Value>logo</Value>
+            <Sizing>FitProportional</Sizing>
+            <Top>0.28787cm</Top>
+            <Left>0.95398cm</Left>
+            <Height>1.1825cm</Height>
+            <Width>3.84863cm</Width>
+            <ZIndex>16</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
+          <Textbox Name="Textbox32">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>MG Corporation - Daily Operation Report(DOS)</Value>
+                    <Style>
+                      <FontSize>18pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox32</rd:DefaultName>
+            <Top>0.28787cm</Top>
+            <Left>5.12938cm</Left>
+            <Height>1.1825cm</Height>
+            <Width>14.39834cm</Width>
+            <ZIndex>17</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox24">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Sales Loss (Part not Issued)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>script MT Bold</FontFamily>
+                      <FontSize>22pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox4</rd:DefaultName>
+            <Top>11.00267cm</Top>
+            <Left>0.89891cm</Left>
+            <Height>0.97042cm</Height>
+            <Width>18.68385cm</Width>
+            <ZIndex>18</ZIndex>
+            <Style>
+              <Border />
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Tablix Name="Tablix8">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.82208cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>5.34452cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>5.99099cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>5.49972cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.67205cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox44">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>SNo.</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox40</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox55">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total Line Of Product</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox55</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox57">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total Product Qty</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox57</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox59">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total Value (INR )</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox59</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.67205cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox48">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber(Nothing)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox41</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalLineOfProduct">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalLineOfProduct.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalLineOfProduct</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalProductQty">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalProductQty.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalProductQty</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalValue1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalValue.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalValue1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details7" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>SaleLossOrder</DataSetName>
+            <Top>11.99739cm</Top>
+            <Left>0.95398cm</Left>
+            <Height>1.3441cm</Height>
+            <Width>18.65732cm</Width>
+            <ZIndex>19</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox37">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Sale Return</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>script MT Bold</FontFamily>
+                      <FontSize>22pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox4</rd:DefaultName>
+            <Top>8.3128cm</Top>
+            <Left>0.89891cm</Left>
+            <Height>0.97042cm</Height>
+            <Width>18.6288cm</Width>
+            <ZIndex>20</ZIndex>
+            <Style>
+              <Border />
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Tablix Name="Tablix9">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.82596cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>5.23799cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>5.51242cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.66976cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.38266cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.67205cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox45">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>SNo.</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox40</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Tomato</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox56">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Party Name</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox55</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Tomato</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox58">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Order No</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox57</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Tomato</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox70">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Reason</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox70</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Tomato</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox60">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total Value (INR )</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox59</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Tomato</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.67205cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox49">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber(Nothing)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox41</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalLineOfProduct2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!PartyName.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalLineOfProduct</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalProductQty2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!OrderNo.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalProductQty</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Reason">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Reason.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Reason</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalValue2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Value.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalValue1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details8" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>SaleReturn</DataSetName>
+            <Top>9.28322cm</Top>
+            <Left>0.95398cm</Left>
+            <Height>1.3441cm</Height>
+            <Width>18.62879cm</Width>
+            <ZIndex>21</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Line Name="Line1">
+            <Top>1.64676cm</Top>
+            <Left>0.97233cm</Left>
+            <Height>0cm</Height>
+            <Width>18.57374cm</Width>
+            <ZIndex>22</ZIndex>
+            <Style>
+              <Border>
+                <Style>Solid</Style>
+                <Width>2pt</Width>
+              </Border>
+            </Style>
+          </Line>
         </ReportItems>
-        <Height>44.68934cm</Height>
+        <Height>54.37309cm</Height>
         <Style />
       </Body>
-      <Width>20cm</Width>
+      <Width>19.84625cm</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
@@ -2474,6 +4328,28 @@
       <NumberOfRows>2</NumberOfRows>
     </GridLayoutDefinition>
   </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="logo">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>284be5be-191a-42a6-9103-69a91099bf98</rd:ReportID>
 </Report>

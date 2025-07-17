@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Employee" targetNamespace="http://tempuri.org/Employee.xsd" xmlns:mstns="http://tempuri.org/Employee.xsd" xmlns="http://tempuri.org/Employee.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="Employee" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="Employee" msprop:Generator_DataSetName="Employee">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Employee" msprop:Generator_RowEvHandlerName="EmployeeRowChangeEventHandler" msprop:Generator_RowDeletedName="EmployeeRowDeleted" msprop:Generator_RowDeletingName="EmployeeRowDeleting" msprop:Generator_RowEvArgName="EmployeeRowChangeEvent" msprop:Generator_TablePropName="_Employee" msprop:Generator_RowChangedName="EmployeeRowChanged" msprop:Generator_RowChangingName="EmployeeRowChanging" msprop:Generator_TableClassName="EmployeeDataTable" msprop:Generator_RowClassName="EmployeeRow" msprop:Generator_TableVarName="tableEmployee" msprop:Generator_UserTableName="Employee">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Name" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_UserColumnName="Name" type="xs:string" minOccurs="0" />
+              <xs:element name="Unloaded" msprop:Generator_ColumnPropNameInRow="Unloaded" msprop:Generator_ColumnPropNameInTable="UnloadedColumn" msprop:Generator_ColumnVarNameInTable="columnUnloaded" msprop:Generator_UserColumnName="Unloaded" type="xs:string" minOccurs="0" />
+              <xs:element name="NoOfOrderPacked" msprop:Generator_ColumnPropNameInRow="NoOfOrderPacked" msprop:Generator_ColumnPropNameInTable="NoOfOrderPackedColumn" msprop:Generator_ColumnVarNameInTable="columnNoOfOrderPacked" msprop:Generator_UserColumnName="NoOfOrderPacked" type="xs:string" minOccurs="0" />
+              <xs:element name="NoOfOrderDispatch" msprop:Generator_ColumnPropNameInRow="NoOfOrderDispatch" msprop:Generator_ColumnPropNameInTable="NoOfOrderDispatchColumn" msprop:Generator_ColumnVarNameInTable="columnNoOfOrderDispatch" msprop:Generator_UserColumnName="NoOfOrderDispatch" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

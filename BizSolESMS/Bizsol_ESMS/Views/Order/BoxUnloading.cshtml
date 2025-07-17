@@ -404,6 +404,30 @@
             </div>
         </div>
     </div>
+    <div class="modal position-absolute" id="ModelManual" style="padding-top: 201px;" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header tab-header" style="background-color:#033764">
+                    <level style="color:white">Manual Update Box No</level>
+                    <button type="button" class="close modal-close btn-sm" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                   
+                </div>
+                <div class="modal-body">
+                    <label for="hfManualBoxNo" class="col-form-label-sm fw-bold">Box No</label> <span class="text-danger">*</span>
+                    <input type="text" id="hfManualBoxNo" disabled class="box_border form-control form-control-sm" autocomplete="off" value="0" />
+                    <label for="hfManualPicklistNo" class="col-form-label-sm fw-bold">Picklist No</label> <span class="text-danger">*</span>
+                    <input type="text" id="hfManualPicklistNo" disabled class="box_border form-control form-control-sm" autocomplete="off" value="0" />
+                    <input type="checkbox" id="chkUnloadedBox" checked/>
+                    <label for="chkUnloadedBox" class="col-form-label-sm fw-bold">Unloaded</label>
+                    
+                    <div class="text-right">
+                        <button type="button" class="btn btn-primary btn-height" onclick="SaveManualData()">Save</button>
+                        <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 <div id="overlay" class="overlay"></div>
