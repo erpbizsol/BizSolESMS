@@ -172,7 +172,7 @@ function ShowMRNMasterlist(Type) {
             if (response.length > 0) {
                 unblockUI();
                 $("#MRNTable").show();
-                const StringFilterColumn = ["Vender Name"];
+                const StringFilterColumn = ["Vender Name","Vehicle No"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = ["MRN Date","Challan Date"];
                 const Button = false;

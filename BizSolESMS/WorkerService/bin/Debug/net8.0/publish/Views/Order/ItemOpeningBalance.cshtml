@@ -1,0 +1,361 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="~/assets/js/blockui.js"></script>
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+<script src="~/assets/script/ItemOpeningBalance.js"></script>
+
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+    .tabSec {
+        color: white;
+        width: 117px;
+        height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        margin-top: -8px;
+        background: #1d4b7d;
+    }
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
+    }
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
+    .datepicker table tfoot {
+        display: none;
+    }
+    .page-content {
+        display: block;
+    }
+    .textCreatepage .tabs .fix-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0 8px 9px;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+    .shadow-sm {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+        margin-top: 15px;
+        border-top: 1px solid #c9cae7;
+    }
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 50%;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 20px;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+    .btn-danger {
+        background-color: #ab1624;
+    }
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
+    }
+    .container {
+        overflow: auto;
+        height: 81vh;
+    }
+    .breadcrumbs1 {
+        background: #dddde4;
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
+    }
+    .page-content {
+        padding: 3px 0;
+    }
+    .table th {
+        width: 100px;
+    }
+
+    #table th:last-child {
+        width: 20px;
+    }
+
+    .table-wrapper {
+        height: 350px !important;
+    }
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+    .tab-header {
+        display: flex;
+        height: 36px;
+    }
+
+    .tab-header div {
+        flex: 0.1;
+        text-align: center;
+        padding: 7px 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        border-bottom-right-radius: 40px;
+        border-top-left-radius: 40px;
+        font-weight: bold;
+    }
+    .tab-header div:hover {
+    background: #586e87;
+    color: white;
+    }
+    .tab-header .active {
+    background: #1d4b7d;
+    }
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
+    }
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
+    .datepicker table tfoot {
+        display: none;
+    }
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
+</style>
+
+<section class="breadcrumbs1" id="txtHeaderDv1" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        @*  <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a> *@
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="breadcrumbs1" id="txtHeaderDv2" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="SaveImport()" title="Save Import"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">Import</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div id="txtCreatePage" style="display:block;">
+        <div class="card shadow-sm">
+            <div class="tabs">
+                <div class="row">
+                    <div class="col-sm-12 text-end">
+                        <button type="button" class="btn btn-info btn-height" onclick="ImportExcel()" id="ImportExcel">IMPORT</button>
+                    </div>
+                </div>
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
+                                <select id="txtWarehouse" class="box_border form-control form-control-sm"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row p-2" id="divOrderBooking mb-2">
+                    <div class="accordion accordion-flush" id="accordionFlushOrder">
+
+                        <div class="accordion-item tab active">
+                            <h2 class="accordion-header tab-header .active" id="flush-headingOne">
+                                <button class="accordion-button fw-medium tab-header div" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOrder" aria-expanded="false" aria-controls="flush-collapseOrder">
+                                    Item Opening Balance
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
+                                <div class="accordion-body-sec">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-wrapper" style="overflow: auto;">
+                                                <table id="table" class="table">
+                                                    <thead id="table-header">
+                                                    </thead>
+                                                    <tbody id="table-body"></tbody>
+                                                </table>
+                                            </div>
+                                            <div class="paginator" id="paginator-table">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal position-absolute" id="staticBackdrop" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header tab-header" style="background-color:#e9e9ef">
+                            <div id="tab1" class="tab active" style="color:white">New</div>
+                            <button type="button" class="close modal-close" aria-label="Close" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row pt-4">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtItemCode" class="col-form-label-sm fw-bold" id="txtItemCodelab">Item Code</label><span class="text-danger">*</span>
+                                            <datalist id="txtItemCodelist"></datalist>
+                                            <input list="txtItemCodelist" id="txtItemCode" onchange="FillallItemfield(this);"  class="box_border form-control form-control-sm" autocomplete="off" placeholder="Item Code..">
+                                        </div>
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtItemBarCode" class="col-form-label-sm fw-bold" id="txtItembarcodelab">Item Bar Code</label><span class="text-danger">*</span>
+                                            <datalist id="txtItemBarCodelist"></datalist>
+                                            <input list="txtItemBarCodelist" disabled id="txtItemBarCode" class=" box_border form-control form-control-sm" autocomplete="off" placeholder="Item Bar Code..">
+                                        </div>
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtItemName" class="col-form-label-sm fw-bold" id="txtItemNamelab">Item Name</label><span class="text-danger">*</span>
+                                            <datalist id="txtItemNamelist"></datalist>
+                                            <input list="txtItemNamelist" id="txtItemName" class="box_border form-control form-control-sm" disabled autocomplete="off" placeholder="Item Name..">
+                                        </div>
+                                        <div class="col-md-3 col-sm-6">
+                                            <label for="txtOpeningBalance" class="col-form-label-sm fw-bold ">Opening Balance</label><span class="text-danger">*</span>
+                                            <input type="text" id="txtOpeningBalance" onkeypress="return OnChangeNumericTextBox(event,this);" class="box_border form-control form-control-sm text-right Number" autocomplete="off" placeholder="Opening Balance..">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success btn-height" id="txtbtnSave" onclick="confirmSave()">Save</button>
+                                <button type="button" class="btn btn-danger btn-height" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="txtImport" style="display:none;">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtImportWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
+                                <select id="txtImportWarehouse" class="box_border form-control form-control-sm"></select>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtFile" class="col-form-label-sm fw-bold">File</label><span class="text-danger">*</span>
+                                <input type="file" id="txtFile" class="box_border form-control form-control-sm" autocomplete="off" placeholder="file..">
+                            </div>
+                            <div class="col-md-3 col-sm-6" style="margin-top:32px;">
+                                <button type="button" class="btn btn-info btn-height" onclick="DownloadTemplate();">Download Template</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row p-2 " id="dvImportTable" style="display:none;" >
+                    <div class="accordion accordion-flush" id="accordionFlushOrder">
+                        <div id="flush-collapseOrder" class="accordion-collapse collapse show" aria-labelledby="flush-collapseOrder" data-bs-parent="#accordionFlushOrder" style="">
+                            <div class="accordion-body-sec">
+                                <div class="row">
+                                    <div class="col-md-12" style="background: white;padding: 0px;">
+                                        <div class="table-wrapper" style="overflow: auto;">
+                                            <table id="ImportTable" class="table">
+                                                <thead id="ImportTable-header">
+                                                </thead>
+                                                <tbody id="ImportTable-body"></tbody>
+                                            </table>
+                                        </div>
+                                        <div class="paginator" id="paginator-ImportTable">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/filter.js"></script>
+

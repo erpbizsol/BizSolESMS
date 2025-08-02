@@ -402,7 +402,7 @@ function DataExport() {
         },
         success: function (response) {
             if (response.length > 0) {
-                Export(response);
+                ExportData(response);
             } else {
                 toastr.error("Record not found...!");
             }
@@ -413,7 +413,7 @@ function DataExport() {
     });
 
 }
-function Export(jsonData) {
+function ExportData(jsonData) {
     const columnsToRemove = ["Code"];
     if (!Array.isArray(columnsToRemove)) {
         console.error("columnsToRemove should be an array");
@@ -482,7 +482,7 @@ function showToast(Msg) {
     setTimeout(() => toast.style.opacity = "1", 10);
     let blinkInterval = setInterval(() => {
         toast.style.visibility = (toast.style.visibility === "hidden") ? "visible" : "hidden";
-    }, 300);
+    }, 3000);
     setTimeout(() => {
         clearInterval(blinkInterval);
         toast.style.visibility = "visible";
@@ -496,7 +496,6 @@ function showToast(Msg) {
 function GetDispatchOrderLists(Mode) {
     $("#txtSearch").val("");
     G_Tab = 1;
-    ShowHideDate();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -575,7 +574,7 @@ async function StartDispatchPanding(Code, Mode) {
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtPackedBy").val(G_UserName);
                     $("#txtBoxNo").val(OrderMaster.BoxNo);
-                    
+                    GetTotalLineOfPart(OrderMaster.Code);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     $("#tblDispatchData").show();
@@ -586,7 +585,7 @@ async function StartDispatchPanding(Code, Mode) {
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
-                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    const StringdoubleFilterColumn = [G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name', G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code'];
                     let hiddenColumns = [];
                     if (UserType == "A") {
                         hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
@@ -912,6 +911,7 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtBoxNo").val(OrderMaster.BoxNo);
                     $("#txtScanProduct").prop("disabled", false);
+                    GetTotalLineOfPart(OrderMaster.Code);
                     disableFields(false);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -923,7 +923,7 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
-                    const StringdoubleFilterColumn = [];
+                    const StringdoubleFilterColumn = [G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code', G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name'];
                     let hiddenColumns = [];
                     if (UserType == "A") {
                         hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
@@ -1046,7 +1046,6 @@ function checkValidateqtyTransit1(element, Code) {
 function GetDespatchTransitOrderList(Mode) {
     $("#txtSearch").val("");
     G_Tab = 2;
-    ShowHideDate();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -1097,7 +1096,6 @@ function GetDespatchTransitOrderList(Mode) {
 function GetCompletedDespatchOrderList(Mode) {
     $("#txtSearch").val("");
     G_Tab = 3;
-    ShowHideDate();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -1179,6 +1177,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtScanProduct").prop("disabled", false);
                     $("#txtBoxNo").val(OrderMaster.BoxNo);
+                    GetTotalLineOfPart(OrderMaster.Code);
                     disableFields(false);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -1190,7 +1189,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     const DateFilterColumn = [];
                     const Button = false;
                     const showButtons = [];
-                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    const StringdoubleFilterColumn = [G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name', G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code'];
                     let hiddenColumns = [];
                     if (UserType == "A") {
                         hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
@@ -1373,6 +1372,7 @@ async function ViewDespatchTransit(Code, Mode) {
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtBoxNo").val(OrderMaster.BoxNo);
+                    GetTotalLineOfPart(OrderMaster.Code);
                     $("#txtScanProduct").prop("disabled", true);
                     disableFields(true);
                 }
@@ -1599,6 +1599,7 @@ async function ShowUpdateBoxNo(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtScanProduct").prop("disabled", false);
+                    GetTotalLineOfPart(OrderMaster.Code);
                     disableFields(false);
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
@@ -2126,27 +2127,24 @@ function DownloadQRPdf(response) {
         }
     });
 }
-function ShowHideDate() {
-    if (G_Tab === 3) {
-        $("#dvDownloadButton").show();
-        $("#dvDownloadDate").show();
-    } else {
-        $("#dvDownloadButton").hide();
-        $("#dvDownloadDate").hide();
-    }
-}
 async function DownloadInExcel() {
     try {
         const DownloadDate = convertDateFormat1($("#txtDownloadDate").val());
+        const OrderStatus = $("#ddlOrderStatus").val();
         if (DownloadDate === '' || DownloadDate === undefined || DownloadDate === null) {
             toastr.error("Please enter a valid date !");
             $("#txtDownloadDate").focus()
             return;
         }
-        const response = await getDataWithAjax(DownloadDate);
+        if (OrderStatus == '') {
+            toastr.error("Please select order status !");
+            $("#ddlOrderStatus").focus()
+            return;
+        }
+        const response = await getDataWithAjax(DownloadDate, OrderStatus);
 
         if (response.length > 0) {
-            await Export(response);
+            await DownloadExport(response);
         } else {
             alert("Record not found...!");
         }
@@ -2154,10 +2152,10 @@ async function DownloadInExcel() {
         console.error("AJAX error:", error);
     }
 }
-function getDataWithAjax(Date) {
+function getDataWithAjax(Date,OrderStatus) {
     return new Promise(function (resolve, reject) {
         $.ajax({
-            url: `${appBaseURL}/api/OrderMaster/GetOrderPackedDetail?Date=${Date}`,
+            url: `${appBaseURL}/api/OrderMaster/GetOrderPackedDetail?Date=${Date}&OrderStatus=${OrderStatus}`,
             type: 'GET',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -2171,8 +2169,9 @@ function getDataWithAjax(Date) {
         });
     });
 }
-async function Export(Data) {
+async function DownloadExport(Data) {
     const Picklist = $("#txtDownloadDate").val();
+    const OrderStatus = $("#ddlOrderStatus").val();
     const renameMap = {
         "Item Name": G_ItemConfig[0].ItemNameHeader || 'Item Name',
         "Item Code": G_ItemConfig[0].ItemCodeHeader || 'Item Code',
@@ -2235,7 +2234,7 @@ async function Export(Data) {
 
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `OrderPacked_${Picklist}.xlsx`;
+    link.download = `${OrderStatus}_${Picklist}.xlsx`;
     link.click();
 }
 function convertDateFormat1(dateString) {
@@ -2307,5 +2306,22 @@ function DatePickerForDownloadDate(date) {
                 'z-index': '1000',
             });
         }, 10);
+    });
+}
+function GetTotalLineOfPart(OrderMaster_Code) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetTotalLineOfPart?OrderMaster_Code=${OrderMaster_Code}`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            $("#txtTotalPartLine").text(response[0].PartCount);
+        },
+        error: function (xhr, status, error) {
+            showToast("Error in api/OrderMaster/SaveManualRateAndQty");
+        }
     });
 }

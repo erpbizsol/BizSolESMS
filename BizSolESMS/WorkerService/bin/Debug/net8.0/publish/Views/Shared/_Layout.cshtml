@@ -1,0 +1,483 @@
+﻿
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>BizSol e-SMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!--toastr-->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <link href="~/assets/css/toastr.min.css" rel="stylesheet" />
+    @* Google Fonts *@
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">    @* End Google Fonts *@
+    <link href="~/assets/libs/datatables.net-bs4/css/datatables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Responsive datatable examples -->
+    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Bootstrap Css -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Icons Css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    @* <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> *@
+    <link href="~/assets/libs/select2-4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- App Css-->
+    <link href="~/assets/css/app.min.css" rel="stylesheet" />
+    <link href="~/assets/css/responsive.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.6.0.min.js"></script>
+
+    <style>
+       /*  .breadcrumbs1 {
+            background: #dddde4;
+            position: sticky;
+            top: 0;
+            background-color: #dddde4;
+            z-index: 1000;
+            padding: 8px 0 8px 9px;
+            border-top-right-radius: 5px;
+            border-top-left-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+            height: 36px;
+        } */
+        .Highlighted {
+            background-color: #FFD700 !important; /* Gold color */
+            color: black !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="layout-wrapper">
+        <header id="page-topbar">
+            <div class="navbar-header">
+                <div class="d-flex">
+                    <!-- LOGO -->
+                    <div class="navbar-brand-box">
+                        <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Dashbord/Dashbord" class="logo logo-dark">
+                            <span class="logo-sm">
+                                <img src="~/assets/images/logo-full.jpeg" alt="" height="30">
+                            </span>
+                            <span class="logo-lg">
+                                <img src="~/assets/images/logo-full.jpeg" alt="" height="30"> <span class="logo-txt">BizSol e-SMS</span>
+                            </span>
+                        </a>
+
+                        <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Dashbord/Dashbord" class="logo logo-light">
+                            <span class="logo-sm">
+                                <img src="~/assets/images/logo-sm.svg" alt="" height="24">
+                            </span>
+                            <span class="logo-lg">
+                                <img src="~/assets/images/logo-sm.svg" alt="" height="24"> <span class="logo-txt">BizSol</span>
+                            </span>
+                        </a>
+                    </div>
+
+                    <button type="button" class="btn btn-sm px-3 font-size-16 header-item toggleBtn"
+                            id="vertical-menu-btn">
+                        <i class="fa fa-fw fa-bars"></i>
+                    </button>
+
+                    <div class="pt-4" style="padding-top: 20px;">
+                        <h4 class="mb-sm-0 font-size-16" id="ERPHeading">Dashboard</h4>
+                    </div>
+
+                </div>
+
+                <div class="d-flex">
+                    <div class="dropdown d-inline-block d-lg-none ms-2">
+                        <button type="button" class="btn header-item" id="page-header-search-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i data-feather="search" class="icon-lg"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                             aria-labelledby="page-header-search-dropdown">
+
+                            <form class="p-3">
+                                <div class="form-group m-0">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search ..."
+                                               aria-label="Search Result">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="mdi mdi-magnify"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="dropdown d-none d-sm-inline-block">
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="en">
+                                <img src="~/assets/images/flags/us.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle">English</span>
+                            </a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="sp">
+                                <img src="~/assets/images/flags/spain.jpg" alt="user-image" class="me-1" height="12">
+                                <span class="align-middle">Spanish</span>
+                            </a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="gr">
+                                <img src="~/assets/images/flags/germany.jpg" alt="user-image" class="me-1" height="12">
+                                <span class="align-middle">German</span>
+                            </a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="it">
+                                <img src="~/assets/images/flags/italy.jpg" alt="user-image" class="me-1" height="12">
+                                <span class="align-middle">Italian</span>
+                            </a>
+                            <!-- item-->
+                            <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="ru">
+                                <img src="~/assets/images/flags/russia.jpg" alt="user-image" class="me-1" height="12">
+                                <span class="align-middle">Russian</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item bg-light-subtle"
+                                id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                            <img class="rounded-circle header-profile-user" src="~/assets/images/users/user.jpg"
+                                 alt="Header User">
+                            @* <span class="d-none d-xl-inline-block ms-1 fw-medium">User</span>
+                            <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i> *@
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <!-- item-->
+                            <a class="dropdown-item" href="@Html.Raw(ViewBag.AppBaseURLMenu)/Master/UserMaster?Profile=1">
+                                <i class='bx bxs-user align-middle userIcon me-1'></i> <span>Profile</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" onclick="logoutUser()">
+                                <i class="bx bx-log-out align-middle me-1 userIcon"></i> <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ========== Left Sidebar Start ========== -->
+       @*  <div class="vertical-menu">
+            <div data-simplebar class="h-100">
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+                    <!-- Left Menu Start -->
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li>
+                            <a href="/Dashbord/Dashbord">
+                                <i data-feather="home"></i>
+                                <span data-key="t-dashboard">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i data-feather="users"></i>
+                                <span data-key="t-authentication">Master</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="/Master/UserMaster" data-key="t-login">User Master</a></li>
+                                <li><a href="/Master/UserGroupMaster" data-key="t-login">User Group Master</a></li>
+                                <li><a href="/Master/UOMMasterList" data-key="t-login">UOM Master</a></li>
+                                <li><a href="/Master/LocationMasterList" data-key="t-recover-password">Location Master</a></li>
+                                <li><a href="/Master/CategoryMasterList" data-key="t-recover-password">Category Master</a></li>
+                                <li><a href="/Master/GroupMasterList" data-key="t-recover-password">Group Master</a></li>
+                                <li><a href="/Master/SubGroupMasterList" data-key="t-recover-password">Sub Group Master</a></li>
+                                <li><a href="/Master/BrandMasterList" data-key="t-recover-password">Brand Master</a></li>
+                                <li><a href="/Master/WarehouseMasterList" data-key="t-lock-screen">Warehouse Master</a></li>
+                                <li><a href="/Master/ItemConfigList" data-key="t-confirm-mail">ItemConfig</a></li>
+                                <li><a href="/Master/ItemMasterList" data-key="t-logout">Item Master</a></li>
+                                <li><a href="/Master/StateMasterList" data-key="t-email-verification">State Master</a></li>
+                                <li><a href="/Master/CityMasterList" data-key="t-email-verification">City Master</a></li>
+                                <li><a href="/Master/AccountMaster" data-key="t-email-verification">Account Master</a></li>
+                                <li><a href="auth-two-step-verification.html" data-key="t-two-step-verification">Two Step Verification</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Sidebar -->
+            </div>
+        </div> *@
+
+       
+
+        <div class="vertical-menu">
+            <div data-simplebar class="h-100">
+                <div id="sidebar-menu">
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+            @* <section class="breadcrumbs1">
+                <div class="container">
+                    <div class="fix-header">
+                        <div class="row">
+                            <div class="col-md-6 col-6">
+                                <div class="icon-tab">
+                                    <a class="btn-icon me-1" title="Save"><i class='bx bx-save'></i></a>
+                                    <a class="btn-icon btn-danger" title="Back"><i class='bx bx-arrow-back'></i></a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-6">
+                                <div id="" class="tabSec tab active">NEW</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section> *@
+            <div class="container-fluid">
+                <div class="page-content">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
+            </div>
+        </div>
+        <!-- End Page-content -->
+        <!-- ============================================================== -->
+        <!-- Start Footer here -->
+        <!-- ============================================================== -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4 text-left">
+                        <div>
+                            <span class="userTextBig" id="ERPUserName">ANKIT BIZSOL</span>
+                            <span class="userTextSmall" id="ERPCompanyCode">(BizSol e-SMS)</span>
+                        </div>
+                    </div>
+                    <div class="col-md-8 text-end">
+                        <div><p class="m-0 copyright">Copyright © 2024 <a href="">BizSol Technologies Pvt. Ltd.</a> All rights reserved.</p></div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+        <!-- End Footer -->
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="right-bar">
+        <div data-simplebar class="h-100">
+            <div class="rightbar-title d-flex align-items-center p-3">
+                <h5 class="m-0 me-2">Theme Customizer</h5>
+                <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
+                    <i class="mdi mdi-close noti-icon"></i>
+                </a>
+            </div>
+            <!-- Settings -->
+            <hr class="m-0" />
+
+            <div class="p-4">
+                <h6 class="mb-3">Layout</h6>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout"
+                           id="layout-vertical" value="vertical">
+                    <label class="form-check-label" for="layout-vertical">Vertical</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout"
+                           id="layout-horizontal" value="horizontal">
+                    <label class="form-check-label" for="layout-horizontal">Horizontal</label>
+                </div>
+
+                <h6 class="mt-4 mb-3 pt-2">Layout Mode</h6>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout-mode"
+                           id="layout-mode-light" value="light">
+                    <label class="form-check-label" for="layout-mode-light">Light</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout-mode"
+                           id="layout-mode-dark" value="dark">
+                    <label class="form-check-label" for="layout-mode-dark">Dark</label>
+                </div>
+
+                <h6 class="mt-4 mb-3 pt-2">Layout Width</h6>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout-width"
+                           id="layout-width-fuild" value="fuild" onchange="document.body.setAttribute('data-layout-size', 'fluid')">
+                    <label class="form-check-label" for="layout-width-fuild">Fluid</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout-width"
+                           id="layout-width-boxed" value="boxed" onchange="document.body.setAttribute('data-layout-size', 'boxed')">
+                    <label class="form-check-label" for="layout-width-boxed">Boxed</label>
+                </div>
+
+                <h6 class="mt-4 mb-3 pt-2">Layout Position</h6>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout-position"
+                           id="layout-position-fixed" value="fixed" onchange="document.body.setAttribute('data-layout-scrollable', 'false')">
+                    <label class="form-check-label" for="layout-position-fixed">Fixed</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout-position"
+                           id="layout-position-scrollable" value="scrollable" onchange="document.body.setAttribute('data-layout-scrollable', 'true')">
+                    <label class="form-check-label" for="layout-position-scrollable">Scrollable</label>
+                </div>
+
+                <h6 class="mt-4 mb-3 pt-2">Topbar Color</h6>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="topbar-color"
+                           id="topbar-color-light" value="light" onchange="document.body.setAttribute('data-topbar', 'light')">
+                    <label class="form-check-label" for="topbar-color-light">Light</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="topbar-color"
+                           id="topbar-color-dark" value="dark" onchange="document.body.setAttribute('data-topbar', 'dark')">
+                    <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                </div>
+
+                <h6 class="mt-4 mb-3 pt-2 sidebar-setting">Sidebar Size</h6>
+
+                <div class="form-check sidebar-setting">
+                    <input class="form-check-input" type="radio" name="sidebar-size"
+                           id="sidebar-size-default" value="default" onchange="document.body.setAttribute('data-sidebar-size', 'lg')">
+                    <label class="form-check-label" for="sidebar-size-default">Default</label>
+                </div>
+                <div class="form-check sidebar-setting">
+                    <input class="form-check-input" type="radio" name="sidebar-size"
+                           id="sidebar-size-compact" value="compact" onchange="document.body.setAttribute('data-sidebar-size', 'md')">
+                    <label class="form-check-label" for="sidebar-size-compact">Compact</label>
+                </div>
+                <div class="form-check sidebar-setting">
+                    <input class="form-check-input" type="radio" name="sidebar-size"
+                           id="sidebar-size-small" value="small" onchange="document.body.setAttribute('data-sidebar-size', 'sm')">
+                    <label class="form-check-label" for="sidebar-size-small">Small (Icon View)</label>
+                </div>
+
+                <h6 class="mt-4 mb-3 pt-2 sidebar-setting">Sidebar Color</h6>
+
+                <div class="form-check sidebar-setting">
+                    <input class="form-check-input" type="radio" name="sidebar-color"
+                           id="sidebar-color-light" value="light" onchange="document.body.setAttribute('data-sidebar', 'light')">
+                    <label class="form-check-label" for="sidebar-color-light">Light</label>
+                </div>
+                <div class="form-check sidebar-setting">
+                    <input class="form-check-input" type="radio" name="sidebar-color"
+                           id="sidebar-color-dark" value="dark" onchange="document.body.setAttribute('data-sidebar', 'dark')">
+                    <label class="form-check-label" for="sidebar-color-dark">Dark</label>
+                </div>
+                <div class="form-check sidebar-setting">
+                    <input class="form-check-input" type="radio" name="sidebar-color"
+                           id="sidebar-color-brand" value="brand" onchange="document.body.setAttribute('data-sidebar', 'brand')">
+                    <label class="form-check-label" for="sidebar-color-brand">Brand</label>
+                </div>
+
+                <h6 class="mt-4 mb-3 pt-2">Direction</h6>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout-direction"
+                           id="layout-direction-ltr" value="ltr">
+                    <label class="form-check-label" for="layout-direction-ltr">LTR</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="layout-direction"
+                           id="layout-direction-rtl" value="rtl">
+                    <label class="form-check-label" for="layout-direction-rtl">RTL</label>
+                </div>
+
+            </div>
+
+        </div> <!-- end slimscroll-menu-->
+    </div>
+    <!-- /Right-bar -->
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+    <div id="sidebar-overlay"></div>
+    <!--toastr-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    @* "toast-top-right": Top - right corner(default )
+    "toast-top-left": Top - left corner
+    "toast-bottom-right": Bottom - right corner
+    "toast-bottom-left": Bottom - left corner
+    "toast-top-center": Centered at the top
+    "toast-bottom-center": Centered at the bottom
+    "toast-top-full-width": Full - width at the top
+    "toast-bottom-full-width": Full - width at the bottom
+    toastr.success(resdata.Msg);
+    toastr.error(resdata.Msg);
+    toastr.warning(resdata.Msg);
+    *@
+    <!--toastr-->
+    @* @await RenderSectionAsync("Scripts", required: false) *@
+    <!-- JAVASCRIPT -->
+    <!-- jQuery should be loaded first -->
+    @* <script src="~/assets/js/jquery-3.6.0.min.js"></script> *@
+    <!-- Then load other libraries and plugins that depend on jQuery -->
+    <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Then load menu.js after dependencies -->
+    <script src="~/assets/libs/metismenu/metismenu.min.js"></script>
+    <script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/assets/libs/node-waves/waves.min.js"></script>
+    <script src="~/assets/libs/feather-icons/feather.min.js"></script>
+    <!-- pace js -->
+    <script src="~/assets/libs/pace-js/pace.min.js"></script>
+    <!-- Required datatable js -->
+    <script src="~/assets/libs/datatables.net/js/jquery.datatables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/datatables.bootstrap4.min.js"></script>
+    <!-- Buttons examples -->
+    <script src="~/assets/libs/datatables.net-buttons/js/datatables.buttons.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/assets/libs/jszip/jszip.min.js"></script>
+    <script src="~/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="~/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.colvis.min.js"></script>
+    <!-- Responsive examples -->
+    <script src="~/assets/libs/datatables.net-responsive/js/datatables.responsive.min.js"></script>
+    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Datatable init js -->
+    <script src="~/assets/js/pages/datatables.init.js"></script>
+    @* <script src="~/assets/js/pages/table-responsive.init.js"></script> *@
+    <!-- Table Editable plugin -->
+
+    <script src="~/assets/libs/table-edits/build/table-edits.min.js"></script>
+    <script src="~/assets/js/pages/table-editable.int.js"></script>
+    <!-- App script should come last -->
+    <script src="~/assets/js/app.js"></script>
+    <!-- apexcharts -->
+    <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
+    <!-- Plugins js-->
+    <script src="~/assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="~/assets/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js"></script>
+    @*  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> *@
+    <script src="~/assets/libs/select2-4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+   <script>
+        // $(document).ready(function () {
+        var authKey = '@Html.Raw(ViewBag.AuthKey)';
+       if (authKey !== '') {
+              sessionStorage.setItem('authKey',authKey);
+              sessionStorage.setItem('AppBaseURL', '@Html.Raw(ViewBag.AppBaseURL)');
+              sessionStorage.setItem('AppBaseURLMenu', '@Html.Raw(ViewBag.AppBaseURLMenu)');
+              sessionStorage.setItem('UserName', '@Html.Raw(ViewBag.UserName)');
+              //window.AppBaseURL='@Html.Raw(ViewBag.AppBaseURL)';
+        }
+        // });
+        $("#ERPUserName").text(sessionStorage.getItem('UserName'));
+    </script>
+    <script src="~/assets/script/logout.js"></script>
+    <script src="~/assets/js/menu.js"></script>
+    <script src="~/assets/script/common.js"></script>
+    <script src="~/assets/js/checkoptionpermission.js"></script>
+</body>
+</html>

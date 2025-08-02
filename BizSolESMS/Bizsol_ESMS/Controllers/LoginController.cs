@@ -60,7 +60,7 @@ namespace Bizsol_ESMS.Controllers
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlDatabase", dr["LoginDatabase"].ToString());
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlUser", dr["userid"].ToString());
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlPassword", dr["pwd"].ToString());
-
+                                HttpContext.Session.SetString("EsmsCompanyName", dr["CompanyName"].ToString());
                                 HttpContext.Session.SetString("ConnectionString", connectionMYSqlString);
                                 CookieOptions options = new CookieOptions
                                 {

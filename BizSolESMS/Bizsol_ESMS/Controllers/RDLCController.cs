@@ -95,6 +95,9 @@ namespace Bizsol_ESMS.Controllers
             report.DataSources.Add(new ReportDataSource("Employee", ds.Tables[6]));
             report.DataSources.Add(new ReportDataSource("SaleLossOrder", ds.Tables[7]));
             report.DataSources.Add(new ReportDataSource("SaleReturn", ds.Tables[8]));
+            report.DataSources.Add(new ReportDataSource("TatConfig", ds.Tables[9]));
+            report.DataSources.Add(new ReportDataSource("TatMaster", ds.Tables[10]));
+            report.DataSources.Add(new ReportDataSource("StockSummary", ds.Tables[11]));
 
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "OrderReport.pdf");
@@ -124,6 +127,8 @@ namespace Bizsol_ESMS.Controllers
             //string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "OrderReport.rdlc");
             //string updatedPath = reportPath.Replace(@"WorkerService", "BizSol_ESMS");
             string updatedPath = @"C:\E-SMS_Publish\Reports\OrderReport.rdlc";
+            //string updatedPath = @"C:\ESMS_RDLC\Reports\OrderReport.rdlc";
+
             LocalReport report = new LocalReport();
             report.ReportPath = updatedPath;
             report.DataSources.Add(new ReportDataSource("DailyOrderReport", ds.Tables[0]));
@@ -135,6 +140,9 @@ namespace Bizsol_ESMS.Controllers
             report.DataSources.Add(new ReportDataSource("Employee", ds.Tables[6]));
             report.DataSources.Add(new ReportDataSource("SaleLossOrder", ds.Tables[7]));
             report.DataSources.Add(new ReportDataSource("SaleReturn", ds.Tables[8]));
+            report.DataSources.Add(new ReportDataSource("TatConfig", ds.Tables[9]));
+            report.DataSources.Add(new ReportDataSource("TatMaster", ds.Tables[10]));
+            report.DataSources.Add(new ReportDataSource("StockSummary", ds.Tables[11]));
 
             byte[] pdfBytes = report.Render("PDF");
 

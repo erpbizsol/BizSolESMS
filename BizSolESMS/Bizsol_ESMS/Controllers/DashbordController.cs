@@ -22,6 +22,7 @@ namespace Bizsol_ESMS.Controllers
             string UserType=HttpContext.Session.GetString("UserType");
             string FormToOpen = HttpContext.Session.GetString("FormToOpen");
             string DefaultPage = HttpContext.Session.GetString("DefaultPage");
+            string EsmsCompanyName = HttpContext.Session.GetString("EsmsCompanyName");
 
             //string newconnectionStrings = "Server=220.158.165.98;Port = 65448;database=bizsolesms_test;user=sa;password=biz1981";
             //AuthKey = $"{{" +
@@ -47,6 +48,7 @@ namespace Bizsol_ESMS.Controllers
             ViewBag.DefaultPage = DefaultPage;
             ViewBag.UserMaster_Code = UserMaster_Code;
             ViewBag.AuthKey = jsonAuthKey;
+            ViewBag.EsmsCompanyName = EsmsCompanyName;
 
             return View();
         }

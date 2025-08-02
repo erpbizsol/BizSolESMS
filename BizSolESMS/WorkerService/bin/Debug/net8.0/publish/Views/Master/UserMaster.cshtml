@@ -1,0 +1,370 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="~/assets/script/UserMaster.js"></script>
+<style>
+    /* table filter header text in one line  */
+    th, .filter-table-heading {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .filter-table-heading {
+        overflow: hidden;
+    }
+
+    .table th {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .table-filter-arrow {
+        position: relative;
+        display: inline-block;
+    }
+    /* End table filter header text in one line  */
+
+    .form-group {
+        margin-bottom: 8px;
+    }
+
+    #imgUserForShow {
+        /* margin-left: 29px;
+                margin-top: 20px; */
+        border: 1px solid black;
+        height: 200px;
+        width: 180px;
+        border-radius: 2px;
+    }
+
+    #imgSelfie {
+        height: 196px;
+        width: 176px;
+        padding: 2px;
+    }
+
+    img {
+        border-radius: 0px;
+    }
+
+.tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+
+    .tabSec {
+        color: white;
+        width: 117px;
+        height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        margin-top: -8px;
+        background: #1d4b7d;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
+    }
+
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
+    .datepicker table tfoot {
+        display: none;
+    }
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .fix-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0 8px 9px;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+
+    .shadow-sm {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+        margin-top: 15px;
+        border-top: 1px solid #c9cae7;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 50%;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 20px;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-danger {
+        background-color: #ab1624;
+    }
+
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
+
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
+        /*  overflow: hidden;
+                        height: auto; */
+    }
+
+    .container {
+        overflow: auto;
+        height: 81vh;
+        /* overflow: hidden; */
+    }
+    /* .breadcrumbs .container-fluid .fix-header {
+                    position: sticky;
+                    top: 0;
+                    background-color: #dddde4;
+                    z-index: 1000;
+                    padding: 8px 0 8px 9px;
+                    border-top-right-radius: 5px;
+                    border-top-left-radius: 5px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                    height: 36px;
+                } */
+
+    .breadcrumbs1 {
+        background: #dddde4;
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        /* border-top-right-radius: 5px;
+                        border-top-left-radius: 5px; */
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        /* height: 36px; */
+        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
+    }
+
+    .page-content {
+        padding: 3px 0;
+    }
+
+    .sm-table {
+        width: 100% !important;
+        margin: auto;
+    }
+</style>
+<script>
+    var Profile = '@ViewBag.Profile';
+</script>
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" id="btnSave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div id="tblUserMaster" class="sm-table mt-3" style="display:block;">
+    <div class="row mt-3">
+        <div class="col-sm-12 text-end">
+            <label></label>
+            @* <button type="button" class="btn btn-primary btn-height">DOWNLOAD</button> *@
+            <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="Create()">CREATE NEW</button>
+        </div>
+    </div>
+    <div class="card-body mt-2" id="txtUsertable">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <div class="paginator" id="paginator-table">
+        </div>
+    </div>
+</div>
+
+<div id="FrmUserMaster" style="display:None">
+    <form>
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="txtUserID" class="col-form-label-sm fw-bold">User ID <span class="text-danger">*</span> </label>
+                                        <input type="text" id="txtUserID" class="box_border form-control form-control-sm" placeholder="Enter UserId" autocomplete="off" maxlength="20">
+                                        <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" value="0">
+                                    </div>
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="txtUserName" class="col-form-label-sm fw-bold">User Name <span class="text-danger">*</span></label>
+                                        <input type="text" id="txtUserName" class="box_border form-control form-control-sm" placeholder="Enter User Name" autocomplete="off" maxlength="20">
+                                    </div>
+                                    <div class="col-md-4 col-sm-6">
+                                            <label for="txtMobileNo" class="col-form-label-sm fw-bold">Mobile No<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtMobileNo" class="box_border form-control form-control-sm Phone" placeholder="Enter Mobile No." autocomplete="off" maxlength="10">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="txtPassword" class="col-form-label-sm fw-bold">Password <span class="text-danger">*</span></label>
+                                        <input type="password" id="txtPassword" name="txtPassword" class="box_border form-control form-control-sm" placeholder="Enter Password" autocomplete="off" maxlength="15" />
+                                    </div>
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="txtConfirmPassword" class="col-form-label-sm fw-bold">Confirm Password <span class="text-danger">*</span></label>
+                                        <input type="password" id="txtConfirmPassword" name="txtConfirmPassword" class="box_border form-control form-control-sm" placeholder="Enter Confirm Password" autocomplete="off" maxlength="15" />
+                                    </div>
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="txtEmailId" class="col-form-label-sm fw-bold">Email Id</label>
+                                        <input type="text" id="txtEmailId" class="box_border form-control form-control-sm" placeholder="Enter Email Id" autocomplete="off" maxlength="50">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="ddlGroupName" class="col-form-label-sm fw-bold">User Group Name <span class="text-danger">*</span></label>
+                                        <select id="ddlGroupName" name="ddlGroupName" class="box_border form-control form-control-sm" autocomplete="off">
+                                            <option value="" selected>Please Select User Group</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="ddlDefaultPage" class="col-form-label-sm fw-bold">Default Page</label>
+                                            <select id="ddlDefaultPage" name="ddlDefaultPage" class="box_border form-control form-control-sm" autocomplete="off">
+                                                <option value="0" selected>Please Select Default Page</option>
+                                            </select>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="ddlDesignation" class="col-form-label-sm fw-bold">Designation <span class="text-danger">*</span></label>
+                                        <select id="ddlDesignation" name="ddlDesignation" class="box_border form-control form-control-sm" autocomplete="off">
+                                            <option value="" selected>Please Select Designation</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="txtAddress" class="col-form-label-sm fw-bold">Address</label>
+                                        <textarea type="text" id="txtAddress" name="txtAddress" class="box_border form-control form-control-sm" rows="1"></textarea>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6">
+                                        <label for="txtSystemName" class="col-form-label-sm fw-bold">User Login Allow Form System</label>
+                                        <input type="text" id="txtSystemName" class="box_border form-control form-control-sm" placeholder="Enter System Name" autocomplete="off" maxlength="100">
+                                    </div>
+                                    <div class="col-md-2 without-label-field">
+                                        <div class="form-group">
+                                            <input type="checkbox" id="chkActive" name="chkActive" class="box_border" checked />
+                                            <label for="chkActive">Active</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 without-label-field">
+                                        <div class="form-group">
+                                            <input type="checkbox" id="chkIsBizSolUser" name="chkIsBizSolUser" class="box_border" checked />
+                                            <label for="chkIsBizSolUser">BizSol User</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <center>
+                                    <div style="display:none">
+                                        <input type="file" id="txtUserImg" name="txtUserImg" class="box_border form-control form-control-sm" accept="image/*" capture="camera" />
+                                        <input type="hidden" id="hfUserImg" name="hfUserImg" value="" />
+                                        <input type="hidden" id="hfUserIm" name="hfUserImg" value="" />
+                                    </div>
+                                    <div id="imgUserForShow">
+                                        <img id="imgSelfie" class="" src="" />
+                                    </div>
+                                    <div class="col-md-10 mt-2">
+                                        <button type="button" style="width: 181px;" id="btnBrowse" class="btn btn-primary btn-height">BROWSE</button>
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="chkOTPApplicable" name="chkOTPApplicable" class="box_border" checked />
+                                        <label for="chkOTPApplicable">OTP Applicable</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="chkShowClientInProductionReport" name="chkShowClientInProductionReport" class="box_border" checked />
+                                        <label for="chkShowClientInProductionReport">Show Client In Production Report</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 ">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="chkChangePasswordForNextLogIn" name="chkChangePasswordForNextLogIn" class="box_border" checked />
+                                        <label for="chkChangePasswordForNextLogIn">User Change Password For Next LogIn</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="chkShowRatesInQuotation" name="chkShowRatesInQuotation" class="box_border" checked />
+                                        <label for="chkShowRatesInQuotation">Show Rates In Quotation</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</div>
+<script src="~/assets/js/filter.js"></script>

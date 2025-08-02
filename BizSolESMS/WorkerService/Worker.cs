@@ -6,12 +6,21 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 using System.Security.Policy;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Data;
+using MySql.Data.MySqlClient;
+using System.Xml.Linq;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace WorkerService
 {
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
+        private static readonly HttpClient client = new HttpClient();
+
         public Worker(ILogger<Worker> logger)
         {
             _logger = logger;
@@ -20,10 +29,8 @@ namespace WorkerService
         {
            
             string folderPath = @"C:\Esms Email Service";
-            string ConnectionString = "Server=220.158.165.98;Port=65448;database=MG_Corporation_Main;user=sa;password=biz1981;";
-            //string pdfFilePath = @"C:\Users\Meetu\Downloads\Daily Health Report (2).pdf";
+            string ConnectionString = "Server=220.158.165.98;Port=65448;database=mg_corporation_main;user=sa;password=biz1981;";
             Directory.CreateDirectory(folderPath);
-
 
             string filePath = Path.Combine(folderPath, "log.txt");
 
@@ -32,8 +39,7 @@ namespace WorkerService
             while (!stoppingToken.IsCancellationRequested)
             {
                 DateTime now = DateTime.Now;
-
-                if (now.Hour == 15 && now.Minute == 08 && lastRunDate.Date != now.Date)
+                if (now.Hour == 19 && now.Minute == 00 && lastRunDate.Date != now.Date)
                 {
                     string logMessage = $"Scheduled task running at : {now}";
                     await File.AppendAllTextAsync(filePath, logMessage + Environment.NewLine, stoppingToken);
@@ -46,101 +52,42 @@ namespace WorkerService
                     {
                         string Date = DateTime.Now.ToString("yyyy-MM-dd");
                         var controller = new Bizsol_ESMS.Controllers.RDLCController();
-                        //string ConnectionString = _configuration.GetConnectionString("ReportString");
-
                         byte[] pdfBytes = controller.GenerateOrderReport(Date, Date, ConnectionString);
-
-                        SendEmailWithAttachment("ankityadavfzd2002@gmail.com", "Daily Report", "This is your 10:00 AM report email.", pdfBytes);
-                        //SendWhatsAppGatePass(pdfBytes);
+                        DataTable dt1 = EmailConfiguration(ConnectionString);
+                        DataTable dt2 = AllEmailSendTo(ConnectionString);
+                        if (dt1.Rows.Count > 0 && dt2.Rows.Count > 0)
+                        {
+                            SendEmailWithAttachment(dt1,dt2 ,pdfBytes);
+                        }
+                        DataTable dt3 = WhatsAppConfiguration(ConnectionString);
+                        DataTable dt4 = AllWhatsAppSendTo(ConnectionString);
+                        if (dt1.Rows.Count > 0 && dt2.Rows.Count > 0)
+                        {
+                           var result= await SendWhatsAppWithAttachment(dt3,dt4,pdfBytes);
+                            if (_logger.IsEnabled(LogLevel.Information))
+                            {
+                                _logger.LogInformation(result);
+                            }
+                        }
+                        
                         lastRunDate = now;
                     }
                     catch (Exception ex) {
                         await File.AppendAllTextAsync(filePath, ex.Message, stoppingToken);
+                        if (_logger.IsEnabled(LogLevel.Information))
+                        {
+                            _logger.LogInformation(ex.Message);
+                        }
                     }
                 }
 
                 await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
             }
         }
-        private void SendEmail(string toEmail, string subject, string body, string pdfFilePath)
-        {
-            try
-            {
-                var smtpClient = new SmtpClient("smtp.gmail.com")
-                {
-                    Port = 587,
-                    Credentials = new NetworkCredential("Erpbizsol@gmail.com", "gycc uvmp eveb xvry"),
-                    EnableSsl = true
-                };
-
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress("Erpbizsol@gmail.com"),
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = false
-                };
-
-                mailMessage.To.Add(toEmail);
-
-                if (!string.IsNullOrEmpty(pdfFilePath) && File.Exists(pdfFilePath))
-                {
-                    Attachment attachment = new Attachment(pdfFilePath);
-                    mailMessage.Attachments.Add(attachment);
-                }
-
-                smtpClient.Send(mailMessage);
-            }
-            catch (Exception ex)
-            {
-                string errorPath = @"D:\ServiceFile\log.txt"; ;
-                Directory.CreateDirectory(Path.GetDirectoryName(errorPath));
-                File.AppendAllText(errorPath, $"[{DateTime.Now}] Email failed: {ex.Message}\n");
-            }
-        }
-        private void SendEmailWithAttachment(string toEmail, string subject, string body, byte[] pdfBytes)
-        {
-            try
-            {
-                var smtpClient = new SmtpClient("smtp.gmail.com")
-                {
-                    Port = 587,
-                    Credentials = new NetworkCredential("Erpbizsol@gmail.com", "gycc uvmp eveb xvry"),
-                    EnableSsl = true
-                };
-
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress("Erpbizsol@gmail.com"),
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = false
-                };
-
-                foreach (var email in toEmail.Split(','))
-                {
-                    mailMessage.To.Add(email.Trim());
-                }
-                using (MemoryStream ms = new MemoryStream(pdfBytes))
-                {
-                    ms.Position = 0;
-                    Attachment attachment = new Attachment(ms, "OrderReport.pdf", "application/pdf");
-                    mailMessage.Attachments.Add(attachment);
-
-                    smtpClient.Send(mailMessage);
-                }
-            }
-            catch (Exception ex)
-            {
-                string logPath = @"D:\ServiceFile\log.txt";
-                Directory.CreateDirectory(Path.GetDirectoryName(logPath));
-                File.AppendAllText(logPath, $"[{DateTime.Now}] Email failed: {ex.Message}\n");
-            }
-        }
         private async Task<string> UploadWhatsAppMediaAsync(byte[] fileBytes)
         {
             string apiAttachmentUrl = "http://web.bizsol.in/ERP/BizSolBlog/UploadWhatsappFile";
-            string uploadFileName = $"Upload_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            string uploadFileName = $"DailyOperationReport_{DateTime.Now:yyyyMMddHHmmss}.pdf";
 
             string fileBase64String = Convert.ToBase64String(fileBytes);
 
@@ -181,137 +128,308 @@ namespace WorkerService
                 }
             }
         }
-        //public async Task<string> SendWhatsAppGatePass(byte[] pdfBytes)
-        //{
-        //    try
-        //    {
-        //        DateTime now = DateTime.Now;
-        //        string uploadedFileUrl = await UploadWhatsAppMediaAsync(pdfBytes);
-        //        var json1 = Newtonsoft.Json.Linq.JObject.Parse(uploadedFileUrl);
-        //        string fileUrl = json1["messages"]?[0]?["path"]?.ToString();
-        //        string fileName = fileUrl.Substring(fileUrl.LastIndexOf('/') + 1);
-        //        string chatMyBotApiUrl = "https://wa.chatmybot.in/gateway/wabuissness/v1/message/batchapi";
-        //        string accessToken = "d7098185-4ed8-4ce6-8750-0aaae7439c6e";
-        //        string toNumber = "918957798886";
-        //        string Date = Convert.ToString(now.Date);
-        //        var payload = new[]
-        //        {
-        //            new
-        //            {
-        //                template = new
-        //                {
-        //                    id = "a31d7a9b-386a-4762-af01-2c3bf1853a6e",
-        //                    language = new { code = "en" },
-        //                    components = new object[]
-        //                    {
-        //                        new {
-        //                            type = "body",
-        //                            parameters = new[] {
-        //                                new { type = "text", text = Date },
-        //                                new { type = "text", text = "BizSol Technologies Pvt Ltd." },
-        //                                new { type = "text", text = fileUrl }
-        //                            }
-        //                        }
-        //                    }
-        //                },
-        //                to = toNumber,
-        //                type = "template"
-        //            }
-        //        };
+        public DataTable EmailConfiguration(string connectionString)
+        {
+            DataSet ds = new DataSet();
 
-        //        using (var httpClient = new HttpClient())
-        //        {
-        //            var json = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
-        //            var content = new StringContent(json, Encoding.UTF8, "application/json");
-        //            content.Headers.Add("accessToken", accessToken);
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
 
-        //            var response = await httpClient.PostAsync(chatMyBotApiUrl, content);
-        //            string responseBody = await response.Content.ReadAsStringAsync();
+                using (MySqlCommand cmd = new MySqlCommand("select * From f_emailconfiguration limit 1", conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    
 
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                return $"✅ WhatsApp Sent Successfully: {responseBody}";
-        //            }
-        //            else
-        //            {
-        //                throw new Exception($"❌ WhatsApp Send Failed: {response.StatusCode} - {responseBody}");
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return $"❌ Error: {ex.Message}";
-        //    }
-        //}
-        public async Task<string> SendWhatsAppGatePass(byte[] pdfBytes)
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            return ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        }
+        public DataTable AllEmailSendTo(string connectionString)
+        {
+            DataSet ds = new DataSet();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand("Select EmailID From EmailSMSConfigurationMaster Where EmailSMSType='Email' And ForType='Daily Operation Summary' LIMIT 1;", conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+
+
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            return ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        }
+        private void SendEmailWithAttachment(DataTable dt1, DataTable dt2, byte[] pdfBytes)
         {
             try
             {
-                // Current Date in readable format
-                string formattedDate = DateTime.Now.ToString("dd-MMM-yyyy"); // e.g., 09-Jul-2025
+                string date = DateTime.Now.ToString("yyyy-MM-dd");
 
-                // Upload PDF and get file URL
-                string uploadedFileUrl = await UploadWhatsAppMediaAsync(pdfBytes);
-                var json1 = Newtonsoft.Json.Linq.JObject.Parse(uploadedFileUrl);
-                string? fileUrl = json1["messages"]?[0]?["path"]?.ToString();
+                string body = "Dear Team," + Environment.NewLine + Environment.NewLine +
+                              "Please find below the Daily Operation Summary for " + date + ".";
+                              
 
-                if (string.IsNullOrEmpty(fileUrl))
-                    throw new Exception("File upload failed or invalid response received.");
-
-                string chatMyBotApiUrl = "https://wa.chatmybot.in/gateway/wabuissness/v1/message/batchapi";
-                string accessToken = "d7098185-4ed8-4ce6-8750-0aaae7439c6e";
-                string toNumber = "918957798886";
-
-                var payload = new
+                using (var smtpClient = new SmtpClient(dt1.Rows[0]["ServerName"].ToString()))
                 {
-                    template = new
+                    smtpClient.Port = Convert.ToInt32(dt1.Rows[0]["PortNo"]);
+                    smtpClient.Credentials = new NetworkCredential(
+                        dt1.Rows[0]["UserID"].ToString(),
+                        dt1.Rows[0]["UserPwd"].ToString());
+                    smtpClient.EnableSsl = true;
+
+                    using (var mailMessage = new MailMessage())
                     {
-                        id = "a31d7a9b-386a-4762-af01-2c3bf1853a6e",
-                        language = new { code = "en" },
-                        components = new object[]
+                        mailMessage.From = new MailAddress(dt1.Rows[0]["UserID"].ToString());
+                        mailMessage.Subject = "Daily Operation Summary";
+                        mailMessage.Body = body;
+                        mailMessage.IsBodyHtml = false;
+                        var emails = dt2.Rows[0]["EmailID"].ToString().Split(';');
+                        foreach (var email in emails)
                         {
-                    new
-                    {
-                        type = "body",
-                        parameters = new[]
+                            if (!string.IsNullOrWhiteSpace(email))
+                                mailMessage.To.Add(email.Trim());
+                        }
+                        using (var ms = new MemoryStream(pdfBytes))
                         {
-                            new { type = "text", text = formattedDate },
-                            new { type = "text", text = "BizSol Technologies Pvt Ltd." },
-                            new { type = "text", text = fileUrl }
+                            ms.Position = 0;
+                            var attachment = new Attachment(ms, "OrderReport.pdf", "application/pdf");
+                            mailMessage.Attachments.Add(attachment);
+
+                            smtpClient.Send(mailMessage);
                         }
-                    }
-                        }
-                    },
-                    to = toNumber,
-                    type = "template"
-                };
-
-                using (var httpClient = new HttpClient())
-                {
-                    // Set AccessToken in header
-                    httpClient.DefaultRequestHeaders.Add("accessToken", accessToken);
-
-                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                    var response = await httpClient.PostAsync(chatMyBotApiUrl, content);
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return $"✅ WhatsApp Sent Successfully: {responseBody}";
-                    }
-                    else
-                    {
-                        return $"❌ WhatsApp Send Failed: {response.StatusCode} - {responseBody}";
                     }
                 }
             }
             catch (Exception ex)
             {
-                return $"❌ Error: {ex.Message}";
+                string logPath = @"D:\ServiceFile\log.txt";
+                Directory.CreateDirectory(Path.GetDirectoryName(logPath));
+                File.AppendAllText(logPath, $"[{DateTime.Now}] Email failed: {ex.Message}\n");
             }
         }
+        //public async Task<string> SendWhatsAppWithAttachment(DataTable dt1, DataTable dt2, byte[] pdfBytes)
+        //{
+        //    try
+        //    {
+        //        string formattedDate = DateTime.Now.ToString("dd-MMM-yyyy");
 
+        //        string uploadedFileUrl = await UploadWhatsAppMediaAsync(pdfBytes);
+        //        var jsonResponse = Newtonsoft.Json.Linq.JObject.Parse(uploadedFileUrl);
+        //        string? fileUrl = jsonResponse["messages"]?[0]?["path"]?.ToString();
+
+        //        if (string.IsNullOrEmpty(fileUrl))
+        //            throw new Exception("File upload failed or invalid response received.");
+        //        string? filename = null;
+        //        if (!string.IsNullOrEmpty(fileUrl))
+        //        {
+        //            filename = Path.GetFileName(fileUrl);
+        //        }
+        //        var payload = new object[]
+        //        {
+        //            new
+        //            {
+        //                template = new
+        //                {
+        //                    id = "1dfffade-14c6-43d9-b0bf-6ee7f1022a44",
+        //                    components = new object[]
+        //                    {
+        //                        new
+        //                        {
+        //                            type = "header",
+        //                            parameters = new object[]
+        //                            {
+        //                                new
+        //                                {
+        //                                    type = "document",
+        //                                    document = new
+        //                                    {
+        //                                        link = fileUrl,
+        //                                        filename = filename
+        //                                    }
+        //                                }
+        //                            }
+        //                        },
+        //                        new
+        //                        {
+        //                            type = "body",
+        //                            parameters = new object[]
+        //                            {
+        //                                new { type = "text", text = formattedDate },
+        //                                new { type = "text", text = "BizSol Technologies Pvt Ltd." }
+        //                            }
+        //                        }
+        //                    }
+        //                },
+        //                to = dt2.Rows[0]["MobileNo"].ToString(),
+        //                type = "template"
+        //            }
+        //        };
+
+        //        string chatMyBotApiUrl = dt1.Rows[0]["API_URL"].ToString();
+        //        string accessToken = dt1.Rows[0]["NameSpace"].ToString();
+
+        //        using (var httpClient = new HttpClient())
+        //        {
+        //            httpClient.DefaultRequestHeaders.Add("accessToken", accessToken);
+        //            var json = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+        //            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //            var response = await httpClient.PostAsync(chatMyBotApiUrl, content);
+        //            var result = await response.Content.ReadAsStringAsync();
+
+        //            if (response.IsSuccessStatusCode)
+        //                return $"WhatsApp sent successfully.\nResponse: {result}";
+        //            else
+        //                return $"Failed to send WhatsApp.\nStatus: {response.StatusCode}\nBody: {result}";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return $"Error: {ex.Message}";
+        //    }
+        //}
+        public DataTable WhatsAppConfiguration(string connectionString)
+        {
+            DataSet ds = new DataSet();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand("select * From f_whatsappconfiguration limit 1", conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+
+
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            return ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        }
+        public DataTable AllWhatsAppSendTo(string connectionString)
+        {
+            DataSet ds = new DataSet();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand("Select MobileNo From EmailSMSConfigurationMaster Where EmailSMSType='WhatsApp' And ForType='Daily Operation Summary' LIMIT 1;", conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+
+
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            return ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        }
+        public async Task<string> SendWhatsAppWithAttachment(DataTable dt1, DataTable dt2, byte[] pdfBytes)
+        {
+            try
+            {
+                string formattedDate = DateTime.Now.ToString("dd-MMM-yyyy");
+
+                string uploadedFileUrl = await UploadWhatsAppMediaAsync(pdfBytes);
+                var jsonResponse = Newtonsoft.Json.Linq.JObject.Parse(uploadedFileUrl);
+                string? fileUrl = jsonResponse["messages"]?[0]?["path"]?.ToString();
+
+                if (string.IsNullOrEmpty(fileUrl))
+                    throw new Exception("File upload failed or invalid response received.");
+
+                string? filename = Path.GetFileName(fileUrl);
+                string chatMyBotApiUrl = dt1.Rows[0]["API_URL"].ToString();
+                string accessToken = dt1.Rows[0]["NameSpace"].ToString();
+
+                string[] mobileNumbers = dt2.Rows[0]["MobileNo"].ToString()?.Split(',') ?? [];
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("accessToken", accessToken);
+                    StringBuilder responseLog = new();
+
+                    foreach (string mobile in mobileNumbers)
+                    {
+                        var trimmedMobile = mobile.Trim();
+
+                        var payload = new object[]
+                        {
+                    new
+                    {
+                        template = new
+                        {
+                            id = "1dfffade-14c6-43d9-b0bf-6ee7f1022a44",
+                            components = new object[]
+                            {
+                                new
+                                {
+                                    type = "header",
+                                    parameters = new object[]
+                                    {
+                                        new
+                                        {
+                                            type = "document",
+                                            document = new
+                                            {
+                                                link = fileUrl,
+                                                filename = filename
+                                            }
+                                        }
+                                    }
+                                },
+                                new
+                                {
+                                    type = "body",
+                                    parameters = new object[]
+                                    {
+                                        new { type = "text", text = formattedDate },
+                                        new { type = "text", text = "BizSol Technologies Pvt Ltd." }
+                                    }
+                                }
+                            }
+                        },
+                        to = trimmedMobile,
+                        type = "template"
+                    }
+                        };
+
+                        var json = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                        var response = await httpClient.PostAsync(chatMyBotApiUrl, content);
+                        var result = await response.Content.ReadAsStringAsync();
+
+                        responseLog.AppendLine($"To: {trimmedMobile}");
+                        if (response.IsSuccessStatusCode)
+                            responseLog.AppendLine($"✅ Success: {result}");
+                        else
+                            responseLog.AppendLine($"❌ Failed: {response.StatusCode} - {result}");
+                    }
+
+                    return responseLog.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}";
+            }
+        }
     }
 }

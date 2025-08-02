@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <title>BizSol ESMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!--toastr-->
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <link href="~/assets/css/toastr.min.css" rel="stylesheet" />
+  
+    <!-- DataTables -->
+    <link href="~/assets/libs/datatables.net-bs4/css/datatables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Responsive datatable examples -->
+    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Bootstrap Css -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Icons Css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    @* <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> *@
+    <link href="~/assets/libs/select2-4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- App Css-->
+    <link href="~/assets/css/app.min.css" rel="stylesheet" />
+    <link href="~/assets/css/responsive.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.6.0.min.js"></script>
+    <style>
+        .Highlighted {
+            background-color: #FFD700 !important; /* Gold color */
+            color: black !important;
+        }
+    </style>
+</head>
+<body>
+    
+    <!--toastr-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+   @*  "toast-top-right": Top - right corner(default )
+    "toast-top-left": Top - left corner
+    "toast-bottom-right": Bottom - right corner
+    "toast-bottom-left": Bottom - left corner
+    "toast-top-center": Centered at the top
+    "toast-bottom-center": Centered at the bottom
+    "toast-top-full-width": Full - width at the top
+    "toast-bottom-full-width": Full - width at the bottom
+    toastr.success(resdata.Msg);
+    toastr.error(resdata.Msg);
+    toastr.warning(resdata.Msg); *@
+  
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>

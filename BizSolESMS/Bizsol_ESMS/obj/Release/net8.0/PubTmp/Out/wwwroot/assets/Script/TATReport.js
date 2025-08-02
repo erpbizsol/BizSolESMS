@@ -51,6 +51,7 @@ function GetTATReportList(Type, Month,Year) {
 
                     return {
                         ...item,
+                        "DISPATCH DATE": `<input type="date" class="box_border form-control form-control-sm" value="${item["DISPATCH DATE"]}" id="txtDispatchDate_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
                         POD: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.POD}" id="txtPODDate_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
                         REDISPATCH: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REDISPATCH}" id="txtRedispatch_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
                         "VEHICLE NO": `<input type="text" maxlength="10" class="box_border form-control form-control-sm" ${isDisabled} value="${item["VEHICLE NO"]}" id="txtVehicleNo_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`,
@@ -227,6 +228,12 @@ function convertDateFormat3(dateString) {
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const monthAbbreviation = monthNames[parseInt(month) - 1];
     return `${day}-${monthAbbreviation}-${year}`;
+}
+function convertDateFormat4(dateString) {
+    const [year, month, day] = dateString.split('-');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthAbbreviation = monthNames[parseInt(month) - 1];
+    return `${year}-${month}-${day}`;
 }
 function Import(event) {
     JsonData = [];
@@ -450,7 +457,7 @@ async function SaveData(element) {
     Save(element);
 }
 function Save(element) {
-    if ($(element).val() !== '') {
+    if ($(element).val() !== '' && $(element).val() !== null) {
         let id = element.id;
         let Code = id.split('_')[1];
         let POD = $("#txtPODDate_" + Code).val();
@@ -461,6 +468,10 @@ function Save(element) {
         if (Redispatch != '') {
             Redispatch = convertDateFormat3($("#txtRedispatch_" + Code).val());
         }
+        let DispatchedDate = $("#txtDispatchDate_" + Code).val()
+        if (DispatchedDate != '') {
+            DispatchedDate = convertDateFormat4($("#txtDispatchDate_" + Code).val());
+        }
         var VehicleNo = $("#txtVehicleNo_" + Code).val();
         var Remark = $("#txtRemark_" + Code).val();
 
@@ -469,6 +480,7 @@ function Save(element) {
             POD: POD,
             Redispatch: Redispatch,
             VehicleNo: VehicleNo,
+            DispatchedDate: DispatchedDate,
             Remark: Remark,
             UserMaster_Code: UserMaster_Code
         };

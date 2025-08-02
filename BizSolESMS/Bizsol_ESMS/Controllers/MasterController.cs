@@ -163,5 +163,19 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion HolidayMaster
+
+        #region MailConfiguration
+        public IActionResult MailConfiguration()
+        {
+            return View();
+        }
+        #endregion MailConfiguration
+
+        #region Helpdesk
+        public IActionResult Helpdesk()
+        {
+            return View();
+        }
+        #endregion Helpdesk
     }
 }

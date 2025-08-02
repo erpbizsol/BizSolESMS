@@ -472,6 +472,10 @@ function openManualPopup() {
     saveModal.show();
 }
 function SaveManualData() {
+    if (UserType == 'U') {
+        toastr.error("You don't have permission. please contact administrator!");
+        return;
+    }
     var BoxNo=$("#hfManualBoxNo").val();
     var PicklistNo = $("#hfPicklistNo").val();
     var Manual = $("#chkUnloadedBox").is(":checked");

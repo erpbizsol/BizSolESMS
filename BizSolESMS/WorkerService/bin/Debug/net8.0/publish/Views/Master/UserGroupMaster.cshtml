@@ -1,0 +1,230 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="~/assets/script/UserGroupMaster.js"></script>
+<style>
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+
+    .tabSec {
+        color: white;
+        width: 117px;
+        height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        margin-top: -8px;
+        background: #1d4b7d;
+    }
+
+
+    /*  .tab-header {
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                } */
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
+    }
+
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
+
+    .datepicker table tfoot {
+        display: none;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .fix-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0 8px 9px;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+
+    .shadow-sm {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+        margin-top: 15px;
+        border-top: 1px solid #c9cae7;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 50%;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 20px;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-danger {
+        background-color: #ab1624;
+    }
+
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
+
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
+        /*  overflow: hidden;
+                            height: auto; */
+    }
+
+    .container {
+        overflow: auto;
+        height: 81vh;
+        /* overflow: hidden; */
+    }
+    /* .breadcrumbs .container-fluid .fix-header {
+                        position: sticky;
+                        top: 0;
+                        background-color: #dddde4;
+                        z-index: 1000;
+                        padding: 8px 0 8px 9px;
+                        border-top-right-radius: 5px;
+                        border-top-left-radius: 5px;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+                        height: 36px;
+                    } */
+
+    .breadcrumbs1 {
+        background: #dddde4;
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        /* border-top-right-radius: 5px;
+                            border-top-left-radius: 5px; */
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        /* height: 36px; */
+        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
+    }
+
+    .page-content {
+        padding: 3px 0;
+    }
+</style>
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" id="btnSave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+<div id="tblUserMaster" class="sm-table mt-3">
+    <div class="row">
+        <div class="col-sm-12 text-end">
+            <label></label>
+            @* <button type="button" class="btn btn-primary btn-height">DOWNLOAD</button> *@
+            <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="Create()">CREATE NEW</button>
+        </div>
+    </div>
+    <div class="card-body mt-2" id="txtUserGroupMaster">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="fixed-width-table table">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <div class="paginator" id="paginator-table"> 
+        </div>
+    </div>
+</div>
+<div id="FrmUserMaster" style="display:None">
+    
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+              @*   <div class="tab-header">
+                    <div id="tab1" class="tab active" style="color:white"></div>
+                </div> *@
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtGroupName" class="col-form-label-sm fw-bold">Group Name<span class="text-danger">*</span> </label>
+                                <input type="text" id="txtGroupName" class="box_border form-control form-control-sm" placeholder="Enter Group Name" autocomplete="off" maxlength="30">
+                                <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" maxlength="20" value="0">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="ddlGroupType" class="col-form-label-sm fw-bold">Type<span class="text-danger">*</span></label>
+                                <select id="ddlGroupType" name="ddlGroupType" class="box_border form-control form-control-sm" autocomplete="off">
+                                    <option value="A" selected>Administrator</option>
+                                    <option value="U">User</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               @*  <div class="row m-2">
+                    <div class="col-md-12" style="margin-top: 30px !important;">
+                        <button class="btn btn-primary btn-height" title="Save" id="btnSave">Save</button>
+                        <button class="btn btn-danger btn-height" title="Back" id="btnBack">Back</button>
+                    </div>
+                </div> *@
+            </div>
+        </div>
+
+</div>
+</div>
+<script src="~/assets/js/filter.js"></script>
