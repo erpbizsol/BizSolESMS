@@ -100,7 +100,7 @@ namespace Bizsol_ESMS.Controllers
             report.DataSources.Add(new ReportDataSource("StockSummary", ds.Tables[11]));
 
             byte[] pdf = report.Render("PDF");
-            return File(pdf, "application/pdf", "OrderReport.pdf");
+            return File(pdf, "application/pdf", "WeBiz_DOS.pdf");
         }
         public byte[] GenerateOrderReport(string fromDate, string toDate, string connectionString)
         {

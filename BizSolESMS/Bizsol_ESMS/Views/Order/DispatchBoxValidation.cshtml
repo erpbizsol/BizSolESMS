@@ -281,7 +281,8 @@
     </div>
     <div class="row m-1" sstyle="display:none" id="UnloadingTable1">
         <div class="col-sm-12 text-end m-2">
-            <button type="button" class="btn btn-primary btn-height" title="Print Gate Pass" onclick="GetGatePass()">GATE PASS</button>
+            <button type="button" class="btn btn-primary btn-height" title="Print Gate Pass" onclick="GetGatePassManual()">Manual Dispatch</button>
+            <button type="button" class="btn btn-primary btn-height" title="Print Gate Pass" onclick="GetGatePass()">Gate Pass</button>
         </div>
         <div class="card-body">
             <div class="table-wrapper fixed-height-table">
@@ -384,6 +385,56 @@
                 </table>
             </div>
             <div class="paginator" id="paginator-EditTable">
+            </div>
+        </div>
+    </div>
+    <div id="ManualForm" style="display:none">
+        <div class="card shadow-sm" style="background-color:#e9e9ef;">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtManualVehicleNo" class="col-form-label-sm fw-bold">Vehicle No.</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtManualVehicleNo" onkeyup="convertToUppercase(this)" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Vehicle No..">
+                                <ul id="txtManualVehicleNoList" class="AutoSuggestion-list"></ul>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtManualDriverName" class="col-form-label-sm fw-bold">Driver Name</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtManualDriverName" class="box_border form-control form-control-sm" maxlength="50" autocomplete="off" placeholder="Driver Name..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtManualDriverNumber" class="col-form-label-sm fw-bold">Driver Contact Number</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtManualDriverNumber" class="box_border form-control form-control-sm Phone" maxlength="10" autocomplete="off" placeholder="Driver Contact Number..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtManualLorryMeter" class="col-form-label-sm fw-bold">Lorry Meter Reading</label> <span class="text-danger">*</span>
+                                <input type="text" id="txtManualLorryMeter" class="box_border form-control form-control-sm Phone" maxlength="5" autocomplete="off" placeholder="Lorry Meter Reading..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtManualUserName" class="col-form-label-sm fw-bold">Made By</label> <span class="text-danger">*</span>
+                                <input type="text" disabled id="txtManualUserName" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Made By..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtManualOrderNo" class="col-form-label-sm fw-bold">Order No</label> <span class="text-danger">*</span>
+                                <select id="txtManualOrderNo" class="form-control form-control-sm box_border" multiple style="width: 300px;" placeholder="Select locations..">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div class="card-body" id="tblManual" style="display:none">
+            <div class="table-wrapper fixed-height-table">
+                <table id="ManualTable" class="fixed-width-table table">
+                    <thead id="ManualTable-header">
+                    </thead>
+                    <tbody id="ManualTable-body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-ManualTable">
             </div>
         </div>
     </div>

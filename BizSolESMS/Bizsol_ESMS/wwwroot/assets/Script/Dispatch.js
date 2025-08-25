@@ -827,6 +827,7 @@ function SaveScanQty() {
         PackedBy: '',
         BoxNo: $("#txtBoxNo").val()
     }
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch?Mode=Scan`,
         type: 'POST',
@@ -855,22 +856,26 @@ function SaveScanQty() {
                 G_IDFORTRCOLOR = 'GET';
                 $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
+                unblockUI();
             } else if (response[0].Status == 'N') {
                 G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
                 $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
+                unblockUI();
             } else {
                 G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
                 $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
+                unblockUI();
             }
         },
         error: function (xhr, status, error) {
             showToast("INVALID SCAN NO !");
             $("#txtScanProduct").val("");
             $("#txtScanProduct").focus();
+            unblockUI();
         }
     });
 

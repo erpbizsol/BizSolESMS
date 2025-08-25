@@ -291,6 +291,12 @@ namespace DatasetClass.Dataset {
             
             private global::System.Data.DataColumn columnIsAudit;
             
+            private global::System.Data.DataColumn columnDTC;
+            
+            private global::System.Data.DataColumn columnPartDescription;
+            
+            private global::System.Data.DataColumn columnTotalValue;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public AverageTrunAroundDataTable() {
@@ -368,6 +374,30 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn DTCColumn {
+                get {
+                    return this.columnDTC;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn PartDescriptionColumn {
+                get {
+                    return this.columnPartDescription;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn TotalValueColumn {
+                get {
+                    return this.columnTotalValue;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -403,14 +433,17 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public AverageTrunAroundRow AddAverageTrunAroundRow(string ItemCode, string StockQTY, string ScanQty, string Difference, string IsAudit) {
+            public AverageTrunAroundRow AddAverageTrunAroundRow(string ItemCode, string StockQTY, string ScanQty, string Difference, string IsAudit, string DTC, string PartDescription, string TotalValue) {
                 AverageTrunAroundRow rowAverageTrunAroundRow = ((AverageTrunAroundRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         ItemCode,
                         StockQTY,
                         ScanQty,
                         Difference,
-                        IsAudit};
+                        IsAudit,
+                        DTC,
+                        PartDescription,
+                        TotalValue};
                 rowAverageTrunAroundRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowAverageTrunAroundRow);
                 return rowAverageTrunAroundRow;
@@ -438,6 +471,9 @@ namespace DatasetClass.Dataset {
                 this.columnScanQty = base.Columns["ScanQty"];
                 this.columnDifference = base.Columns["Difference"];
                 this.columnIsAudit = base.Columns["IsAudit"];
+                this.columnDTC = base.Columns["DTC"];
+                this.columnPartDescription = base.Columns["PartDescription"];
+                this.columnTotalValue = base.Columns["TotalValue"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -453,6 +489,12 @@ namespace DatasetClass.Dataset {
                 base.Columns.Add(this.columnDifference);
                 this.columnIsAudit = new global::System.Data.DataColumn("IsAudit", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnIsAudit);
+                this.columnDTC = new global::System.Data.DataColumn("DTC", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDTC);
+                this.columnPartDescription = new global::System.Data.DataColumn("PartDescription", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnPartDescription);
+                this.columnTotalValue = new global::System.Data.DataColumn("TotalValue", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTotalValue);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_AverageTrunAround");
                 this.ExtendedProperties.Add("Generator_UserTableName", "AverageTrunAround");
             }
@@ -677,6 +719,54 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string DTC {
+                get {
+                    try {
+                        return ((string)(this[this.tableAverageTrunAround.DTCColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'DTC\' in table \'AverageTrunAround\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAverageTrunAround.DTCColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string PartDescription {
+                get {
+                    try {
+                        return ((string)(this[this.tableAverageTrunAround.PartDescriptionColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'PartDescription\' in table \'AverageTrunAround\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAverageTrunAround.PartDescriptionColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string TotalValue {
+                get {
+                    try {
+                        return ((string)(this[this.tableAverageTrunAround.TotalValueColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'TotalValue\' in table \'AverageTrunAround\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAverageTrunAround.TotalValueColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsItemCodeNull() {
                 return this.IsNull(this.tableAverageTrunAround.ItemCodeColumn);
             }
@@ -733,6 +823,42 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetIsAuditNull() {
                 this[this.tableAverageTrunAround.IsAuditColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsDTCNull() {
+                return this.IsNull(this.tableAverageTrunAround.DTCColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetDTCNull() {
+                this[this.tableAverageTrunAround.DTCColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsPartDescriptionNull() {
+                return this.IsNull(this.tableAverageTrunAround.PartDescriptionColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetPartDescriptionNull() {
+                this[this.tableAverageTrunAround.PartDescriptionColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsTotalValueNull() {
+                return this.IsNull(this.tableAverageTrunAround.TotalValueColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetTotalValueNull() {
+                this[this.tableAverageTrunAround.TotalValueColumn] = global::System.Convert.DBNull;
             }
         }
         

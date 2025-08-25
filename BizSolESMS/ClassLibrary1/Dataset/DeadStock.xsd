@@ -9,14 +9,17 @@
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="DeadStock" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="DeadStock" msprop:Generator_DataSetName="DeadStock">
+  <xs:element name="DeadStock" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DeadStock" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DeadStock">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="DeadStock" msprop:Generator_RowEvHandlerName="DeadStockRowChangeEventHandler" msprop:Generator_RowDeletedName="DeadStockRowDeleted" msprop:Generator_RowDeletingName="DeadStockRowDeleting" msprop:Generator_RowEvArgName="DeadStockRowChangeEvent" msprop:Generator_TablePropName="_DeadStock" msprop:Generator_RowChangedName="DeadStockRowChanged" msprop:Generator_RowChangingName="DeadStockRowChanging" msprop:Generator_TableClassName="DeadStockDataTable" msprop:Generator_RowClassName="DeadStockRow" msprop:Generator_TableVarName="tableDeadStock" msprop:Generator_UserTableName="DeadStock">
+        <xs:element name="DeadStock" msprop:Generator_RowClassName="DeadStockRow" msprop:Generator_RowEvHandlerName="DeadStockRowChangeEventHandler" msprop:Generator_RowDeletedName="DeadStockRowDeleted" msprop:Generator_RowDeletingName="DeadStockRowDeleting" msprop:Generator_RowEvArgName="DeadStockRowChangeEvent" msprop:Generator_TablePropName="_DeadStock" msprop:Generator_RowChangedName="DeadStockRowChanged" msprop:Generator_UserTableName="DeadStock" msprop:Generator_RowChangingName="DeadStockRowChanging" msprop:Generator_TableClassName="DeadStockDataTable" msprop:Generator_TableVarName="tableDeadStock">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="PartNo" msprop:Generator_ColumnPropNameInRow="PartNo" msprop:Generator_ColumnPropNameInTable="PartNoColumn" msprop:Generator_ColumnVarNameInTable="columnPartNo" msprop:Generator_UserColumnName="PartNo" type="xs:string" minOccurs="0" />
-              <xs:element name="PurchaseQty" msprop:Generator_ColumnPropNameInRow="PurchaseQty" msprop:Generator_ColumnPropNameInTable="PurchaseQtyColumn" msprop:Generator_ColumnVarNameInTable="columnPurchaseQty" msprop:Generator_UserColumnName="PurchaseQty" type="xs:string" minOccurs="0" />
+              <xs:element name="PartNo" msprop:Generator_UserColumnName="PartNo" msprop:Generator_ColumnPropNameInTable="PartNoColumn" msprop:Generator_ColumnPropNameInRow="PartNo" msprop:Generator_ColumnVarNameInTable="columnPartNo" type="xs:string" minOccurs="0" />
+              <xs:element name="PurchaseQty" msprop:Generator_UserColumnName="PurchaseQty" msprop:Generator_ColumnPropNameInTable="PurchaseQtyColumn" msprop:Generator_ColumnPropNameInRow="PurchaseQty" msprop:Generator_ColumnVarNameInTable="columnPurchaseQty" type="xs:string" minOccurs="0" />
+              <xs:element name="PartDescription" msprop:Generator_ColumnPropNameInRow="PartDescription" msprop:Generator_ColumnPropNameInTable="PartDescriptionColumn" msprop:Generator_ColumnVarNameInTable="columnPartDescription" msprop:Generator_UserColumnName="PartDescription" type="xs:string" minOccurs="0" />
+              <xs:element name="DTC" msprop:Generator_ColumnPropNameInRow="DTC" msprop:Generator_ColumnPropNameInTable="DTCColumn" msprop:Generator_ColumnVarNameInTable="columnDTC" msprop:Generator_UserColumnName="DTC" type="xs:string" minOccurs="0" />
+              <xs:element name="TotalValue" msprop:Generator_ColumnPropNameInRow="TotalValue" msprop:Generator_ColumnPropNameInTable="TotalValueColumn" msprop:Generator_ColumnVarNameInTable="columnTotalValue" msprop:Generator_UserColumnName="TotalValue" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

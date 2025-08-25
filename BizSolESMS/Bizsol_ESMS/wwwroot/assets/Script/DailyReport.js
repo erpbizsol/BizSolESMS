@@ -203,7 +203,7 @@ function Report() {
             let url = window.URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
-            a.download = "DailyOperationSummary_" + ToDate +".pdf";
+            a.download = "WeBiz_DOS_" + ToDate +".pdf";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

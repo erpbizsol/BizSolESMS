@@ -94,6 +94,29 @@ $(document).ready(function () {
             $("#btnModelShow").focus();
         }
     });
+    $('#txtManualVehicleNo').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtManualDriverName").focus();
+        }
+    });
+    $('#txtManualDriverName').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtManualDriverNumber").focus();
+        }
+    });
+    $('#txtManualDriverNumber').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtManualLorryMeter").focus();
+        }
+    });
+    $('#txtManualLorryMeter').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtManualOrderNo").focus();
+        }
+    });
+    $("#txtManualOrderNo").change(function () {
+        GetOrderDetailsDataByCodes($("#txtManualOrderNo").val());
+    });
 });
 function showToast(Msg) {
     let toast = document.getElementById("toast");
@@ -131,7 +154,7 @@ function DispatchDetail() {
             if (response.length > 0) {
                 G_DispatchData = response;
                 $("#UnloadingTable1").show();
-                const StringFilterColumn = ["Order No", "Party Name","Status"];
+                const StringFilterColumn = ["Order No", "Party Name", "Status","VehicleNo"];
                 const NumericFilterColumn = ["BoxNo"];
                 const DateFilterColumn = ["Packed Date"];
                 const Button = false;
@@ -157,6 +180,7 @@ function DispatchDetail() {
     });
 
 }
+
 async function ViewData(Code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -189,20 +213,28 @@ function Back() {
     $("#txtDriverName").val("");
     $("#txtDriverNumber").val("");
     $("#txtLorryMeter").val("");
+    $("#txtManualVehicleNo").val("");
+    $("#txtManualDriverName").val("");
+    $("#txtManualDriverNumber").val("");
+    $("#txtManualLorryMeter").val("");
     $("#txtScanProduct").val("");
     $("#txtUserName").val("");
     $("#txtheaderdiv").hide();
     $("#dvSearch").show();
     $("#EditForm").hide();
+    $("#ManualForm").hide();
+    $("#tblManual").hide();
     G_DispatchMaster_Code = 0;
+    DispatchDetail();
 }
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Box Unloading");
+    const result = Data.find(item => item.ModuleDesp === "Dispatch Box Validation");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }
 }
+
 async function View(Code) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetDispatchValidationViewData?Code=${Code}`,
@@ -249,6 +281,7 @@ async function View(Code) {
         }
     });
 }
+
 async function EditData(Code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -263,6 +296,7 @@ async function EditData(Code) {
     $("#tab1").text("Edit");
     Edit(Code);
 }
+
 async function Edit(Code) {
     G_DispatchMaster_Code = Code;
     $.ajax({
@@ -668,7 +702,198 @@ function VehicleNoListEdit() {
             }
         },
         error: function (xhr, status, error) {
+            toastr.error("Error:"+ error);
+        }
+    });
+}
+function ManualVehicleNoListEdit() {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetVehicleNoForDispatch`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            const $input = $('#txtManualVehicleNo');
+            let $list = $('#txtManualVehicleNoList');
+            if (!$list.parent().is('body')) {
+                $list.appendTo('body');
+            }
+
+            if (response && response.length > 0) {
+                const offset = $input.offset();
+
+                $list.css({
+                    position: 'absolute',
+                    top: offset.top + $input.outerHeight(),
+                    left: offset.left,
+                    width: $input.outerWidth(),
+                    zIndex: 99999,
+                    display: 'none'
+                });
+
+                SetUpAutoSuggestion(
+                    $input,
+                    $list,
+                    response.map(item => ({ Desp: item["VehicleNo"] })),
+                    'StartWith'
+                );
+            } else {
+                $list.empty().hide();
+            }
+        },
+        error: function (xhr, status, error) {
             console.error("Error:", error);
         }
     });
+}
+
+async function GetGatePassManual() {
+    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    OrderNoList();
+    ManualVehicleNoListEdit();
+    $("#ManualForm").show();
+    $("#EditForm").hide();
+    $("#txtheaderdiv").show();
+    $("#UnloadingTable1").hide();
+    $("#txtManualUserName").val(G_UserName);
+    $("#dvSearch").hide();
+}
+
+async function OrderNoList() {
+    try {
+        const response = await $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/GetPackedOrderNoList`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            }
+        });
+
+        const $select = $('#txtManualOrderNo');
+        $select.empty();
+
+        if (response.length > 0) {
+            $.each(response, function (key, val) {
+                $select.append(new Option(val["OrderNo"], val.Code));
+            });
+
+            $select.select2({
+                width: '100%',
+                closeOnSelect: false,
+                placeholder: "Select location...",
+                allowClear: true
+            });
+        } else {
+            $select.empty();
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+function GetOrderDetailsDataByCodes(Code) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsDataByCodes?Code=${Code}`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                $("#tblManual").show();
+                const StringFilterColumn = ["Client Name","Order No"];
+                const NumericFilterColumn = ["Box Count", "Total Rate"];
+                const DateFilterColumn = [];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                let hiddenColumns = ["Code"];
+                const ColumnAlignment = {
+                    "Invoice No":";width:150px;"
+                };
+                
+                const updatedResponse = response.map(item => {
+                    const renamedItem = {};
+
+                    for (const key in item) {
+                         renamedItem[key] = item[key];
+                    }
+                    renamedItem["Invoice No"] = `<input id="InvoiceNo_${item.Code}" value="${item["Invoice No"]}" class="form-control form-control-sm box_border"/>`;
+                    renamedItem["Action"] = `<button class="btn btn-success icon-height mb-1"  title="Complete audit" onclick="SaveManualDispatchBox('${item.Code}')"><i class="fa fa-save"></i></button>`;
+                    return renamedItem;
+                });
+                BizsolCustomFilterGrid.CreateDataTable("ManualTable-header", "ManualTable-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Record not found...!");
+            $("#tblManual").hide();
+        }
+    });
+}
+function SaveManualDispatchBox(Code) {
+    if ($("#txtManualVehicleNo").val() == '') {
+        toastr.error("Please enter vehicle no. !");
+        $("#txtManualVehicleNo").focus();
+        return;
+    } else if ($("#txtManualDriverName").val() == '') {
+        toastr.error("Please enter driver name. !");
+        $("#txtManualDriverName").focus();
+        return;
+    } else if ($("#txtManualDriverNumber").val() === '') {
+        toastr.error("Please enter driver contact number..!");
+        $("#txtManualDriverNumber").focus();
+        return;
+    } else if (!IsMobileNumber($("#txtManualDriverNumber").val())) {
+        toastr.error("Please enter valid contact number..!");
+        $("#txtManualDriverNumber").focus();
+        return;
+    } else if ($("#txtManualLorryMeter").val() == '0' || $("#txtManualLorryMeter").val() == '') {
+        toastr.error("Please enter lorry meter reading !");
+        $("#txtManualLorryMeter").focus();
+        return;
+    } else if ($("#InvoiceNo_"+Code).val() === '') {
+        toastr.error("Please enter invoice number..!");
+        $("#InvoiceNo_" + Code).focus();
+        return;
+    }
+    const payload = {
+        Code: Code,
+        VehicleNo: $("#txtManualVehicleNo").val(),
+        BoxNo: "",
+        InvoiceNo: $("#InvoiceNo_" + Code).val(),
+        DriverName: $("#txtManualDriverName").val(),
+        DriverContactNo: $("#txtManualDriverNumber").val(),
+        LorryMeter: $("#txtManualLorryMeter").val(),
+        UserMaster_Code: UserMaster_Code
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/SaveManualDispatchBoxValidation`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status == 'Y') {
+                toastr.success(response[0].Msg);
+            } else {
+                toastr.error(response[0].Msg);
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Error:" + error);
+        }
+    });
+
 }

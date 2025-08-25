@@ -2,10 +2,12 @@
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
+let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
     $("#ERPHeading").text("Stock Audit");
     ShowStockAuditlist('Load');
+    GetModuleMasterCode();
     $('#txtScanProduct').on('focus', function () {
         const inputElement = this;
         const isManual = $("#txtIsManual").is(':checked');
@@ -30,7 +32,7 @@ function ShowStockAuditlist(Type) {
         success: function (response) {
             if (response.length > 0) {
                 $("#txtordertable").show();
-                const StringFilterColumn = ["Item Code","Location"];
+                const StringFilterColumn = [G_ItemConfig[0].ItemCodeHeader,"Location"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
@@ -40,7 +42,7 @@ function ShowStockAuditlist(Type) {
                 if (UserType == 'A') {
                     hiddenColumns = ["Code"];
                 } else {
-                    hiddenColumns = ["Code", "Stock Qty", "Action"];
+                    hiddenColumns = ["Code", "Stock Qty"];
                 }
                 const ColumnAlignment = {
                     "Stock Qty": "right;width:25px;",
@@ -165,7 +167,12 @@ function ChangecolorTr() {
 }
 
 setInterval(ChangecolorTr, 100);
-function ManualAudit(Code) {
+async function ManualAudit(Code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Complete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
     if (confirm(`Are you sure you want to complete this audit.?`)) {
         $.ajax({
             url: `${appBaseURL}/api/OrderMaster/ManualStockAudit?Code=${Code}&UserMaster_Code=${UserMaster_Code}`,
@@ -185,5 +192,12 @@ function ManualAudit(Code) {
 
             }
         });
+    }
+}
+function GetModuleMasterCode() {
+    var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
+    const result = Data.find(item => item.ModuleDesp === "Stock Audit");
+    if (result) {
+        UserModuleMaster_Code = result.Code;
     }
 }

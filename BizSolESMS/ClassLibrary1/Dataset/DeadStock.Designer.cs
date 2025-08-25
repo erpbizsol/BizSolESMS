@@ -285,6 +285,12 @@ namespace DatasetClass.Dataset {
             
             private global::System.Data.DataColumn columnPurchaseQty;
             
+            private global::System.Data.DataColumn columnPartDescription;
+            
+            private global::System.Data.DataColumn columnDTC;
+            
+            private global::System.Data.DataColumn columnTotalValue;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public DeadStockDataTable() {
@@ -338,6 +344,30 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn PartDescriptionColumn {
+                get {
+                    return this.columnPartDescription;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn DTCColumn {
+                get {
+                    return this.columnDTC;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn TotalValueColumn {
+                get {
+                    return this.columnTotalValue;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -373,11 +403,14 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public DeadStockRow AddDeadStockRow(string PartNo, string PurchaseQty) {
+            public DeadStockRow AddDeadStockRow(string PartNo, string PurchaseQty, string PartDescription, string DTC, string TotalValue) {
                 DeadStockRow rowDeadStockRow = ((DeadStockRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         PartNo,
-                        PurchaseQty};
+                        PurchaseQty,
+                        PartDescription,
+                        DTC,
+                        TotalValue};
                 rowDeadStockRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowDeadStockRow);
                 return rowDeadStockRow;
@@ -402,6 +435,9 @@ namespace DatasetClass.Dataset {
             internal void InitVars() {
                 this.columnPartNo = base.Columns["PartNo"];
                 this.columnPurchaseQty = base.Columns["PurchaseQty"];
+                this.columnPartDescription = base.Columns["PartDescription"];
+                this.columnDTC = base.Columns["DTC"];
+                this.columnTotalValue = base.Columns["TotalValue"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -411,6 +447,12 @@ namespace DatasetClass.Dataset {
                 base.Columns.Add(this.columnPartNo);
                 this.columnPurchaseQty = new global::System.Data.DataColumn("PurchaseQty", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnPurchaseQty);
+                this.columnPartDescription = new global::System.Data.DataColumn("PartDescription", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnPartDescription);
+                this.columnDTC = new global::System.Data.DataColumn("DTC", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDTC);
+                this.columnTotalValue = new global::System.Data.DataColumn("TotalValue", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTotalValue);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_DeadStock");
                 this.ExtendedProperties.Add("Generator_UserTableName", "DeadStock");
             }
@@ -587,6 +629,54 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string PartDescription {
+                get {
+                    try {
+                        return ((string)(this[this.tableDeadStock.PartDescriptionColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'PartDescription\' in table \'DeadStock\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDeadStock.PartDescriptionColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string DTC {
+                get {
+                    try {
+                        return ((string)(this[this.tableDeadStock.DTCColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'DTC\' in table \'DeadStock\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDeadStock.DTCColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string TotalValue {
+                get {
+                    try {
+                        return ((string)(this[this.tableDeadStock.TotalValueColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'TotalValue\' in table \'DeadStock\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDeadStock.TotalValueColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsPartNoNull() {
                 return this.IsNull(this.tableDeadStock.PartNoColumn);
             }
@@ -607,6 +697,42 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetPurchaseQtyNull() {
                 this[this.tableDeadStock.PurchaseQtyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsPartDescriptionNull() {
+                return this.IsNull(this.tableDeadStock.PartDescriptionColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetPartDescriptionNull() {
+                this[this.tableDeadStock.PartDescriptionColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsDTCNull() {
+                return this.IsNull(this.tableDeadStock.DTCColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetDTCNull() {
+                this[this.tableDeadStock.DTCColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsTotalValueNull() {
+                return this.IsNull(this.tableDeadStock.TotalValueColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetTotalValueNull() {
+                this[this.tableDeadStock.TotalValueColumn] = global::System.Convert.DBNull;
             }
         }
         

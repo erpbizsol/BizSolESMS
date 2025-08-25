@@ -39,7 +39,7 @@ namespace WorkerService
             while (!stoppingToken.IsCancellationRequested)
             {
                 DateTime now = DateTime.Now;
-                if (now.Hour == 19 && now.Minute == 00 && lastRunDate.Date != now.Date)
+                if (now.Hour == 22 && now.Minute == 00 && lastRunDate.Date != now.Date)
                 {
                     string logMessage = $"Scheduled task running at : {now}";
                     await File.AppendAllTextAsync(filePath, logMessage + Environment.NewLine, stoppingToken);
@@ -87,7 +87,7 @@ namespace WorkerService
         private async Task<string> UploadWhatsAppMediaAsync(byte[] fileBytes)
         {
             string apiAttachmentUrl = "http://web.bizsol.in/ERP/BizSolBlog/UploadWhatsappFile";
-            string uploadFileName = $"DailyOperationReport_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            string uploadFileName = $"WeBiz_DOS_{DateTime.Now:yyyyMMddHHmmss}.pdf";
 
             string fileBase64String = Convert.ToBase64String(fileBytes);
 
@@ -203,7 +203,7 @@ namespace WorkerService
                         using (var ms = new MemoryStream(pdfBytes))
                         {
                             ms.Position = 0;
-                            var attachment = new Attachment(ms, "OrderReport.pdf", "application/pdf");
+                            var attachment = new Attachment(ms, "WeBiz_DOS_"+ date + ".pdf", "application/pdf");
                             mailMessage.Attachments.Add(attachment);
 
                             smtpClient.Send(mailMessage);
@@ -400,7 +400,7 @@ namespace WorkerService
                                     parameters = new object[]
                                     {
                                         new { type = "text", text = formattedDate },
-                                        new { type = "text", text = "BizSol Technologies Pvt Ltd." }
+                                        new { type = "text", text = "WeBiz." }
                                     }
                                 }
                             }

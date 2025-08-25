@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Bizsol_ESMS.Dataset {
+namespace DatasetClass.Dataset {
     
     
     /// <summary>

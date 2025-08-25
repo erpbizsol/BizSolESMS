@@ -5,9 +5,10 @@ let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let JsonData = [];
 let G_IsCheck = 'N';
+let G_originalData = [];
 $(document).ready(function () {
     GetCurrentDate();
-    $("#ERPHeading").text("TAT Report");
+    $("#ERPHeading").text("TAT Report");Zxsadx
     GetModuleMasterCode();
     $("#txtExcelFile").on("change", function (e) {
         Import(e);
@@ -21,6 +22,46 @@ $(document).ready(function () {
         var Year = $(this).val();
         GetTATReportList('Get', $("#ddlMonth").val(), Year);
     });
+    $("#txtSearch").on("input", function () {
+        let updatedResponse = [];
+        let filteredData = [];
+        const searchValue = $(this).val().toLowerCase().trim();
+        filteredData = G_originalData.filter(item =>
+            Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+        );
+        let StringFilterColumn = ["INVOICE NO", "RETAILER CODE", "PARTY NAME", "SALES ORDER NO", "INVOICE VALUE", "ORDER TYPE", "PD NAME"];
+        let NumericFilterColumn = [];
+        let DateFilterColumn = ["INVOICE DATE", "ORDER DATE"];
+        let Button = false;
+        let showButtons = [];
+        let StringdoubleFilterColumn = [];
+        let hiddenColumns = ["Code"];
+        let ColumnAlignment = {
+            "Reorder Level": 'right',
+            "Reorder Qty": 'right',
+            "REMARK": 'left;width:100px;',
+        };
+        if (filteredData.length > 0) {
+           
+            updatedResponse = filteredData.map(item => {
+                const isDisabled = item["DISPATCH DATE"] === '' ? 'disabled' : '';
+
+                return {
+                    ...item,
+                    "DISPATCH DATE": `<input type="date" class="box_border form-control form-control-sm" value="${item["DISPATCH DATE"]}" id="txtDispatchDate_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                    POD: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.POD}" id="txtPODDate_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                    REDISPATCH: `<input type="date" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REDISPATCH}" id="txtRedispatch_${item.Code}" onchange="SaveData(this);" autocomplete="off"/>`,
+                    "VEHICLE NO": `<input type="text" maxlength="10" class="box_border form-control form-control-sm" ${isDisabled} value="${item["VEHICLE NO"]}" id="txtVehicleNo_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`,
+                    REMARK: `<input type="text" maxlength="100" class="box_border form-control form-control-sm" ${isDisabled} value="${item.REMARK}" id="txtRemark_${item.Code}" onfocusout="SaveData(this);" autocomplete="off"/>`
+                };
+            });
+        }
+        if (filteredData.length === 0) {
+            $("#table-body").html("<tr><td colspan='10' style='text-align:center;'>No matching records found</td></tr>");
+            return;
+        }
+        BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+    });
 });
 function GetTATReportList(Type, Month,Year) {
     blockUI();
@@ -32,6 +73,7 @@ function GetTATReportList(Type, Month,Year) {
         },
         success: function (response) {
             if (response.length > 0) {
+                G_originalData = response;
                 unblockUI();
                 $("#txtTATTable").show();
                 const StringFilterColumn = ["INVOICE NO","RETAILER CODE","PARTY NAME","SALES ORDER NO","INVOICE VALUE","ORDER TYPE","PD NAME"];

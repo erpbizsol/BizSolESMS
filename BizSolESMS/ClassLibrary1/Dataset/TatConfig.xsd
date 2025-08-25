@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="TatConfig" targetNamespace="http://tempuri.org/TatConfig.xsd" xmlns:mstns="http://tempuri.org/TatConfig.xsd" xmlns="http://tempuri.org/TatConfig.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="TatConfig" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="TatConfig" msprop:Generator_DataSetName="TatConfig">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="TatConfig" msprop:Generator_RowEvHandlerName="TatConfigRowChangeEventHandler" msprop:Generator_RowDeletedName="TatConfigRowDeleted" msprop:Generator_RowDeletingName="TatConfigRowDeleting" msprop:Generator_RowEvArgName="TatConfigRowChangeEvent" msprop:Generator_TablePropName="_TatConfig" msprop:Generator_RowChangedName="TatConfigRowChanged" msprop:Generator_RowChangingName="TatConfigRowChanging" msprop:Generator_TableClassName="TatConfigDataTable" msprop:Generator_RowClassName="TatConfigRow" msprop:Generator_TableVarName="tableTatConfig" msprop:Generator_UserTableName="TatConfig">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="MinKM" msprop:Generator_ColumnPropNameInRow="MinKM" msprop:Generator_ColumnPropNameInTable="MinKMColumn" msprop:Generator_ColumnVarNameInTable="columnMinKM" msprop:Generator_UserColumnName="MinKM" type="xs:string" minOccurs="0" />
+              <xs:element name="MaxKM" msprop:Generator_ColumnPropNameInRow="MaxKM" msprop:Generator_ColumnPropNameInTable="MaxKMColumn" msprop:Generator_ColumnVarNameInTable="columnMaxKM" msprop:Generator_UserColumnName="MaxKM" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
