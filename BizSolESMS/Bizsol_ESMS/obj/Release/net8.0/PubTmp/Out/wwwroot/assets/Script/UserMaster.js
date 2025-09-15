@@ -299,6 +299,7 @@ function Back() {
     $("#txtAddress").prop('disabled', false);
     $("#txtSystemName").prop('disabled', false);
 }
+
 async function Delete(code, username, button) {
     let tr = button.closest("tr");
     tr.classList.add("highlight");
@@ -341,6 +342,7 @@ async function Delete(code, username, button) {
     }
     $('tr').removeClass('highlight');
 }
+
 async function Edit(Code) {
    
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);

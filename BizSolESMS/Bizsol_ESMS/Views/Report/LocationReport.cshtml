@@ -3,9 +3,8 @@
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 <script src="~/assets/script/productenquiry.js"></script>
 <style>
     .tabs {
@@ -131,7 +130,38 @@
     .page-content {
         padding: 3px 0;
     }
+    .card{
+        margin:0;
+    }
 
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d35950;
+        color: white;
+        padding: 35px 55px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10000;
+        font-size: 18px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
 </style>
 <div class="container">
     <div id="txtListpage">
@@ -144,13 +174,26 @@
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-3 col-sm-6">
+                            <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
+                            <audio id="BoxNoVoice" style="display: none;"><source src="~/assets/audio/BoxNoVoice.mp3" type="audio/mpeg" /></audio>
                             <label for="txtVendorName" class="col-form-label-sm fw-bold">Template </label><span class="text-danger">*</span>
-                            <datalist id="TempletsList"></datalist>
+                            <select id="TempletsList" class="form-control form-control-sm box_border"></select>
+                       @*      <datalist id="TempletsList"></datalist>
                             <input list="TempletsList" id="txTemplet" name="txtTemplet" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Template..">
+                       *@ </div>
+                        <div class="col-md-3  col-sm-6" id="dvUPI_ID" style="display:none;">
+                            <label for="txtUPI" class="col-form-label-sm fw-bold">
+                                UPI ID <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="txtUPI" name="txtUPI" autocomplete="off" class="form-control form-control-sm box_border" placeholder="UPI Id.." maxlength="50">
                         </div>
-                        
+                        <div class="col-md-3  col-sm-6" id="dvScan" style="display:none;">
+                                <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product<span class="text-danger">*</span></label>
+                                <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product.." onfocus="this.select()">
+                        </div>
                         <div class="col-md-1  col-sm-6 " style="margin-top: 33px !important;">
                             <button class="btn btn-primary btn-height" title="Show" id="txtShow">Show</button>
+                            <button class="btn btn-danger btn-height" title="Reset" id="txtReset" style="display:none" onclick="Reset()">Reset</button>
                         </div>
                         <div class="col-md-3  col-sm-6">
                             <label for="txSearch" class="col-form-label-sm fw-bold">
@@ -163,7 +206,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body mt-2 ">
+        <div class="card-body mt-2 " id="dvTable" style="display:none;">
             <div class="table-wrapper fixed-height-table">
                 <table id="table" class="fixed-width-table table">
                     <thead id="table-header">
@@ -176,6 +219,43 @@
             <div class="paginator" id="paginator-table">
             </div>
         </div>
+        <div class="card-body mt-2 " id="dvTable2" style="display:none;">
+            <div class="table-wrapper card p-1" id="tblPackingTable" style="display:none;">
+                <div class="card ps-2 p-1" style="background:#275481;color:white;">UPI PACKING DETAILS</div>
+                <table id="table1" class="fixed-width-table table">
+                    <thead id="table1-header">
+                    </thead>
+                    <tbody id="table1-body">
+                    </tbody>
+                </table>
+                <div class="paginator" id="paginator-table1">
+                </div>
+             </div>
+            <div class="table-wrapper card p-1" id="tblMRNTable" style="display:none;">
+                <div class="card ps-2 p-1" style="background:#275481;color:white;">UPI MRN DETAILS</div>
+                <table id="table2" class="fixed-width-table table">
+                    <thead id="table2-header">
+                    </thead>
+                    <tbody id="table2-body">
+                    </tbody>
+                </table>
+                <div class="paginator" id="paginator-table2">
+                </div>
+            </div>
+            <div class="table-wrapper card p-1" id="tblSalesTable" style="display:none;">
+                <div class="card ps-2 p-1" style="background:#275481;color:white;">UPI SALES RETURN DETAILS</div>
+                <table id="table3" class="fixed-width-table table">
+                    <thead id="table3-header">
+                    </thead>
+                    <tbody id="table3-body">
+                    </tbody>
+                </table>
+                <div class="paginator" id="paginator-table3">
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<div id="overlay" class="overlay"></div>
+<div id="toast" class="toast-container"></div>
 <script src="~/assets/js/filter.js"></script>
