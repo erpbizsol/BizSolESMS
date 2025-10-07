@@ -19,7 +19,7 @@ $(document).ready(function () {
         }
     });
     $("#TempletsList").on("change", function () {
-        let value = $(this).val().toUpperCase(); 
+        let value = $(this).val().toUpperCase().replace(/\s+/g, "");; 
 
         $("#txtUPI").val("");
         $("#dvTable, #dvTable2").hide();
@@ -29,7 +29,7 @@ $(document).ready(function () {
             $("#dvScan").hide();
             $("#txtReset").hide();
             $("#txtShow").show();
-        } else if (value == 'PRODUCT DETAILS') {
+        } else if (value == 'PRODUCTDETAILS') {
             $("#dvScan").show();
             $("#dvUPI_ID").hide();
             $("#txtReset").show();
@@ -92,19 +92,19 @@ async function ShowProductlist() {
         toastr.error(msg);
         return;
     }
-    var ReportName = $("#TempletsList").val().toUpperCase().trim();
+    var ReportName = $("#TempletsList").val().toUpperCase().replace(/\s+/g, "");
     var UPI = $("#txtUPI").val();
     if (ReportName == '') {
         toastr.error("Please select Report Type !..");
         $("#TempletsList").focus();
         return;
     }
-    if (ReportName == 'UPI DETAILS' && UPI == '') {
+    if (ReportName == 'UPIDETAILS' && UPI == '') {
         toastr.error("Please enter UPI ID !..");
         $("#txtUPI").focus();
         return;
     }
-    if (ReportName == 'UPI DETAILS') {
+    if (ReportName == 'UPIDETAILS') {
         $.ajax({
             url: `${appBaseURL}/api/Report/GetUPIIDReport?UPI_ID=${UPI}`,
             type: 'GET',
@@ -217,7 +217,7 @@ function GetModuleMasterCode() {
     }
 }
 function DataExport() {
-    var ReportName = $("#TempletsList").val().toUpperCase().trim();
+    var ReportName = $("#TempletsList").val().toUpperCase().replace(/\s+/g, "");
     if (ReportName == 'LOCATION') {
         $.ajax({
             url: `${appBaseURL}/api/Report/GetLocationReport?Templete=location`,
@@ -237,7 +237,7 @@ function DataExport() {
             }
         });
     }
-    if (ReportName == 'PRODUCT DETAILS') {
+    if (ReportName == 'PRODUCTDETAILS') {
         $.ajax({
             url: `${appBaseURL}/api/Report/GetGoldenCruiserQRDetails`,
             type: 'GET',
