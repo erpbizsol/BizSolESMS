@@ -20,6 +20,9 @@
     <None Update="Dataset\MonthWiseSale.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Update="Dataset\PrintQR.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Update="Dataset\PsrDetailData.xsd">
       <SubType>Designer</SubType>
     </None>

@@ -87,6 +87,12 @@
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>MonthWiseSale.Designer.cs</LastGenOutput>
     </None>
+    <None Update="Dataset\PrintGatePass.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="Dataset\PrintQR.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
     <None Update="Dataset\PsrDetailData.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>PsrDetailData.Designer.cs</LastGenOutput>

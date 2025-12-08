@@ -11,6 +11,7 @@ $(document).ready(function () {
     $(".Number").keyup(function (e) {
         if (/\D/g.test(this.value)) this.value = this.value.replace(/[^0-9]/g, '')
     });
+
     $(".Amount").keyup(function (e) {
         if (/\D/g.test(this.value)) {
             if (this.value.length == 1) this.value = this.value.replace(/[.]/g, '0.');
@@ -21,6 +22,7 @@ $(document).ready(function () {
             if (this.value.charAt(0) == ".") this.value = this.value.replace(this.value, '0' + this.value)
         }
     });
+
     $('#txtItemCode').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtItemName").focus();

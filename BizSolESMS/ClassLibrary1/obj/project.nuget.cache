@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BTkW+F3OTtc=",
+  "dgSpecHash": "Vcv+IP4qmbc=",
   "success": true,
-  "projectFilePath": "D:\\WebERP2.4Core\\BizSolESMS\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
+  "projectFilePath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\BizSol\\.nuget\\packages\\app.metrics\\4.0.0\\app.metrics.4.0.0.nupkg.sha512",
     "C:\\Users\\BizSol\\.nuget\\packages\\app.metrics.abstractions\\4.0.0\\app.metrics.abstractions.4.0.0.nupkg.sha512",
@@ -247,8 +247,10 @@
     {
       "code": "NU1608",
       "level": "Warning",
-      "warningLevel": 1,
       "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.CSharp 2.8.0 requires Microsoft.CodeAnalysis.Common (= 2.8.0) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
+      "projectPath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
       "libraryId": "Microsoft.CodeAnalysis.Common",
       "targetGraphs": [
         "net8.0"
@@ -257,8 +259,10 @@
     {
       "code": "NU1701",
       "level": "Warning",
-      "warningLevel": 1,
       "message": "Package 'Microsoft.AspNet.WebApi.Core 5.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
+      "projectPath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
       "libraryId": "Microsoft.AspNet.WebApi.Core",
       "targetGraphs": [
         "net8.0"
@@ -267,8 +271,10 @@
     {
       "code": "NU1701",
       "level": "Warning",
-      "warningLevel": 1,
       "message": "Package 'Microsoft.AspNet.WebApi.WebHost 5.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
+      "projectPath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\ClassLibrary1\\DatasetClass.csproj",
       "libraryId": "Microsoft.AspNet.WebApi.WebHost",
       "targetGraphs": [
         "net8.0"

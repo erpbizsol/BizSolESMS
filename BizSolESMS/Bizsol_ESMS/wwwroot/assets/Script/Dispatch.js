@@ -18,7 +18,9 @@ let G_UPDATEBOX = 'N';
 let originalDispatchData = [];
 let originalTransitData = [];
 let originalCompletedData = [];
+
 let G_OrderMaster = [];
+
 $(document).ready(function () {
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');

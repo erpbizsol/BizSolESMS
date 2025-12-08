@@ -8,8 +8,10 @@ let JsonData = [];
 let AccountList = [];
 let ItemDetail = [];
 $(document).ready(function () {
+
     $("#ERPHeading").text("Sales Return");
     GetAccountMasterList();
+
     GetReasonMasterList();
     ShowSalesReturnMasterlist('Load');
     GetModuleMasterCode();
@@ -18,6 +20,7 @@ $(document).ready(function () {
             $("#txtClientName").focus();
         }
     });
+
     $('#txtClientName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtReason").focus();

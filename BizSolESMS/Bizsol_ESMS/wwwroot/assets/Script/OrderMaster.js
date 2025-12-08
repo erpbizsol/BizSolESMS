@@ -15,7 +15,9 @@ $(document).ready(function () {
         if (e.key === "Enter") {
             $("#txtOrderDate").focus();
         }
+
     });
+
     $('#txtOrderDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtClientName").focus();

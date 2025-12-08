@@ -12,8 +12,10 @@ let BrandList = [];
 let ItemDetail = [];
 let JsonData = [];
 
+
 $(document).ready(function () {
     GetCurrentDate();
+
     $("#ERPHeading").text("Material Receipt Note");
     $("#txtImportWarehouse").val(DefaultWarehouse);
     $('#txtMRNDate').on('keydown', function (e) {

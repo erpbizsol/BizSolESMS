@@ -11,7 +11,9 @@ $(document).ready(function () {
         if (e.key === "Enter") {
             $("#txtItembarcode").focus();
         }
+
     });
+
     $('#txtItembarcode').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtGroupItem").focus();
