@@ -1,4 +1,5 @@
-﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+﻿
+var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
@@ -6,7 +7,7 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let CityList = [];
 let G_selectedCodes = [];
 $(document).ready(function () {
-    $("#ERPHeading").text("Client Master");
+    $("#ERPHeading").text("Vendor Master");
     $('#txtAccounCode').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtAccountName").focus();
@@ -73,7 +74,7 @@ $(document).ready(function () {
             firstInput.focus();
         }
     });
-    ShowAccountMasterlist('Load');
+    ShowAccountMasterlistV('Load');
     GetGroupMasterList();
     GetCountryMasterList();
     GetCityDropDownList();
@@ -142,7 +143,7 @@ $(document).ready(function () {
     $("#tdsNationlist").on("focus", function () {
         $(this).val("");
     });
-    $("#btnAddNewRow").click(function(){
+    $("#btnAddNewRow").click(function () {
         addNewRow();
     });
     $(".btnAddNewRow").click(function (e) {
@@ -185,9 +186,9 @@ $(document).ready(function () {
         updateSelected();
     });
 });
-function ShowAccountMasterlist(Type) {
+function ShowAccountMasterlistV(Type) {
     $.ajax({
-        url: `${appBaseURL}/api/Master/ShowAccountMaster`,
+        url: `${appBaseURL}/api/Master/ShowAccountMasterV`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -195,13 +196,13 @@ function ShowAccountMasterlist(Type) {
         success: function (response) {
             if (response.length > 0) {
                 $("#txtAccounttable").show();
-                const StringFilterColumn = ["Account Name", "Display Name","Client Type"];
+                const StringFilterColumn = ["Account Name", "Display Name", "Client Type"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code", "DataImported","PAN No"];
+                const hiddenColumns = ["Code", "DataImported", "PAN No"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',
@@ -263,16 +264,16 @@ async function CreateItemMaster() {
     $("#txtIsVendor").prop("disabled", false);
     disableFields(false);
     $("#txtheaderdiv").show();
-  
+
 }
 function toggleClientType() {
     if ($("#txtIsClient").is(":checked")) {
-        $("#txtClientType").prop("disabled", false); 
+        $("#txtClientType").prop("disabled", false);
     } else {
-        $("#txtClientType").prop("disabled", true);  
-        $("#txtClientType").val("");  
+        $("#txtClientType").prop("disabled", true);
+        $("#txtClientType").val("");
 
-     
+
     }
 }
 function BackMaster() {
@@ -307,7 +308,7 @@ function BackMaster() {
 }
 
 async function Edit(code) {
- 
+
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -321,7 +322,7 @@ async function Edit(code) {
         url: `${appBaseURL}/api/Master/ShowAccountMasterByCode?Code=` + code,
         type: 'GET',
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData); 
+            xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response) {
@@ -372,7 +373,7 @@ async function Edit(code) {
                     $("#tdsEmail").prop("disabled", false);
                     $("#tdsEmail").prop("disabled", false);
                     if (accountMaster.IsClient == 'N') {
-                        $("#txtIsClient").prop("checked",false);
+                        $("#txtIsClient").prop("checked", false);
                     }
                     if (accountMaster.IsVendor == 'N') {
                         $("#txtIsVendor").prop("checked", false);
@@ -381,7 +382,7 @@ async function Edit(code) {
                         $("#txtClientType").prop("disabled", false);
                     } else {
                         $("#txtClientType").prop("disabled", true);
-                        $("#txtClientType").val(""); 
+                        $("#txtClientType").val("");
                     }
                 } else {
                     toastr.warning("Account master data is missing.");
@@ -389,7 +390,7 @@ async function Edit(code) {
                 $("#Orderdata").empty();
                 if (response.AccountAddress && response.AccountAddress.length > 0) {
                     response.AccountAddress.forEach(function (address, index) {
-                      
+
                         addNewRowEdit(index, address);
                     });
                 } else {
@@ -431,7 +432,7 @@ async function deleteItem(code, account, button) {
             success: function (response) {
                 if (response.Status === 'Y') {
                     toastr.success(response.Msg);
-                    ShowAccountMasterlist('Get');
+                    ShowAccountMasterlistV('Get');
                 } else {
                     toastr.error("Unexpected response format.");
                 }
@@ -533,7 +534,7 @@ function ClearData() {
     $("#txtDisplayName").val("");
     $("#txtPANNo").val("");
     $("#txtAccounCode").val("");
-    $("#txtIsClient").prop("checked",true);
+    $("#txtIsClient").prop("checked", true);
     $("#txtIsVendor").prop("checked", true);
     $("#txtIsMSME").val("");
     $("#Orderdata").empty();
@@ -550,11 +551,11 @@ function Save() {
         toastr.error("Please enter  Account Code!");
         $("#txtAccounCode").focus();
         return;
-    }else if (!AccountName) {
+    } else if (!AccountName) {
         toastr.error("Please enter an Account Name!");
         $("#txtAccountName").focus();
         return;
-    }else if (!isValidPAN($("#txtPANNo").val()) && $("#txtPANNo").val() !== '') {
+    } else if (!isValidPAN($("#txtPANNo").val()) && $("#txtPANNo").val() !== '') {
         toastr.error("Please enter valid PAN No!");
         $("#txtPANNo").focus();
         return;
@@ -578,23 +579,24 @@ function Save() {
         toastr.error("At least one default field is correctly checked!");
         return;
     }
+
     //else if ($("#txtIsClient").is(":checked")) {
-    // $("#txtClientType").prop("disabled", false);
-   // const ClientType = $("#txtClientType").val();
-    else if (!ClientType) {
-        toastr.error("Please select  Client Type!");
-        $("#txtClientType").focus();
+    //    $("#txtClientType").prop("disabled", false);
+    //    const ClientType = $("#txtClientType").val();
+    //    if (!ClientType) {
+    //        toastr.error("Please select  Client Type!");
+    //        $("#txtClientType").focus();
+    //        return;
+    //    }
+    //    else {
+    //        $("#txtClientType").prop("disabled", true);
+
+    //    }
+    //}
+    else if (codes == "") {
+        toastr.error("Please select  Brand !");
         return;
     }
-    // else {
-    // $("#txtClientType").prop("disabled", true);
-           
-    //}
-    //}
-    //else if (codes == "") {
-    //    toastr.error("Please select  Brand !");
-    //    return;
-    //}
     let validationFailed = false;
     $("#tblorderbooking tbody tr").each(function () {
         const row = $(this);
@@ -604,7 +606,7 @@ function Save() {
         //    validationFailed = true;
         //    return;
         //} else
-         if (row.find(".txtAddressLine1").val() == '') {
+        if (row.find(".txtAddressLine1").val() == '') {
             toastr.error("Please enter Address Line1 !");
             row.find(".txtAddressLine1").focus();
             validationFailed = true;
@@ -635,13 +637,13 @@ function Save() {
             row.find(".txtPIN").focus();
             validationFailed = true;
             return;
-         }
-         else if (row.find(".txtGSTIN").val() == '') {
-             toastr.error("Please enter GSTIN !");
-             row.find(".txtGSTIN").focus();
-             validationFailed = true;
-             return;
-         }
+        }
+        else if (row.find(".txtGSTIN").val() == '') {
+            toastr.error("Please enter GSTIN !");
+            row.find(".txtGSTIN").focus();
+            validationFailed = true;
+            return;
+        }
         else if (row.find(".txtMobile").val() == '') {
             toastr.error("Please enter Mobile No!");
             row.find(".txtMobile").focus();
@@ -652,13 +654,13 @@ function Save() {
             row.find(".txtMobile").focus();
             validationFailed = true;
             return;
-         }
+        }
         //    else if (row.find(".txtEmail").val() == '') {
         //    toastr.error("Please enter Email !");
         //    row.find(".txtEmail").focus();
         //    validationFailed = true;
         //    return;
-            else if (!isEmail(row.find(".txtEmail").val()) && row.find(".txtEmail").val() !== '') {
+        else if (!isEmail(row.find(".txtEmail").val()) && row.find(".txtEmail").val() !== '') {
             toastr.error("Please enter valid Email !");
             row.find(".txtEmail").focus();
             validationFailed = true;
@@ -666,19 +668,19 @@ function Save() {
         }
     });
     if (validationFailed) {
-        return; 
+        return;
     }
     const accountPayload = [{
         Code: $("#hfCode").val(),
         AccountCode: $("#txtAccounCode").val(),
         AccountName: AccountName,
-        ClientType: $("#txtClientType").val(),
+        ClientType: ClientType,
         DisplayName: DisplayName,
         PANNo: $("#txtPANNo").val(),
-        IsClient: "Y", 
-        IsVendor: "N", 
+        IsClient:"N",
+        IsVendor:"Y",
         BrandMaster_Code: Brand
-       
+
     }];
     // Collect Address Details Data
     const addressData = [];
@@ -701,7 +703,7 @@ function Save() {
         };
         addressData.push(addressRow);
     });
-  
+
     const payload = {
         AccountMaster: accountPayload,
         accountAddress: addressData,
@@ -720,7 +722,7 @@ function Save() {
             if (response.Status === "Y") {
                 setTimeout(() => {
                     toastr.success(response.Msg);
-                    ShowAccountMasterlist('Get');
+                    ShowAccountMasterlistV('Get');
                     BackMaster();
                 }, 1000);
             } else {
@@ -773,7 +775,7 @@ function addNewRowEdit(index, address) {
     }
 
     if (address.IsDefault === 'Y') {
-     
+
         document.getElementById("tdsAddressCode1").value = address.AddressCode;
         document.getElementById("tdsAddressLine1").value = address.AddressLine1;
         document.getElementById("tdsAddressLine2").value = address.AddressLine2;
@@ -786,7 +788,7 @@ function addNewRowEdit(index, address) {
         document.getElementById("tdsPhone").value = address.PhoneNo;
         document.getElementById("tdsMobile").value = address.MobileNo;
         document.getElementById("tdsEmail").value = address.EmailID;
-       
+
         $("#txtAddressCodeby_" + rowCount).val(address.AddressCode || "").prop('disabled', address.IsDefault === 'Y');
         $("#txtAddressLine1by_" + rowCount).val(address.AddressLine1 || "").prop('disabled', address.IsDefault === 'Y');
         $("#txtAddressLine2by_" + rowCount).val(address.AddressLine2 || "").prop('disabled', address.IsDefault === 'Y');
@@ -799,7 +801,7 @@ function addNewRowEdit(index, address) {
         $("#txtPhoneby_" + rowCount).val(address.PhoneNo || "").prop('disabled', address.IsDefault === 'Y');
         $("#txtMobileby_" + rowCount).val(address.MobileNo || "").prop('disabled', address.IsDefault === 'Y');
         $("#txtEmailby_" + rowCount).val(address.EmailID || "").prop('disabled', address.IsDefault === 'Y');
-      /*  $("#chkIsDefault_" + rowCount).prop('checked', address.IsDefault === 'Y').prop('disabled', address.IsDefault === 'Y');*/
+        /*  $("#chkIsDefault_" + rowCount).prop('checked', address.IsDefault === 'Y').prop('disabled', address.IsDefault === 'Y');*/
     }
 
 }
@@ -1064,7 +1066,7 @@ function GetCountryMasterList1() {
 }
 function FillallItemfield1(inputElement) {
     const inputValue = inputElement.value.trim();
-    const  State = document.querySelector('#tdsStatelist');
+    const State = document.querySelector('#tdsStatelist');
     const Nation = document.querySelector('#tdsNationlist');
     const PIN = document.querySelector('#tdsPIN');
 
@@ -1097,7 +1099,7 @@ function FillValue(element) {
             input.disabled = false;
         }
     });
-  ;
+    ;
     if ($(element).prop('checked')) {
         if (currentRow) {
             const txtAddressCode = currentRow.querySelector('.txtAddressCode');
@@ -1113,17 +1115,17 @@ function FillValue(element) {
             const txtMobile = currentRow.querySelector('.txtMobile');
             const txtEmail = currentRow.querySelector('.txtEmail');
             $("#tdsAddressCode1").val(txtAddressCode.value),
-            $("#tdsAddressLine1").val(txtAddressLine1.value),
-            $("#tdsAddressLine2").val(txtAddressLine2.value),
-            $("#tdsCitysList").val(txtCity.value),
-            $("#tdsStatelist").val(txtState.value),
-            $("#tdsNationlist").val(txtNation.value),
-            $("#tdsPIN").val(txtPIN.value),
-            $("#tdsGSTIN").val(txtGSTIN.value),
-            $("#tdsContactPerson").val(txtContactPerson.value),
-            $("#tdsPhone").val(txtPhone.value),
-            $("#tdsMobile").val(txtMobile.value),
-            $("#tdsEmail").val(txtEmail.value)
+                $("#tdsAddressLine1").val(txtAddressLine1.value),
+                $("#tdsAddressLine2").val(txtAddressLine2.value),
+                $("#tdsCitysList").val(txtCity.value),
+                $("#tdsStatelist").val(txtState.value),
+                $("#tdsNationlist").val(txtNation.value),
+                $("#tdsPIN").val(txtPIN.value),
+                $("#tdsGSTIN").val(txtGSTIN.value),
+                $("#tdsContactPerson").val(txtContactPerson.value),
+                $("#tdsPhone").val(txtPhone.value),
+                $("#tdsMobile").val(txtMobile.value),
+                $("#tdsEmail").val(txtEmail.value)
             const inputs = currentRow.querySelectorAll('input');
             inputs.forEach(input => {
                 if (input.type !== 'checkbox') {
@@ -1135,7 +1137,7 @@ function FillValue(element) {
         const inputs = currentRow.querySelectorAll('input');
         inputs.forEach(input => {
             if (
-                input.type !== 'checkbox' && !input.classList.contains('txtState') && !input.classList.contains('txtNation') && !input.classList.contains('txtPIN')){
+                input.type !== 'checkbox' && !input.classList.contains('txtState') && !input.classList.contains('txtNation') && !input.classList.contains('txtPIN')) {
                 input.disabled = false;
                 ClearData1();
             }
@@ -1231,20 +1233,20 @@ function fillFields(inputid, row, value) {
 }
 function ClearData1() {
     $("#tdsAddressCode1").val(""),
-    $("#tdsAddressLine1").val(""),
-    $("#tdsAddressLine2").val(""),
-    $("#tdsCitysList").val(""),
-    $("#tdsStatelist").val(""),
-    $("#tdsNationlist").val(""),
-    $("#tdsPIN").val(""),
-    $("#tdsGSTIN").val(""),
-    $("#tdsContactPerson").val(""),
-    $("#tdsPhone").val(""),
-    $("#tdsMobile").val(""),
-    $("#tdsEmail").val("")
+        $("#tdsAddressLine1").val(""),
+        $("#tdsAddressLine2").val(""),
+        $("#tdsCitysList").val(""),
+        $("#tdsStatelist").val(""),
+        $("#tdsNationlist").val(""),
+        $("#tdsPIN").val(""),
+        $("#tdsGSTIN").val(""),
+        $("#tdsContactPerson").val(""),
+        $("#tdsPhone").val(""),
+        $("#tdsMobile").val(""),
+        $("#tdsEmail").val("")
 }
 async function View(code) {
-   
+
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
@@ -1314,7 +1316,7 @@ async function View(code) {
             toastr.error("Failed to fetch data. Please try again.");
         }
     });
-   
+
 }
 function disableFields(disable) {
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");

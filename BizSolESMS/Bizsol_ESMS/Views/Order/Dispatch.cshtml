@@ -263,15 +263,23 @@
                 </label>
                 <input type="text" id="txtSearch" name="txtSearch" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Search.." maxlength="50">
             </div>
-            <div class="col-md-3  col-sm-6">
+            <div class="col-md-3  col-sm-6" id="txtDownloadDate1">
                 <div>
                     <label for="txtDownloadDate" class="col-form-label-sm fw-bold">
-                        Date <span class="text-danger">*</span>
+                        From  Date <span class="text-danger">*</span>
                     </label>
                     <input type="text" id="txtDownloadDate" name="txtDownloadDate" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Date.." maxlength="50">
                 </div>
             </div>
-            <div class="col-md-3  col-sm-6">
+            <div class="col-md-3  col-sm-6" id="txtToDate1">
+                <div>
+                    <label for="txtToDate" class="col-form-label-sm fw-bold">
+                        To Date <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="txtToDate" name="txtToDate" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Date.." maxlength="50">
+                </div>
+            </div>
+            <div class="col-md-3  col-sm-6" id="txtshowhide" style="display:none">
                 <div>
                     <label for="ddlOrderStatus" class="col-form-label-sm fw-bold">
                         Order Status <span class="text-danger">*</span>
@@ -283,7 +291,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-3" style="margin-top:34px;">
+            <div class="  text-end col-md-12" id="txtDownload">
                 <label></label>
                 <button type="button" class="btn btn-primary btn-height" title="Download" onclick="DownloadInExcel()">Download</button>
             </div>
@@ -333,7 +341,13 @@
             </div>
             <!-- Paginator -->
             <div class="paginator" id="paginator-table">
+
             </div>
+          
+        </div>
+        <div class="row ">
+            
+            
         </div>
     </div>
     <div id="txtCreatepage" style="display:none;">
@@ -353,11 +367,11 @@
                                 <input type="hidden" id="hfCode" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No.." disabled value="0">
                             </div>
                             <div class="col-md-3 col-sm-6">
-                                <label for="txtChallanNo" class="col-form-label-sm fw-bold">Challan No<span class="text-danger">*</span></label>
+                                <label for="txtChallanNo" class="col-form-label-sm fw-bold">Packing No<span class="text-danger">*</span></label>
                                 <input type="text" id="txtChallanNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Challan No.." disabled>
                             </div>
                             <div class="col-md-3 col-sm-6">
-                                <label for="txtChallanDate" class="col-form-label-sm fw-bold">Challan Date<span class="text-danger">*</span></label>
+                                <label for="txtChallanDate" class="col-form-label-sm fw-bold">Packing Date<span class="text-danger">*</span></label>
                                 <input type="text" id="txtChallanDate" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Challan Date.." disabled>
                             </div>
                             <div class="col-md-3 col-sm-6">

@@ -4,6 +4,7 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+
 $(document).ready(function () {
     LocationList();
     $("#ERPHeading").text("Item Master");
@@ -245,7 +246,43 @@ $(document).ready(function () {
     $("#btnSaveLocation").on("click", function () {
         Savelocation();
     });
+
+    // listen on the INPUT (fires when typing or selecting a datalist entry)
+    $('#txtBrand').on('input', function () {
+        var brandName = $(this).val().trim();
+        if (!brandName) return;
+
+        $.ajax({
+            type: "POST",
+            url: `${appBaseURL}/api/Master/GetBrandType?BrandName=${brandName}`,
+            dataType: 'json',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                var brandType = response && response[0].BarcodeType;
+                if (brandType === "SameAsPartCode") {
+                    $('#txtItembarcode').prop('required', false);
+                    $('#txtItembarcodelab').text('Part Code (Optional)');
+                } else if (brandType === "DifferentAsPartCode") {
+                    $('#txtItembarcode').prop('required', true);
+                    $('#txtItembarcodelab').html('Part Code <span style="color:red">*</span>');
+                    toastr.error("Part Code required !");
+                    
+                } else {
+                    $('#txtItembarcode').prop('required', false);
+                    $('#txtItembarcodelab').text('Part Code');
+                }
+            },
+            error: function (xhr, status, err) {
+                console.warn("Could not fetch brand type", status, err);
+            }
+        });
+    });
+
+    
 });
+
 function UpdateLabelforItemMaster() {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemConfig`,
@@ -299,6 +336,12 @@ function UpdateLabelforItemMaster() {
                     else {
                         $("#txtItemCodelab").text("Item Code");
                         $("#txtItemCode").attr("placeholder", "Item Code");
+                    }
+                    if (item.MRPNo == "Y") {
+                        $("#txtMRPDiV").show();
+                    }
+                    else {
+                        $("#txtMRPDiV").hide();
                     }
                     if (item.ItemCode) {
                         const escapedItemCode = item.ItemCode.replace("[\/\\^$*+?.()|[\]{}]/g, ''");
@@ -421,6 +464,7 @@ function Save() {
     var GroupItem = $("#txtGroupItem").val();
     var SubGroupItem = $("#txtSubGroupItem").val();
     var ItemLocation = $("#txtItemLocation").val();
+    var MRP = $("#txtMRP").val();
     if (!ItemCode) {
         toastr.error('Please enter an Item Code!');
         $("#txtItemCode").focus();
@@ -492,6 +536,7 @@ function Save() {
             maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N",
             QtyInBox: $("#txtQtyinBox").val(),
             IsActive: $("#txtIsActive").is(":checked") ? "Y" : "N",
+            MRPNo: MRP
         };
         
         $.ajax({
@@ -522,6 +567,7 @@ function Save() {
 
     }
 }
+
 async function CreateItemMaster() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -554,6 +600,7 @@ async function CreateItemMaster() {
     $("#txtIsActive").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     disableFields(false);
+    $("#txtMRP").prop("disabled", false);
 }
 function BackMaster() {
     $("#txtListpage").show();
@@ -579,9 +626,11 @@ function BackMaster() {
     $("#txtMaintainExpiry").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     $("#txtIsActive").prop("disabled", false);
+    $("#txtMRP").prop("disabled", false);
     $("#txtheaderdiv").hide();
     disableFields(false);
 }
+
 async function deleteItem(code, ItemName, button) {
     let tr = button.closest("tr");
     tr.classList.add("highlight");
@@ -624,6 +673,7 @@ async function deleteItem(code, ItemName, button) {
     }
     $('tr').removeClass('highlight');
 }
+
 async function Edit(code) {
 
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -657,6 +707,7 @@ async function Edit(code) {
                 $("#txtReorderLevel").val(item.ReorderLevel);
                 $("#txtReorderQty").val(item.ReorderQty);
                 $("#txtItemLocation").val(item.locationName);
+                $("#txtMRP").val(item.MRPNo);
                 //$("#txtBoxPacking").val(item.BoxPacking);
              
                 if (item.BoxPacking == 'N') {
@@ -949,6 +1000,7 @@ async function View(code) {
                 $("#txtBoxPacking").val(item.BoxPacking).prop("disabled", true);
               /*  $("#txtQtyinBox").val(item.QtyInBox).prop("disabled", true);*/
                 $("#txtMaintainExpiry").val(item.MaintainExpiry).prop("disabled", true);
+                $("#txtMRP").val(item.MRP).prop("disabled", true);
                 $("#txtIsActive").val(item.IsActive).prop("disabled", true);
                 $("#txtsave").prop("disabled", true);
                 disableFields(true);
@@ -1237,3 +1289,5 @@ async function CreateNewlocation() {
         toastr.error("An error occurred while saving the data.");
     }
 }
+
+

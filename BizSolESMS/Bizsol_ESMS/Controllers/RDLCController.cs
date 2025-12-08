@@ -251,5 +251,62 @@ namespace Bizsol_ESMS.Controllers
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "PrintGatePass.pdf");
         }
+        [HttpPost]
+        public IActionResult GPrintQR([FromBody] List<MRNModel> model)
+        {
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("QRCode", typeof(byte[]));
+                dt.Columns.Add("ItemCode");
+                dt.Columns.Add("ItemName");
+                dt.Columns.Add("billqty");
+                dt.Columns.Add("ItemRate");
+
+                if (model == null || model.Count == 0)
+                {
+                    return StatusCode(400, "No data provided");
+                }
+
+                foreach (var item in model)
+                {
+                    int totalCopies = Convert.ToInt32(item.billqty);
+
+                    for (int i = 1; i <= totalCopies; i++)
+                    {
+                        byte[] qrCodeBytes = null;
+                        if (!string.IsNullOrEmpty(item.QRCode))
+                        {
+                            qrCodeBytes = Convert.FromBase64String(item.QRCode.Replace("data:image/png;base64,", ""));
+                        }
+                        dt.Rows.Add(
+                            qrCodeBytes,
+                            item.ItemCode,
+                            item.ItemName,
+                            item.billqty,
+                            item.ItemRate
+                        );
+                    }
+                }
+
+                LocalReport report = new LocalReport();
+                string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "ForceItemQR.rdlc");
+                
+                if (!System.IO.File.Exists(reportPath))
+                {
+                    return StatusCode(500, "Report file not found: " + reportPath);
+                }
+
+                report.ReportPath = reportPath;
+                report.DataSources.Add(new ReportDataSource("PrintQR", dt));
+
+                byte[] pdf = report.Render("PDF");
+                return File(pdf, "application/pdf", "PrintQR.pdf");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error generating report: " + ex.Message + " | " + ex.InnerException?.Message);
+            }
+        }
     }
 } 

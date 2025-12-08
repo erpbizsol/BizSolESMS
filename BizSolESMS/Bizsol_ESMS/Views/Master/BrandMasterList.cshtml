@@ -183,6 +183,34 @@
                                 <input type="hidden" value="0" id="hftextCode" />
                                 <input type="text" id="txtBrandName" name="txtBrandName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Brand Name" maxlength="50">
                             </div>
+                            <div class="col-md-3">
+                                <label for="ddlImportFormat" class="col-form-label-sm fw-bold">
+                                    Import Format <span class="text-danger">*</span>
+                                </label>
+                                <datalist id="ddlImportFormat"></datalist>
+                                <input list="ddlImportFormat" id="txtImportFormat" name="txtImportFormat" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Import Format">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="ddlBarcodeType" class="col-form-label-sm fw-bold">
+                                    Barcode Type <span class="text-danger">*</span>
+                                </label>
+                                <select id="ddlBarcodeType" name="ddlBarcodeType" class="form-control form-control-sm box_border">
+                                    <option value="">Select Barcode Type</option>
+                                    <option value="UPI">UPI</option>
+                                    <option value="UPIHERO">UPI HERO</option>
+                                    <option value="NoBarcode">No Barcode</option>
+                                    <option value="SameasPartCode">SameAsPartCode</option>
+                                    <option value="DifferentAsPartCode">DifferentAsPartCode</option>
+
+                                </select>
+                            </div>
+                            <div class="col-md-3" style="margin-top:34px;">
+                                <input type="checkbox" id="txtPicklistNo" name="txtPicklistNo" class="box_border" checked />
+
+                                <label for="txtPicklistNo" class="col-form-label-sm fw-bold">
+                                    Is PicklistNo mandatory <span class="text-danger">*</span>
+                                </label>
+                            </div>
                             @* <div class="col-md-2" style="margin-top: 30px !important;">
                             <button class="btn btn-primary btn-height" title="Save" onclick="Save()" id="txtbtnSave">Save</button>
                             <button class="btn btn-danger btn-height" title="Back" onclick="BackMaster()">Back</button>

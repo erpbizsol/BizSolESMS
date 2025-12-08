@@ -46,6 +46,7 @@ function BackMaster() {
     $("#txtheaderdiv").hide();
     window.location.href = `${AppBaseURLMenu}/Master/ItemMasterList`;
 }
+
 async function Save() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -88,6 +89,7 @@ async function Save() {
             LocationItemHeader: $("#txtItemLocation").val(),
             itemCode: $("#txtItemCode").val(),
             itemCodeHeader: $("#txtItemCodeHeader").val(),
+            MRPNo: $("#txtMRPNo").val(),
         };
         $.ajax({
             url: `${appBaseURL}/api/Master/SaveConfig`,
@@ -114,6 +116,7 @@ async function Save() {
 
     //}
 }
+
 async function Edit() {
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
@@ -138,6 +141,7 @@ async function Edit() {
                         $("#txtItemLocation").val(item.SubLocationItemHeader || "");
                         $("#txtItemCode").val(item.ItemCode);
                         $("#txtItemCodeHeader").val(item.ItemCodeHeader);
+                        $("#txtMRPNo").val(item.MRPNo);
                     } 
                 });
             } else {

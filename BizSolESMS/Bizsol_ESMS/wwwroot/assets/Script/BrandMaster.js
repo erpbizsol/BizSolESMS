@@ -9,11 +9,23 @@ $(document).ready(function () {
     $("#ERPHeading").text("Brand Master");
     $('#txtBrandName').on('keydown', function (e) {
         if (e.key === "Enter") {
+            $("#txtImportFormat").focus();
+        }
+    });
+    $('#txtImportFormat').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#ddlBarcodeType").focus();
+        }
+    });
+    $('#ddlBarcodeType').on('keydown', function (e) {
+        if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
     });
+ 
     ShowBrandMasterlist('Load');
     GetModuleMasterCode();
+    GetImportFormat();
 });
 function ShowBrandMasterlist(Type) {
     $.ajax({
@@ -59,15 +71,28 @@ function ShowBrandMasterlist(Type) {
 }
 function Save() {
     const BrandName = $("#txtBrandName").val();
+    let ImportFormat = $("#txtImportFormat").val(); // Get the code, not the name
+    let BarcodeType = $("#ddlBarcodeType").val();
+
     if (BrandName === "") {
         toastr.error('Please enter a Brand Name.');
         $("#txtBrandName").focus();
     }
+    else if (ImportFormat === "" || ImportFormat === null) {
+        toastr.error('Please select a valid Import Format.');
+        $("#txtImportFormat").focus();
+    }
+    else if (BarcodeType === "") {
+        toastr.error('Please select a Barcode Type.');
+        $("#ddlBarcodeType").focus();
+    }
     else {
         const payload = {
             code: $("#hftextCode").val(),
-            brandName: BrandName
-
+            brandName: BrandName,
+            ImportFormat: $("#txtImportFormat").val(),
+            BarcodeType: BarcodeType,
+            PicklistNo: $("#txtPicklistNo").is(":checked") ? "Y" : "N",
         };
         $.ajax({
             url: `${appBaseURL}/api/Master/InsertBrandMaster?UserMaster_Code=${UserMaster_Code}`,
@@ -95,6 +120,7 @@ function Save() {
         });
     }
 }
+
 async function Edit(code) {
   
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -116,7 +142,14 @@ async function Edit(code) {
             if (item.length > 0) {
                 item.forEach(function (item) {
                     $("#hftextCode").val(item.Code),
-                    $("#txtBrandName").val(item.BrandName);
+                        $("#txtBrandName").val(item.BrandName);
+                    $("#txtImportFormat").val(item.FormatName);
+                    $("#ddlBarcodeType").val(item.BarcodeType);
+                    if (item.PicklistNo == 'N') {
+                        $("#txtPicklistNo").prop("checked", false);
+                    } else {
+                        $("#txtPicklistNo").prop("checked", true);
+                    }
                     $("#txtbtnSave").prop("disabled", false);
                     disableFields(false);
                 });
@@ -130,6 +163,7 @@ async function Edit(code) {
     });
 
 }
+
 async function deleteBrand(code, brand, button) {
     let tr = button.closest("tr");
     tr.classList.add("highlight");
@@ -176,7 +210,11 @@ async function deleteBrand(code, brand, button) {
 function ClearData() {
     $("#hftextCode").val("0");
     $("#txtBrandName").val("");
+    $("#txtImportFormat").val("");
+    $("#ddlBarcodeType").val("");
+    //$("#txtPicklistNo").val('');
 }
+
 async function CreateBrandMaster() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -211,6 +249,7 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
+
 async function View(code) {
    
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
@@ -233,6 +272,11 @@ async function View(code) {
                 item.forEach(function (item) {
                     $("#hftextCode").val(item.Code).prop("disabled", true),
                         $("#txtBrandName").val(item.BrandName).prop("disabled", true),
+                        $("#txtImportFormat").val(item.FormatName).prop("disabled", true),
+                        $("#ddlBarcodeType").val(item.BarcodeType).prop("disabled", true);
+                        if(item.PicklistNo == 'N') {
+                            $("#txtPicklistNo").prop("checked", false);
+                        }
                         $("#txtbtnSave").prop("disabled", true),
                         disableFields(true);
 
@@ -284,4 +328,29 @@ function Export(jsonData) {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "BrandMaster.xlsx");
+}
+function GetImportFormat() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetImportFormat`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#ddlImportFormat').empty();
+                let options = '<option value="">Select Import Format</option>';
+                response.forEach(item => {
+                    options += '<option value="' + item.FormatName + '" text="' + item.Code + '"></option>';
+                });
+                $('#ddlImportFormat').html(options);
+            } else {
+                $('#ddlImportFormat').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#ddlImportFormat').empty();
+        }
+    });
 }

@@ -18,6 +18,7 @@ let G_UPDATEBOX = 'N';
 let originalDispatchData = [];
 let originalTransitData = [];
 let originalCompletedData = [];
+let G_OrderMaster = [];
 $(document).ready(function () {
     DatePicker();
     GetDispatchOrderLists('GETCLIENT');
@@ -59,19 +60,28 @@ $(document).ready(function () {
         }
     });
     $("#pendingOrder").click(function () {
-      
+
         GetDispatchOrderLists('GETCLIENT');
-   
+        $("#txtshowhide").hide();
+        $("#txtDownload").show();
+        $("#txtToDate1").show();
+        $("#txtDownloadDate1").show();
     });
     $("#despatchTransit").click(function () {
-        
+
         GetDespatchTransitOrderList('DespatchTransit');
-       
+        $("#txtshowhide").hide();
+        $("#txtDownload").hide();
+        $("#txtToDate1").hide();
+        $("#txtDownloadDate1").hide();
     });
     $("#completedDespatch").click(function () {
-        
+
         GetCompletedDespatchOrderList('CompletedDespatch');
-      
+        $("#txtshowhide").hide();
+        $("#txtDownload").show();
+        $("#txtToDate1").show();
+        $("#txtDownloadDate1").show();
     });
     $('#txtScanProduct').on('input', function (e) {
         if (G_UPDATEBOX == 'N') {
@@ -83,15 +93,15 @@ $(document).ready(function () {
     $("#txtOrderNo").on("change", function () {
         let value = $(this).val();
         let isValid = false;
-            if ($(this).val() === value) {
-                const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == value);
-                if (item.Code != undefined) {
-                    CreateOrderNo(item.Code);
+        if ($(this).val() === value) {
+            const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == value);
+            if (item.Code != undefined) {
+                CreateOrderNo(item.Code);
 
-                }
-                isValid = true;
-                return false;
             }
+            isValid = true;
+            return false;
+        }
         if (!isValid) {
             $(this).val("");
         }
@@ -166,7 +176,7 @@ $(document).ready(function () {
                 "TDQ": 'right'
             };
 
-            updatedResponse = filteredData.map(item => ({   
+            updatedResponse = filteredData.map(item => ({
                 ...item
                 , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
@@ -275,7 +285,7 @@ function ClearData() {
     $("#txtClientDispatchName").val("");
     $("#tblDispatchData").hide();
     $("#txtScanProduct").attr('inputmode', '');
-    SelectOptionByText('txtOrderNo','Select');
+    SelectOptionByText('txtOrderNo', 'Select');
 }
 function OnChangeNumericTextBox(element) {
 
@@ -368,28 +378,28 @@ function validateDate(value) {
 
     }
 }
-function DatePicker() {
-    $.ajax({
-        url: `${appBaseURL}/api/Master/GetCurrentDate`,
-        method: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            let apiDate = response[0].Date;
-            $('#txtChallanDate').val(apiDate);
+//function DatePicker() {
+//    $.ajax({
+//        url: `${appBaseURL}/api/Master/GetCurrentDate`,
+//        method: 'GET',
+//        beforeSend: function (xhr) {
+//            xhr.setRequestHeader('Auth-Key', authKeyData);
+//        },
+//        success: function (response) {
+//            let apiDate = response[0].Date;
+//            $('#txtChallanDate').val(apiDate);
 
-            $('#txtChallanDate').datepicker({
-                format: 'dd/mm/yyyy',
-                autoclose: true,
-            });
-            DatePickerForDownloadDate(apiDate);
-        },
-        error: function () {
-            console.error('Failed to fetch the date from the API.');
-        }
-    });
-}
+//            $('#txtChallanDate').datepicker({
+//                format: 'dd/mm/yyyy',
+//                autoclose: true,
+//            });
+//            DatePickerForDownloadDate(apiDate);
+//        },
+//        error: function () {
+//            console.error('Failed to fetch the date from the API.');
+//        }
+//    });
+//}
 function convertToUppercase(element) {
     element.value = element.value.toUpperCase();
 }
@@ -505,6 +515,9 @@ function GetDispatchOrderLists(Mode) {
         success: function (response) {
             if (response.length > 0) {
                 originalDispatchData = response;
+                G_OrderMaster = response[0]["Order Date"];
+                let Date = G_OrderMaster;
+                DatePickerForDownloadOld(Date);
                 $("#DataTable").show();
                 const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
                 const NumericFilterColumn = ["TOQ", "TBQ"];
@@ -538,7 +551,53 @@ function GetDispatchOrderLists(Mode) {
             originalDispatchData = [];
         }
     });
+}
+function DatePicker() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetCurrentDate`,
+        method: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            var apiDateRaw = null;
+            if (response && response.length > 0 && response[0] && response[0].Date) {
+                apiDateRaw = response[0].Date;
+            }
 
+            var apiDate = DatePickerForDownloadDate(apiDateRaw);
+            var challanDate = DatePickerForDownloadOld(Data);
+            var $challan = $('#txtChallanDate');
+            var $to = $('#txtToDate');
+
+            try { $challan.datepicker('destroy'); } catch (e) { }
+            try { $to.datepicker('destroy'); } catch (e) { }
+
+            var minDate = challanDate;
+
+            $challan.datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+                startDate: minDate
+            });
+
+            $to.datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+                startDate: minDate
+            });
+
+            if (apiDate) {
+                $challan.datepicker('setDate', apiDate);
+            }
+            if (challanDate) {
+                $to.datepicker('setDate', challanDate);
+            }
+        },
+        error: function () {
+            console.error('Failed to fetch the date from the API.');
+        }
+    });
 }
 async function StartDispatchPanding(Code, Mode) {
     if (G_DispatchMaster_Code === 0) {
@@ -595,9 +654,10 @@ async function StartDispatchPanding(Code, Mode) {
                     const ColumnAlignment = {
                         "Ord Qty": "right;width:30px;",
                         "Bal Qty": "right;width:30px;",
-                        "Scan Qty":"right;width:70px;",
-                        "Packing Qty":"right;width:70px;",
-                        "Manual Qty":"right;width:70px;",
+                        "Scan Qty": "right;width:70px;",
+                        "Packing Qty": "right;width:70px;",
+						"Manual Qty": "right;width:70px;",
+						"MRP": "right;width:70px;",
                     };
                     const renameMap = {
                         "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
@@ -613,11 +673,12 @@ async function StartDispatchPanding(Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-                        renamedItem["Scan Qty"]= `
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
+                        renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" readonly onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`;
-                        renamedItem["Manual Qty"]=`
+                        renamedItem["Manual Qty"] = `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        renamedItem["Packing Qty"]= `
+                            renamedItem["Packing Qty"] = `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
                         renamedItem["Action"] = item["ROWSTATUS"] == 'RED' ? '' : `<button class="btn btn-danger icon-height mb-1"  title="Delete item qty" onclick="DeleteItemQty('${item.Code}')"><i class="fa-solid fa-trash"></i></button>`;
                         return renamedItem;
@@ -723,7 +784,7 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         ManualQty: ManualQty,
         DispatchQty: DispatchQty,
         UserMaster_Code: UserMaster_Code,
-        PackedBy:''
+        PackedBy: ''
     }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ManualItemForDispatch?Mode=Edit`,
@@ -773,7 +834,7 @@ function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
     }
     const payload = {
         Code: Code,
-        DispatchMaster_Code:G_DispatchMaster_Code,
+        DispatchMaster_Code: G_DispatchMaster_Code,
         ScanNo: "",
         ScanQty: ScanQty,
         ManualQty: ManualQty,
@@ -812,7 +873,7 @@ function SaveScanQty() {
         toastr.error("Please scan product !");
         $("#txtScanProduct").focus();
         return;
-    }else if ($("#txtBoxNo").val() === '') {
+    } else if ($("#txtBoxNo").val() === '') {
         toastr.error("Please enter box no..!");
         return;
     }
@@ -880,7 +941,7 @@ function SaveScanQty() {
     });
 
 }
-async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
+async function StartDispatchTransit(Code, DispatchMaster_Code, Mode) {
     G_DispatchMaster_Code = DispatchMaster_Code;
     G_Tab = 2;
     $("#hfCode").val(Code);
@@ -908,6 +969,7 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
             if (response) {
                 if (response.OrderMaster && response.OrderMaster.length > 0) {
                     const OrderMaster = response.OrderMaster[0];
+
                     $("#hfCode").val(OrderMaster.Code || "");
                     SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
@@ -933,14 +995,15 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                     if (UserType == "A") {
                         hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
                     } else {
-                        hiddenColumns = ["Code", "Manual Qty","ROWSTATUS"];
+                        hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
                     }
                     const ColumnAlignment = {
                         "Ord Qty": "right;width:30px;",
                         "Bal Qty": "right;width:30px;",
                         "Scan Qty": "right;width:70px;",
                         "Packing Qty": "right;width:70px;",
-                        "Manual Qty": "right;width:70px;",
+						"Manual Qty": "right;width:70px;",
+						"MRP": "right;width:70px;",
                     };
                     const renameMap = {
                         "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
@@ -956,7 +1019,7 @@ async function StartDispatchTransit(Code,DispatchMaster_Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
                         renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" readonly class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Manual Qty"] = `
@@ -1117,12 +1180,12 @@ function GetCompletedDespatchOrderList(Mode) {
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
- 
+
                 let hiddenColumns = [];
                 if (UserType == "A") {
                     hiddenColumns = ["Code", "D_Code"];
                 } else {
-                    hiddenColumns = ["Code", "D_Code","Dispatch Date"];
+                    hiddenColumns = ["Code", "D_Code", "Dispatch Date"];
                 }
                 const ColumnAlignment = {
                     "TDQ": 'right'
@@ -1206,7 +1269,8 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                         "Bal Qty": "right;width:30px;",
                         "Scan Qty": "right;width:70px;",
                         "Packing Qty": "right;width:70px;",
-                        "Manual Qty": "right;width:70px;",
+						"Manual Qty": "right;width:70px;",
+						"MRP": "right;width:70px;",
                     };
                     const renameMap = {
                         "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
@@ -1222,12 +1286,12 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-
-                        renamedItem["Scan Qty"]=`
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
+                        renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" readonly class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                            renamedItem["Manual Qty"]= `
+                            renamedItem["Manual Qty"] = `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyCompleteTransit(this,${item.Code});" onfocusout="checkValidateqtyCompleteTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                            renamedItem["Packing Qty"]= `
+                            renamedItem["Packing Qty"] = `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
                         renamedItem["Action"] = item["ROWSTATUS"] == 'RED' ? '' : `<button class="btn btn-danger icon-height mb-1"  title="Delete item qty" onclick="DeleteItemQty('${item.Code}')"><i class="fa-solid fa-trash"></i></button>`;
                         return renamedItem;
@@ -1323,21 +1387,21 @@ function GetOrderNoList1() {
         success: function (response) {
             G_OrderList = response;
             if (response.length > 0) {
-                    let option = '<option value="">Select</option>';
-                    $.each(response, function (key, val) {
+                let option = '<option value="">Select</option>';
+                $.each(response, function (key, val) {
 
-                        option += '<option value="' + val["OrderNoWithPrefix"] + '">' + val["OrderNoWithPrefix"] + '</option>';
-                    });
+                    option += '<option value="' + val["OrderNoWithPrefix"] + '">' + val["OrderNoWithPrefix"] + '</option>';
+                });
 
-                    $('#txtOrderNo')[0].innerHTML = option;
-                    $('#txtOrderNo')[0].innerHTML = option;
+                $('#txtOrderNo')[0].innerHTML = option;
+                $('#txtOrderNo')[0].innerHTML = option;
 
                 $('#txtOrderNo').select2({
-                        width: '-webkit-fill-available'
-                    });
-                } else {
-                    $('#txtOrderNo').empty();
-                }
+                    width: '-webkit-fill-available'
+                });
+            } else {
+                $('#txtOrderNo').empty();
+            }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
@@ -1418,11 +1482,11 @@ async function ViewDespatchTransit(Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-                        renamedItem["Scan Qty"]= `
+                        renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
-                            renamedItem["Manual Qty"]=`
+                            renamedItem["Manual Qty"] = `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" disabled value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqtyTransit(this,${item.Code});" onfocusout="checkValidateqtyTransit1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
-                        renamedItem["Packing Qty"]= `
+                            renamedItem["Packing Qty"] = `
                         <input type="text" id="txtDispatchQty_${item.Code}" value="${item["Packing Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Packing Qty..">`;
                         return renamedItem;
 
@@ -1878,10 +1942,10 @@ async function ManualUpdateQtyAndMRP(ItemCode, BalanceQty, MRP) {
         toastr.error(msg);
         return;
     }
-    $("#txtManualItemCode").text("PRODUCT NAME : " +ItemCode);
-    $("#hfManualProductCode").val (ItemCode);
+    $("#txtManualItemCode").text("PRODUCT NAME : " + ItemCode);
+    $("#hfManualProductCode").val(ItemCode);
     $("#hfManualProductQuantity").val(BalanceQty);
-    $("#txtManualBalanceQuantity").text("EXPECTED QUANTITY : "+BalanceQty)
+    $("#txtManualBalanceQuantity").text("EXPECTED QUANTITY : " + BalanceQty)
     $("#txtManualProductMRP").val(MRP)
     openSavePopup();
 }
@@ -1917,7 +1981,7 @@ function SaveManual() {
         return;
     }
     const item = G_OrderList.find(entry => entry.OrderNoWithPrefix == orderNo);
-    
+
     const payload = {
         DispatchMaster_Code: G_DispatchMaster_Code,
         ManualQty: quantity,
@@ -2032,8 +2096,8 @@ function GetDispatchReport() {
 }
 function Report(Code) {
     $("#hfDownloadCode").val(Code);
-        var saveModal = new bootstrap.Modal(document.getElementById("DownloadModal"));
-        saveModal.show();
+    var saveModal = new bootstrap.Modal(document.getElementById("DownloadModal"));
+    saveModal.show();
 }
 function CloseDownloadModal() {
     var modal = bootstrap.Modal.getInstance(document.getElementById('DownloadModal'));
@@ -2065,6 +2129,7 @@ function DownloadReportPdf() {
         }
     });
 }
+
 async function DownloadDispatchQR() {
     var Code = $("#hfDownloadCode").val();
     $.ajax({
@@ -2121,7 +2186,7 @@ function DownloadQRPdf(response) {
             let url = window.URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
-            a.download = "DispatchQR_" + response[0]["OrderNo"]+".pdf";
+            a.download = "DispatchQR_" + response[0]["OrderNo"] + ".pdf";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -2132,11 +2197,13 @@ function DownloadQRPdf(response) {
         }
     });
 }
+
 async function DownloadInExcel() {
     try {
-        const DownloadDate = convertDateFormat1($("#txtDownloadDate").val());
+        const DownloadDate = convertDateFormat1($("#txtToDate").val());
+        const OldDate = convertDateFormat1($("#txtDownloadDate").val());
         const OrderStatus = $("#ddlOrderStatus").val();
-        if (DownloadDate === '' || DownloadDate === undefined || DownloadDate === null) {
+        if (OldDate === '' || OldDate === undefined || OldDate === null) {
             toastr.error("Please enter a valid date !");
             $("#txtDownloadDate").focus()
             return;
@@ -2146,7 +2213,7 @@ async function DownloadInExcel() {
             $("#ddlOrderStatus").focus()
             return;
         }
-        const response = await getDataWithAjax(DownloadDate, OrderStatus);
+        const response = await getDataWithAjax(DownloadDate, OldDate, OrderStatus);
 
         if (response.length > 0) {
             await DownloadExport(response);
@@ -2157,10 +2224,10 @@ async function DownloadInExcel() {
         console.error("AJAX error:", error);
     }
 }
-function getDataWithAjax(Date,OrderStatus) {
+function getDataWithAjax(FromDate, ToDate, OrderStatus) {
     return new Promise(function (resolve, reject) {
         $.ajax({
-            url: `${appBaseURL}/api/OrderMaster/GetOrderPackedDetail?Date=${Date}&OrderStatus=${OrderStatus}`,
+            url: `${appBaseURL}/api/OrderMaster/GetOrderPackedDetail?Date=${ToDate}&ToDate=${FromDate}&OrderStatus=${OrderStatus}`,
             type: 'GET',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -2209,7 +2276,7 @@ async function DownloadExport(Data) {
     };
 
     Data.forEach(rowObj => {
-        const row = originalHeaders.map(key => rowObj[key]); 
+        const row = originalHeaders.map(key => rowObj[key]);
         const addedRow = sheet.addRow(row);
 
         addedRow.eachCell(cell => {
@@ -2291,6 +2358,29 @@ function validateDate(value) {
     }
 }
 function DatePickerForDownloadDate(date) {
+    $('#txtToDate').val(date);
+    $('#txtToDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        orientation: 'bottom auto',
+        todayHighlight: true
+    }).on('show', function () {
+        let $input = $(this);
+        let inputOffset = $input.offset();
+        let inputHeight = $input.outerHeight();
+        let inputWidth = $input.outerWidth();
+        setTimeout(function () {
+            let $datepicker = $('.datepicker-dropdown');
+            $datepicker.css({
+                width: inputWidth + 'px',
+                top: (inputOffset.top + inputHeight) + 'px',
+                left: inputOffset.left + 'px',
+                'z-index': '1000',
+            });
+        }, 10);
+    });
+}
+function DatePickerForDownloadOld(date) {
     $('#txtDownloadDate').val(date);
     $('#txtDownloadDate').datepicker({
         format: 'dd/mm/yyyy',
@@ -2329,4 +2419,75 @@ function GetTotalLineOfPart(OrderMaster_Code) {
             showToast("Error in api/OrderMaster/SaveManualRateAndQty");
         }
     });
+}
+function SaveMRPByItemInput(element, itemCode) {
+    var mrp = $(element).val();
+    if (mrp === undefined || mrp === null || mrp === '') {
+        return;
+    }
+    if (isNaN(parseFloat(mrp))) {
+        toastr.error("Please enter a valid MRP!");
+        $(element).focus();
+        return;
+    }
+    if (!G_DispatchMaster_Code || parseInt(G_DispatchMaster_Code) <= 0) {
+        toastr.error("Invalid Dispatch reference!");
+        return;
+    }
+    var payload = {
+        DispatchMaster_Code: G_DispatchMaster_Code,
+        ItemCode: itemCode,
+        Mrp: mrp,
+        UserMaster_Code: UserMaster_Code
+    };
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/UpdateDispatchMRPByItemAsync`,
+        type: 'POST',
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+		success: function (response) {
+			var res = response;
+			if (Array.isArray(response)) {
+				res = response[0];
+			}
+			if (res && res.Status == 'Y') {
+				if (G_Tab == 1) {
+					StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
+				} else if (G_Tab == 2) {
+					if (All == 0) {
+						StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
+					} else {
+						StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
+					}
+				} else if (G_Tab == 3) {
+					StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+				}
+			} else {
+				var msg = "Unable to update MRP";
+				if (res && res.Msg) {
+					msg = res.Msg;
+				}
+				showToast(msg);
+			}
+		},
+        error: function () {
+            showToast("Error in api/OrderMaster/UpdateDispatchMRPByItem");
+        }
+    });
+}
+function OpenManualForMRP(element, itemCode) {
+	var mrp = $(element).val();
+	if (mrp === undefined || mrp === null || mrp === '') {
+		return;
+	}
+	if (isNaN(parseFloat(mrp))) {
+		toastr.error("Please enter a valid MRP!");
+		$(element).focus();
+		return;
+	}
+	SaveMRPByItemInput(element, itemCode);
 }

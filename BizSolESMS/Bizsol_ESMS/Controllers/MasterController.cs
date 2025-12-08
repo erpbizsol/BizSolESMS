@@ -119,6 +119,10 @@ namespace Bizsol_ESMS.Controllers
         {
             return View();
         }
+        public IActionResult ClientMaster()
+        {
+            return View();
+        }
         #endregion  AccountMaster 
 
         #region  MRNMaster 
@@ -177,5 +181,12 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion Helpdesk
+
+        #region ManualSalesReturn
+        public IActionResult ManualSalesReturn()
+        {
+            return View();
+        }
+        #endregion ManualSalesReturn
     }
 }
