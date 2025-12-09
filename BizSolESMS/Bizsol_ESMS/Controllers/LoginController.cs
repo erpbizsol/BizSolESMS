@@ -125,6 +125,7 @@ namespace Bizsol_ESMS.Controllers
                                     HttpContext.Session.SetString("FormToOpen", FormToOpen);
                                     ViewBag.AppBaseURL = _configuration["AppBaseURL"];
                                     ViewBag.AppBaseURLMenu = _configuration["AppBaseURLMenu"];
+                                    UpdateUserMasterField(Convert.ToInt32(UserMaster_Code));
                                     return Ok(new { success = true, message = "Login successful!" });
                                 }
                             }
@@ -137,8 +138,32 @@ namespace Bizsol_ESMS.Controllers
             return Json(new { success = false, message = "Invalid credentials!" });
         }
 
-    }
+        public void UpdateUserMasterField(int UserMaster_Code)
+        {
+            try
+            {
+                string connectionString = HttpContext.Session.GetString("ConnectionString");
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string procedureName = "USP_UpdateUserMaster";
+                    using (var command = new MySqlCommand($"CALL {procedureName}(@p_UserMaster_Code, @p_Mode, @p_IsActive)", connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.AddWithValue("@p_UserMaster_Code", UserMaster_Code);
+                        command.Parameters.AddWithValue("@p_Mode", "Update");
+                        command.Parameters.AddWithValue("@p_IsActive","Y");
+                        int rowsAffected = command.ExecuteNonQuery();
+                        connection.Close();
 
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+            }
+        }
+    }
 }
 
 
