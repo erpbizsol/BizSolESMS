@@ -125,8 +125,7 @@ namespace Bizsol_ESMS.Controllers
                                     HttpContext.Session.SetString("FormToOpen", FormToOpen);
                                     ViewBag.AppBaseURL = _configuration["AppBaseURL"];
                                     ViewBag.AppBaseURLMenu = _configuration["AppBaseURLMenu"];
-                                    UpdateUserMasterField(Convert.ToInt32(UserMaster_Code));
-                                    return Ok(new { success = true, message = "Login successful!" });
+                                    return Ok(new { success = true, message = "Login successful!", userType = UserType });
                                 }
                             }
                         }
@@ -138,29 +137,194 @@ namespace Bizsol_ESMS.Controllers
             return Json(new { success = false, message = "Invalid credentials!" });
         }
 
-        public void UpdateUserMasterField(int UserMaster_Code)
+        [HttpGet]
+        public IActionResult GetIsActiveUser()
         {
             try
             {
                 string connectionString = HttpContext.Session.GetString("ConnectionString");
+                string userMasterCode = HttpContext.Session.GetString("UserMaster_Code");
+                
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    return Json(new { success = false, message = "Session expired. Please login again." });
+                }
+
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    string procedureName = "USP_UpdateUserMaster";
-                    using (var command = new MySqlCommand($"CALL {procedureName}(@p_UserMaster_Code, @p_Mode, @p_IsActive)", connection))
+                    string procedureName = "USP_CheckUserIsActive";
+                    using (var command = new MySqlCommand($"CALL {procedureName}(@p_Mode, @p_Code, @p_IsActive, @p_IPAddress)", connection))
                     {
                         command.CommandType = CommandType.Text;
-                        command.Parameters.AddWithValue("@p_UserMaster_Code", UserMaster_Code);
-                        command.Parameters.AddWithValue("@p_Mode", "Update");
-                        command.Parameters.AddWithValue("@p_IsActive","Y");
+                        command.Parameters.AddWithValue("@p_Mode", "COUNT");
+                        command.Parameters.AddWithValue("@p_Code", string.IsNullOrEmpty(userMasterCode) ? 0 : Convert.ToInt32(userMasterCode));
+                        command.Parameters.AddWithValue("@p_IsActive", "Y");
+                        command.Parameters.AddWithValue("@p_IPAddress", "");
+                        
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows && reader.Read())
+                            {
+                                var result = new
+                                {
+                                    status = reader["Status"]?.ToString() ?? "N",
+                                    count = reader["Count"] != DBNull.Value ? Convert.ToInt32(reader["Count"]) : 0,
+                                    msg = reader["Msg"]?.ToString() ?? ""
+                                };
+                                return Json(new[] { result });
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+                return Json(new[] { new { status = "Y", count = 0, msg = "" } });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error fetching active user limit: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetUsersWithEmptyIsActive()
+        {
+            try
+            {
+                string connectionString = HttpContext.Session.GetString("ConnectionString");
+                
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    return Json(new { success = false, message = "Session expired. Please login again." });
+                }
+
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string procedureName = "USP_CheckUserIsActive";
+                    using (var command = new MySqlCommand($"CALL {procedureName}(@p_Mode,@p_Code,@p_IsActive,@p_IPAddress)", connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.AddWithValue("@p_Mode", "GETUSERS");
+                        command.Parameters.AddWithValue("@p_Code", 0);
+                        command.Parameters.AddWithValue("@p_IsActive", "Y");
+                        command.Parameters.AddWithValue("@p_IPAddress", "");
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            var users = new List<object>();
+                            while (reader.Read())
+                            {
+                                users.Add(new
+                                {
+                                    code = reader["Code"] != DBNull.Value ? Convert.ToInt32(reader["Code"]) : 0,
+                                    userID = reader["UserID"]?.ToString() ?? "",
+                                    userName = reader["UserName"]?.ToString() ?? "",
+                                    userMobileNo = reader["UserMobileNo"]?.ToString() ?? "",
+                                    emailID = reader["EmailID"]?.ToString() ?? ""
+                                });
+                            }
+                            return Json(users);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error fetching users: " + ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult UpdateUserMasterField(int UserMaster_Code)
+        {
+            try
+            {
+                string connectionString = HttpContext.Session.GetString("ConnectionString");
+                
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    return Json(new { success = false, message = "Session expired. Please login again." });
+                }
+
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string procedureName = "USP_CheckUserIsActive";
+                    using (var command = new MySqlCommand($"CALL {procedureName}(@p_Mode, @p_Code, @p_IsActive, @p_IPAddress)", connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.AddWithValue("@p_Mode", "UPDATE");
+                        command.Parameters.AddWithValue("@p_Code", UserMaster_Code);
+                        command.Parameters.AddWithValue("@p_IsActive", "N");
+                        command.Parameters.AddWithValue("@p_IPAddress", "");
                         int rowsAffected = command.ExecuteNonQuery();
                         connection.Close();
 
+                        if (rowsAffected > 0)
+                        {
+                            return Json(new { success = true, message = "User status updated successfully." });
+                        }
+                        else
+                        {
+                            return Json(new { success = false, message = "Failed to update user status." });
+                        }
                     }
                 }
             }
             catch (MySqlException ex)
             {
+                return Json(new { success = false, message = "Failed to update user status. Please try again." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error updating user status: " + ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult CheckUserStatus()
+        {
+            try
+            {
+                string connectionString = HttpContext.Session.GetString("ConnectionString");
+                string userMasterCode = HttpContext.Session.GetString("UserMaster_Code");
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    return Json(new { success = false, message = "Session expired. Please login again." });
+                }
+
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string procedureName = "USP_CheckUserIsActive";
+                    using (var command = new MySqlCommand($"CALL {procedureName}(@p_Mode, @p_Code, @p_IsActive, @p_IPAddress)", connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.AddWithValue("@p_Mode", "Status");
+                        command.Parameters.AddWithValue("@p_Code", Convert.ToInt32(userMasterCode));
+                        command.Parameters.AddWithValue("@p_IsActive", "Y");
+                        command.Parameters.AddWithValue("@p_IPAddress", "");
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows && reader.Read())
+                            {
+                                var result = new
+                                {
+                                    status = reader["IsActive"]?.ToString() ?? "N",
+                                    code = reader["Code"]?.ToString() ?? ""
+                                };
+                                return Json(new[] { result });
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+                return Json(new[] { new { status = "Y", count = 0, msg = "" } });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error fetching active user limit: " + ex.Message });
             }
         }
     }

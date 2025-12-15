@@ -49,7 +49,6 @@ namespace Bizsol_ESMS.Controllers
                     {
                         dt.Load(reader);
                     }
-                    connection.Close();
                 }
             }
             return View();

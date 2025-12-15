@@ -1,8 +1,12 @@
-﻿$(document).ready(function () {
+﻿
+
+$(document).ready(function () {
     UserMenuRightsList();
     GetPerPageSize();
     WarehouseNameForDefault();
     ItemMasterConfig();
+    GetIsActiveDetails();
+    GetFixparameter();
 });
 var authKeyData1 = JSON.parse(sessionStorage.getItem('authKey'));
 var authKeyData = sessionStorage.getItem('authKey');
@@ -191,6 +195,61 @@ function ItemMasterConfig() {
         },
         error: function (xhr, status, error) {
             toastr.error('Error Api/ShowItemConfig');
+        }
+    });
+}
+
+async function GetIsActiveDetails() {
+    let systemIP = '';
+
+    await GetPublicIPAsync()
+        .then(ip => {
+            systemIP = ip;
+        });
+    $.ajax({
+        url: `${baseUrl1}/api/Master/GetIsActiveDetails?UserMaster_Code=${userMasterCode}&IPAddress=${systemIP}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                if (response[0].IsActive == 'N') {
+                    logoutUser();
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error('Error Api/ShowItemConfig');
+        }
+    });
+}
+
+async function GetPublicIPAsync() {
+    try {
+        const response = await fetch('https://api.ipify.org');
+        const ip = await response.text();
+        return ip.trim();
+    }
+    catch (error) {
+        return '';
+    }
+}
+
+function GetFixparameter() {
+    $.ajax({
+        url: `${baseUrl1}/api/Master/GetFixparameter`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                sessionStorage.setItem('Fixparameter', JSON.stringify(response));
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error('Error Api/Fixparameter');
         }
     });
 }

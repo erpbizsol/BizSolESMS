@@ -37,7 +37,6 @@ namespace Bizsol_ESMS.Models
                         }
                         Report.DataSources.Add(new ReportDataSource("dt", dt));
                     }
-                    connection.Close();
                 }
             }
         }
@@ -64,7 +63,6 @@ namespace Bizsol_ESMS.Models
                         }
                         Report.DataSources.Add(new ReportDataSource("dt", dt));
                     }
-                    connection.Close();
                 }
             }
         }

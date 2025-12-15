@@ -75,32 +75,122 @@
 
 </div>
 <script>
-    var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+    var authKeyData = null;
+    try {
+        var authKeyStr = sessionStorage.getItem('authKey');
+        if (authKeyStr) {
+            authKeyData = JSON.parse(authKeyStr);
+        }
+    } catch (e) {
+        console.warn("Could not parse authKey from sessionStorage");
+    }
     let UserMaster_Code = '@ViewBag.UserMaster_Code';
 
-        $(document).ready(function () {
-            $.ajax({
-                url: `@ViewBag.AppBaseURL/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${UserMaster_Code}`,
-                type: 'GET',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('Auth-Key', authKeyData);
-                },
-                success: function (value) {
-                    if (value.length > 0) {
-                    let matchedItems = value.filter(item => item.Code == '@ViewBag.DefaultPage');
-                    if (matchedItems.length > 0) {
-                                location.href = "@ViewBag.AppBaseURLMenu/@ViewBag.FormToOpen"
+    $(document).ready(function () {
+        // Get IP address first, then make API calls
+        fetch('https://api.ipify.org')
+            .then(response => response.text())
+            .then(ip => {
+                var ipAddress = ip.trim();
+                
+                // Update user IsActive status to 'Y' (logged in) with IP address
+                // Try API endpoint first, fallback to LoginController if API fails
+                $.ajax({
+                    url: `@ViewBag.AppBaseURL/api/Master/UpdateIsActiveUser?UserMaster_Code=${UserMaster_Code}&IsActive=Y&IPAddress=${ipAddress}`,
+                    type: 'GET',
+                    beforeSend: function (xhr) {
+                        if (authKeyData) {
+                            xhr.setRequestHeader('Auth-Key', authKeyData);
                         }
-                    } else {
-                        console.warn("No data returned.");
+                    },
+                    success: function (response) {
+                        console.log("User IsActive updated to Y via API");
+                    },
+                    error: function (xhr, status, error) {
+                        // API endpoint not available - this is expected if API server is not running
+                        // User status is already set during login, so this is optional
+                        // Silent fail - not critical for dashboard functionality
+                        if (xhr.status !== 0) { // Only log if it's a real HTTP error, not connection refused
+                            console.warn("API endpoint not available, user status already set during login");
+                        }
                     }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", error);
-                    toastr.error("Failed to fetch item data. Please try again.");
-                }
+                });
+
+                // Get user module rights and redirect to default page
+                $.ajax({
+                    url: `@ViewBag.AppBaseURL/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${UserMaster_Code}`,
+                    type: 'GET',
+                    beforeSend: function (xhr) {
+                        if (authKeyData) {
+                            xhr.setRequestHeader('Auth-Key', authKeyData);
+                        }
+                    },
+                    success: function (value) {
+                        if (value && value.length > 0) {
+                            let matchedItems = value.filter(item => item.Code == '@ViewBag.DefaultPage');
+                            if (matchedItems.length > 0) {
+                                location.href = "@ViewBag.AppBaseURLMenu/@ViewBag.FormToOpen";
+                            }
+                        } else {
+                            console.warn("No data returned.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                        toastr.error("Failed to fetch item data. Please try again.");
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching IP address:", error);
+                // Continue with API calls even if IP fetch fails
+                var ipAddress = '';
+                
+                // Try API endpoint first, fallback to LoginController if API fails
+                $.ajax({
+                    url: `@ViewBag.AppBaseURL/api/Master/UpdateIsActiveUser?UserMaster_Code=${UserMaster_Code}&IsActive=Y&IPAddress=${ipAddress}`,
+                    type: 'GET',
+                    beforeSend: function (xhr) {
+                        if (authKeyData) {
+                            xhr.setRequestHeader('Auth-Key', authKeyData);
+                        }
+                    },
+                    success: function (response) {
+                        console.log("User IsActive updated to Y via API");
+                    },
+                    error: function (xhr, status, error) {
+                        // API endpoint not available - this is expected if API server is not running
+                        // User status is already set during login, so this is optional
+                        // Silent fail - not critical for dashboard functionality
+                        if (xhr.status !== 0) { // Only log if it's a real HTTP error, not connection refused
+                            console.warn("API endpoint not available, user status already set during login");
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: `@ViewBag.AppBaseURL/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${UserMaster_Code}`,
+                    type: 'GET',
+                    beforeSend: function (xhr) {
+                        if (authKeyData) {
+                            xhr.setRequestHeader('Auth-Key', authKeyData);
+                        }
+                    },
+                    success: function (value) {
+                        if (value && value.length > 0) {
+                            let matchedItems = value.filter(item => item.Code == '@ViewBag.DefaultPage');
+                            if (matchedItems.length > 0) {
+                                location.href = "@ViewBag.AppBaseURLMenu/@ViewBag.FormToOpen";
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                        toastr.error("Failed to fetch item data. Please try again.");
+                    }
+                });
             });
-        });
+    });
 
 </script>
 

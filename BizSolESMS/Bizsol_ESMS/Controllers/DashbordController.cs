@@ -1,6 +1,8 @@
 ﻿using Google.Apis.Admin.Directory.directory_v1.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using MySql.Data.MySqlClient;
+using System.Data;
 
 namespace Bizsol_ESMS.Controllers
 {
@@ -15,7 +17,13 @@ namespace Bizsol_ESMS.Controllers
         }
         public IActionResult Dashbord(string AuthKey)
         {
+            // Validate session
             string newconnectionStrings = HttpContext.Session.GetString("ConnectionString");
+            if (string.IsNullOrEmpty(newconnectionStrings))
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
             string UserMaster_Code = HttpContext.Session.GetString("UserMaster_Code");
             string UserID = HttpContext.Session.GetString("UserID");
             string UserName = HttpContext.Session.GetString("UserName");
@@ -49,7 +57,6 @@ namespace Bizsol_ESMS.Controllers
             ViewBag.UserMaster_Code = UserMaster_Code;
             ViewBag.AuthKey = jsonAuthKey;
             ViewBag.EsmsCompanyName = EsmsCompanyName;
-
             return View();
         }
     }

@@ -1,4 +1,5 @@
 ﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var G_Fixparameter = JSON.parse(sessionStorage.getItem('Fixparameter'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -11,6 +12,8 @@ let AccountList = [];
 let BrandList = [];
 let ItemDetail = [];
 let JsonData = [];
+let G_IsValidation = G_Fixparameter[0].IsValidation ? G_Fixparameter[0].IsValidation : 'Y';
+let G_IsUnloading = G_Fixparameter[0].IsUnloading ? G_Fixparameter[0].IsUnloading : 'Y';
 
 $(document).ready(function () {
     GetCurrentDate();
@@ -232,9 +235,15 @@ function ShowMRNMasterlist(Type) {
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = ["Challan No"];
-                const hiddenColumns = ["Code"];
+                let hiddenColumns = ["Code"];
                 const ColumnAlignment = {
                 };
+                if (G_IsValidation == 'N') {
+                    hiddenColumns.push("Validation Status");
+                }
+                if (G_IsUnloading == 'N') {
+                    hiddenColumns.push("Unloading Status");
+                }
                 const updatedResponse = response.map(item => ({
                     ...item,
                     "Unloading Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code},${item["PickList No"]})>${item["Unloading Status"]}</a>`,
@@ -318,7 +327,7 @@ function BackImport() {
 }
 
 async function Edit(code, Status) {
-    if (Status !== 'UNLOADING PENDING') {
+    if (Status !== 'UNLOADING PENDING' && G_IsUnloading == 'Y' && G_IsValidation == 'Y') {
         toastr.error("Un-Loading start you can`t edit !.");
         return;
     }
@@ -392,7 +401,7 @@ async function Edit(code, Status) {
 async function DeleteItem(code, Challan, status, button) {
     let tr = button.closest("tr");
     tr.classList.add("highlight");
-    if (status !== 'UNLOADING PENDING') {
+    if (status !== 'UNLOADING PENDING' && G_IsUnloading == 'Y' && G_IsValidation == 'Y') {
         toastr.error("Un-Loading start you can`t delete !.");
         return;
     }
