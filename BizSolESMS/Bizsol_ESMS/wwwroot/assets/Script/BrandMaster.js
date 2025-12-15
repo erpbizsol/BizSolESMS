@@ -118,8 +118,10 @@ function Save() {
                 toastr.error("An error occurred while saving the data.");
             }
         });
+
     }
 }
+
 
 async function Edit(code) {
   

@@ -15,8 +15,10 @@ let JsonData = [];
 let G_IsValidation = G_Fixparameter[0].IsValidation ? G_Fixparameter[0].IsValidation : 'Y';
 let G_IsUnloading = G_Fixparameter[0].IsUnloading ? G_Fixparameter[0].IsUnloading : 'Y';
 
+
 $(document).ready(function () {
     GetCurrentDate();
+
     $("#ERPHeading").text("Material Receipt Note");
     $("#txtImportWarehouse").val(DefaultWarehouse);
     $('#txtMRNDate').on('keydown', function (e) {

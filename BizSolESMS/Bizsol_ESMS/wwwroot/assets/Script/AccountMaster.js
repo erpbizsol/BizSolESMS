@@ -6,12 +6,14 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let CityList = [];
 let G_selectedCodes = [];
 $(document).ready(function () {
+
     $("#ERPHeading").text("Client Master");
     $('#txtAccounCode').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtAccountName").focus();
         }
     });
+
     $('#txtAccountName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtDisplayName").focus();

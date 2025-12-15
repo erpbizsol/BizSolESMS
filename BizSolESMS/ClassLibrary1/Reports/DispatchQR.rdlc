@@ -40,7 +40,6 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox32</rd:DefaultName>
                           <Top>0.03194in</Top>
-                          <Left>0cm</Left>
                           <Height>0.41162cm</Height>
                           <Width>3.38667cm</Width>
                           <Style>
@@ -72,7 +71,6 @@
                           </Paragraphs>
                           <rd:DefaultName>OrderNo</rd:DefaultName>
                           <Top>0.52801cm</Top>
-                          <Left>0cm</Left>
                           <Height>0.48838cm</Height>
                           <Width>3.38667cm</Width>
                           <ZIndex>1</ZIndex>
@@ -128,8 +126,6 @@
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>BoxNo</rd:DefaultName>
-                                            <Top>0cm</Top>
-                                            <Left>0cm</Left>
                                             <Height>0.48181cm</Height>
                                             <Width>3.38667cm</Width>
                                             <Style>
@@ -171,7 +167,6 @@
                           </TablixRowHierarchy>
                           <DataSetName>DispatchQRData</DataSetName>
                           <Top>1.19278cm</Top>
-                          <Left>0cm</Left>
                           <Height>0.48181cm</Height>
                           <Width>3.38667cm</Width>
                           <ZIndex>2</ZIndex>
@@ -195,6 +190,23 @@
                                   <TablixCell>
                                     <CellContents>
                                       <Rectangle Name="Rectangle10">
+                                        <ReportItems>
+                                          <Image Name="Image3">
+                                            <Source>Database</Source>
+                                            <Value>=Fields!QRCode.Value</Value>
+                                            <MIMEType>image/png</MIMEType>
+                                            <Sizing>FitProportional</Sizing>
+                                            <Top>0in</Top>
+                                            <Left>0.05556in</Left>
+                                            <Height>1.95888cm</Height>
+                                            <Width>1.68873cm</Width>
+                                            <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
+                                            </Style>
+                                          </Image>
+                                        </ReportItems>
                                         <KeepTogether>true</KeepTogether>
                                         <Style>
                                           <Border>
@@ -231,22 +243,6 @@
                             </Border>
                           </Style>
                         </Tablix>
-                        <Image Name="Image3">
-                          <Source>Database</Source>
-                          <Value>=Fields!QRCode.Value</Value>
-                          <MIMEType>image/png</MIMEType>
-                          <Sizing>FitProportional</Sizing>
-                          <Top>0.03194in</Top>
-                          <Left>1.38889in</Left>
-                          <Height>1.95888cm</Height>
-                          <Width>1.68873cm</Width>
-                          <ZIndex>4</ZIndex>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                          </Style>
-                        </Image>
                       </ReportItems>
                       <KeepTogether>true</KeepTogether>
                       <Style>
