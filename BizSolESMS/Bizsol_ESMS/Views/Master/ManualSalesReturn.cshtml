@@ -1,0 +1,354 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+<script src="~/assets/js/blockui.js"></script>
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+
+<style>
+
+    .tabs {
+        width: 100%;
+        max-width: 2000px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 0.7rem;
+    }
+
+    .tabSec {
+        color: white;
+        width: 117px;
+        height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        margin-top: -8px;
+        background: #1d4b7d;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 16px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+    .tab[disabled] {
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .datepicker td, .datepicker th {
+        border-radius: 20px !important;
+    }
+
+    .datepicker table tr td, .datepicker table tr td {
+        padding: 8px 9px !important;
+        height: 16px !important;
+    }
+
+    .datepicker table tfoot {
+        display: none;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .textCreatepage .tabs .fix-header {
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0 8px 9px;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+        height: 36px;
+    }
+
+    .shadow-sm {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        background-color: #e9e9ef;
+        margin-top: 15px;
+        border-top: 1px solid #c9cae7;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 50%;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+        border-radius: 20px;
+        background: #1d4b7d;
+        color: #fff;
+        padding: 6px;
+    }
+
+    .btn-danger {
+        background-color: #ab1624;
+    }
+
+    .highlight {
+        background-color: #f5c0bfc4;
+    }
+
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .container {
+        overflow: auto;
+        height: 81vh;
+    }
+
+    .breadcrumbs1 {
+        background: #dddde4;
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
+    }
+
+    .page-content {
+        padding: 3px 0;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d35950;
+        color: white;
+        padding: 35px 55px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10000;
+        font-size: 18px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .tabSec1 {
+        color: white;
+        width: 173px;
+        height: 36px;
+        float: inline-end;
+        font-size: 12px;
+        text-align: center;
+        border-top-right-radius: 40px;
+        border-bottom-left-radius: 40px;
+        line-height: 3;
+        margin-top: -8px;
+        background: #1d4b7d;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .breadcrumbs2 {
+        /* background: #dddde4; */
+        position: sticky;
+        top: 0;
+        background-color: #dddde4;
+        z-index: 1000;
+        padding: 8px 0px 0px 9px;
+        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
+        /* box-shadow: 0 1px 1px rgb(76 76 76 / 90%); */
+    }
+
+    /* Active tab styles */
+    .tab-section {
+        display: flex;
+        padding: 5px 7px;
+        margin: 0;
+        border: none;
+    }
+
+    .nav-item-btn {
+        background: #fffbff;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+        text-transform: capitalize;
+        padding: 10px 10px;
+        margin: 3px 10px 3px 0;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        border-bottom: 2px solid #275481;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+    }
+
+        .nav-item-btn.active {
+            background-color: #1c4e80;
+            color: white;
+            border: none;
+        }
+
+        .nav-item-btn:hover {
+            background-color: #e6e9ff;
+            color: #081a2c;
+        }
+
+    .active {
+        background-color: #4a7aaa;
+        color: white;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d35950;
+        color: white;
+        padding: 35px 55px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10000;
+        font-size: 18px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    /* End Active tab styles */
+</style>
+
+<div class="container">
+    <div id="txtCreatepage">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label class="col-form-label-sm fw-bold">Date<span class="text-danger">*</span></label>
+                                <input disabled type="txtDate" id="txtDate" class="form-control form-control-sm box_border" autocomplete="off">
+                            </div>
+
+                            <div class="col-md-3 col-sm-6">
+                                <label class="col-form-label-sm fw-bold">Client Name<span class="text-danger">*</span></label>
+                                <select id="txtVendorName" class="form-control form-control-sm box_border">
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6">
+                                <label class="col-form-label-sm fw-bold">Address<span class="text-danger">*</span></label>
+                                <input type="text" id="txtAddress" class="form-control form-control-sm box_border" placeholder="Address.." autocomplete="off" disabled>
+                            </div>
+
+                            <div class="col-md-3 col-sm-6">
+                                <label class="col-form-label-sm fw-bold">Order No<span class="text-danger">*</span></label>
+                                <select id="txtOrderNo" class="form-control form-control-sm box_border">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-md-3 col-sm-6">
+                                <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
+                                <audio id="BoxNoVoice" style="display: none;"><source src="~/assets/audio/BoxNoVoice.mp3" type="audio/mpeg" /></audio>
+                                <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product<span class="text-danger">*</span></label>
+                                <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" maxlength="200" placeholder="Scan Product.." onfocus="this.select()" disabled>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtPackedBy" class="col-form-label-sm fw-bold">Scan By<span class="text-danger">*</span></label>
+                                <input type="text" id="txtPackedBy" disabled class="box_border form-control form-control-sm" autocomplete="off" maxlength="50" placeholder="Packed By..">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="  text-end col-md-12" id="txtshow" style="display:none;">
+        <label></label>
+        <button type="button" class="btn btn-primary btn-height" title="Save All" id="txtSaveAll">Save All</button>
+    </div>
+    <div class="  text-end col-md-12" id="txtshowa" style="display:none;">
+        <label></label>
+        <button type="button" class="btn btn-primary btn-height" title="Save All" id="txtSaveAlls">Save All</button>
+    </div>
+    <div class="card-body mt-2" id="DataTable">
+        <div class="table-wrapper fixed-height-table">
+            <table id="table" class="table">
+                <thead id="table-header">
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginator -->
+        <div class="paginator" id="paginator-table">
+        </div>
+    </div>
+</div>
+<div id="overlay" class="overlay"></div>
+<div id="toast" class="toast-container"></div>
+<script src="~/assets/js/filter.js"></script>
+<script src="~/assets/script/manualsalesreturn.js"></script>
+
+<script>
+    const tabs = document.querySelectorAll('.nav-item-btn');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+
+</script>
