@@ -1,0 +1,7 @@
+# Visual Studio / MSBuild
+**/.vs/
+.vs/
+
+# Build outputs (optional — uncomment if not already covered elsewhere)
+# bin/
+# obj/
