@@ -5,6 +5,10 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bizsol_ESMS", "Bizsol_ESMS\Bizsol_ESMS.csproj", "{A2F1B18F-F390-4C94-82E1-FEB010B3C329}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatasetClass", "ClassLibrary1\DatasetClass.csproj", "{4CA57920-0D80-B257-1270-55400C079EA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "WorkerService\WorkerService.csproj", "{48D1988F-AA1B-3E5B-C53F-B584F25BB2F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{A2F1B18F-F390-4C94-82E1-FEB010B3C329}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2F1B18F-F390-4C94-82E1-FEB010B3C329}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2F1B18F-F390-4C94-82E1-FEB010B3C329}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CA57920-0D80-B257-1270-55400C079EA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CA57920-0D80-B257-1270-55400C079EA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CA57920-0D80-B257-1270-55400C079EA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CA57920-0D80-B257-1270-55400C079EA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48D1988F-AA1B-3E5B-C53F-B584F25BB2F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48D1988F-AA1B-3E5B-C53F-B584F25BB2F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48D1988F-AA1B-3E5B-C53F-B584F25BB2F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48D1988F-AA1B-3E5B-C53F-B584F25BB2F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

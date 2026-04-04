@@ -68,6 +68,10 @@ namespace Bizsol_ESMS.Controllers
         {
             return View();
         }
+        public IActionResult OrderConformation()
+        {
+            return View();
+        }
         #endregion  DispatchBoxValidation 
     }
 }

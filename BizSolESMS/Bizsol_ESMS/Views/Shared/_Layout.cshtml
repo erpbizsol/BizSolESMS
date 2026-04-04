@@ -1,4 +1,4 @@
-﻿
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,8 +10,8 @@
     <!--toastr-->
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
     <link href="~/assets/css/toastr.min.css" rel="stylesheet" />
-    @* Google Fonts *@
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">    @* End Google Fonts *@
+    @* Google Fonts — ESMS Profenna-style (display + UI) *@
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link href="~/assets/libs/datatables.net-bs4/css/datatables.bootstrap4.min.css" rel="stylesheet" />
     <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" />
     <!-- Responsive datatable examples -->
@@ -27,50 +27,24 @@
     <!-- App Css-->
     <link href="~/assets/css/app.min.css" rel="stylesheet" />
     <link href="~/assets/css/responsive.css" rel="stylesheet" />
+    <link href="~/assets/css/esms-layout-theme.css" rel="stylesheet" />
+    <link href="~/assets/css/esms-reference-design.css" rel="stylesheet" />
+    <link href="~/assets/css/esms-page-patterns.css" rel="stylesheet" />
+    <link href="~/assets/css/esms-forms-ui.css" rel="stylesheet" />
     <script src="~/assets/js/jquery-3.6.0.min.js"></script>
-
-    <style>
-       /*  .breadcrumbs1 {
-            background: #dddde4;
-            position: sticky;
-            top: 0;
-            background-color: #dddde4;
-            z-index: 1000;
-            padding: 8px 0 8px 9px;
-            border-top-right-radius: 5px;
-            border-top-left-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-            height: 36px;
-        } */
-        .Highlighted {
-            background-color: #FFD700 !important; /* Gold color */
-            color: black !important;
-        }
-    </style>
 </head>
-<body>
-    <div id="layout-wrapper">
+<body class="esms-profenna-body">
+    <div id="layout-wrapper" class="esms-profenna">
         <header id="page-topbar">
             <div class="navbar-header">
                 <div class="d-flex">
                     <!-- LOGO -->
                     <div class="navbar-brand-box">
-                        <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Dashbord/Dashbord" class="logo logo-dark">
-                            <span class="logo-sm">
-                                <img src="~/assets/images/final_logo-circle.jpg" alt="" height="30">
+                        <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Dashbord/Dashbord" class="logo logo-dark esms-brand-link">
+                            <span class="esms-brand-logo">
+                                <img src="~/assets/images/final_logo-circle.jpg" alt="WeBiz" height="34">
                             </span>
-                            <span class="logo-lg">
-                                <img src="~/assets/images/final_logo-circle.jpg" alt="" height="30"> <span class="logo-txt">WeBiz</span>
-                            </span>
-                        </a>
-
-                        <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Dashbord/Dashbord" class="logo logo-light">
-                            <span class="logo-sm">
-                                <img src="~/assets/images/logo-sm.svg" alt="" height="24">
-                            </span>
-                            <span class="logo-lg">
-                                <img src="~/assets/images/logo-sm.svg" alt="" height="24"> <span class="logo-txt">BizSol</span>
-                            </span>
+                            <span class="logo-txt esms-brand-title">WeBiz</span>
                         </a>
                     </div>
 
@@ -79,7 +53,8 @@
                         <i class="fa fa-fw fa-bars"></i>
                     </button>
 
-                    <div class="pt-4" style="padding-top: 20px;">
+                    <div class="esms-page-title-wrap">
+                        @* <p class="esms-kicker d-none d-md-block">BizSol ESMS</p> *@
                         <h4 class="mb-sm-0 font-size-16" id="ERPHeading">Dashboard</h4>
                     </div>
 
@@ -237,7 +212,7 @@
                     </div>
                 </div>
             </section> *@
-            <div class="container-fluid">
+            <div class="esms-main-panel">
                 <div class="page-content">
                     <main role="main" class="pb-3">
                         @RenderBody()
@@ -476,9 +451,48 @@
         // });
         $("#ERPUserName").text(sessionStorage.getItem('UserName'));
         $("#ERPCompanyCode").text('('+sessionStorage.getItem('EsmsCompanyName')+')');
+
+        /* Hamburger: clear stuck Bootstrap .active when focus leaves */
+        $(document).on('focusout blur', '#vertical-menu-btn', function () {
+            $(this).removeClass('active');
+        });
     </script>
     <script src="~/assets/script/logout.js"></script>
     <script src="~/assets/js/menu.js"></script>
+    <script>
+        /* SM sidebar: clamp first-level submenu height to space below row (CSS positions list under “Master”) */
+        (function ($) {
+            var PAD = 8;
+
+            function positionSmFlyout($li) {
+                if (document.body.getAttribute('data-sidebar-size') !== 'sm') return;
+                var li = $li[0];
+                var sub = li.querySelector(':scope > ul.sub-menu');
+                if (!sub) return;
+
+                requestAnimationFrame(function () {
+                    var liRect = li.getBoundingClientRect();
+                    var available = Math.max(120, window.innerHeight - liRect.bottom - PAD);
+                    sub.style.setProperty('max-height', available + 'px', 'important');
+                });
+            }
+
+            function clearSmFlyout($li) {
+                var li = $li[0];
+                if (!li) return;
+                var sub = li.querySelector(':scope > ul.sub-menu');
+                if (!sub) return;
+                sub.style.removeProperty('max-height');
+            }
+
+            $(document).on('mouseenter', '#layout-wrapper.esms-profenna #sidebar-menu > ul > li', function () {
+                positionSmFlyout($(this));
+            });
+            $(document).on('mouseleave', '#layout-wrapper.esms-profenna #sidebar-menu > ul > li', function () {
+                clearSmFlyout($(this));
+            });
+        })(jQuery);
+    </script>
     <script src="~/assets/script/common.js"></script>
     <script src="~/assets/js/checkoptionpermission.js"></script>
 </body>

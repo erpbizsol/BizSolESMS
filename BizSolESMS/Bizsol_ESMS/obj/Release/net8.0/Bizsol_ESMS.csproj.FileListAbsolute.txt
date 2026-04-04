@@ -190,3 +190,14 @@ D:\WebERP2.4Core\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\refint\Biz
 D:\WebERP2.4Core\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.pdb
 D:\WebERP2.4Core\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.genruntimeconfig.cache
 D:\WebERP2.4Core\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\ref\Bizsol_ESMS.dll
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.csproj.AssemblyReference.cache
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\rpswa.dswa.cache.json
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.GeneratedMSBuildEditorConfig.editorconfig
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.AssemblyInfoInputs.cache
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.AssemblyInfo.cs
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.csproj.CoreCompileInputs.cache
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.MvcApplicationPartsAssemblyInfo.cs
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.MvcApplicationPartsAssemblyInfo.cache
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.RazorAssemblyInfo.cache
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.RazorAssemblyInfo.cs
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Release\net8.0\Bizsol_ESMS.sourcelink.json

@@ -1,0 +1,109 @@
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+    ViewBag.Title = "Proof of Delivery";
+}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet" />
+<link href="~/assets/css/esms-proof-of-delivery.css" rel="stylesheet" />
+<div class="pod-page">
+    <div class="pod-shell">
+        <a href="@Url.Action("Login", "Login")" class="pod-back" title="Back to login">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to login
+        </a>
+
+        <div class="pod-card">
+            <div class="pod-card-header">
+                <div class="pod-badge">
+                    <span class="pod-badge-dot" aria-hidden="true"></span>
+                    Verification
+                </div>
+                <h1>Proof of delivery</h1>
+                <p>Scan the shipment QR, confirm the details below, then send the OTP to complete.</p>
+            </div>
+            <div id="podOtpBanner" class="pod-otp-banner" role="status" aria-live="polite" aria-atomic="true">
+                <div class="pod-otp-banner-label">Your OTP</div>
+                <div id="podOtpCode" class="pod-otp-code" aria-label="One time password"></div>
+                <p class="pod-otp-hint mb-0">Use this code to complete verification. Do not share it with anyone.</p>
+            </div>
+            <div class="pod-card-body pod-body-grid">
+                <div class="pod-scan-col">
+                <div class="pod-scan-panel">
+                    <div class="pod-scan-row">
+                        <div class="pod-scan-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.008v.008H6.75V6.75zm0 9.75h.008v.008H6.75v-.008zm9.75-9.75h.008v.008h-.008V6.75zm-3 9.75h.008v.008h-.008v-.008zm0-3.75h.008v.008h-.008v-.008zm0-3.75h.008v.008h-.008v-.008z" />
+                            </svg>
+                        </div>
+                        <div class="pod-scan-fields">
+                            <label for="txtQrScan" class="pod-scan-label">Scan or enter QR</label>
+                            <input type="text"
+                                   id="txtQrScan"
+                                   class="form-control pod-scan-input"
+                                   autocomplete="off"
+                                   spellcheck="false"
+                                   placeholder="Point scanner here or paste code"
+                                   maxlength="2000" />
+                        </div>
+                    </div>
+                    <p class="pod-hint">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Hardware scanners usually send <strong>Enter</strong> after the code. You can also press Enter after pasting.</span>
+                    </p>
+                    <div class="pod-camera-actions">
+                        <button type="button" class="pod-btn-camera" id="btnOpenCameraQr" data-bs-toggle="modal" data-bs-target="#podCameraModal" tabindex="-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Scan with camera
+                        </button>
+                    </div>
+                </div>
+                </div>
+
+                <div id="podDetailsSection" class="pod-details-wrap" aria-live="polite">
+                    <div class="pod-details-title">Shipment details</div>
+                    <div class="pod-table-wrap">
+                        <table class="table pod-table mb-0" id="tblPodDetails">
+                            <tbody id="tblPodDetailsBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="pod-actions">
+                        <button type="button" class="pod-btn-otp" id="btnSendOtp" disabled>Send OTP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="pod-footer-note">BizSol e-SMS · Proof of delivery</p>
+    </div>
+</div>
+
+<div id="podScanOverlay" class="pod-scan-overlay" aria-hidden="true"></div>
+<div id="podScanToast" class="pod-scan-toast" role="alert"></div>
+
+<div class="modal fade" id="podCameraModal" tabindex="-1" aria-labelledby="podCameraModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="podCameraModalLabel">Scan QR with camera</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-muted mb-2">Allow camera access when prompted. Point at the QR code until it reads automatically.</p>
+                <div id="podQrReader"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="~/assets/Script/ProofOfDelivery.js"></script>

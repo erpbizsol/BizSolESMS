@@ -1,5 +1,7 @@
-﻿let AppBaseURLMenu=window.location.href.toLowerCase().includes('local') == true ? 'https://localhost:7072' : 'https://web.bizsol.in/esms'
+let AppBaseURLMenu=window.location.href.toLowerCase().includes('local') == true ? 'https://localhost:7072' : 'https://web.bizsol.in/esms'
 $(document).ready(function () {
+
+    $('#txtProofOfDelivery').attr('href', `${AppBaseURLMenu}/Login/ProofOfDelivery`);
 
     $('#txtCompanyCode').on('keydown', function (e) {
         if (e.key === "Enter") {
@@ -31,7 +33,6 @@ $(document).ready(function () {
     } else {
         console.warn("CompanyCode cookie not found!");
     }
-
 });
 function getCookie(name) {
     let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -77,18 +78,22 @@ function Login() {
         data: JSON.stringify(formData),
         success: function (response) {
             if (response.success) {
-                CheckUserStatus(function (statusData) { 
-                    if (statusData && statusData.status === 'Y') {
-                        if (confirm("You are already logged in. Do you want to logout and login again?")) {
-                            CurrentUserLogOut(statusData.code);
-                            proceedWithLogin(response);
+                if (getDeviceType() === 'android') {
+                    CheckUserStatus(function (statusData) {
+                        if (statusData && statusData.status === 'Y') {
+                            if (confirm("You are already logged in. Do you want to logout and login again?")) {
+                                CurrentUserLogOut(statusData.code);
+                                proceedWithLogin(response);
+                            } else {
+                                return;
+                            }
                         } else {
-                            return;
+                            proceedWithLogin(response);
                         }
-                    } else {
-                        proceedWithLogin(response);
-                    }
-                });
+                    });
+                } else {
+                    proceedWithLogin(response);
+                }
             } else {
                 toastr.error(response.message);
             }
@@ -316,4 +321,14 @@ function CheckUserStatus(callback) {
             if (callback) callback(null);
         }
     });
+}
+
+/**
+ * Returns the device category from the user agent: "android" or "desktop".
+ * Non-Android browsers (including iOS Safari) return "desktop".
+ * @returns {'android'|'desktop'}
+ */
+function getDeviceType() {
+    var ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
+    return /Android/i.test(ua) ? 'android' : 'desktop';
 }

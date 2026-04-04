@@ -1,5 +1,7 @@
-﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+const FixParameter = JSON.parse(sessionStorage.getItem('Fixparameter'));
+let G_CompanyCode = FixParameter[0].CompanyCode == null ? "" : FixParameter[0].CompanyCode;
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
@@ -2110,7 +2112,7 @@ function CloseDownloadModal() {
 function DownloadReportPdf() {
     var Code = $("#hfDownloadCode").val();
     $.ajax({
-        url: `${AppBaseURLMenu}/RDLC/PSRReport?Code=${Code}&UserName=${G_UserName}&AuthKey=${authKeyData}`,
+        url: `${AppBaseURLMenu}/RDLC/PSRReportQR?Code=${Code}&UserName=${G_UserName}&AuthKey=${authKeyData}&CompanyCode=${G_CompanyCode}`,
         type: 'GET',
         xhrFields: {
             responseType: 'blob'
@@ -2493,3 +2495,4 @@ function OpenManualForMRP(element, itemCode) {
 	}
 	SaveMRPByItemInput(element, itemCode);
 }
+

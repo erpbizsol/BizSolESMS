@@ -1,67 +1,8 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
     <title>Login ESMS</title>
-    <style>
-        body {
-       /*  background-color: #191010 !important; */
-         /* background-image: url('../assets/images/login4.jpg'); */
-       /*  background-image: url("https://cdn.pixabay.com/photo/2019/09/24/16/05/storm-4501645_1280.jpg");  */
-       /*  background-repeat: no-repeat, repeat;
-        background-position: center; 
-        background-size: cover;  */
-        }
-
-        .login-containers {
-            padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 11px 1px #999999;
-            max-width: 370px;
-            margin: 0 auto;
-            margin-top: 5rem;
-            font-size:12px;
-           /*  margin-left: auto;
-            margin-right: auto;
-            display: block; */
-
-
-        /* background: #1a11117a;
-       
-        color: white;
-        box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75); */
-        }
-
-        #btnValidateCompany, #btnProceed {
-            width: 100%;
-        }
-       
-    .Esms-logo {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-       /*  border-style: dotted;
-        border-color: #275481; */
-        position: relative;
-        bottom: 4rem;
-        border: 1px solid #e0e4e8;
-       /*  box-shadow: 0 0px 2px rgb(181 183 181); */
-    }
-
-    .Esms-login-logo {
-        height: 50px;
-    }
-
-    .login-form-text {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-        font-size: 1rem !important;
-        font-weight: 400 !important;
-    }
-
-    .login-test-field {
-        padding: 4px .75rem 0.59rem .75rem;
-    }
-
-    </style>
+    <link href="~/assets/css/esms-login.css" rel="stylesheet" />
 
     <div class="login-containers card">
         <div class="text-center Esms-login-logo">
@@ -90,7 +31,11 @@
                 <label for="txtPassword" class="form-label login-form-text">Password</label>
                 <input id="txtPassword" name="Password" class="login-test-field form-control login-form-text" placeholder="Enter Password" autocomplete="off" type="password" required>
                 </div>
-            <input type="button" class="login-test-field btn btn-primary login-form-text mt-3" id="btnProceed" value="Login" />
+                <input type="button" class="login-test-field btn btn-primary login-form-text mt-3" id="btnProceed" value="Login" />
+                
+            </div>
+            <div class="mt-2 text-end" style="font-size:15px;">
+                <a href="" id="txtProofOfDelivery">Click here for POD</a>
             </div>
         </form>
     </div>

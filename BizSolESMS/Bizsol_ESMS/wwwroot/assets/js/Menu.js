@@ -1,4 +1,4 @@
-﻿
+
 
 $(document).ready(function () {
     UserMenuRightsList();
@@ -14,6 +14,61 @@ var authKeyData = sessionStorage.getItem('authKey');
     const userMasterCode = authKeyData1.UserMaster_Code;
     var baseUrl1 = sessionStorage.getItem('AppBaseURL');
     var baseUrl = sessionStorage.getItem('AppBaseURLMenu');
+
+    /**
+     * Feather icons pool (each menu label maps to one; same label => same icon every time).
+     * Different labels usually get different icons via hash; semantic hints override when useful.
+     */
+    var MENU_FEATHER_ICONS = [
+        'home', 'grid', 'layers', 'package', 'box', 'archive', 'database', 'server', 'hard-drive', 'cpu',
+        'file-text', 'file', 'folder', 'clipboard', 'list', 'book-open', 'book',
+        'bar-chart-2', 'bar-chart', 'pie-chart', 'trending-up', 'trending-down', 'activity',
+        'shopping-cart', 'shopping-bag', 'truck', 'map-pin', 'map', 'navigation',
+        'users', 'user', 'user-check', 'shield', 'lock', 'unlock', 'key',
+        'settings', 'tool', 'sliders', 'filter', 'search', 'crosshair',
+        'bell', 'mail', 'message-circle', 'calendar', 'clock', 'watch',
+        'tag', 'bookmark', 'star', 'award', 'gift', 'target',
+        'monitor', 'smartphone', 'tablet', 'tv', 'camera', 'image',
+        'credit-card', 'dollar-sign', 'percent', 'briefcase',
+        'share-2', 'link', 'link-2', 'external-link', 'globe',
+        'download', 'upload', 'cloud', 'refresh-cw', 'repeat', 'shuffle',
+        'edit-3', 'edit-2', 'eye', 'printer', 'save', 'copy',
+        'trash-2', 'scissors', 'paperclip', 'inbox', 'send', 'phone',
+        'feather', 'anchor', 'compass', 'flag', 'life-buoy', 'umbrella',
+        'sun', 'moon', 'zap', 'aperture', 'hexagon', 'triangle'
+    ];
+
+    function menuLabelHash(str) {
+        var s = String(str || '');
+        var h = 0;
+        for (var i = 0; i < s.length; i++) {
+            h = ((h << 5) - h) + s.charCodeAt(i);
+            h |= 0;
+        }
+        return Math.abs(h);
+    }
+
+    /**
+     * Distinct feather icon per menu name (stable). Optional salt shifts nested items so names match fewer collisions.
+     * @param semanticOnlyRoot - if true, apply keyword hints only for main module groups (not every "… Master" child).
+     */
+    function featherIconForLabel(name, salt, semanticOnlyRoot) {
+        var s = (name || '').trim();
+        if (!s) return 'circle';
+        var lower = s.toLowerCase();
+        if (semanticOnlyRoot) {
+            if (lower === 'master' || lower.indexOf('master') === 0) return 'layers';
+            if (lower.indexOf('transaction') === 0) return 'shuffle';
+            if (lower.indexOf('report') === 0) return 'bar-chart-2';
+            if (lower.indexOf('config') === 0) return 'settings';
+            if (lower.indexOf('admin') === 0) return 'shield';
+            if (lower.indexOf('dispatch') === 0) return 'truck';
+            if (lower.indexOf('order') === 0) return 'shopping-cart';
+        }
+
+        var idx = menuLabelHash(lower + (salt != null ? ':' + salt : '')) % MENU_FEATHER_ICONS.length;
+        return MENU_FEATHER_ICONS[idx];
+    }
 
     //CRMDashboardService.GetUserDetails()
     //    .then(function (res) {
@@ -40,7 +95,7 @@ function UserMenuRightsList() {
                             var hasArrow = childMenuHtml ? 'has-arrow' : '';
                             menuHtml += '<li>';
                             menuHtml += '<a href="javascript:void(0);" class="menu-toggle ' + hasArrow + '">';
-                            menuHtml += '<span class="iconBg"><i class="side-menu-icon" data-feather="grid"></i></span>';
+                            menuHtml += '<span class="iconBg"><i class="side-menu-icon" data-feather="' + featherIconForLabel(item.ModuleDesp, 'root', true) + '"></i></span>';
                             menuHtml += '<span>' + item.ModuleDesp + '</span>';
                             // Add arrow if submenu exists (always point right initially)
                             //menuHtml += childMenuHtml ? '<i class="arrow-icon" data-feather="chevron-right"></i>' : '';
@@ -110,8 +165,10 @@ function getChildMenu(value, masterCode) {
         if (item.MasterModuleCode === masterCode) {
             var subChildMenuHtml = getChildMenu(value, item.Code);
             var hasArrow = subChildMenuHtml ? 'has-arrow' : '';
+            var subIcon = featherIconForLabel(item.ModuleDesp, 'c' + item.Code);
             childMenuHtml += '<li>';
             childMenuHtml += '<a href="' + baseUrl + '/' + item.FormToOpen + '" class="menu-toggle ' + hasArrow + '">';
+            childMenuHtml += '<span class="esms-submenu-icon"><i data-feather="' + subIcon + '"></i></span>';
             childMenuHtml += '<span>' + item.ModuleDesp + '</span>';
             // Add arrow if submenu exists (always point right initially)
             //childMenuHtml += subChildMenuHtml ? '<i class="arrow-icon" data-feather="chevron-right"></i>' : '';
