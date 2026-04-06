@@ -29,6 +29,7 @@
     <link href="~/assets/css/responsive.css" rel="stylesheet" />
     <link href="~/assets/css/esms-layout-theme.css" rel="stylesheet" />
     <link href="~/assets/css/esms-reference-design.css" rel="stylesheet" />
+    <link href="~/assets/css/esms-motion.css" rel="stylesheet" />
     <link href="~/assets/css/esms-page-patterns.css" rel="stylesheet" />
     <link href="~/assets/css/esms-forms-ui.css" rel="stylesheet" />
     <script src="~/assets/js/jquery-3.6.0.min.js"></script>
@@ -377,6 +378,8 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <div id="sidebar-overlay"></div>
+    @* Modals here (direct under body) so z-index stacks above .modal-backdrop — nested modals under .esms-main-panel were unclickable *@
+    @await RenderSectionAsync("ModalDialogs", required: false)
     <!--toastr-->
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     @* "toast-top-right": Top - right corner(default )
@@ -494,6 +497,28 @@
         })(jQuery);
     </script>
     <script src="~/assets/script/common.js"></script>
+    <script>
+        /* ─── Global modal teleport ────────────────────────────────────────────────
+         * Bootstrap appends .modal-backdrop directly to <body>.
+         * Any .modal that lives inside #layout-wrapper sits in a nested stacking
+         * context, so the backdrop always paints above it — the dialog looks dimmed
+         * and buttons stop responding.
+         * Fix: the moment ANY modal is about to show, move it to <body> so it shares
+         * the same stacking context as .modal-backdrop and wins (z-index 10100 > 10095).
+         * The Bootstrap Modal instance stays attached to the element (it's stored via
+         * a WeakMap on the element itself), so all JS that calls
+         *   bootstrap.Modal.getInstance(el)  or  new bootstrap.Modal(el)
+         * continues to work without change.
+         * ─────────────────────────────────────────────────────────────────────── */
+        (function () {
+            document.addEventListener('show.bs.modal', function (e) {
+                var modal = e.target;
+                if (modal && modal.parentElement && modal.parentElement !== document.body) {
+                    document.body.appendChild(modal);
+                }
+            }, true);
+        })();
+    </script>
     <script src="~/assets/js/checkoptionpermission.js"></script>
 </body>
 </html>

@@ -229,14 +229,16 @@ body .datepicker table thead th {
     color: #475569;
 }
 
-/* —— OTP modal —— */
-#layout-wrapper.esms-profenna .oc-otp-backdrop {
-    background: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(6px);
-    border-radius: 16px;
+/* —— OTP modal ——
+   Bootstrap already provides .modal-backdrop (full-page dim). Do not add a second
+   dark “backdrop” inside .modal-content — it looked like a stacked layer + heavy shadow. */
+body.esms-profenna-body #ocOtpModal .oc-otp-backdrop {
+    background: transparent;
+    border-radius: 0;
+    /* keep horizontal padding from markup (p-2 p-sm-3); no extra dimming */
 }
 
-#layout-wrapper.esms-profenna .oc-otp-card {
+body.esms-profenna-body #ocOtpModal .oc-otp-card {
     position: relative;
     max-width: 400px;
     margin: 0 auto;
@@ -244,11 +246,13 @@ body .datepicker table thead th {
     background: #ffffff;
     border-radius: 16px;
     border: 1px solid rgba(15, 23, 42, 0.08);
-    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.2);
+    box-shadow:
+        0 4px 6px rgba(15, 23, 42, 0.05),
+        0 18px 48px rgba(15, 23, 42, 0.12);
     text-align: center;
 }
 
-#layout-wrapper.esms-profenna .oc-otp-card--error {
+body.esms-profenna-body #ocOtpModal .oc-otp-card--error {
     animation: esms-oc-shake 0.45s ease;
     border-color: rgba(239, 68, 68, 0.45);
 }
@@ -261,32 +265,32 @@ body .datepicker table thead th {
     80% { transform: translateX(4px); }
 }
 
-#layout-wrapper.esms-profenna .oc-otp-icon {
+body.esms-profenna-body #ocOtpModal .oc-otp-icon {
     width: 56px;
     height: 56px;
     margin: 0 auto 1rem;
     border-radius: 14px;
-    background: linear-gradient(135deg, #3c56ab 0%, #07227e 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #4f46e5;
+    color: #ffffff;
     font-size: 1.5rem;
 }
 
-#layout-wrapper.esms-profenna .oc-otp-title {
+body.esms-profenna-body #ocOtpModal .oc-otp-title {
     font-size: 1.2rem;
     font-weight: 700;
     color: #0f172a;
     margin-bottom: 0.35rem;
 }
 
-#layout-wrapper.esms-profenna .oc-otp-sub {
+body.esms-profenna-body #ocOtpModal .oc-otp-sub {
     font-size: 0.875rem;
     color: #64748b;
 }
 
-#layout-wrapper.esms-profenna .oc-otp-wrap {
+body.esms-profenna-body #ocOtpModal .oc-otp-wrap {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -298,7 +302,7 @@ body .datepicker table thead th {
     box-sizing: border-box;
 }
 
-#layout-wrapper.esms-profenna .oc-otp-digit {
+body.esms-profenna-body #ocOtpModal .oc-otp-digit {
     flex: 1 1 0;
     min-width: 1.25rem;
     width: auto !important;
@@ -315,40 +319,40 @@ body .datepicker table thead th {
 }
 
 @media (max-width: 575.98px) {
-    #layout-wrapper.esms-profenna .oc-otp-card {
+    body.esms-profenna-body #ocOtpModal .oc-otp-card {
         padding-left: 0.85rem;
         padding-right: 0.85rem;
     }
 
-    #layout-wrapper.esms-profenna .oc-otp-wrap {
+    body.esms-profenna-body #ocOtpModal .oc-otp-wrap {
         gap: 0.22rem;
     }
 
-    #layout-wrapper.esms-profenna .oc-otp-digit {
+    body.esms-profenna-body #ocOtpModal .oc-otp-digit {
         max-width: none;
         min-width: 0;
         height: 2.5rem !important;
     }
 }
 
-#layout-wrapper.esms-profenna .oc-otp-digit:focus {
+body.esms-profenna-body #ocOtpModal .oc-otp-digit:focus {
     border-color: #6366f1 !important;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
 }
 
-#layout-wrapper.esms-profenna .oc-otp-digit--err {
+body.esms-profenna-body #ocOtpModal .oc-otp-digit--err {
     border-color: #ef4444 !important;
     background: #fef2f2 !important;
 }
 
-#layout-wrapper.esms-profenna .oc-otp-msg {
+body.esms-profenna-body #ocOtpModal .oc-otp-msg {
     min-height: 1.25rem;
     font-size: 0.8125rem;
     color: #dc2626;
     font-weight: 600;
 }
 
-#layout-wrapper.esms-profenna .btn-oc-verify {
+body.esms-profenna-body #ocOtpModal .btn-oc-verify {
     width: 100%;
     margin-top: 0.5rem;
     border-radius: 10px;
@@ -426,5 +430,18 @@ body .modal .modal-dialog.modal-dialog-centered {
     margin-right: auto;
     min-height: calc(100vh - 2rem) !important;
     min-height: calc(100dvh - 2rem) !important;
+}
+
+/* Keep dialogs within the visible screen (short viewports, on-screen keyboard). */
+body .modal .modal-dialog:not(.modal-dialog-scrollable) {
+    max-height: calc(100dvh - 1.5rem);
+    overflow-y: auto;
+}
+
+/* Notched phones / home indicator */
+body .modal {
+    padding-left: max(0.5rem, env(safe-area-inset-left));
+    padding-right: max(0.5rem, env(safe-area-inset-right));
+    padding-bottom: env(safe-area-inset-bottom);
 }
 

@@ -226,8 +226,31 @@
             </div>
         </div>
     </div>
-    <div class="modal position-absolute" id="staticBackdrop" style="padding-top: 101px;" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+
+    <div id="overlay" class="overlay"></div>
+    <div id="toast" class="toast-container"></div>
+</div>
+<div style="display:none;">
+      <input type="text" id="txtCode" placeholder="Enter Text">
+       <div id="qrcodeview" style="margin-top:20px"></div>
+</div>
+<script src="~/assets/js/filter.js"></script>
+
+<script>
+    const tabs = document.querySelectorAll('.nav-item-btn');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+
+</script>
+
+@section ModalDialogs {
+    @* Rendered next to <body> children — same stacking context as .modal-backdrop so the dialog stays above the dimmer *@
+    <div class="modal fade" id="staticBackdrop" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="modal-header tab-header" style="background-color:#033764">
@@ -262,8 +285,8 @@
             </div>
         </div>
     </div>
-    <div class="modal position-absolute" id="DownloadModal" style="padding-top: 101px;padding-left: 30px;padding-right: 30px;" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+    <div class="modal fade" id="DownloadModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered px-3">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="modal-header tab-header" style="background-color:#033764">
@@ -292,31 +315,8 @@
                             <button type="button" class="btn btn-dark form-control mt-2" onclick="DownloadDispatchQR()">Dispatch QR</button>
                         </div>
                     </div>
-
-                    @* <div class="text-right">
-                        <button type="button" class="btn btn-danger btn-height" onclick="CloseDownloadModal()">Close</button>
-                    </div> *@
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="overlay" class="overlay"></div>
-    <div id="toast" class="toast-container"></div>
-</div>
-<div style="display:none;">
-      <input type="text" id="txtCode" placeholder="Enter Text">
-       <div id="qrcodeview" style="margin-top:20px"></div>
-</div>
-<script src="~/assets/js/filter.js"></script>
-
-<script>
-    const tabs = document.querySelectorAll('.nav-item-btn');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-        });
-    });
-
-</script>
+}

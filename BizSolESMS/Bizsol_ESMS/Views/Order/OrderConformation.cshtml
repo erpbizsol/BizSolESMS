@@ -11,7 +11,7 @@
 
 <div class="oc-page esms-order-confirmation">
     <div class="container-fluid oc-inner pt-1 pt-md-2">
-        <div id="txtListpage">
+        <div>
             <div class="oc-card oc-card--filters">
                 <div class="oc-card-title">Date range</div>
                 <div class="row">
@@ -50,32 +50,35 @@
     </div>
 </div>
 
-<div class="modal fade" id="ocOtpModal" tabindex="-1" role="dialog" aria-labelledby="ocOtpModalTitle" aria-hidden="true" data-backdrop="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content border-0 bg-transparent shadow-none">
-            <div class="oc-otp-backdrop rounded-lg p-2 p-sm-3">
-                <div class="oc-otp-card" id="ocOtpCard">
-                    <button type="button" class="btn-close position-absolute" style="right: 12px; top: 8px; z-index: 2;" data-bs-dismiss="modal" aria-label="Close" id="btnOcOtpClose"></button>
-                    <div class="oc-otp-icon">
-                        <i class="fa-solid fa-shield-halved"></i>
+<script src="~/assets/Script/OrderConformation.js"></script>
+<script src="~/assets/js/filter.js"></script>
+
+@section ModalDialogs {
+    @* No dimming layer — backdrop disabled (data-bs-backdrop="false") *@
+    <div class="modal fade" id="ocOtpModal" tabindex="-1" role="dialog" aria-labelledby="ocOtpModalTitle" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 bg-transparent shadow-none">
+                <div class="oc-otp-backdrop rounded-lg p-2 p-sm-3">
+                    <div class="oc-otp-card" id="ocOtpCard">
+                        <button type="button" class="btn-close position-absolute" style="right: 12px; top: 8px; z-index: 2;" data-bs-dismiss="modal" aria-label="Close" id="btnOcOtpClose"></button>
+                        <div class="oc-otp-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="oc-otp-title" id="ocOtpModalTitle">Enter OTP</div>
+                        <p class="oc-otp-sub mb-2">We sent a code to verify order <code id="ocOtpOrderLabel">—</code></p>
+                        <div class="oc-otp-wrap" id="ocOtpInputs" aria-label="One time password">
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="one-time-code" aria-label="Digit 1" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 2" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 3" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 4" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 5" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 6" />
+                        </div>
+                        <div class="oc-otp-msg" id="ocOtpErrorMsg"></div>
+                        <button type="button" class="btn btn-primary btn-oc-verify" id="btnOcOtpVerify">Verify &amp; continue</button>
                     </div>
-                    <div class="oc-otp-title" id="ocOtpModalTitle">Enter OTP</div>
-                    <p class="oc-otp-sub mb-2">We sent a code to verify order <code id="ocOtpOrderLabel">—</code></p>
-                    <div class="oc-otp-wrap" id="ocOtpInputs" aria-label="One time password">
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="one-time-code" aria-label="Digit 1" />
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 2" />
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 3" />
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 4" />
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 5" />
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 6" />
-                    </div>
-                    <div class="oc-otp-msg" id="ocOtpErrorMsg"></div>
-                    <button type="button" class="btn btn-primary btn-oc-verify" id="btnOcOtpVerify">Verify &amp; continue</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<script src="~/assets/Script/OrderConformation.js"></script>
-<script src="~/assets/js/filter.js"></script>
+}

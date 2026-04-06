@@ -54,7 +54,8 @@ function getOcOtpModalBs() {
     if (!el || typeof bootstrap === 'undefined' || !bootstrap.Modal) {
         return null;
     }
-    return bootstrap.Modal.getOrCreateInstance(el);
+    /* No full-screen dim (.modal-backdrop) — matches data-bs-backdrop="false" on markup */
+    return bootstrap.Modal.getOrCreateInstance(el, { backdrop: false, keyboard: true });
 }
 function showOcOtpModal() {
     var m = getOcOtpModalBs();

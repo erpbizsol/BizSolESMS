@@ -5,17 +5,28 @@
 
 body.esms-profenna-body,
 #layout-wrapper.esms-profenna {
-    --esms-header-bg: #2c315e;
-    --esms-menu-bg: #2c315e;
-    --esms-menu-elevated: #383e6e;
-    --esms-menu-hover: #454d84;
+    /* Top bar + rail: shared tokens; header chrome is light on blue */
+    --esms-header-bg: #3a4552;
+    --esms-header-fg: #ffffff;
+    --esms-header-muted: rgba(255, 255, 255, 0.72);
+    --esms-header-accent: #7dd3fc;
+    --esms-menu-bg: #3a4552;
+    --esms-submenu-fg: #ffffff;
+    --esms-submenu-fg-panel: #1e293b;
+    --esms-menu-elevated: #ffffff;
+    --esms-menu-hover: rgba(255, 255, 255, 0.12);
     --esms-menu-cyan: #7dd3fc;
+    --esms-menu-text: #ffffff;
+    --esms-menu-dim: rgba(255, 255, 255, 0.65);
     --esms-canvas: #ffffff;
     --esms-surface: #ffffff;
-    --esms-table-header-start: #3b5bdb;
-    --esms-table-header-end: #2563eb;
-    --esms-pill-active-start: rgba(125, 211, 252, 0.38);
-    --esms-pill-active-end: rgba(129, 140, 248, 0.28);
+    /* Table headers — blue only (aligned with shell) */
+    --esms-table-header-start: #1f7bc8;
+    --esms-table-header-end: #1f8acb;
+    /* Selected leaf — blue pill (white text), matches menu gradient family */
+    --esms-pill-active-start: #2d8fd4;
+    --esms-pill-active-end: #1f8acb;
+    --esms-menu-gradient-end: #1f8acb;
     /* High-contrast content (reduces “blurry” grey UI) */
     --esms-text-strong: #212529;
     --esms-text-label: #1e293b;
@@ -26,11 +37,16 @@ body.esms-profenna-body,
 
 body.esms-profenna-body {
     background-color: #ffffff !important;
+    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 /* Main workspace — pure white (content shell matches @RenderBody region) */
 #layout-wrapper.esms-profenna .main-content {
     background: #ffffff !important;
+    /* Match visible screen height when mobile browser chrome shows/hides */
+    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 #layout-wrapper.esms-profenna .page-content,
@@ -59,7 +75,7 @@ body.esms-profenna-body,
 }
 
 #layout-wrapper.esms-profenna .esms-main-panel .table tbody a {
-    color: #1e3a8a;
+    color: #2563eb;
     font-weight: 600;
 }
 
@@ -68,6 +84,7 @@ body.esms-profenna-body,
     font-weight: 600;
     font-size: 1.25rem;
     letter-spacing: 0.02em;
+    color: #ffffff !important;
 }
 
 /* Sidebar — “MAIN MENU” kicker */
@@ -84,19 +101,31 @@ body.esms-profenna-body,
     margin-bottom: 0.15rem;
 }
 
-/* Current page leaf — pill highlight (reference) */
+/* Current page leaf — blue pill (shell tones), all foreground white */
 #layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active {
     background: linear-gradient(90deg, var(--esms-pill-active-start), var(--esms-pill-active-end)) !important;
     border-left: none !important;
     border-radius: 999px !important;
     color: #fff !important;
     font-weight: 600 !important;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+    box-shadow: 0 4px 16px rgba(31, 138, 203, 0.45);
 }
 
-#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active .esms-submenu-icon svg {
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active .esms-submenu-icon,
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active .esms-submenu-icon svg,
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active svg {
     color: #fff !important;
     stroke: #fff !important;
+    fill: #fff !important;
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active > span:not(.esms-submenu-icon) {
+    color: #fff !important;
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active:hover {
+    background: linear-gradient(90deg, var(--esms-pill-active-start), var(--esms-pill-active-end)) !important;
+    color: #fff !important;
 }
 
 /* Fallback if .active lands on non-sub-menu (rare) */
@@ -104,6 +133,8 @@ body.esms-profenna-body,
     border-radius: 999px !important;
     border-left: none !important;
     background: linear-gradient(90deg, var(--esms-pill-active-start), var(--esms-pill-active-end)) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(31, 138, 203, 0.45);
 }
 
 /* Cards — visible edge on white canvas */
@@ -115,9 +146,31 @@ body.esms-profenna-body,
     color: var(--esms-text-strong);
 }
 
-/* Bootstrap / plain tables — compact header row */
+/* Left rail — slate → blue vertical gradient */
+#layout-wrapper.esms-profenna .vertical-menu {
+    background-color: var(--esms-menu-bg) !important;
+    background-image: linear-gradient(180deg, var(--esms-menu-bg) 0%, var(--esms-menu-gradient-end) 100%) !important;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.2);
+}
+
+#layout-wrapper.esms-profenna .vertical-menu > [data-simplebar],
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-wrapper,
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-mask,
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-offset,
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-content-wrapper,
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-content {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu {
+    background-color: var(--esms-menu-bg) !important;
+    background-image: linear-gradient(180deg, var(--esms-menu-bg) 0%, var(--esms-menu-gradient-end) 100%) !important;
+}
+
+/* Bootstrap / plain tables — compact header + readable cell grid */
 #layout-wrapper.esms-profenna .esms-main-panel .table thead th {
-    background: linear-gradient(180deg, var(--esms-table-header-start) 0%, var(--esms-table-header-end) 100%) !important;
+    background: linear-gradient(135deg, var(--esms-table-header-start) 0%, var(--esms-table-header-end) 100%) !important;
     color: #fff !important;
     border-color: transparent !important;
     font-weight: 600;
@@ -155,7 +208,7 @@ body.esms-profenna-body,
     background: #ffffff;
 }
 
-/* DataTables — match reference blue header */
+/* DataTables — match table header gradient */
 #layout-wrapper.esms-profenna .esms-main-panel table.dataTable tbody td,
 #layout-wrapper.esms-profenna .esms-main-panel table.dataTable tbody th {
     border-color: rgba(33, 37, 41, 0.14) !important;
@@ -164,7 +217,7 @@ body.esms-profenna-body,
 
 #layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead th,
 #layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead td {
-    background: linear-gradient(180deg, var(--esms-table-header-start) 0%, var(--esms-table-header-end) 100%) !important;
+    background: linear-gradient(135deg, var(--esms-table-header-start) 0%, var(--esms-table-header-end) 100%) !important;
     color: #fff !important;
     border-bottom: none !important;
     padding: 0.35rem 0.55rem !important;
@@ -203,16 +256,16 @@ body.esms-profenna-body,
     line-height: 1.35;
 }
 
-/* Primary buttons — indigo family */
+/* Primary buttons — match shell blues */
 #layout-wrapper.esms-profenna .esms-main-panel .btn-primary {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    background: linear-gradient(135deg, var(--esms-table-header-start) 0%, var(--esms-table-header-end) 100%);
     border: none;
     border-radius: 10px;
     font-weight: 600;
 }
 
 #layout-wrapper.esms-profenna .esms-main-panel .btn-primary:hover {
-    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    background: linear-gradient(135deg, #1a6eb8 0%, #1880c0 100%);
 }
 
 /* Footer stays light on canvas */
@@ -230,10 +283,11 @@ body.esms-profenna-body,
     gap: 1rem;
     padding: 1.2rem 1.35rem;
     border-radius: 14px;
-    background: linear-gradient(120deg, #8b7cf8 0%, #6a5acd 42%, #483d8b 100%);
-    color: #fff;
+    background: linear-gradient(118deg, #eff6ff 0%, #e0e7ff 45%, #f5f3ff 88%);
+    color: #0f172a;
     margin-bottom: 1.15rem;
-    box-shadow: 0 12px 36px rgba(72, 61, 139, 0.28);
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 #layout-wrapper.esms-profenna .esms-page-hero-title {
@@ -248,7 +302,7 @@ body.esms-profenna-body,
     margin: 0.35rem 0 0;
     font-size: 0.82rem;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.82);
+    color: #475569;
 }
 
 #layout-wrapper.esms-profenna .esms-panel-card {
@@ -265,7 +319,7 @@ body.esms-profenna-body,
     justify-content: space-between;
     gap: 0.75rem;
     padding: 0.9rem 1.1rem;
-    border-left: 4px solid #22c55e;
+    border-left: 4px solid #2563eb;
     background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
 }
 
@@ -276,4 +330,23 @@ body.esms-profenna-body,
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #334155;
+}
+
+/* Master / list grid wrapper — framed panel (aligned with ESMS cards, readable on white) */
+#layout-wrapper.esms-profenna #txtListpage {
+    border: 1px solid var(--esms-border-card);
+    border-radius: 12px;
+    padding: 0.75rem 0.85rem;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.07), 0 0 0 1px rgba(15, 23, 42, 0.03);
+    box-sizing: border-box;
+    transition: box-shadow 0.25s ease;
+    margin-top: 5px;
+}
+
+#layout-wrapper.esms-profenna #txtListpage:hover {
+    box-shadow:
+        0 2px 4px rgba(15, 23, 42, 0.05),
+        0 14px 32px rgba(15, 23, 42, 0.09),
+        0 0 0 1px rgba(37, 99, 235, 0.08);
 }
