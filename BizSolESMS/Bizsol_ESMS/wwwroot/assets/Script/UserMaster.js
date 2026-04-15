@@ -1,4 +1,4 @@
-﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let imageBase64Data = [];
@@ -10,6 +10,7 @@ $(document).ready(function () {
     DesignationList();
     UserMasterList('Load');
     DefaultPageList();
+    WarehouseList();
     $('#btnBrowse').on('click', function (e) {
         $("#txtUserImg").click();
     });
@@ -181,6 +182,48 @@ function DesignationList() {
         }
     });
 }
+function WarehouseList() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowWarehouseMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            const $select = $('#ddlWarehouse');
+            $select.empty();
+            if (response.length > 0) {
+                $select.append(`<option value="ALL">-- All --</option>`);
+                response.forEach(item => {
+                    $select.append(`<option value="${item.Code}">${item["Warehouse Name"]}</option>`);
+                });
+            }
+            $select.select2({
+                width: '-webkit-fill-available',
+                placeholder: 'Select Warehouse(s)',
+                allowClear: true
+            });
+
+            $select.on('select2:select', function (e) {
+                if (e.params.data.id === 'ALL') {
+                    const allVals = $select.find('option').not('[value="ALL"]').map(function () {
+                        return this.value;
+                    }).get();
+                    $select.val(['ALL', ...allVals]).trigger('change.select2');
+                }
+            });
+
+            $select.on('select2:unselect', function (e) {
+                if (e.params.data.id === 'ALL') {
+                    $select.val(null).trigger('change.select2');
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        }
+    });
+}
 function DefaultPageList() {
     $.ajax({
         url: `${appBaseURL}/api/UserMaster/GetUserModuleMasterList`,
@@ -278,6 +321,7 @@ async function Create() {
     $("#ddlDesignation").prop('disabled', false);
     $("#txtAddress").prop('disabled', false);
     $("#txtSystemName").prop('disabled', false);
+    $("#ddlWarehouse").prop('disabled', false);
 }
 function Back() {
     $("#FrmUserMaster").hide();
@@ -298,6 +342,7 @@ function Back() {
     $("#ddlDesignation").prop('disabled', false);
     $("#txtAddress").prop('disabled', false);
     $("#txtSystemName").prop('disabled', false);
+    $("#ddlWarehouse").prop('disabled', false);
 }
 
 async function Delete(code, username, button) {
@@ -369,6 +414,7 @@ async function Edit(Code) {
     $("#ddlDesignation").prop('disable', false);
     $("#txtAddress").prop('disable', false);
     $("#txtSystemName").prop('disable', false);
+    $("#ddlWarehouse").prop('disabled', false);
 }
 function UserMasterByCode(Code) {
     $.ajax({
@@ -391,7 +437,16 @@ function UserMasterByCode(Code) {
                 $("#ddlDesignation").val(response.DesignationMaster_Code);
                 $("#txtAddress").val(response.UserLocation);
                 $("#txtSystemName").val(response.LoginAllowFromSystem);
-               
+
+                if (response.warehouseMaster_Codes && response.warehouseMaster_Codes !== '') {
+                    const selectedCodes = response.warehouseMaster_Codes.split(',').map(c => c.trim());
+                    const totalOptions = $('#ddlWarehouse option').not('[value="ALL"]').length;
+                    const allSelected = selectedCodes.length === totalOptions && totalOptions > 0;
+                    $('#ddlWarehouse').val(allSelected ? ['ALL', ...selectedCodes] : selectedCodes).trigger('change');
+                } else {
+                    $('#ddlWarehouse').val(null).trigger('change');
+                }
+
                 if(response.Status == 'N')
                 {
                     $('#chkActive').prop("checked",false);
@@ -527,6 +582,8 @@ function SaveUserMaster() {
     const ShowClientInProductionReport = $('#chkShowClientInProductionReport').is(":checked");
     const ChangePasswordForNextLogIn = $('#chkChangePasswordForNextLogIn').is(":checked");
     const ShowRatesInQuotation = $('#chkShowRatesInQuotation').is(":checked");
+    const rawWarehouse = $('#ddlWarehouse').val() || [];
+    const WarehouseCodes = rawWarehouse.filter(v => v !== 'ALL').join(', ');
     if (UserID === "") {
         toastr.error('Please enter User Id.');
         $("#txtUserID").focus();
@@ -554,6 +611,9 @@ function SaveUserMaster() {
     } else if (Designation === "") {
         toastr.error('Please select designation.');
         $("#ddlDesignation").focus();
+    } else if (!WarehouseCodes || WarehouseCodes === '') {
+        toastr.error('Please select at least one Warehouse.');
+        $("#ddlWarehouse").focus();
     }
     else {
         const payload = {
@@ -577,6 +637,7 @@ function SaveUserMaster() {
            ChangePasswordForNextLogIn: ChangePasswordForNextLogIn == true ? 'Y' : 'N',
            ShowRatesInQuotation: ShowRatesInQuotation == true ? 'Y' : 'N',
            UserImage: UserImage,
+           WarehouseMaster_Codes: WarehouseCodes,
            UserMaster_Code:0
         };
         $.ajax({
@@ -643,6 +704,7 @@ function ClearData()
     $('#chkShowClientInProductionReport').prop("checked", true);
     $('#chkChangePasswordForNextLogIn').prop("checked", true);
     $('#chkShowRatesInQuotation').prop("checked", true);
+    $('#ddlWarehouse').val(null).trigger('change');
 }
 function isEmail(email) {
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -693,6 +755,17 @@ async function View(code) {
                 $("#ddlDefaultPage").val(response.DefaultPage).prop('disabled', true);
                 $("#txtAddress").val(response.UserLocation).prop('disabled', true);
                 $("#txtSystemName").val(response.LoginAllowFromSystem).prop('disabled', true);
+
+                if (response.warehouseMaster_Codes && response.warehouseMaster_Codes !== '') {
+                    const selectedCodes = response.warehouseMaster_Codes.split(',').map(c => c.trim());
+                    const totalOptions = $('#ddlWarehouse option').not('[value="ALL"]').length;
+                    const allSelected = selectedCodes.length === totalOptions && totalOptions > 0;
+                    $('#ddlWarehouse').val(allSelected ? ['ALL', ...selectedCodes] : selectedCodes).trigger('change');
+                } else {
+                    $('#ddlWarehouse').val(null).trigger('change');
+                }
+                $('#ddlWarehouse').prop('disabled', true);
+
                 disableFields(true);
                 if (response.Status == 'N') {
                     $('#chkActive').prop("checked", false);

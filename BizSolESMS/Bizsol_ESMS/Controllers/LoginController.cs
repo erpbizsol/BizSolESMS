@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
 using System.Data;
 using Grpc.Core;
@@ -327,6 +327,114 @@ namespace Bizsol_ESMS.Controllers
                 return Json(new { success = false, message = "Error fetching active user limit: " + ex.Message });
             }
         }
+        public IActionResult ProofOfDelivery()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult SendPodOtp([FromBody] PodOtpRequest model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Code) || string.IsNullOrWhiteSpace(model.CompanyCode))
+            {
+                return Json(new { success = false, message = "Code and company code are required." });
+            }
+            if (!int.TryParse(model.Code.Trim(), out int dispatchMasterCode))
+            {
+                return Json(new { success = false, message = "Invalid code." });
+            }
+
+            string mysqlConn = GetCompanyConnectionString(model.CompanyCode);
+            if (string.IsNullOrEmpty(mysqlConn))
+            {
+                return Json(new { success = false, message = "Invalid company code or database not found." });
+            }
+
+            int otp = new Random().Next(100000, 1000000);
+
+            try
+            {
+                using (var connection = new MySqlConnection(mysqlConn))
+                {
+                    connection.Open();
+                    using (var command = new MySqlCommand("CALL USP_SendOTPForDispatchValidation(@p_Mode, @p_Code, @p_OTP,@p_UserMaster_Code)", connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.AddWithValue("@p_Mode", "Send");
+                        command.Parameters.AddWithValue("@p_Code", dispatchMasterCode);
+                        command.Parameters.AddWithValue("@p_OTP", otp);
+                        command.Parameters.AddWithValue("@p_UserMaster_Code", 0);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string msg = reader["Msg"]?.ToString() ?? "";
+                                string status = reader["Status"]?.ToString() ?? "N";
+                                string otpOut = "";
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    if (string.Equals(reader.GetName(i), "OTP", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        otpOut = reader.IsDBNull(i) ? "" : reader.GetValue(i).ToString();
+                                        break;
+                                    }
+                                }
+
+                                bool ok = string.Equals(status, "Y", StringComparison.OrdinalIgnoreCase);
+                                return Json(new { success = ok, message = msg, otp = ok ? otpOut : "" });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+            return Json(new { success = false, message = "No response from database." });
+        }
+        private string GetCompanyConnectionString(string companyCode)
+        {
+            if (string.IsNullOrWhiteSpace(companyCode))
+            {
+                return string.Empty;
+            }
+
+            string connectionString = _configuration.GetConnectionString("DefaultConnectionSQL");
+            string connectionMYSqlString = _configuration.GetConnectionString("DefaultConnectionMYSQL");
+
+            if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(connectionMYSqlString))
+            {
+                return string.Empty;
+            }
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT sqladdress, LoginDatabase, userid, pwd FROM BizSolESMSLoginDetails WHERE CompanyCode = @CompanyCode";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@CompanyCode", companyCode);
+                    using (SqlDataReader dr = command.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            connectionMYSqlString = connectionMYSqlString.Replace("IPMySql", dr["sqladdress"]?.ToString() ?? "");
+                            connectionMYSqlString = connectionMYSqlString.Replace("MySqlPort", "65448");
+                            connectionMYSqlString = connectionMYSqlString.Replace("MySqlDatabase", dr["LoginDatabase"]?.ToString() ?? "");
+                            connectionMYSqlString = connectionMYSqlString.Replace("MySqlUser", dr["userid"]?.ToString() ?? "");
+                            connectionMYSqlString = connectionMYSqlString.Replace("MySqlPassword", dr["pwd"]?.ToString() ?? "");
+                            return connectionMYSqlString;
+                        }
+                    }
+                }
+            }
+
+            return string.Empty;
+        }
+
     }
 }
 

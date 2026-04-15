@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 
 namespace Bizsol_ESMS.Models
 {
@@ -7,6 +7,12 @@ namespace Bizsol_ESMS.Models
         public int Id { get; set; }
         public string UserID { get; set; }
         public string Password { get; set; }
+    }
+
+    public class PodOtpRequest
+    {
+        public string Code { get; set; }
+        public string CompanyCode { get; set; }
     }
 }
 

@@ -8,6 +8,7 @@ using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QRCoder;
 using System.Data;
 using System.Net.Http.Headers;
 using System.Net.Http;
@@ -185,6 +186,92 @@ namespace Bizsol_ESMS.Controllers
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "OrderReport.pdf");
         }
+
+        [HttpGet]
+        public IActionResult PSRReportQR(int Code, string UserName, string AuthKey, string? CompanyCode = null)
+        {
+            JObject data = JObject.Parse(AuthKey);
+            string connectionString = data["DefultMysqlTemp"]?.ToString();
+
+            DataSet ds = new DataSet();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand("USP_DispatchReport", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_Code", Code);
+
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+
+            string? companyCode = CompanyCode ?? data["CompanyCode"]?.ToString();
+            ApplyPsrReportQrPayload(ds, Code, companyCode);
+
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReport.rdlc");
+
+            LocalReport report = new LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PsrDetailData", ds.Tables[0]));
+            report.DataSources.Add(new ReportDataSource("PsrTabledata", ds.Tables[1]));
+            var reportParameters = new[]
+            {
+                new ReportParameter("PrintedBy", UserName),
+                new ReportParameter("PrintedOn", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"))
+            };
+            report.SetParameters(reportParameters);
+            byte[] pdf = report.Render("PDF");
+            return File(pdf, "application/pdf", "PSRReport.pdf");
+        }
+
+        private static void ApplyPsrReportQrPayload(DataSet ds, int code, string? companyCode)
+        {
+            if (ds.Tables.Count < 2) return;
+            DataTable detail = ds.Tables[0];
+            DataTable lines = ds.Tables[1];
+           
+            string? payload = null;
+
+            if (detail.Rows.Count > 0)
+            {
+                DataRow d0 = detail.Rows[0];
+                string orderNo = GetDataRowString(d0, "OrderNo");
+                string challanNo = GetDataRowString(d0, "ChallanNo");
+                string noOfBoxes = GetDataRowString(d0, "NoOfBoxes");
+                string totalScannedProducts = GetDataRowString(d0, "TotalScannedProducts");
+                string clientName = GetDataRowString(d0, "To");
+                if (string.IsNullOrEmpty(clientName))
+                    clientName = GetDataRowString(d0, "TO");
+
+                payload = $"Code={code}&OrderNo={orderNo}&ChallanNo={challanNo}&NoOfBoxes={noOfBoxes}&TotalScannedProducts={totalScannedProducts}&ClientName={clientName}&CompanyCode={companyCode ?? ""}";
+            }
+
+            if (string.IsNullOrEmpty(payload))
+                payload = $"PSR|{code}|{companyCode ?? ""}".TrimEnd('|');
+
+            using var qrGenerator = new QRCodeGenerator();
+            using QRCodeData qrData = qrGenerator.CreateQrCode(payload, QRCodeGenerator.ECCLevel.Q);
+            var pngQr = new PngByteQRCode(qrData);
+            byte[] png = pngQr.GetGraphic(20);
+            string b64 = Convert.ToBase64String(png);
+
+            foreach (DataRow row in detail.Rows)
+                row["QRCode"] = b64;
+        }
+
+        private static string GetDataRowString(DataRow row, string columnName)
+        {
+            if (!row.Table.Columns.Contains(columnName)) return "";
+            object? v = row[columnName];
+            return v == null || v == DBNull.Value ? "" : v.ToString() ?? "";
+        }
+
         [HttpPost]
         public IActionResult PrintDispatchQR([FromBody] List<DispatchModel> model)
         {

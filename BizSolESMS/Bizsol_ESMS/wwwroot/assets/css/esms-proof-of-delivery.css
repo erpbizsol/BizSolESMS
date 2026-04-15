@@ -1,0 +1,495 @@
+:root {
+        --pod-accent: #3d7ea6;
+        --pod-accent-bright: #5eb8e8;
+        --pod-surface: #ffffff;
+        --pod-surface-2: #f4f7fb;
+        --pod-text: #1a2332;
+        --pod-text-muted: #5c6b80;
+        --pod-border: #e2e8f0;
+        --pod-glow: rgba(94, 184, 232, 0.25);
+    }
+
+    .pod-page {
+        min-height: 100vh;
+        font-family: 'Manrope', system-ui, sans-serif;
+        background: transparent;
+        color: var(--pod-text);
+        position: relative;
+        overflow-x: hidden;
+        padding: clamp(1rem, 4vw, 2.5rem) clamp(0.75rem, 5vw, 3.5rem) 3rem;
+    }
+
+    .pod-shell {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: min(1120px, 100vw - 1.25rem);
+        margin: 0 auto;
+        padding-inline: clamp(0.25rem, 1.5vw, 0.75rem);
+    }
+
+    .pod-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #1d4b7d;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        padding: 0.5rem 0.85rem 0.5rem 0.4rem;
+        border-radius: 999px;
+        margin-bottom: 1.25rem;
+        transition: color 0.2s, background 0.2s;
+    }
+
+    .pod-back:hover {
+        color: #0f2d4d;
+        background: rgba(29, 75, 125, 0.08);
+    }
+
+    .pod-back svg {
+        width: 18px;
+        height: 18px;
+        opacity: 0.85;
+    }
+
+    .pod-card {
+        background: var(--pod-surface);
+        border: 1px solid var(--pod-border);
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+
+    .pod-card-header {
+        padding: 1.75rem 1.5rem 1.25rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        background: linear-gradient(135deg, #1d4b7d 0%, #2a5f8f 100%);
+    }
+
+    .pod-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--pod-accent-bright);
+        margin-bottom: 0.65rem;
+    }
+
+    .pod-badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--pod-accent-bright);
+        box-shadow: 0 0 10px var(--pod-glow);
+        animation: podPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes podPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.45; }
+    }
+
+    .pod-card-header h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(1.35rem, 4vw, 1.55rem);
+        font-weight: 700;
+        margin: 0;
+        color: #fff;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+
+    .pod-card-header p {
+        margin: 0.6rem 0 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.62);
+        font-weight: 400;
+    }
+
+    .pod-card-body {
+        padding: clamp(1.25rem, 3vw, 2.25rem);
+        background: var(--pod-surface);
+        border-radius: 0 0 18px 18px;
+    }
+
+    .pod-body-grid {
+        display: grid;
+        gap: clamp(1.25rem, 2.5vw, 1.75rem);
+    }
+
+    @media (min-width: 992px) {
+        .pod-body-grid:has(#podDetailsSection.is-visible) {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: start;
+        }
+
+        .pod-card-header {
+            padding: 2rem 2.5rem 1.5rem;
+        }
+
+        .pod-card-header p {
+            max-width: 52rem;
+        }
+    }
+
+    .pod-scan-panel {
+        position: relative;
+        padding: clamp(1.1rem, 2.5vw, 1.5rem);
+        border-radius: 14px;
+        border: 2px dashed rgba(61, 126, 166, 0.35);
+        background: var(--pod-surface-2);
+        transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .pod-scan-panel:focus-within {
+        border-color: var(--pod-accent);
+        box-shadow: 0 0 0 4px var(--pod-glow);
+    }
+
+    .pod-scan-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+    }
+
+    .pod-scan-icon {
+        margin-top:2px;
+        flex-shrink: 0;
+        width: 58px;
+        height: 58px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #1d4b7d 0%, var(--pod-accent) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(29, 75, 125, 0.35);
+    }
+
+    .pod-scan-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .pod-scan-fields {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .pod-scan-label {
+        font-weight: 600;
+        font-size: 0.8125rem;
+        color: var(--pod-text);
+        margin-bottom: 0.45rem;
+        display: block;
+    }
+
+    .pod-scan-input {
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        border-radius: 10px;
+        border: 1.5px solid #d8e0ea;
+        padding: 0.3rem 0.9rem;
+        width: 100%;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .pod-scan-input:focus {
+        border-color: var(--pod-accent);
+        box-shadow: 0 0 0 3px var(--pod-glow);
+        outline: none;
+    }
+
+    .pod-scan-input::placeholder {
+        color: #94a3b8;
+        font-weight: 400;
+    }
+
+    .pod-hint {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        color: var(--pod-text-muted);
+        margin-top: 0.65rem;
+        line-height: 1.45;
+    }
+
+    .pod-hint svg {
+        flex-shrink: 0;
+        margin-top: 2px;
+        opacity: 0.7;
+    }
+
+    .pod-camera-actions {
+        margin-top: 0.85rem;
+    }
+
+    .pod-btn-camera {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.6rem 1rem;
+        border-radius: 10px;
+        border: 1.5px solid #1d4b7d;
+        color: #1d4b7d;
+        background: #fff;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .pod-btn-camera:hover {
+        background: #1d4b7d;
+        color: #fff;
+        border-color: #1d4b7d;
+    }
+
+    .pod-btn-camera svg {
+        width: 1.15rem;
+        height: 1.15rem;
+    }
+
+    #podQrReader {
+        border-radius: 12px;
+        overflow: hidden;
+        min-height: 200px;
+        background: #0f172a;
+    }
+
+    #podQrReader video {
+        border-radius: 12px;
+    }
+
+    #podCameraModal .modal-header {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    #podCameraModal .modal-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        color: #1a2332;
+    }
+
+    .pod-details-wrap {
+        display: none;
+        animation: podFade 0.35s ease;
+    }
+
+    .pod-details-wrap.is-visible {
+        display: block;
+    }
+
+    @keyframes podFade {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pod-details-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--pod-text-muted);
+        margin-bottom: 0.65rem;
+    }
+
+    .pod-table-wrap {
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        box-shadow:
+            0 4px 20px rgba(15, 23, 42, 0.07),
+            0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+    }
+
+    .pod-table {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+    .pod-table tbody tr:nth-child(odd):not(.pod-table-row--client) td {
+        background: #f8fafc;
+    }
+
+    .pod-table tbody tr:nth-child(even):not(.pod-table-row--client) td {
+        background: #fff;
+    }
+
+    .pod-table tbody tr.pod-table-row--client th {
+        width: 34%;
+        min-width: 7.5rem;
+        background: linear-gradient(145deg, #0c2d4d 0%, #1d4b7d 55%, #2563a8 100%);
+        color: #e8f4fc;
+        font-weight: 700;
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        vertical-align: middle;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .pod-table tbody tr.pod-table-row--client td {
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid #dbe7f0;
+        color: #0f172a;
+        word-break: break-word;
+        font-weight: 600;
+        font-size: 1.05rem;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        background: linear-gradient(180deg, #f0f7fd 0%, #ffffff 65%);
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .pod-table tbody tr:not(.pod-table-row--client) th {
+        width: 32%;
+        min-width: 7.5rem;
+        background: #1d4b7d;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.7rem 0.9rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        vertical-align: middle;
+        font-size: 0.8125rem;
+    }
+
+    .pod-table tbody tr:not(.pod-table-row--client) td {
+        padding: 0.7rem 0.9rem;
+        border-bottom: 1px solid #eef2f6;
+        color: var(--pod-text);
+        word-break: break-word;
+        font-weight: 500;
+    }
+
+    .pod-table tr:last-child th,
+    .pod-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .pod-actions {
+        margin-top: 1.1rem;
+    }
+
+    .pod-btn-otp {
+        width: 100%;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.02em;
+        padding: 0.4rem 1.25rem;
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        background: linear-gradient(135deg, #1d4b7d 0%, #2563a8 50%, #2d6a9e 100%);
+        box-shadow:
+            0 4px 14px rgba(29, 75, 125, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+    }
+
+    .pod-btn-otp:hover:not(:disabled) {
+        filter: brightness(1.06);
+        box-shadow:
+            0 6px 20px rgba(29, 75, 125, 0.45),
+            0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+        transform: translateY(-1px);
+    }
+
+    .pod-btn-otp:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .pod-btn-otp:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        filter: grayscale(0.2);
+    }
+
+    .pod-footer-note {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.7rem;
+        color: #94a3b8;
+        letter-spacing: 0.04em;
+    }
+
+    .pod-otp-banner {
+        display: none;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: .2rem .5rem;
+        text-align: center;
+    }
+
+    .pod-otp-banner.is-visible {
+        display: block;
+    }
+
+    .pod-otp-banner-label {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+
+    .pod-otp-code {
+        font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: 0.35em;
+        color: #1d4b7d;
+        user-select: all;
+    }
+
+    .pod-otp-hint {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.5rem;
+    }
+
+    /* Same pattern as Box Unloading: full-screen error toast for invalid scan */
+    .pod-scan-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10050;
+        display: none;
+    }
+
+    .pod-scan-toast {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d35950;
+        color: white;
+        padding: 35px 55px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10051;
+        font-size: 18px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }

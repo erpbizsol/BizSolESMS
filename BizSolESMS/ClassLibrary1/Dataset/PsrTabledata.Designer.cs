@@ -295,6 +295,8 @@ namespace DatasetClass.Dataset {
             
             private global::System.Data.DataColumn columnOrgMRP;
             
+            private global::System.Data.DataColumn columnQRCode;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public PsrTabledataDataTable() {
@@ -388,6 +390,14 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn QRCodeColumn {
+                get {
+                    return this.columnQRCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -423,7 +433,7 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public PsrTabledataRow AddPsrTabledataRow(string SrNo, string ItemCode, string BoxNo, string ScannedQty, string OrderedQty, string MRP, string OrgMRP) {
+            public PsrTabledataRow AddPsrTabledataRow(string SrNo, string ItemCode, string BoxNo, string ScannedQty, string OrderedQty, string MRP, string OrgMRP, string QRCode) {
                 PsrTabledataRow rowPsrTabledataRow = ((PsrTabledataRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SrNo,
@@ -432,7 +442,8 @@ namespace DatasetClass.Dataset {
                         ScannedQty,
                         OrderedQty,
                         MRP,
-                        OrgMRP};
+                        OrgMRP,
+                        QRCode};
                 rowPsrTabledataRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowPsrTabledataRow);
                 return rowPsrTabledataRow;
@@ -462,6 +473,7 @@ namespace DatasetClass.Dataset {
                 this.columnOrderedQty = base.Columns["OrderedQty"];
                 this.columnMRP = base.Columns["MRP"];
                 this.columnOrgMRP = base.Columns["OrgMRP"];
+                this.columnQRCode = base.Columns["QRCode"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -481,6 +493,8 @@ namespace DatasetClass.Dataset {
                 base.Columns.Add(this.columnMRP);
                 this.columnOrgMRP = new global::System.Data.DataColumn("OrgMRP", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnOrgMRP);
+                this.columnQRCode = new global::System.Data.DataColumn("QRCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnQRCode);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_PsrTabledata");
                 this.ExtendedProperties.Add("Generator_UserTableName", "PsrTabledata");
             }
@@ -737,6 +751,22 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string QRCode {
+                get {
+                    try {
+                        return ((string)(this[this.tablePsrTabledata.QRCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'QRCode\' in table \'PsrTabledata\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePsrTabledata.QRCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsSrNoNull() {
                 return this.IsNull(this.tablePsrTabledata.SrNoColumn);
             }
@@ -817,6 +847,18 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetOrgMRPNull() {
                 this[this.tablePsrTabledata.OrgMRPColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsQRCodeNull() {
+                return this.IsNull(this.tablePsrTabledata.QRCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetQRCodeNull() {
+                this[this.tablePsrTabledata.QRCodeColumn] = global::System.Convert.DBNull;
             }
         }
         

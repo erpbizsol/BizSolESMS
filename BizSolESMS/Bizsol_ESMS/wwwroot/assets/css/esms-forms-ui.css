@@ -1,0 +1,447 @@
+/**
+ * ESMS — forms & content polish (inputs, labels, Order Confirmation, datepicker, footer).
+ * Load after esms-page-patterns.css
+ */
+
+/* —— Main column —— padding lives in esms-page-patterns.css (was: 0.65rem 0.85rem 1.75rem) —— */
+/* #layout-wrapper.esms-profenna .page-content {
+    padding: 0.65rem 0.85rem 1.75rem !important;
+} */
+
+/* —— Global form controls (all pages) — compact height + dark border —— */
+#layout-wrapper.esms-profenna .esms-main-panel .form-control,
+#layout-wrapper.esms-profenna .esms-main-panel .form-select,
+#layout-wrapper.esms-profenna .esms-main-panel textarea.form-control,
+#layout-wrapper.esms-profenna .esms-main-panel select.form-control {
+    border-radius: 8px;
+    border: 1px solid var(--esms-border-ui, #64748b);
+    background-color: #ffffff;
+    color: var(--esms-text-strong, #212529);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    /* line-height: 1.35; */
+    min-height: 1.9rem;
+    padding: 0.28rem 0.55rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel textarea.form-control {
+    min-height: 4rem;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .form-control::placeholder {
+    color: #64748b;
+    font-weight: 400;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .form-control:focus,
+#layout-wrapper.esms-profenna .esms-main-panel .form-select:focus,
+#layout-wrapper.esms-profenna .esms-main-panel textarea.form-control:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+    outline: none;
+    background-color: #ffffff;
+    color: var(--esms-text-strong, #212529);
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .form-control-sm,
+#layout-wrapper.esms-profenna .esms-main-panel .form-select-sm {
+    border-radius: 8px;
+    padding: 0.22rem 0.5rem;
+    min-height: 1.72rem;
+    font-size: 0.8125rem;
+}
+
+/* Native selects without Bootstrap classes */
+#layout-wrapper.esms-profenna .esms-main-panel select:not([class*="form-"]):not([size]) {
+    min-height: 1.9rem;
+    padding: 0.28rem 0.5rem;
+    font-size: 0.8125rem;
+    border-radius: 8px;
+    border: 1px solid var(--esms-border-ui, #64748b);
+    color: var(--esms-text-strong, #212529);
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel label,
+#layout-wrapper.esms-profenna .esms-main-panel .col-form-label,
+#layout-wrapper.esms-profenna .esms-main-panel .col-form-label-sm {
+    font-weight: 600;
+    color: var(--esms-text-label, #1e293b);
+    letter-spacing: 0.01em;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .box_border {
+    border: 1px solid var(--esms-border-ui, #64748b) !important;
+    color: var(--esms-text-strong, #212529) !important;
+}
+
+/* Compact toolbar + filter actions (Download, Create New, Apply, Clear — .btn-height) */
+#layout-wrapper.esms-profenna .esms-main-panel .btn-height {
+    min-height: 0;
+    height: auto;
+    padding: 0.28rem 0.75rem;
+    line-height: 1.25;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .btn-primary.btn-height,
+#layout-wrapper.esms-profenna .esms-main-panel .btn-success.btn-height {
+    padding-top: 0.28rem;
+    padding-bottom: 0.28rem;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .btn-success {
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 1px 4px rgba(22, 163, 74, 0.2);
+}
+
+/* Grid row action chips (filter.js icon-height) */
+#layout-wrapper.esms-profenna .esms-main-panel .icon-height {
+    height: auto !important;
+    min-height: 1.45rem;
+    padding: 0.18rem 0.4rem !important;
+    line-height: 1 !important;
+    font-size: 0.65rem !important;
+    border-radius: 6px !important;
+}
+
+/* Column filter dropdown — align under shorter header */
+#layout-wrapper.esms-profenna .filter-dropdown,
+#layout-wrapper.esms-profenna .filter-dropdown-double {
+    top: 20px;
+}
+
+/* —— Bootstrap datepicker (used on Order Confirmation & elsewhere) —— */
+body .datepicker-dropdown,
+body .datepicker.datepicker-dropdown {
+    z-index: 10090 !important;
+    border-radius: 14px !important;
+    border: 1px solid #64748b !important;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18) !important;
+    padding: 0.5rem 0.45rem 0.65rem !important;
+    font-family: inherit;
+    color: #212529 !important;
+    background: #fff !important;
+}
+
+body .datepicker-dropdown .datepicker-days table {
+    width: 100%;
+}
+
+body .datepicker .datepicker-switch {
+    font-size: 0.9rem !important;
+    padding: 0.35rem 0.25rem !important;
+}
+
+body .datepicker table tr td.day:hover,
+body .datepicker table tr td.day.focused {
+    background: #eef2ff !important;
+    color: #1e1b4b !important;
+}
+
+body .datepicker table tr td.active,
+body .datepicker table tr td.active:hover,
+body .datepicker table tr td.active.disabled,
+body .datepicker table tr td.active.disabled:hover {
+    background: linear-gradient(180deg, #4f46e5 0%, #4338ca 100%) !important;
+    /* background-image: none !important; */
+    color: #fff !important;
+    text-shadow: none !important;
+}
+
+body .datepicker .datepicker-switch,
+body .datepicker .prev,
+body .datepicker .next,
+body .datepicker tfoot tr th {
+    font-weight: 600 !important;
+    color: #334155 !important;
+}
+
+body .datepicker table thead th {
+    color: #64748b !important;
+    font-weight: 600 !important;
+    font-size: 0.72rem !important;
+}
+
+/* —— Order Confirmation page —— */
+#layout-wrapper.esms-profenna .oc-page {
+    background: #ffffff;
+}
+
+#layout-wrapper.esms-profenna .oc-inner {
+    max-width: 1680px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#layout-wrapper.esms-profenna .oc-card {
+    background: var(--esms-surface-card, #f8fafc);
+    border: 1px solid var(--esms-border-card, #cbd5e1);
+    border-radius: 16px;
+    padding: 1.35rem 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--esms-text-strong, #212529);
+    box-shadow:
+        0 1px 3px rgba(15, 23, 42, 0.06),
+        0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* Allow datepicker popup to escape card bounds (calendar not clipped) */
+#layout-wrapper.esms-profenna .oc-card--filters {
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+
+#layout-wrapper.esms-profenna .oc-card.p-0 {
+    padding: 0 !important;
+}
+
+#layout-wrapper.esms-profenna .oc-card-title {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #475569;
+    margin: 0 0 1.1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #cbd5e1;
+}
+
+#layout-wrapper.esms-profenna .oc-card .table-wrapper {
+    overflow: auto;
+    border-radius: 0 0 15px 15px;
+}
+
+#layout-wrapper.esms-profenna .oc-card .fixed-height-table {
+    min-height: 200px;
+}
+
+#layout-wrapper.esms-profenna .oc-table-paginator {
+    background: #fafafa;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+/* —— OTP modal ——
+   Bootstrap already provides .modal-backdrop (full-page dim). Do not add a second
+   dark “backdrop” inside .modal-content — it looked like a stacked layer + heavy shadow. */
+body.esms-profenna-body #ocOtpModal .oc-otp-backdrop {
+    background: transparent;
+    border-radius: 0;
+    /* keep horizontal padding from markup (p-2 p-sm-3); no extra dimming */
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-card {
+    position: relative;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem 1.75rem 1.75rem;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow:
+        0 4px 6px rgba(15, 23, 42, 0.05),
+        0 18px 48px rgba(15, 23, 42, 0.12);
+    text-align: center;
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-card--error {
+    animation: esms-oc-shake 0.45s ease;
+    border-color: rgba(239, 68, 68, 0.45);
+}
+
+@keyframes esms-oc-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 1rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.5rem;
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.35rem;
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-sub {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(0.2rem, 1.2vw, 0.45rem);
+    margin: 1.25rem 0 0.75rem;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-digit {
+    flex: 1 1 0;
+    min-width: 1.25rem;
+    width: auto !important;
+    max-width: 2.75rem;
+    height: 2.75rem !important;
+    text-align: center;
+    font-size: clamp(0.95rem, 2.8vw, 1.125rem) !important;
+    font-weight: 700 !important;
+    border-radius: 10px !important;
+    border: 1px solid #64748b !important;
+    color: #212529 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+}
+
+@media (max-width: 575.98px) {
+    body.esms-profenna-body #ocOtpModal .oc-otp-card {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+
+    body.esms-profenna-body #ocOtpModal .oc-otp-wrap {
+        gap: 0.22rem;
+    }
+
+    body.esms-profenna-body #ocOtpModal .oc-otp-digit {
+        max-width: none;
+        min-width: 0;
+        height: 2.5rem !important;
+    }
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-digit:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-digit--err {
+    border-color: #ef4444 !important;
+    background: #fef2f2 !important;
+}
+
+body.esms-profenna-body #ocOtpModal .oc-otp-msg {
+    min-height: 1.25rem;
+    font-size: 0.8125rem;
+    color: #dc2626;
+    font-weight: 600;
+}
+
+body.esms-profenna-body #ocOtpModal .btn-oc-verify {
+    width: 100%;
+    margin-top: 0.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 0.55rem 1rem;
+}
+
+/* —— Footer readability —— */
+#layout-wrapper.esms-profenna .footer .copyright,
+#layout-wrapper.esms-profenna .footer .userTextSmall {
+    color: #475569;
+    font-weight: 500;
+}
+
+#layout-wrapper.esms-profenna .footer .userTextBig {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+/* —— Select2 (used on many masters) — compact single select —— */
+#layout-wrapper.esms-profenna .esms-main-panel .select2-container--default .select2-selection--single {
+    min-height: 1.9rem !important;
+    height: auto !important;
+    padding: 0.12rem 0.35rem;
+    border: 1px solid var(--esms-border-ui, #64748b) !important;
+    border-radius: 8px !important;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .select2-container--default .select2-selection--single .select2-selection__rendered {
+    /* line-height: 1.45; */
+    padding-left: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--esms-text-strong, #212529);
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 1.75rem !important;
+    top: 50% !important;
+    transform: translateY(-50%);
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .select2-container {
+    min-width: 8rem;
+}
+
+/* Column filter popover search / numeric inputs (filter.js) */
+#layout-wrapper.esms-profenna .filter-dropdown .filter-inputs input,
+#layout-wrapper.esms-profenna .filter-dropdown input.filter-input,
+#layout-wrapper.esms-profenna .filter-dropdown-double input.filter-input-double {
+    min-height: 1.72rem !important;
+    padding: 0.22rem 0.5rem !important;
+    font-size: 0.8125rem !important;
+    line-height: 1.35 !important;
+}
+
+/* =============================================================================
+   Bootstrap modals — above fixed #page-topbar (z-index 10080).
+   Default Bootstrap modal (~1055) was lower, so OTP and other dialogs sat
+   behind the navy header and looked “cut off”.
+   ============================================================================= */
+body .modal {
+    --bs-modal-zindex: 10100;
+    z-index: 10100 !important;
+}
+
+body .modal-backdrop {
+    --bs-backdrop-zindex: 10095;
+    z-index: 10095 !important;
+}
+
+/* Middle of viewport: Bootstrap’s % min-height can fail inside nested layout; use vh/dvh. */
+body .modal .modal-dialog.modal-dialog-centered {
+    margin-left: auto;
+    margin-right: auto;
+    min-height: calc(100vh - 2rem) !important;
+    min-height: calc(100dvh - 2rem) !important;
+}
+
+/* Keep dialogs within the visible screen (short viewports, on-screen keyboard). */
+body .modal .modal-dialog:not(.modal-dialog-scrollable) {
+    max-height: calc(100dvh - 1.5rem);
+    overflow-y: auto;
+}
+
+/* Notched phones / home indicator */
+body .modal {
+    padding-left: max(0.5rem, env(safe-area-inset-left));
+    padding-right: max(0.5rem, env(safe-area-inset-right));
+    padding-bottom: env(safe-area-inset-bottom);
+}
+

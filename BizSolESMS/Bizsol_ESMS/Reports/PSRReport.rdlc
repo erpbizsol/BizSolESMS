@@ -52,6 +52,10 @@
           <DataField>OrgMRP</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="QRCode">
+          <DataField>QRCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PsrTabledata</rd:DataSetName>
@@ -118,6 +122,10 @@
         </Field>
         <Field Name="TotalScannedProducts">
           <DataField>TotalScannedProducts</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QRCode">
+          <DataField>QRCode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -1676,14 +1684,30 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Image Name="Image3">
+            <Source>Database</Source>
+            <Value>=First(Fields!QRCode.Value, "PsrDetailData")</Value>
+            <MIMEType>image/png</MIMEType>
+            <Sizing>FitProportional</Sizing>
+            <Top>20.01822cm</Top>
+            <Left>15.95721cm</Left>
+            <Height>3.87243cm</Height>
+            <Width>4.19805cm</Width>
+            <ZIndex>23</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
         </ReportItems>
-        <Height>19.11933cm</Height>
+        <Height>23.89065cm</Height>
         <Style />
       </Body>
       <Width>20.15526cm</Width>
       <Page>
         <PageFooter>
-          <Height>0.94079cm</Height>
+          <Height>1.02017cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1705,7 +1729,7 @@
               </Paragraphs>
               <rd:DefaultName>Textbox20</rd:DefaultName>
               <Top>0.17639cm</Top>
-              <Left>0.29104cm</Left>
+              <Left>0.29103cm</Left>
               <Height>0.6cm</Height>
               <Width>19.53791cm</Width>
               <Style>

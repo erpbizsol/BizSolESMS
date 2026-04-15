@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -10,229 +10,6 @@
 <script src="~/assets/script/Dispatch.js"></script>
 <script src="~/assets/js/blockui.js"></script>
 <link href="~/assets/css/loader.css" rel="stylesheet" />
-<style>
-    
-
-
-    .tabs {
-        width: 100%;
-        max-width: 2000px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-        border-radius: 8px;
-        overflow: hidden;
-        padding: 0.7rem;
-    }
-
-    .tabSec {
-        color: white;
-        width: 117px;
-        height: 36px;
-        float: inline-end;
-        font-size: 12px;
-        text-align: center;
-        border-top-right-radius: 40px;
-        border-bottom-left-radius: 40px;
-        line-height: 3;
-        margin-top: -8px;
-        background: #1d4b7d;
-    }
-
-    .tab-content {
-        display: none;
-        padding: 16px;
-        border: 1px solid lightgray;
-        border-radius: 5px;
-    }
-
-        .tab-content.active {
-            display: block;
-        }
-
-    .tab[disabled] {
-        cursor: not-allowed;
-        opacity: 0.9;
-    }
-
-    .datepicker td, .datepicker th {
-        border-radius: 20px !important;
-    }
-
-    .datepicker table tr td, .datepicker table tr td {
-        padding: 8px 9px !important;
-        height: 16px !important;
-    }
-
-    .datepicker table tfoot {
-        display: none;
-    }
-
-    .page-content {
-        display: block;
-    }
-
-    .textCreatepage .tabs .fix-header {
-        position: sticky;
-        top: 0;
-        background-color: #dddde4;
-        z-index: 1000;
-        padding: 8px 0 8px 9px;
-        transition: background 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-        height: 36px;
-    }
-
-    .shadow-sm {
-        border-top-right-radius: 5px;
-        border-top-left-radius: 5px;
-        background-color: #e9e9ef;
-        margin-top: 15px;
-        border-top: 1px solid #c9cae7;
-    }
-
-    .btn-icon {
-        font-size: 14px;
-        border-radius: 50%;
-        background: #1d4b7d;
-        color: #fff;
-        padding: 6px;
-    }
-
-    .btn-icon {
-        font-size: 14px;
-        border-radius: 20px;
-        background: #1d4b7d;
-        color: #fff;
-        padding: 6px;
-    }
-
-    .btn-danger {
-        background-color: #ab1624;
-    }
-
-    .highlight {
-        background-color: #f5c0bfc4;
-    }
-
-    .container-fluid {
-        padding-right: 0;
-        padding-left: 0;
-    }
-
-    .container {
-        overflow: auto;
-        height: 81vh;
-    }
-
-    .breadcrumbs1 {
-        background: #dddde4;
-        position: sticky;
-        top: 0;
-        background-color: #dddde4;
-        z-index: 1000;
-        padding: 8px 0px 0px 9px;
-        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
-        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
-    }
-
-    .page-content {
-        padding: 3px 0;
-    }
-
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
-        display: none;
-    }
-
-    .toast-container {
-        position: fixed;
-        top: 45%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #d35950;
-        color: white;
-        padding: 35px 55px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        display: none;
-        z-index: 10000;
-        font-size: 18px;
-        text-align: center;
-        opacity: 0;
-        transition: opacity 0.3s ease-in-out;
-    }
-
-    .tabSec1 {
-        color: white;
-        width: 173px;
-        height: 36px;
-        float: inline-end;
-        font-size: 12px;
-        text-align: center;
-        border-top-right-radius: 40px;
-        border-bottom-left-radius: 40px;
-        line-height: 3;
-        margin-top: -8px;
-        background: #1d4b7d;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    }
-
-    .breadcrumbs2 {
-        /* background: #dddde4; */
-        position: sticky;
-        top: 0;
-        background-color: #dddde4;
-        z-index: 1000;
-        padding: 8px 0px 0px 9px;
-        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
-        /* box-shadow: 0 1px 1px rgb(76 76 76 / 90%); */
-    }
-
-    /* Active tab styles */
-    .tab-section {
-        display: flex;
-        padding: 5px 7px;
-        margin: 0;
-        border: none;
-    }
-
-    .nav-item-btn {
-        background: #fffbff;
-        font-size: 12px;
-        font-weight: 600;
-        text-align: center;
-        text-transform: capitalize;
-        padding: 10px 10px;
-        margin: 3px 10px 3px 0;
-        border: none;
-        border-radius: 8px 8px 0 0;
-        border-bottom: 2px solid #275481;
-        overflow: hidden;
-        position: relative;
-        z-index: 1;
-    }
-
-        .nav-item-btn.active {
-            background-color: #1c4e80;
-            color: white;
-            border: none;
-        }
-
-        .nav-item-btn:hover {
-            background-color: #e6e9ff;
-            color: #081a2c;
-        }
-        .active{
-        background-color: #4a7aaa;
-        color:white;
-        }
-    /* End Active tab styles */
-</style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
         <div class="fix-header">
@@ -449,8 +226,31 @@
             </div>
         </div>
     </div>
-    <div class="modal position-absolute" id="staticBackdrop" style="padding-top: 101px;" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+
+    <div id="overlay" class="overlay"></div>
+    <div id="toast" class="toast-container"></div>
+</div>
+<div style="display:none;">
+      <input type="text" id="txtCode" placeholder="Enter Text">
+       <div id="qrcodeview" style="margin-top:20px"></div>
+</div>
+<script src="~/assets/js/filter.js"></script>
+
+<script>
+    const tabs = document.querySelectorAll('.nav-item-btn');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+
+</script>
+
+@section ModalDialogs {
+    @* Rendered next to <body> children — same stacking context as .modal-backdrop so the dialog stays above the dimmer *@
+    <div class="modal fade" id="staticBackdrop" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="modal-header tab-header" style="background-color:#033764">
@@ -485,8 +285,8 @@
             </div>
         </div>
     </div>
-    <div class="modal position-absolute" id="DownloadModal" style="padding-top: 101px;padding-left: 30px;padding-right: 30px;" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+    <div class="modal fade" id="DownloadModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered px-3">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="modal-header tab-header" style="background-color:#033764">
@@ -515,31 +315,8 @@
                             <button type="button" class="btn btn-dark form-control mt-2" onclick="DownloadDispatchQR()">Dispatch QR</button>
                         </div>
                     </div>
-
-                    @* <div class="text-right">
-                        <button type="button" class="btn btn-danger btn-height" onclick="CloseDownloadModal()">Close</button>
-                    </div> *@
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="overlay" class="overlay"></div>
-    <div id="toast" class="toast-container"></div>
-</div>
-<div style="display:none;">
-      <input type="text" id="txtCode" placeholder="Enter Text">
-       <div id="qrcodeview" style="margin-top:20px"></div>
-</div>
-<script src="~/assets/js/filter.js"></script>
-
-<script>
-    const tabs = document.querySelectorAll('.nav-item-btn');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-        });
-    });
-
-</script>
+}

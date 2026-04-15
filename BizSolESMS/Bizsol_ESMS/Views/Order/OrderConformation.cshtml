@@ -1,0 +1,84 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="~/assets/js/blockui.js"></script>
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+
+<div class="oc-page esms-order-confirmation">
+    <div class="container-fluid oc-inner pt-1 pt-md-2">
+        <div>
+            <div class="oc-card oc-card--filters">
+                <div class="oc-card-title">Date range</div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label for="txtFromDate" class="col-form-label-sm fw-bold">
+                            From Date <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="txtFromDate" name="txtFromDate" autocomplete="off" class="form-control form-control-sm box_border" placeholder="From date" maxlength="50">
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="txtToDate" class="col-form-label-sm fw-bold">
+                            To Date <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="txtToDate" name="txtToDate" autocomplete="off" class="form-control form-control-sm box_border" placeholder="To date" maxlength="50">
+                    </div>
+                    <div class="col-sm-4" style="margin-top:34px;">
+                        <button class="btn btn-primary btn-height" type="button" title="Apply range" id="txtShow">
+                            <i class="fa-solid fa-filter me-1"></i> Show
+                        </button>
+                        <button type="button" class="btn btn-primary btn-height" id="exportExcel" onclick="ExportExcel()" title="Download Excel">
+                            <i class="fa-solid fa-download me-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="oc-card p-0 overflow-hidden" id="MRNTable">
+                <div class="table-wrapper fixed-height-table">
+                    <table id="table" class="fixed-width-table table mb-0">
+                        <thead id="table-header"></thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+                <div class="paginator oc-table-paginator px-2 py-2" id="paginator-table"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/Script/OrderConformation.js"></script>
+<script src="~/assets/js/filter.js"></script>
+
+@section ModalDialogs {
+    @* No dimming layer — backdrop disabled (data-bs-backdrop="false") *@
+    <div class="modal fade" id="ocOtpModal" tabindex="-1" role="dialog" aria-labelledby="ocOtpModalTitle" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 bg-transparent shadow-none">
+                <div class="oc-otp-backdrop rounded-lg p-2 p-sm-3">
+                    <div class="oc-otp-card" id="ocOtpCard">
+                        <button type="button" class="btn-close position-absolute" style="right: 12px; top: 8px; z-index: 2;" data-bs-dismiss="modal" aria-label="Close" id="btnOcOtpClose"></button>
+                        <div class="oc-otp-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="oc-otp-title" id="ocOtpModalTitle">Enter OTP</div>
+                        <p class="oc-otp-sub mb-2">We sent a code to verify order <code id="ocOtpOrderLabel">—</code></p>
+                        <div class="oc-otp-wrap" id="ocOtpInputs" aria-label="One time password">
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="one-time-code" aria-label="Digit 1" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 2" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 3" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 4" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 5" />
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="form-control oc-otp-digit" autocomplete="off" aria-label="Digit 6" />
+                        </div>
+                        <div class="oc-otp-msg" id="ocOtpErrorMsg"></div>
+                        <button type="button" class="btn btn-primary btn-oc-verify" id="btnOcOtpVerify">Verify &amp; continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

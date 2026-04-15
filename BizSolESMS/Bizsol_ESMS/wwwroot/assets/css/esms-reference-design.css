@@ -1,0 +1,352 @@
+/**
+ * ESMS — reference UI (PO Approval / ERP25-style shell)
+ * Loaded after esms-layout-theme.css — overrides tokens + global content chrome.
+ */
+
+body.esms-profenna-body,
+#layout-wrapper.esms-profenna {
+    /* Top bar + rail: shared tokens; header chrome is light on blue */
+    --esms-header-bg: #3a4552;
+    --esms-header-fg: #ffffff;
+    --esms-header-muted: rgba(255, 255, 255, 0.72);
+    --esms-header-accent: #7dd3fc;
+    --esms-menu-bg: #3a4552;
+    --esms-submenu-fg: #ffffff;
+    --esms-submenu-fg-panel: #1e293b;
+    --esms-menu-elevated: #ffffff;
+    --esms-menu-hover: rgba(255, 255, 255, 0.12);
+    --esms-menu-cyan: #7dd3fc;
+    --esms-menu-text: #ffffff;
+    --esms-menu-dim: rgba(255, 255, 255, 0.65);
+    --esms-canvas: #ffffff;
+    --esms-surface: #ffffff;
+    /* Table headers — blue only (aligned with shell) */
+    --esms-table-header-start: #1f7bc8;
+    --esms-table-header-end: #1f8acb;
+    /* Selected leaf — blue pill (white text), matches menu gradient family */
+    --esms-pill-active-start: #2d8fd4;
+    --esms-pill-active-end: #1f8acb;
+    --esms-menu-gradient-end: #1f8acb;
+    /* High-contrast content (reduces “blurry” grey UI) */
+    --esms-text-strong: #212529;
+    --esms-text-label: #1e293b;
+    --esms-border-ui: #64748b;
+    --esms-border-card: #cbd5e1;
+    --esms-surface-card: #f8fafc;
+}
+
+body.esms-profenna-body {
+    background-color: #ffffff !important;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+/* Main workspace — pure white (content shell matches @RenderBody region) */
+#layout-wrapper.esms-profenna .main-content {
+    background: #ffffff !important;
+    /* Match visible screen height when mobile browser chrome shows/hides */
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+#layout-wrapper.esms-profenna .page-content,
+#layout-wrapper.esms-profenna .esms-main-panel,
+#layout-wrapper.esms-profenna .esms-main-panel > main {
+    background: #ffffff !important;
+}
+
+/* Crisp UI text (reduces “soft”/blurred look on tables and body copy) */
+body.esms-profenna-body,
+#layout-wrapper.esms-profenna .main-content,
+#layout-wrapper.esms-profenna .esms-main-panel {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel {
+    color: var(--esms-text-strong);
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .table tbody td,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable tbody td,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable tbody th {
+    color: var(--esms-text-strong);
+    font-weight: 500;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .table tbody a {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+#layout-wrapper.esms-profenna #ERPHeading {
+    font-family: var(--esms-menu-font);
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: 0.02em;
+    color: #ffffff !important;
+}
+
+/* Sidebar — “MAIN MENU” kicker */
+#layout-wrapper.esms-profenna #sidebar-menu::before {
+    content: "MAIN MENU";
+    display: block;
+    font-family: var(--esms-menu-font);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--esms-menu-dim);
+    padding: 0 0.75rem 0.65rem 0.65rem;
+    margin-bottom: 0.15rem;
+}
+
+/* Current page leaf — blue pill (shell tones), all foreground white */
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active {
+    background: linear-gradient(90deg, var(--esms-pill-active-start), var(--esms-pill-active-end)) !important;
+    border-left: none !important;
+    border-radius: 999px !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 16px rgba(31, 138, 203, 0.45);
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active .esms-submenu-icon,
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active .esms-submenu-icon svg,
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active svg {
+    color: #fff !important;
+    stroke: #fff !important;
+    fill: #fff !important;
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active > span:not(.esms-submenu-icon) {
+    color: #fff !important;
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a.active:hover {
+    background: linear-gradient(90deg, var(--esms-pill-active-start), var(--esms-pill-active-end)) !important;
+    color: #fff !important;
+}
+
+/* Fallback if .active lands on non-sub-menu (rare) */
+#layout-wrapper.esms-profenna #side-menu > li > a.active:not(.menu-toggle) {
+    border-radius: 999px !important;
+    border-left: none !important;
+    background: linear-gradient(90deg, var(--esms-pill-active-start), var(--esms-pill-active-end)) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(31, 138, 203, 0.45);
+}
+
+/* Cards — visible edge on white canvas */
+#layout-wrapper.esms-profenna .esms-main-panel .card {
+    background: var(--esms-surface-card);
+    border: 1px solid var(--esms-border-card);
+    border-radius: 14px;
+    box-shadow: 0 4px 6px rgba(15, 23, 42, 0.05), 0 12px 28px rgba(15, 23, 42, 0.07);
+    color: var(--esms-text-strong);
+}
+
+/* Left rail — slate → blue vertical gradient */
+#layout-wrapper.esms-profenna .vertical-menu {
+    background-color: var(--esms-menu-bg) !important;
+    background-image: linear-gradient(180deg, var(--esms-menu-bg) 0%, var(--esms-menu-gradient-end) 100%) !important;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.2);
+}
+
+#layout-wrapper.esms-profenna .vertical-menu > [data-simplebar],
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-wrapper,
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-mask,
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-offset,
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-content-wrapper,
+#layout-wrapper.esms-profenna .vertical-menu .simplebar-content {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu {
+    background-color: var(--esms-menu-bg) !important;
+    background-image: linear-gradient(180deg, var(--esms-menu-bg) 0%, var(--esms-menu-gradient-end) 100%) !important;
+}
+
+/* Bootstrap / plain tables — compact header + readable cell grid */
+#layout-wrapper.esms-profenna .esms-main-panel .table thead th {
+    background: linear-gradient(135deg, var(--esms-table-header-start) 0%, var(--esms-table-header-end) 100%) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    padding: 0.35rem 0.55rem;
+    line-height: 1.25;
+    vertical-align: middle;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .table tbody td {
+    border-color: rgba(33, 37, 41, 0.14);
+    vertical-align: middle;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .table-bordered td,
+#layout-wrapper.esms-profenna .esms-main-panel .table-bordered th {
+    border-color: rgba(33, 37, 41, 0.16) !important;
+}
+
+/* Body rows: flat white (no alternating lavender) */
+#layout-wrapper.esms-profenna .esms-main-panel .table tbody tr {
+    background: #ffffff;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable tbody tr,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable.stripe tbody tr.odd,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable.stripe tbody tr.even,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable.display tbody tr.odd,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable.display tbody tr.even {
+    background-color: #ffffff !important;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .dataTables_wrapper {
+    background: #ffffff;
+}
+
+/* DataTables — match table header gradient */
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable tbody td,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable tbody th {
+    border-color: rgba(33, 37, 41, 0.14) !important;
+    color: var(--esms-text-strong) !important;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead th,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead td {
+    background: linear-gradient(135deg, var(--esms-table-header-start) 0%, var(--esms-table-header-end) 100%) !important;
+    color: #fff !important;
+    border-bottom: none !important;
+    padding: 0.35rem 0.55rem !important;
+    font-size: 0.75rem !important;
+    line-height: 1.25 !important;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead .sorting:before,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead .sorting:after,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead .sorting_asc:before,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead .sorting_asc:after,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead .sorting_desc:before,
+#layout-wrapper.esms-profenna .esms-main-panel table.dataTable thead .sorting_desc:after {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+#layout-wrapper.esms-profenna .dataTables_wrapper .dataTables_filter input {
+    border-radius: 8px;
+    border: 1px solid var(--esms-border-ui);
+    color: var(--esms-text-strong);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    min-height: 1.9rem;
+    padding: 0.28rem 0.55rem;
+    line-height: 1.35;
+}
+
+#layout-wrapper.esms-profenna .dataTables_wrapper .dataTables_length select {
+    border-radius: 8px;
+    border: 1px solid var(--esms-border-ui);
+    color: var(--esms-text-strong);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    min-height: 1.9rem;
+    padding: 0.28rem 1.75rem 0.28rem 0.5rem;
+    line-height: 1.35;
+}
+
+/* Primary buttons — match shell blues */
+#layout-wrapper.esms-profenna .esms-main-panel .btn-primary {
+    background: linear-gradient(135deg, var(--esms-table-header-start) 0%, var(--esms-table-header-end) 100%);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .btn-primary:hover {
+    background: linear-gradient(135deg, #1a6eb8 0%, #1880c0 100%);
+}
+
+/* Footer stays light on canvas */
+#layout-wrapper.esms-profenna .footer {
+    background: #fff !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* —— Optional blocks (PO Approval–style hero + white panel) — use in existing Razor when needed —— */
+#layout-wrapper.esms-profenna .esms-page-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.2rem 1.35rem;
+    border-radius: 14px;
+    background: linear-gradient(118deg, #eff6ff 0%, #e0e7ff 45%, #f5f3ff 88%);
+    color: #0f172a;
+    margin-bottom: 1.15rem;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+#layout-wrapper.esms-profenna .esms-page-hero-title {
+    font-family: var(--esms-menu-font);
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    margin: 0;
+}
+
+#layout-wrapper.esms-profenna .esms-page-hero-sub {
+    margin: 0.35rem 0 0;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: #475569;
+}
+
+#layout-wrapper.esms-profenna .esms-panel-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 10px 32px rgba(15, 23, 42, 0.07);
+    overflow: hidden;
+}
+
+#layout-wrapper.esms-profenna .esms-panel-card-h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+    border-left: 4px solid #2563eb;
+    background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+}
+
+#layout-wrapper.esms-profenna .esms-panel-card-h h2 {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #334155;
+}
+
+/* Master / list grid wrapper — framed panel (aligned with ESMS cards, readable on white) */
+#layout-wrapper.esms-profenna #txtListpage {
+    border: 1px solid var(--esms-border-card);
+    border-radius: 12px;
+    padding: 0.75rem 0.85rem;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.07), 0 0 0 1px rgba(15, 23, 42, 0.03);
+    box-sizing: border-box;
+    transition: box-shadow 0.25s ease;
+    margin-top: 5px;
+}
+
+#layout-wrapper.esms-profenna #txtListpage:hover {
+    box-shadow:
+        0 2px 4px rgba(15, 23, 42, 0.05),
+        0 14px 32px rgba(15, 23, 42, 0.09),
+        0 0 0 1px rgba(37, 99, 235, 0.08);
+}

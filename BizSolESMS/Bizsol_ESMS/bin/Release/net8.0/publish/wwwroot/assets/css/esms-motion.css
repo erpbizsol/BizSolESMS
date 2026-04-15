@@ -1,0 +1,148 @@
+/**
+ * ESMS — motion (layout shell + menu + content)
+ * Loaded after esms-reference-design.css. Respects prefers-reduced-motion.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+    #layout-wrapper.esms-profenna .esms-main-panel,
+    #layout-wrapper.esms-profenna #page-topbar,
+    #layout-wrapper.esms-profenna .vertical-menu,
+    #layout-wrapper.esms-profenna #side-menu > li,
+    #layout-wrapper.esms-profenna #sidebar-menu a,
+    #layout-wrapper.esms-profenna #sidebar-menu .menu-toggle,
+    #layout-wrapper.esms-profenna #vertical-menu-btn,
+    #layout-wrapper.esms-profenna .esms-main-panel .card {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+        transform: none !important;
+    }
+}
+
+/* Opacity-only: avoid transform on .esms-main-panel — transform creates a stacking
+   context so Bootstrap’s .modal-backdrop (sibling of #layout-wrapper) sat above nested .modal and blocked all clicks. */
+@keyframes esms-fade-up {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes esms-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes esms-menu-stagger {
+    from {
+        opacity: 0;
+        transform: translateX(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Main workspace — soft entrance on navigation (all app pages using layout) */
+#layout-wrapper.esms-profenna .esms-main-panel {
+    animation: esms-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Fixed chrome */
+#layout-wrapper.esms-profenna #page-topbar {
+    animation: esms-fade-in 0.4s ease-out both;
+}
+
+#layout-wrapper.esms-profenna .vertical-menu {
+    animation: esms-fade-in 0.45s ease-out 0.05s both;
+}
+
+/* First-level menu rows — light stagger */
+#layout-wrapper.esms-profenna #side-menu > li {
+    animation: esms-menu-stagger 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(1) {
+    animation-delay: 0.03s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(2) {
+    animation-delay: 0.06s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(3) {
+    animation-delay: 0.09s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(4) {
+    animation-delay: 0.12s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(5) {
+    animation-delay: 0.15s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(6) {
+    animation-delay: 0.18s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(7) {
+    animation-delay: 0.21s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(8) {
+    animation-delay: 0.24s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(9) {
+    animation-delay: 0.27s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(10) {
+    animation-delay: 0.3s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(11) {
+    animation-delay: 0.33s;
+}
+#layout-wrapper.esms-profenna #side-menu > li:nth-child(12) {
+    animation-delay: 0.36s;
+}
+
+/* Interactive transitions — menu + header */
+#layout-wrapper.esms-profenna #sidebar-menu li > a,
+#layout-wrapper.esms-profenna #sidebar-menu .menu-toggle {
+    transition:
+        background-color 0.22s ease,
+        color 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease,
+        transform 0.2s ease;
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu > ul > li > a.menu-toggle:hover {
+    transform: translateX(2px);
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a:hover {
+    transform: translateX(3px);
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu .iconBg,
+#layout-wrapper.esms-profenna #sidebar-menu .esms-submenu-icon svg {
+    transition: color 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
+}
+
+#layout-wrapper.esms-profenna #sidebar-menu li > a:hover .iconBg {
+    transform: scale(1.04);
+}
+
+#layout-wrapper.esms-profenna .navbar-header .header-item,
+#layout-wrapper.esms-profenna .navbar-header .btn {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .card {
+    transition: box-shadow 0.28s ease, transform 0.28s ease;
+}
+
+#layout-wrapper.esms-profenna .esms-main-panel .card:hover {
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    transform: translateY(-1px);
+}

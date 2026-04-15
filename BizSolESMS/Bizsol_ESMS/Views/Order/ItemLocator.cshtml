@@ -1,40 +1,10 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="~/assets/script/ItemLocator.js"></script>
 <script src="~/assets/js/autosuggestion.js"></script>
-<style>
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
-        display: none;
-    }
-
-    .toast-container {
-        position: fixed;
-        top: 45%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #d35950;
-        color: white;
-        padding: 35px 55px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        display: none;
-        z-index: 10000;
-        font-size: 18px;
-        text-align: center;
-        opacity: 0;
-        transition: opacity 0.3s ease-in-out;
-    }
-</style>
 <div class="container">
     <div class="card shadow-sm textCreatepage" id="ValidateFrom">
         <div class="tabs">

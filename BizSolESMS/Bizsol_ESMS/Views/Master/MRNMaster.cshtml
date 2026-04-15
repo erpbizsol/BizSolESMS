@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -11,120 +11,6 @@
 <link href="~/assets/css/loader.css" rel="stylesheet" />
 <script src="~/assets/js/autosuggestion.js"></script>
 
-<style>
-    .tabs {
-        width: 100%;
-        max-width: 2000px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-        border-radius: 8px;
-        overflow: hidden;
-        padding: 0.7rem;
-    }
-
-    .tabSec {
-        color: white;
-        width: 117px;
-        height: 36px;
-        float: inline-end;
-        font-size: 12px;
-        text-align: center;
-        border-top-right-radius: 40px;
-        border-bottom-left-radius: 40px;
-        line-height: 3;
-        margin-top: -8px;
-        background: #1d4b7d;
-    }
-
-    .tab-content {
-        display: none;
-        padding: 16px;
-        border: 1px solid lightgray;
-        border-radius: 5px;
-    }
-
-        .tab-content.active {
-            display: block;
-        }
-
-    .tab[disabled] {
-        cursor: not-allowed;
-        opacity: 0.9;
-    }
-
-    .datepicker td, .datepicker th {
-        border-radius: 20px !important;
-    }
-
-    .datepicker table tr td, .datepicker table tr td {
-        padding: 8px 9px !important;
-        height: 16px !important;
-    }
-
-    .datepicker table tfoot {
-        display: none;
-    }
-
-   
-    .page-content {
-        display: block;
-    }
-
-    .shadow-sm {
-        border-top-right-radius: 5px;
-        border-top-left-radius: 5px;
-        background-color: #e9e9ef;
-        margin-top: 15px;
-        border-top: 1px solid #c9cae7;
-    }
-
-    .btn-icon {
-        font-size: 14px;
-        border-radius: 50%;
-        background: #1d4b7d;
-        color: #fff;
-        padding: 6px;
-    }
-
-    .btn-icon {
-        font-size: 14px;
-        border-radius: 20px;
-        background: #1d4b7d;
-        color: #fff;
-        padding: 6px;
-    }
-
-    .btn-danger {
-        background-color: #ab1624;
-    }
-
-    .highlight {
-        background-color: #f5c0bfc4;
-    }
-
-    .active {
-        background-color: #275481;
-        color: #fff;
-    }
-     .container-fluid {
-        padding-right: 0;
-        padding-left: 0;
-    }
-    .breadcrumbs1 {
-        position: sticky;
-        top: 0;
-        background-color: #eff7ff;
-        z-index: 1000;
-        padding: 8px 0px 0px 9px;
-        box-shadow: 0 2px 4px rgb(96 95 95 / 90%);
-        box-shadow: 0 1px 1px rgb(76 76 76 / 90%);
-    }
-
-    .page-content {
-        padding: 3px 0;
-    }
-
-    
-</style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
         <div class="fix-header">
@@ -374,6 +260,11 @@
                                 <input list="txtVendorNameList" id="txtImportVendorName" name="txtVendorName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Vendor Name">
                             </div>
                             <div class="col-md-3 col-sm-6">
+                                <label for="txtImportBrandName" class="col-form-label-sm fw-bold">Brand</label><span class="text-danger">*</span>
+                                <datalist id="txtImportBrandList"></datalist>
+                                <input list="txtImportBrandList" id="txtImportBrandName" name="txtImportBrandName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Brand Name">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
                                 <label for="txtImportWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
                                 <datalist id="txtImportWarehouseList"></datalist>
                                 <input list="txtImportWarehouseList" id="txtImportWarehouse" name="" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Warehouse..">
@@ -383,6 +274,8 @@
                                 <input type="text" id="txtImportVehicleNo" name="txtImportVehicleNo" class="box_border form-control form-control-sm" value="" onkeyup="convertToUppercase(this);" autocomplete="off" placeholder="Vehicle No..">
                                 <ul id="txtImportVehicleNoList" class="AutoSuggestion-list"></ul>
                             </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtExcelFile" class="col-form-label-sm fw-bold">Choose File</label><span class="text-danger">*</span>
                                 <input type="file" id="txtExcelFile" class="box_border form-control form-control-sm" autocomplete="off" accept=".xlsx, .xls">

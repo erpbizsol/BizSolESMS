@@ -2625,6 +2625,15 @@
           }
         }
       },
+      "QRCoder/1.6.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/QRCoder.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/QRCoder.dll": {}
+        }
+      },
       "ReportViewerCore.NETCore/15.1.26": {
         "type": "package",
         "dependencies": {
@@ -4756,6 +4765,7 @@
           "Microsoft.Data.SqlClient.SNI.runtime": "5.2.0",
           "MySql.Data": "9.1.0",
           "MySqlConnector": "2.4.0",
+          "QRCoder": "1.6.0",
           "ReportViewerCore.NETCore": "15.1.26",
           "RestSharp": "112.1.0",
           "System.Data.DataSetExtensions": "4.5.0",
@@ -8307,6 +8317,27 @@
         "lib/netstandard2.0/Newtonsoft.Json.Bson.xml",
         "newtonsoft.json.bson.1.0.2.nupkg.sha512",
         "newtonsoft.json.bson.nuspec"
+      ]
+    },
+    "QRCoder/1.6.0": {
+      "sha512": "XmPA81eo+oRxBuyVdswsSkTGTE1d3thfF11Z1PdD7oB56A6HU4G4AAOdySmGRMb/cljwlFTMWUtosGEnwpS6GA==",
+      "type": "package",
+      "path": "qrcoder/1.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net35/QRCoder.dll",
+        "lib/net40/QRCoder.dll",
+        "lib/net5.0-windows7.0/QRCoder.dll",
+        "lib/net5.0/QRCoder.dll",
+        "lib/net6.0-windows7.0/QRCoder.dll",
+        "lib/net6.0/QRCoder.dll",
+        "lib/netstandard1.3/QRCoder.dll",
+        "lib/netstandard2.0/QRCoder.dll",
+        "nuget-icon.png",
+        "nuget-readme.md",
+        "qrcoder.1.6.0.nupkg.sha512",
+        "qrcoder.nuspec"
       ]
     },
     "ReportViewerCore.NETCore/15.1.26": {
@@ -13145,23 +13176,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\BizSol\\.nuget\\packages\\": {},
+    "C:\\Users\\Meetu\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\WorkerService\\WorkerService.csproj",
+      "projectUniqueName": "D:\\All Project\\BizSolESMS\\BizSolESMS\\WorkerService\\WorkerService.csproj",
       "projectName": "WorkerService",
-      "projectPath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\WorkerService\\WorkerService.csproj",
-      "packagesPath": "C:\\Users\\BizSol\\.nuget\\packages\\",
-      "outputPath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\WorkerService\\obj\\",
+      "projectPath": "D:\\All Project\\BizSolESMS\\BizSolESMS\\WorkerService\\WorkerService.csproj",
+      "packagesPath": "C:\\Users\\Meetu\\.nuget\\packages\\",
+      "outputPath": "D:\\All Project\\BizSolESMS\\BizSolESMS\\WorkerService\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\BizSol\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Meetu\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -13169,15 +13200,15 @@
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files\\dotnet\\library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj": {
-              "projectPath": "D:\\WebERP2.4Core\\ESMS_TEST\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj"
+            "D:\\All Project\\BizSolESMS\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj": {
+              "projectPath": "D:\\All Project\\BizSolESMS\\BizSolESMS\\Bizsol_ESMS\\Bizsol_ESMS.csproj"
             }
           }
         }
@@ -13223,7 +13254,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
