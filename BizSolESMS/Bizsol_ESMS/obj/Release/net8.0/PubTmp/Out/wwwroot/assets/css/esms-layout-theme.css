@@ -1,0 +1,866 @@
+.Highlighted {
+            background-color: #FFD700 !important;
+            color: black !important;
+        }
+
+        /* —— ESMS layout: top bar + rail share slate→blue gradient; chrome text light on blue —— */
+        body.esms-profenna-body,
+        #layout-wrapper.esms-profenna {
+            --esms-header-h: 64px;
+            --esms-text: #0f172a;
+            --esms-muted: #475569;
+            --esms-surface: #ffffff;
+            --esms-canvas: #ffffff;
+            --esms-footer-bg: #ffffff;
+            --esms-border: rgba(15, 23, 42, 0.08);
+            /* Hairlines on light header / sidebar (name kept for fewer edits) */
+            --esms-border-on-dark: rgba(255, 255, 255, 0.12);
+            --esms-font-ui: "Source Sans 3", system-ui, sans-serif;
+            --esms-font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+            --esms-menu-font: "Inter", "Source Sans 3", system-ui, sans-serif;
+            --esms-header-bg: #3a4552;
+            --esms-header-fg: #ffffff;
+            --esms-header-muted: rgba(255, 255, 255, 0.72);
+            --esms-header-accent: #7dd3fc;
+            /* Rail: slate → vivid blue (not identical to any reference screenshot) */
+            --esms-menu-bg: #3a4552;
+            --esms-menu-gradient-end: #1f8acb;
+            --esms-menu-elevated: #ffffff;
+            --esms-menu-hover: rgba(255, 255, 255, 0.12);
+            --esms-menu-hover-panel: #eef2f7;
+            --esms-menu-panel-fg: #0f172a;
+            /* Submenu labels on blue rail — white; SM flyout panel uses --esms-submenu-fg-panel */
+            --esms-submenu-fg: #ffffff;
+            --esms-submenu-fg-panel: #1e293b;
+            --esms-menu-cyan: #7dd3fc;
+            --esms-menu-text: #ffffff;
+            --esms-menu-dim: rgba(255, 255, 255, 0.65);
+            --esms-accent: #e2e8f0;
+            --esms-accent-mid: #cbd5e1;
+        }
+
+        body.esms-profenna-body {
+            background-color: var(--esms-canvas) !important;
+            min-height: 100vh;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Theme adds margin-top on #layout-wrapper — removes gap above header */
+        #layout-wrapper.esms-profenna {
+            margin-top: 0 !important;
+        }
+
+        /* Full-width top bar — same vertical gradient as .vertical-menu */
+        #layout-wrapper.esms-profenna #page-topbar {
+            position: fixed !important;
+            z-index: 10080 !important;
+            background-color: var(--esms-menu-bg) !important;
+            background-image: linear-gradient(180deg, var(--esms-menu-bg) 0%, var(--esms-menu-gradient-end) 100%) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        #layout-wrapper.esms-profenna .navbar-header {
+            min-height: 64px;
+            height: auto;
+            padding-left: 0 !important;
+            padding-right: 0.75rem;
+            align-items: stretch;
+            font-family: var(--esms-font-ui);
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        /* Logo column — same gradient as .vertical-menu (continuous shell) */
+        #layout-wrapper.esms-profenna .navbar-brand-box {
+            width: 268px;
+            min-height: 64px;
+            height: 64px;
+            background-color: var(--esms-menu-bg) !important;
+            background-image: linear-gradient(180deg, var(--esms-menu-bg) 0%, var(--esms-menu-gradient-end) 100%) !important;
+            box-shadow: none !important;
+            border-right: 1px solid rgba(0, 0, 0, 0.12);
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem 0 0.65rem !important;
+            margin: 0 !important;
+        }
+
+        #layout-wrapper.esms-profenna .logo {
+            line-height: 1.2 !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Single round mark (one img — avoids logo-sm + logo-lg both visible) */
+        #layout-wrapper.esms-profenna .navbar-brand-box .esms-brand-logo {
+            line-height: 0;
+            display: inline-flex;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        #layout-wrapper.esms-profenna .navbar-brand-box .logo img {
+            width: 34px !important;
+            height: 34px !important;
+            max-height: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            border-radius: 50% !important;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            flex-shrink: 0;
+            background-color: transparent !important;
+            background: transparent !important;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28) !important;
+            vertical-align: middle;
+        }
+
+        #layout-wrapper.esms-profenna .navbar-brand-box .logo-txt {
+            font-family: var(--esms-font-display);
+            font-weight: 600;
+            font-size: 1.35rem;
+            letter-spacing: 0.02em;
+            color: #ffffff !important;
+        }
+
+        #layout-wrapper.esms-profenna .navbar-brand-box .svg,
+        #layout-wrapper.esms-profenna .navbar-brand-box svg {
+            color: var(--esms-menu-cyan) !important;
+            fill: currentColor;
+        }
+
+        #layout-wrapper.esms-profenna #vertical-menu-btn {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff !important;
+            margin-right: 0.5rem;
+            box-shadow: none !important;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        #layout-wrapper.esms-profenna #vertical-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.22);
+            color: #ffffff !important;
+        }
+
+        /* Drop Bootstrap focus/active ring so the box does not stay after click */
+        #layout-wrapper.esms-profenna #vertical-menu-btn:focus,
+        #layout-wrapper.esms-profenna #vertical-menu-btn:active,
+        #layout-wrapper.esms-profenna #vertical-menu-btn:focus-visible {
+            box-shadow: none !important;
+            outline: none !important;
+            border-color: rgba(255, 255, 255, 0.45);
+        }
+
+        #layout-wrapper.esms-profenna #vertical-menu-btn:focus:not(:hover) {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        #layout-wrapper.esms-profenna .toggleBtn {
+            height: 64px !important;
+            align-items: center;
+            display: inline-flex;
+        }
+
+        #layout-wrapper.esms-profenna .navbar-header .header-item {
+            height: 64px;
+            color: var(--esms-header-fg) !important;
+        }
+
+        #layout-wrapper.esms-profenna #ERPHeading {
+            font-family: var(--esms-font-display);
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--esms-header-fg) !important;
+            letter-spacing: 0.01em;
+            margin: 0;
+        }
+
+        #layout-wrapper.esms-profenna .esms-page-title-wrap {
+            padding-top: 0 !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 64px;
+        }
+
+        #layout-wrapper.esms-profenna .esms-kicker {
+            font-family: var(--esms-font-ui);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--esms-header-muted) !important;
+            margin: 0 0 2px 0;
+        }
+
+        #layout-wrapper.esms-profenna .header-profile-user {
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #layout-wrapper.esms-profenna .navbar-header .btn.header-item {
+            background: transparent !important;
+        }
+
+        #layout-wrapper.esms-profenna .navbar-header .dropdown .show.header-item {
+            background: rgba(255, 255, 255, 0.14) !important;
+        }
+
+        #layout-wrapper.esms-profenna .navbar-header .header-item.bg-light-subtle {
+            background: transparent !important;
+        }
+
+        #layout-wrapper.esms-profenna .navbar-header svg,
+        #layout-wrapper.esms-profenna .navbar-header [data-feather] {
+            stroke: var(--esms-header-accent) !important;
+            color: var(--esms-header-accent) !important;
+        }
+
+        #layout-wrapper.esms-profenna .navbar-header .dropdown-menu {
+            border-radius: 12px;
+            border: 1px solid var(--esms-border);
+            box-shadow: 0 12px 40px rgba(12, 35, 64, 0.12);
+            font-family: var(--esms-font-ui);
+        }
+
+        #layout-wrapper.esms-profenna .vertical-menu {
+            position: fixed !important;
+            left: 0 !important;
+            background-color: var(--esms-menu-bg) !important;
+            background-image: linear-gradient(180deg, var(--esms-menu-bg) 0%, var(--esms-menu-gradient-end) 100%) !important;
+            border-right: 1px solid rgba(0, 0, 0, 0.12);
+            top: 64px;
+            z-index: 1001 !important;
+            width: 268px;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.2);
+            /* Fill viewport below header — fixes empty body colour showing under short menus */
+            bottom: 0 !important;
+            height: calc(100vh - 64px) !important;
+            min-height: calc(100vh - 64px) !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #layout-wrapper.esms-profenna .vertical-menu > [data-simplebar] {
+            flex: 1 1 auto;
+            min-height: 0;
+            height: 100% !important;
+            max-height: 100%;
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        #layout-wrapper.esms-profenna .vertical-menu .simplebar-wrapper,
+        #layout-wrapper.esms-profenna .vertical-menu .simplebar-mask,
+        #layout-wrapper.esms-profenna .vertical-menu .simplebar-offset,
+        #layout-wrapper.esms-profenna .vertical-menu .simplebar-content-wrapper {
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        #layout-wrapper.esms-profenna .vertical-menu .simplebar-content {
+            min-height: 100%;
+            box-sizing: border-box;
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        /* Fixed #page-topbar sits over the document; theme’s .main-content .content { margin-top: 70px } never applies
+           because we use .esms-main-panel — push page body below header (matches .vertical-menu top: 64px). */
+        #layout-wrapper.esms-profenna .main-content {
+            margin-left: 268px;
+            font-family: var(--esms-font-ui);
+            /* Same as inner shell — was --esms-canvas, which showed as pale blue below short pages */
+            background: #fff !important;
+            padding-top: var(--esms-header-h);
+            box-sizing: border-box;
+            min-height: 100vh;
+            /* Theme .main-content { overflow: hidden } breaks position:sticky for .breadcrumbs1 toolbars */
+            overflow: visible !important;
+        }
+
+        /* Sticky Save/Back/NEW bar — stays under #page-topbar while scrolling (pages use section.breadcrumbs1) */
+        #layout-wrapper.esms-profenna .breadcrumbs1 {
+            position: sticky !important;
+            top: var(--esms-header-h) !important;
+            z-index: 10070 !important;
+        }
+
+        /* Main shell (946–952): solid white content area */
+        #layout-wrapper.esms-profenna .page-content {
+            background: #fff !important;
+            overflow: visible !important;
+        }
+
+        #layout-wrapper.esms-profenna .esms-main-panel {
+            background: #fff !important;
+            overflow: visible !important;
+        }
+
+        #layout-wrapper.esms-profenna .esms-main-panel > main {
+            background: #fff !important;
+            overflow: visible !important;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu {
+            padding: 1rem 0.75rem 1.5rem;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu ul li a {
+            font-family: var(--esms-menu-font);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            color: var(--esms-menu-text) !important;
+            border-radius: 8px;
+            padding: calc(0.65rem + 4px) 0.75rem calc(0.65rem + 4px) 0.65rem;
+            margin-bottom: 2px;
+            border-left: 3px solid transparent;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu .has-arrow:after {
+            color: rgba(233, 241, 250, 0.55) !important;
+            opacity: 0.95;
+        }
+
+        /* Top-level groups (Master, Transactions, …): left-aligned, compact row */
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a.menu-toggle {
+            display: flex !important;
+            align-items: center;
+            justify-content: flex-start !important;
+            text-align: left !important;
+            padding: calc(0.38rem + 4px) 0.55rem calc(0.38rem + 4px) 0.45rem !important;
+            min-height: 0;
+            font-family: var(--esms-menu-font) !important;
+            font-size: 0.75rem !important;
+            font-weight: 600;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a.menu-toggle > span:not(.iconBg) {
+            flex: 1;
+            text-align: left !important;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a.menu-toggle .iconBg {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            min-height: 32px !important;
+            padding: 0 !important;
+            margin-right: 10px !important;
+            flex-shrink: 0;
+            border-radius: 50% !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a.menu-toggle .iconBg svg,
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a.menu-toggle .iconBg .side-menu-icon {
+            width: 16px !important;
+            height: 16px !important;
+        }
+
+        /* Open top-level section: white rounded “card” on dark rail */
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li.mm-active > a.menu-toggle {
+            background: var(--esms-menu-elevated) !important;
+            color: var(--esms-menu-panel-fg) !important;
+            border-left: none !important;
+            border-radius: 14px !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li.mm-active > a.menu-toggle .iconBg {
+            background: rgba(56, 165, 250, 0.22) !important;
+            border: 1px solid rgba(37, 99, 235, 0.35);
+            box-shadow: none;
+            border-radius: 50% !important;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li.mm-active > a.menu-toggle svg {
+            color: #1d4ed8 !important;
+            stroke: #1d4ed8;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li.mm-active > a.menu-toggle:hover {
+            background: var(--esms-menu-hover-panel) !important;
+            color: var(--esms-menu-panel-fg) !important;
+        }
+
+        /* First-level submenu indent (10px from rail) */
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li > ul.sub-menu {
+            padding-left: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Deeper nesting: extra step + subtle guide line */
+        #layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu ul.sub-menu {
+            padding-left: 14px;
+            margin-left: 8px;
+            border-left: 1px solid rgba(255, 255, 255, 0.22);
+            box-sizing: border-box;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu ul li ul.sub-menu li a {
+            font-family: var(--esms-menu-font) !important;
+            font-size: 0.8rem !important;
+            line-height: 1.888;
+            padding: calc(0.32rem + 4px) 0.6rem calc(0.32rem + 4px) 0.5rem !important;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.2rem;
+            color: var(--esms-submenu-fg) !important;
+        }
+
+        #layout-wrapper.esms-profenna .esms-submenu-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 0.35rem;
+        }
+
+        #layout-wrapper.esms-profenna .esms-submenu-icon svg {
+            width: 13px;
+            height: 13px;
+            color: var(--esms-submenu-fg);
+            stroke: var(--esms-submenu-fg);
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu .iconBg {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            min-height: 32px;
+            padding: 0;
+            margin-right: 10px;
+            box-shadow: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu .iconBg svg,
+        #layout-wrapper.esms-profenna #sidebar-menu .iconBg .side-menu-icon {
+            width: 16px !important;
+            height: 16px !important;
+        }
+
+        /* Only the anchor under the pointer — not parent <li> when hovering nested items (li:hover would match ancestors) */
+        #layout-wrapper.esms-profenna #sidebar-menu a:hover .iconBg {
+            background: rgba(255, 255, 255, 0.18) !important;
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* app.min.css uses #sidebar-menu ul li:hover a / .iconBg — parent <li> stays :hover when a child is hovered; cancel for non-hovered links */
+        #layout-wrapper.esms-profenna #sidebar-menu ul li:hover .sub-menu a:not(:hover) {
+            color: var(--esms-submenu-fg) !important;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu ul li:hover > a.menu-toggle:not(:hover) {
+            color: var(--esms-menu-text) !important;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu ul li:hover > a.menu-toggle:not(:hover) .iconBg {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li.mm-active:hover > a.menu-toggle:not(:hover) .iconBg {
+            background: rgba(56, 165, 250, 0.22) !important;
+            border: 1px solid rgba(37, 99, 235, 0.35);
+        }
+
+        /* Top-level leaf only — submenu .active uses purple pill in esms-reference-design.css */
+        #layout-wrapper.esms-profenna #side-menu > li > a.active:not(.menu-toggle) {
+            background: var(--esms-menu-elevated) !important;
+            color: var(--esms-menu-panel-fg) !important;
+            font-family: var(--esms-menu-font) !important;
+            font-weight: 600;
+            border-left: none !important;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Mid-level parent open (e.g. Quality Records) */
+        #layout-wrapper.esms-profenna #sidebar-menu .sub-menu .mm-active > a {
+            background: rgba(255, 255, 255, 0.14) !important;
+            color: var(--esms-submenu-fg) !important;
+            font-weight: 600;
+            border-left: 3px solid rgba(255, 255, 255, 0.45) !important;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu ul.sub-menu li > a:hover {
+            background: rgba(255, 255, 255, 0.14) !important;
+            color: var(--esms-submenu-fg) !important;
+            font-family: var(--esms-menu-font) !important;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a.menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: var(--esms-menu-text) !important;
+            font-family: var(--esms-menu-font) !important;
+        }
+
+        #layout-wrapper.esms-profenna #side-menu .mm-active > a {
+            color: var(--esms-menu-panel-fg) !important;
+        }
+
+        #layout-wrapper.esms-profenna #sidebar-menu .side-menu-icon {
+            color: var(--esms-menu-cyan) !important;
+        }
+
+        #layout-wrapper.esms-profenna .footer {
+            font-family: var(--esms-font-ui);
+            border-top: 1px solid var(--esms-border);
+            background: #fff !important;
+            padding-top: 0.85rem;
+            padding-bottom: 0.85rem;
+            left: 268px !important; /* match sidebar width (theme default is 250px) */
+        }
+
+        /* Collapsed sidebar (“SM” icon rail): compact rail + smaller icon chips */
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna {
+            --esms-sidebar-sm: 72px;
+            --esms-sm-flyout-gap: 40px;
+            --esms-sm-hover-extra: 240px;
+        }
+
+        /* SM header rail (desktop / tablet only): icon-only + narrow logo column — do NOT apply on phones
+           or “WeBiz” stays hidden and the rail stays 72px when users resize from desktop SM. */
+        @media (min-width: 992px) {
+            body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .navbar-brand-box {
+                width: var(--esms-sidebar-sm) !important;
+                min-width: var(--esms-sidebar-sm);
+                padding-left: 0.35rem !important;
+                padding-right: 0.35rem !important;
+                justify-content: center;
+            }
+
+            body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .navbar-brand-box .esms-brand-title,
+            body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .navbar-brand-box .logo-txt {
+                display: none !important;
+            }
+
+            body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .navbar-brand-box .esms-brand-link {
+                justify-content: center;
+                gap: 0;
+            }
+
+            body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .main-content {
+                margin-left: var(--esms-sidebar-sm) !important;
+            }
+
+            body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .footer {
+                left: var(--esms-sidebar-sm) !important;
+            }
+        }
+
+        /* Theme SM uses position:absolute + z-index:5 — rail can sit under the header and flyouts stack wrong */
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu {
+            position: fixed !important;
+            top: 64px !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            width: var(--esms-sidebar-sm) !important;
+            height: calc(100vh - 64px) !important;
+            min-height: calc(100vh - 64px) !important;
+            background-color: var(--esms-menu-bg) !important;
+            background-image: linear-gradient(180deg, var(--esms-menu-bg) 0%, var(--esms-menu-gradient-end) 100%) !important;
+            /* Below #page-topbar (10080), above main/sticky toolbars (~10070) */
+            z-index: 10075 !important;
+        }
+
+        /* No horizontal padding in SM — otherwise <li> is inset and left:100% flyout starts inside the rail */
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna #sidebar-menu {
+            padding: 0.45rem 0 0.75rem !important;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna #sidebar-menu > ul > li {
+            margin-bottom: 4px;
+            position: relative;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
+            overflow: visible !important;
+        }
+
+        /* Expand the <li> to the same width as the hover row so children can sit in one column (below “Master”) */
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover {
+            width: calc(var(--esms-sm-hover-extra) + var(--esms-sidebar-sm)) !important;
+            max-width: none !important;
+            z-index: 10076;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a {
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            padding: calc(0.3rem + 4px) 0.2rem !important;
+            min-height: 46px;
+            border-radius: 10px !important;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a .iconBg {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0 !important;
+            padding: 0 !important;
+            min-width: 32px;
+            min-height: 32px;
+            max-width: 32px;
+            max-height: 32px;
+            border-radius: 50% !important;
+            box-sizing: border-box;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a .iconBg .side-menu-icon,
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna #sidebar-menu > ul > li > a .iconBg svg {
+            width: 16px !important;
+            height: 16px !important;
+            min-width: 16px;
+            min-height: 16px;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > a {
+            width: calc(var(--esms-sm-hover-extra) + var(--esms-sidebar-sm)) !important;
+            background: #ffffff !important;
+            color: var(--esms-menu-panel-fg) !important;
+            border-left: 4px solid var(--esms-header-accent) !important;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > a .iconBg {
+            background: rgba(29, 78, 216, 0.12) !important;
+            box-shadow: none;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > a svg {
+            color: #1d4ed8 !important;
+            fill: rgba(29, 78, 216, 0.35) !important;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > a > span:not(.iconBg) {
+            color: var(--esms-menu-panel-fg) !important;
+            margin-left: 5px;
+        }
+
+        /* SM: first-level submenu below row; inset 40px from rail left = gap after icon column; tighter top padding */
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > ul.sub-menu {
+            display: block !important;
+            position: absolute !important;
+            left: var(--esms-sm-flyout-gap) !important;
+            right: 0 !important;
+            top: 100% !important;
+            width: auto !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            height: auto !important;
+            margin-left: 0 !important;
+            margin-top: 2px !important;
+            margin-right: 0 !important;
+            margin-bottom: 0 !important;
+            padding: 0 0 8px 0 !important;
+            z-index: 10077 !important;
+            background: var(--esms-menu-elevated) !important;
+            background-color: var(--esms-menu-elevated) !important;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 10px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+            max-height: calc(100vh - 120px) !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > ul.sub-menu > li:first-child > a {
+            margin-top: 0 !important;
+            margin-bottom: 1px !important;
+            padding-top: calc(0.3rem + 2px) !important;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > ul.sub-menu::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li > ul.sub-menu li {
+            position: relative;
+        }
+
+        /* Nested SM flyout: opens to the right; slightly wider */
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li > ul.sub-menu li:hover > ul.sub-menu {
+            display: block !important;
+            position: absolute !important;
+            left: 100% !important;
+            top: 0 !important;
+            margin-left: 8px !important;
+            margin-top: 0 !important;
+            width: 260px !important;
+            min-width: 260px !important;
+            z-index: 10078 !important;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > ul.sub-menu li a {
+            width: 100% !important;
+            max-width: none !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+            color: var(--esms-submenu-fg-panel) !important;
+            padding: calc(0.4rem + 4px) 0.65rem calc(0.4rem + 4px) 0.5rem !important;
+            border-radius: 6px !important;
+            margin: 1px 6px !important;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul > li:hover > ul.sub-menu li a:hover {
+            background: rgba(15, 23, 42, 0.06) !important;
+            color: var(--esms-submenu-fg-panel) !important;
+        }
+
+        /* SM flyouts use a white panel — dark text + icons (rail uses white) */
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna #sidebar-menu ul li:hover .sub-menu a:not(:hover) {
+            color: var(--esms-submenu-fg-panel) !important;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu .sub-menu .esms-submenu-icon svg {
+            color: var(--esms-submenu-fg-panel) !important;
+            stroke: var(--esms-submenu-fg-panel) !important;
+        }
+
+        /* Nested flyout in SM — same palette */
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu #sidebar-menu > ul ul li:hover > ul {
+            background: var(--esms-menu-elevated) !important;
+            border: 1px solid var(--esms-border-on-dark);
+            border-radius: 10px;
+            max-height: calc(100vh - 80px) !important;
+            overflow-y: auto !important;
+            scrollbar-width: none;
+        }
+
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu .simplebar-content-wrapper,
+        body[data-sidebar-size=sm] #layout-wrapper.esms-profenna .vertical-menu .simplebar-mask {
+            overflow: visible !important;
+        }
+
+        #layout-wrapper.esms-profenna .footer .copyright,
+        #layout-wrapper.esms-profenna .footer .userTextSmall {
+            color: var(--esms-muted);
+            font-size: 0.8125rem;
+        }
+
+        #layout-wrapper.esms-profenna .footer .userTextBig {
+            font-weight: 600;
+            color: var(--esms-text);
+        }
+
+        @media (max-width: 991.98px) {
+            /* Theme hides .vertical-menu unless body.sidebar-enable — our display:flex !important broke that */
+            #layout-wrapper.esms-profenna .vertical-menu {
+                display: none !important;
+            }
+
+            /* Must sit above .breadcrumbs1 (10070) or sticky toolbars draw over the drawer */
+            body.sidebar-enable #layout-wrapper.esms-profenna .vertical-menu {
+                display: flex !important;
+                z-index: 10076 !important;
+                box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
+            }
+
+            /* Dim page + toolbars; below drawer (10076) and #page-topbar (10080) */
+            body.sidebar-enable #sidebar-overlay.sidebar-overlay-b {
+                z-index: 10073 !important;
+            }
+
+            #layout-wrapper.esms-profenna .main-content {
+                margin-left: 0 !important;
+            }
+
+            #layout-wrapper.esms-profenna .footer {
+                left: 0 !important;
+            }
+
+            body.esms-profenna-body {
+                overflow-x: hidden;
+            }
+
+            #layout-wrapper.esms-profenna .navbar-header {
+                flex-wrap: nowrap;
+                align-items: stretch;
+                min-height: 64px;
+            }
+
+            #layout-wrapper.esms-profenna .navbar-header > .d-flex:first-child {
+                flex: 1 1 auto;
+                min-width: 0;
+                align-items: center;
+            }
+
+            #layout-wrapper.esms-profenna .navbar-header > .d-flex:last-child {
+                flex: 0 0 auto;
+            }
+
+            /* Logo rail: icon only on phones — hide “WeBiz” wordmark to free space for title + actions */
+            #layout-wrapper.esms-profenna .navbar-brand-box {
+                width: auto !important;
+                max-width: none;
+                min-width: 0;
+                flex: 0 0 auto;
+                flex-shrink: 0;
+                height: 64px;
+                min-height: 64px;
+                padding-left: 0.45rem !important;
+                padding-right: 0.35rem !important;
+            }
+
+            #layout-wrapper.esms-profenna .navbar-brand-box .esms-brand-link {
+                min-width: 0;
+                gap: 0;
+                justify-content: center;
+            }
+
+            #layout-wrapper.esms-profenna .navbar-brand-box .logo-txt,
+            #layout-wrapper.esms-profenna .navbar-brand-box .esms-brand-title {
+                display: none !important;
+            }
+
+            #layout-wrapper.esms-profenna .toggleBtn {
+                height: 64px !important;
+                flex-shrink: 0;
+            }
+
+            #layout-wrapper.esms-profenna .navbar-header .header-item {
+                height: 64px;
+            }
+
+            #layout-wrapper.esms-profenna .esms-page-title-wrap {
+                min-width: 0;
+                flex: 1 1 auto;
+                min-height: 64px;
+            }
+
+            #layout-wrapper.esms-profenna #ERPHeading {
+                font-size: 1rem !important;
+                line-height: 1.2;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 100%;
+            }
+        }

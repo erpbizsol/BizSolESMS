@@ -669,5 +669,5 @@ D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\staticwebasset
 D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\Bizsol_E.89E39846.Up2Date
 D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\Bizsol_ESMS.genruntimeconfig.cache
 D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\ref\Bizsol_ESMS.dll
-D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 d:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\bin\Debug\net8.0\QRCoder.dll
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

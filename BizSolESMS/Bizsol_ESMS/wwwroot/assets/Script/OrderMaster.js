@@ -1,4 +1,4 @@
-﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -40,6 +40,7 @@ $(document).ready(function () {
         }
     });
     GetAccountMasterList();
+    GetWareHouseList();
     GetItemDetails();
     ShowOrderMasterlist('Load');
     $("#btnAddNewRow").click(function () {
@@ -184,6 +185,7 @@ async function Create() {
     $("#txtBuyerPONo").prop("disabled", false);
     $("#txtBuyerPODate").prop("disabled", false);
     $("#txtRemark").prop("disabled", false);
+    $("#txtWarehouse").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     $("#txtsave").show();
 }
@@ -198,6 +200,7 @@ function BackMaster() {
     $("#txtBuyerPONo").prop("disabled", false);
     $("#txtBuyerPODate").prop("disabled", false);
     $("#txtRemark").prop("disabled", false);
+    $("#txtWarehouse").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     $("#txtSearch").val("");
     ShowOrderMasterlist('Load');
@@ -226,12 +229,13 @@ async function Edit(code) {
                     $("#hfCode").val(OrderMaster.Code || "");
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtOrderDate").val(OrderMaster.OrderDate || "");
-                    SelectOptionByText('txtClientName',OrderMaster.AccountName);
+                    SelectOptionByText('txtClientName', OrderMaster.AccountName);
                     $("#txtClientName").val(OrderMaster.AccountName || "");
                     $("#txtAddress").val(OrderMaster.Address || "");
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "");
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "");
                     $("#txtRemark").val(OrderMaster.Remark || "");
+                    $("#txtWarehouse").val(OrderMaster.WarehouseMaster_Code || "").trigger('change').prop("disabled", false);
                     disableFields(false);
                     $("#txtsave").prop("disabled", false);
                     const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
@@ -340,6 +344,36 @@ function GetAccountMasterList() {
         }
     });
 }
+function GetWareHouseList() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetWareHouseDropDown`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                let option = '<option value="">Select</option>';
+                response.forEach(item => {
+                    option += '<option value="' + item.Code + '">' + item.Name + '</option>';
+                });
+                $('#txtWarehouse')[0].innerHTML = option;
+                $('#txtImportWarehouse')[0].innerHTML = option;
+                $('#txtWarehouse,#txtImportWarehouse').select2({
+                    width: '-webkit-fill-available'
+                });
+            } else {
+                $('#txtWarehouse').empty();
+                $('#txtImportWarehouse').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtWarehouse').empty();
+            $('#txtImportWarehouse').empty();
+        }
+    });
+}
 function GetItemDetails() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetItemDetails`,
@@ -383,7 +417,8 @@ function ClearData() {
     $("#txtBuyerPONo").val("");
     $("#txtRemark").val("");
     $("#Orderdata").empty();
-    SelectOptionByText('txtClientName','Select');
+    SelectOptionByText('txtClientName', 'Select');
+    $("#txtWarehouse").val("").trigger('change');
 }
 function Save() {
     var OrderNo = $("#txtOrderNo").val();
@@ -392,6 +427,7 @@ function Save() {
     var BuyerPONo = $("#txtBuyerPONo").val();
     var BuyerPODate = $("#txtBuyerPODate").val();
     var Remark = $("#txtRemark").val();
+    var Warehouse = $("#txtWarehouse").val();
 
     if (!OrderDate) {
         toastr.error("Please Select an Order Date!");
@@ -400,6 +436,10 @@ function Save() {
     } else if (!ClientName) {
         toastr.error("Please enter a Client Name!");
         $("#txtClientName").focus();
+        return;
+    } else if (!Warehouse) {
+        toastr.error("Please select a Warehouse!");
+        $("#txtWarehouse").focus();
         return;
     }
     else if (!BuyerPONo) {
@@ -459,7 +499,8 @@ function Save() {
         ClientName: $("#txtClientName").val(),
         BuyerPONo: $("#txtBuyerPONo").val(),
         BuyerPODate: convertDateFormat($("#txtBuyerPODate").val()),
-        Remark: Remark
+        Remark: Remark,
+        WarehouseMaster_Code: Warehouse
     }];
     const addressData = [];
     $("#tblorderbooking tbody tr").each(function () {
@@ -533,7 +574,7 @@ function addNewRowEdit(index, address) {
 
     if (address !== undefined) {
         const item = ItemDetail.find(entry => entry.ItemName == address.ItemName);
-        const isDisabled = item.QtyInBox === 0;
+        const isDisabled = item ? item.QtyInBox === 0 : false;
         $("#txtUOM_" + rowCount).val(address.UOMName || "");
         $("#txtItemAddress_" + rowCount).val(address.LocationName || "");
         $("#txtItemBarCode_" + rowCount).val(address.ItemBarCode || "");
@@ -983,12 +1024,13 @@ async function View(code) {
                     $("#hfCode").val(OrderMaster.Code || "");
                     $("#txtOrderNo").val(OrderMaster.OrderNo || "");
                     $("#txtOrderDate").val(OrderMaster.OrderDate || "").prop("disabled", true);
-                    SelectOptionByText('txtClientName',OrderMaster.AccountName);
+                    SelectOptionByText('txtClientName', OrderMaster.AccountName);
                     $("#txtClientName").val(OrderMaster.AccountName || "").prop("disabled", true);
                     $("#txtAddress").val(OrderMaster.Address || ""),
                     $("#txtBuyerPONo").val(OrderMaster.BuyerPONo || "").prop("disabled", true);
                     $("#txtBuyerPODate").val(OrderMaster.BuyerPODate || "").prop("disabled", true);
                     $("#txtRemark").val(OrderMaster.Remark || "").prop("disabled", true);
+                    $("#txtWarehouse").val(OrderMaster.WarehouseMaster_Code || "").trigger('change').prop("disabled", true);
                     
                     const item = AccountList.find(entry => entry.AccountName == OrderMaster.AccountName);
                     if (!item) {
@@ -1050,6 +1092,7 @@ function GetImportFile() {
     const ClientName = $("#txtImportClientName").val();
     const OrderNo = $("#txtImportOrderNo").val();
     const Remark = $("#txtImportRemark").val();
+    const ImportWarehouse = $("#txtImportWarehouse").val();
     if (ClientType == '') {
         toastr.error("Please select client type !");
         $("#txtClientType").focus();
@@ -1062,6 +1105,10 @@ function GetImportFile() {
         toastr.error("Please select client name !");
         $("#txtImportClientName").focus();
         return;
+    } else if (!ImportWarehouse) {
+        toastr.error("Please select a Warehouse !");
+        $("#txtImportWarehouse").focus();
+        return;
     } else if (JsonData.length == 0) {
         toastr.error("Please select xlx file !");
         $("#txtExcelFile").focus();
@@ -1073,6 +1120,7 @@ function GetImportFile() {
         ClientName: ClientName,
         OrderNo: OrderNo,
         Remark: Remark,
+        WarehouseMaster_Code: ImportWarehouse,
         UserMaster_Code: UserMaster_Code
     };
     blockUI();
@@ -1107,6 +1155,7 @@ function SaveImportFile() {
     const ClientName = $("#txtImportClientName").val();
     const OrderNo = $("#txtImportOrderNo").val();
     const Remark = $("#txtImportRemark").val();
+    const ImportWarehouse = $("#txtImportWarehouse").val();
     if (ClientType == '') {
         toastr.error("Please select client type !");
         $("#txtClientType").focus();
@@ -1114,6 +1163,10 @@ function SaveImportFile() {
     } else if (ClientName == '' && ClientType == 'S') {
         toastr.error("Please select client name !");
         $("#txtImportClientName").focus();
+        return;
+    } else if (!ImportWarehouse) {
+        toastr.error("Please select a Warehouse !");
+        $("#txtImportWarehouse").focus();
         return;
     } else if (JsonData.length == 0) {
         toastr.error("Please select xlx file !");
@@ -1126,6 +1179,7 @@ function SaveImportFile() {
         ClientName: ClientName,
         OrderNo: OrderNo,
         Remark: Remark,
+        WarehouseMaster_Code: ImportWarehouse,
         UserMaster_Code: UserMaster_Code
     };
     blockUI();

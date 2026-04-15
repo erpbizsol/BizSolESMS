@@ -260,6 +260,11 @@
                                 <input list="txtVendorNameList" id="txtImportVendorName" name="txtVendorName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Vendor Name">
                             </div>
                             <div class="col-md-3 col-sm-6">
+                                <label for="txtImportBrandName" class="col-form-label-sm fw-bold">Brand</label><span class="text-danger">*</span>
+                                <datalist id="txtImportBrandList"></datalist>
+                                <input list="txtImportBrandList" id="txtImportBrandName" name="txtImportBrandName" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Brand Name">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
                                 <label for="txtImportWarehouse" class="col-form-label-sm fw-bold">Warehouse</label><span class="text-danger">*</span>
                                 <datalist id="txtImportWarehouseList"></datalist>
                                 <input list="txtImportWarehouseList" id="txtImportWarehouse" name="" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Warehouse..">
@@ -269,6 +274,8 @@
                                 <input type="text" id="txtImportVehicleNo" name="txtImportVehicleNo" class="box_border form-control form-control-sm" value="" onkeyup="convertToUppercase(this);" autocomplete="off" placeholder="Vehicle No..">
                                 <ul id="txtImportVehicleNoList" class="AutoSuggestion-list"></ul>
                             </div>
+                        </div>
+                        <div class="row mt-2">
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtExcelFile" class="col-form-label-sm fw-bold">Choose File</label><span class="text-danger">*</span>
                                 <input type="file" id="txtExcelFile" class="box_border form-control form-control-sm" autocomplete="off" accept=".xlsx, .xls">

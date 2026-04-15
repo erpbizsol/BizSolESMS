@@ -1,4 +1,4 @@
-﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var G_Fixparameter = JSON.parse(sessionStorage.getItem('Fixparameter'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
@@ -10,42 +10,49 @@ const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
  
 let AccountList = [];
 let BrandList = [];
+let ImportBrandList = [];
 let ItemDetail = [];
 let JsonData = [];
 let G_IsValidation = G_Fixparameter[0].IsValidation ? G_Fixparameter[0].IsValidation : 'Y';
 let G_IsUnloading = G_Fixparameter[0].IsUnloading ? G_Fixparameter[0].IsUnloading : 'Y';
+let G_MRNExcelColumns = [];
 
 
 $(document).ready(function () {
     GetCurrentDate();
+    ValidateMRNExcelFormat();
 
     $("#ERPHeading").text("Material Receipt Note");
-    $("#txtImportWarehouse").val(DefaultWarehouse);
     $('#txtMRNDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtVendorName").focus();
         }
     });
+
     $('#txtVendorName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtChallanNo").focus();
         }
     });
+
     $('#txtChallanNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtChallanDate").focus();
         }
     });
+
     $('#txtChallanDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtPickListNo").focus();
         }
     });
+
     $('#txtPickListNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtVehicleNo").focus();
         }
     });
+
     $('#txtVehicleNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
@@ -62,12 +69,15 @@ $(document).ready(function () {
     $("#txtVendorName").on("focus", function () {
          $("#txtVendorName").val("");
     });
+
     $("#txtImportVendorName").on("focus", function () {
         $("#txtImportVendorName").val("");
     });
+
     $("#txtImportWarehouse").on("focus", function () {
         $("#txtImportWarehouse").val("");
     });
+
     $("#txtVendorName").on("change", function () {
         let value = $(this).val();
         let isValid = false;
@@ -84,9 +94,11 @@ $(document).ready(function () {
             $("#txtAddress").val("")
         }
     });
+
     $("#txtExcelFile").on("change", function (e) {
         Import(e);
     });
+
     $('#txtImportVendorName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtImportWarehouse").focus();
@@ -118,6 +130,14 @@ $(document).ready(function () {
         });
         if (!isValid) {
             $(this).val("");
+            $("#txtImportBrandName").val("");
+            $("#txtImportBrandList").empty();
+            ImportBrandList = [];
+        } else {
+            const selectedVendor = AccountList.find(v => v.AccountName === value);
+            if (selectedVendor) {
+                VendorWiseBrandListImport(selectedVendor.Code);
+            }
         }
     });
     $("#txtImportWarehouse").on("change", function () {
@@ -198,6 +218,15 @@ $(document).on("change", "#txtVendorName", function () {
     const selectedVendor = AccountList.find(v => v.AccountName === vendorName);
     if (selectedVendor) {
         VendorWiseBrandList(selectedVendor.Code);
+    }
+});
+
+$(document).on("change", "#txtImportBrandName", function () {
+    const brandName = $(this).val().trim();
+    if (!brandName) return;
+    const selectedBrand = ImportBrandList.find(r => r.BrandName === brandName);
+    if (!selectedBrand) {
+        $(this).val("");
     }
 });
 
@@ -493,6 +522,42 @@ function VendorWiseBrandList(Code) {
         error: function (xhr, status, error) {
             console.error("Error:", error);
             $('#txtBrandList').empty();
+        }
+    });
+}
+function VendorWiseBrandListImport(Code) {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/VendorWiseBrandList?VendorMaster_Code=${Code}`,
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            $("#txtImportBrandName").val("");
+            if (response && response.length > 0) {
+                $('#txtImportBrandList').empty();
+                let options = '';
+                ImportBrandList = response;
+                ImportBrandList.forEach(item => {
+                    options += '<option value="' + item.BrandName + '" text="' + item.Code + '"></option>';
+                });
+                $('#txtImportBrandList').html(options);
+
+                const selectable = $("#txtImportBrandList option").filter(function () {
+                    return ($(this).val() || "").trim() !== "";
+                });
+                if (selectable.length === 1) {
+                    $("#txtImportBrandName").val($(selectable[0]).val()).trigger("change");
+                }
+            } else {
+                ImportBrandList = [];
+                $('#txtImportBrandList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            ImportBrandList = [];
+            $('#txtImportBrandList').empty();
         }
     });
 }
@@ -935,6 +1000,7 @@ function addNewRow() {
         updateTotalReceivedQty();
     }
 }
+
 $(document).on("click", ".deleteRow", function () {
     const row = $(this).closest("tr"); 
     const table = document.getElementById("tblorderbooking").querySelector("tbody");
@@ -1320,11 +1386,16 @@ function CreateTable(response) {
 }
 function SaveImportFile() {
     const VendorName = $("#txtImportVendorName").val();
+    const BrandName = $("#txtImportBrandName").val();
     const VehicleNo = $("#txtImportVehicleNo").val();
     const ImportWarehouse = $("#txtImportWarehouse").val();
     if (VendorName == '') {
         toastr.error("Please enter vendor name !");
         $("#txtImportVendorName").focus();
+        return;
+    } else if (BrandName == '') {
+        toastr.error("Please select Brand !");
+        $("#txtImportBrandName").focus();
         return;
     } else if (ImportWarehouse == '') {
         toastr.error("Please enter Warehouse !");
@@ -1342,6 +1413,7 @@ function SaveImportFile() {
     const requestData = {
         JsonData: JsonData,
         VendorName: VendorName,
+        BrandName: BrandName,
         WarehouseName: ImportWarehouse,
         VehicleNo: VehicleNo,
         UserMaster_Code: UserMaster_Code
@@ -1423,9 +1495,11 @@ function convertToKeyValuePairs(data) {
 }
 function ClearDataImport() {
     $("#txtImportVendorName").val("");
+    $("#txtImportBrandName").val("");
+    $("#txtImportBrandList").empty();
+    ImportBrandList = [];
     $("#txtImportVehicleNo").val("");
     $("#txtExcelFile").val("");
-    $("#txtImportWarehouse").val(DefaultWarehouse);
     $("#Orderdata").empty();
     GetCurrentDate();
     GetAccountMasterList();
@@ -1487,7 +1561,7 @@ function validateExcelFormat(data) {
         return { isValid: false, message: "The Excel file is empty." };
     }
     const headers = data[0].map(header => header.replace(/[\s.]+/g, ''));
-    const requiredColumns = ['PicklistNo', 'ItemLineNo', 'ItemCode', 'Description', 'InvoiceNo','OrderNo'];
+    const requiredColumns = G_MRNExcelColumns;
     const missingColumns = requiredColumns.filter(col => !headers.includes(col));
 
     if (missingColumns.length > 0) {
@@ -1503,17 +1577,28 @@ function GetImportFile() {
     const VendorName = $("#txtImportVendorName").val();
     const VehicleNo = $("#txtImportVehicleNo").val();
     const ImportWarehouse = $("#txtImportWarehouse").val();
+    const BrandName = $("#txtImportBrandName").val();
     if (VendorName == '') {
         toastr.error("Please enter vendor name !");
         $("#txtImportVendorName").focus();
+        $("#txtExcelFile").val("");
+        JsonData = [];
+        return;
+    } else if (BrandName == '') {
+        toastr.error("Please select Brand !");
+        $("#txtImportBrandName").focus();
         return;
     } else if (ImportWarehouse == '') {
         toastr.error("Please enter Warehouse !");
         $("#txtImportWarehouse").focus();
+        $("#txtExcelFile").val("");
+        JsonData = [];
         return;
     } else if (VehicleNo == '') {
         toastr.error("Please enter Vehicle No !");
         $("#txtImportVehicleNo").focus();
+        $("#txtExcelFile").val("");
+        JsonData = [];
         return;
     } else if (JsonData.length == 0) {
         toastr.error("Please select xlx file !");
@@ -1524,6 +1609,7 @@ function GetImportFile() {
         JsonData: JsonData,
         VendorName: VendorName,
         WarehouseName: ImportWarehouse,
+        BrandName: BrandName,
         VehicleNo: VehicleNo,
         UserMaster_Code: UserMaster_Code
     };
@@ -1777,6 +1863,7 @@ function convertDateFormat2(dateString) {
     const monthAbbreviation = monthNames[parseInt(month) - 1];
     return `${day}/${monthAbbreviation}/${year}`;
 }
+
 async function View(code) {
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -1884,6 +1971,7 @@ function DataExport() {
     });
 
 }
+
 async function ExportMRN(jsonData) {
     const columnsToRemove = ["Code"];
     const renameMap = {
@@ -2254,7 +2342,6 @@ async function Export(Data) {
     link.download = `Unloading_${Picklist}.xlsx`;
     link.click();
 }
-
 function DownloadQR(Code) {
     $.ajax({
         url: `${appBaseURL}/api/MRNMaster/GetGenerateQR?Code=${Code}`,
@@ -2297,7 +2384,6 @@ function DownloadQR(Code) {
         }
     });
 }
-
 function DownloadQRPdf(response) {
     blockUI();
     $.ajax({
@@ -2325,6 +2411,23 @@ function DownloadQRPdf(response) {
         error: function (xhr, status, error) {
             unblockUI();
             console.error('Error downloading report:', xhr.responseText);
+        }
+    });
+}
+function ValidateMRNExcelFormat() {
+    $.ajax({
+        url: `${appBaseURL}/api/MRNMaster/ValidateMRNExcelFormat`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                G_MRNExcelColumns = response.map(item => item.FieldName);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
         }
     });
 }
