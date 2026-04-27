@@ -19,6 +19,14 @@ let G_MRNExcelColumns = [];
 
 
 $(document).ready(function () {
+    if (G_Fixparameter[0].MendateVehicleNo == 'Y') {
+        $("#spanVehicleNoRequired").show();
+        $("#spanImportVehicleNoRequired").show();
+    } else {
+        $("#spanVehicleNoRequired").hide();
+        $("#spanImportVehicleNoRequired").hide();
+    }
+
     GetCurrentDate();
     ValidateMRNExcelFormat();
 
@@ -110,6 +118,11 @@ $(document).ready(function () {
         }
     });
     $('#txtImportVehicleNo').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtImportMRNDate").focus();
+        }
+    });
+    $('#txtImportMRNDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtExcelFile").focus();
         }
@@ -450,7 +463,7 @@ async function DeleteItem(code, Challan, status, button) {
         $('tr').removeClass('highlight');
         return;
     }
-    if (confirm(`Are you sure you want to delete this item ${Challan} ?`)) {
+    if (confirm(`Are you sure you want to delete this MRN ?`)) {
         $.ajax({
             url: `${appBaseURL}/api/MRNMaster/DeleteMRNMaster?Code=${code}&UserMaster_Code=${UserMaster_Code}`,
             type: 'POST',
@@ -1026,7 +1039,7 @@ function convertDateFormat(dateString) {
     return `${day}-${monthAbbreviation}-${year}`;
 }
 function setupDateInputFormatting() {
-    $('#txtMRNDate').on('input', function () {
+    $('#txtMRNDate, #txtImportMRNDate').on('input', function () {
         let value = $(this).val().replace(/[^\d]/g, '');
 
         if (value.length >= 2 && value.length < 4) {
@@ -1037,7 +1050,11 @@ function setupDateInputFormatting() {
         $(this).val(value);
 
         if (value.length === 10) {
-            validateDate(value);
+            if ($(this).is('#txtImportMRNDate')) {
+                validateImportMrnDate(value);
+            } else {
+                validateDate(value);
+            }
         } else {
             $(this).val(value);
         }
@@ -1138,6 +1155,34 @@ function validateDate(value) {
         $('#txtMRNDate').val('');
 
     }
+}
+function validateImportMrnDate(value) {
+    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    let isValidFormat = regex.test(value);
+
+    if (isValidFormat) {
+        let parts = value.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parseInt(parts[2], 10);
+
+        let date = new Date(year, month - 1, day);
+
+        if (date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day) {
+            $('#txtImportMRNDate').val(value);
+        } else {
+            $('#txtImportMRNDate').val('');
+        }
+    } else {
+        $('#txtImportMRNDate').val('');
+    }
+}
+function importMrnDateForApi() {
+    const raw = ($("#txtImportMRNDate").val() || "").trim();
+    if (!raw) return "";
+    const parts = raw.split('/');
+    if (parts.length !== 3) return "";
+    return convertDateFormat(raw);
 }
 function FillallItemfield(inputElement, value) {
 
@@ -1401,7 +1446,7 @@ function SaveImportFile() {
         toastr.error("Please enter Warehouse !");
         $("#txtImportWarehouse").focus();
         return;
-    } else if (VehicleNo == '') {
+    } else if (VehicleNo == '' && G_Fixparameter.MendateVehicleNo == 'Y') {
         toastr.error("Please enter Vehicle No !");
         $("#txtImportVehicleNo").focus();
         return;
@@ -1416,6 +1461,7 @@ function SaveImportFile() {
         BrandName: BrandName,
         WarehouseName: ImportWarehouse,
         VehicleNo: VehicleNo,
+        MRNDate: importMrnDateForApi(),
         UserMaster_Code: UserMaster_Code
     };
     blockUI();
@@ -1499,6 +1545,7 @@ function ClearDataImport() {
     $("#txtImportBrandList").empty();
     ImportBrandList = [];
     $("#txtImportVehicleNo").val("");
+    $("#txtImportMRNDate").val("");
     $("#txtExcelFile").val("");
     $("#Orderdata").empty();
     GetCurrentDate();
@@ -1594,7 +1641,7 @@ function GetImportFile() {
         $("#txtExcelFile").val("");
         JsonData = [];
         return;
-    } else if (VehicleNo == '') {
+    } else if (VehicleNo == '' && G_Fixparameter.MendateVehicleNo=='Y') {
         toastr.error("Please enter Vehicle No !");
         $("#txtImportVehicleNo").focus();
         $("#txtExcelFile").val("");
@@ -1611,6 +1658,7 @@ function GetImportFile() {
         WarehouseName: ImportWarehouse,
         BrandName: BrandName,
         VehicleNo: VehicleNo,
+        MRNDate: importMrnDateForApi(),
         UserMaster_Code: UserMaster_Code
     };
     blockUI();
@@ -1803,6 +1851,25 @@ function validateFromDate(value) {
 function DatePicker(date) {
     $('#txtMRNDate, #txtChallanDate,#txtToDate').val(date);
     $('#txtMRNDate, #txtChallanDate,#txtToDate').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        orientation: 'bottom auto',
+        todayHighlight: true
+    }).on('show', function () {
+        let $input = $(this);
+        let inputOffset = $input.offset();
+        let inputHeight = $input.outerHeight();
+        let inputWidth = $input.outerWidth();
+        setTimeout(function () {
+            let $datepicker = $('.datepicker-dropdown');
+            $datepicker.css({
+                width: inputWidth + 'px',
+                top: (inputOffset.top + inputHeight) + 'px',
+                left: inputOffset.left + 'px'
+            });
+        }, 10);
+    });
+    $('#txtImportMRNDate').datepicker({
         format: 'dd/mm/yyyy',
         autoclose: true,
         orientation: 'bottom auto',

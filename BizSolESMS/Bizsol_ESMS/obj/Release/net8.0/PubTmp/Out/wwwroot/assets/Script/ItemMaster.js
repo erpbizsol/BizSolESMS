@@ -1190,6 +1190,9 @@ async function LocationList() {
         });
 
         const $select = $('#mySelect2');
+        if ($select.data('select2')) {
+            $select.select2('destroy');
+        }
         $select.empty();
 
         if (response.length > 0) {
@@ -1201,7 +1204,8 @@ async function LocationList() {
                 width: '100%',
                 closeOnSelect: false,
                 placeholder: "Select location...",
-                allowClear: true
+                allowClear: true,
+                dropdownParent: $('#LocationModal')
             });
         } else {
             $select.empty();

@@ -53,10 +53,10 @@ function BoxValidationDetail(Check) {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code", "Item Bar Code"];
                     let hiddenColumns = [];
                     if (UserType == "A") {
-                        hiddenColumns = ["Msg", "Status", "Code", "Manual Qty","BoxNo"];
+                        hiddenColumns = ["Msg", "Status", "Code","BoxNo"];
                         $("#btnAutoUpdate").show();
                     } else {
-                        hiddenColumns = ["Msg", "Status", "Code", "Manual Qty", "BoxNo"];
+                        hiddenColumns = ["Msg", "Status", "Code", "BoxNo"];
                         $("#btnAutoUpdate").hide();
                     }
                     const ColumnAlignment = {
@@ -81,6 +81,8 @@ function BoxValidationDetail(Check) {
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Manual Qty"] = `
                         <input type="text" id="txtManualQty_${item.Code}" onkeypress="return OnChangeNumericTextBox(event,this);" value="${item["Manual Qty"]}" onkeyup="if(event.key === 'Enter') checkValidateqty(this,${item.Code});" onfocusout="checkValidateqty1(this,${item.Code});" class="box_border form-control form-control-sm text-right BizSolFormControl txtManualQty" autocomplete="off" placeholder="Manual Qty..">`,
+                            renamedItem["MFD Date"] = `
+                        <input type="text" id="txtMFDDate_${item.Code}" value="${item["MFD Date"] || ''}" oninput="FormatMFDDate(this)" onfocusout="checkMFDDate(this,${item.Code})" maxlength="7" class="box_border form-control form-control-sm BizSolFormControl txtMFDDate" autocomplete="off" placeholder="MM/YYYY">`,
                             renamedItem["Received Qty"] = `
                         <input type="text" id="txtReceivedQty_${item.Code}" value="${item["Received Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Received Qty..">`
                         return renamedItem;
@@ -136,7 +138,13 @@ function checkValidateqty(element, Code) {
     } else {
         $("#txtReceivedQty_" + Code).val(total);
         if (manualQty > 0) {
-            SaveManualValidationDetail(Code, scanQty, manualQty, total);
+            var mfdDate = $("#txtMFDDate_" + Code).val();
+            if (!mfdDate || mfdDate.length < 7) {
+                toastr.error("MFD Date is required! (MM/YYYY)");
+                $("#txtMFDDate_" + Code).focus();
+                return;
+            }
+            SaveManualValidationDetail(Code, scanQty, manualQty, total, mfdDate);
         }
         var currentRow = $(element).closest("tr");
         var nextRow = currentRow.next("tr");
@@ -163,9 +171,38 @@ function checkValidateqty1(element, Code) {
     } else {
         $("#txtReceivedQty_" + Code).val(total);
         if (manualQty > 0) {
-            SaveManualValidationDetail(Code, scanQty, manualQty, total);
+            var mfdDate = $("#txtMFDDate_" + Code).val();
+            if (!mfdDate || mfdDate.length < 7) {
+                toastr.error("MFD Date is required! (MM/YYYY)");
+                $("#txtMFDDate_" + Code).focus();
+                return;
+            }
+            SaveManualValidationDetail(Code, scanQty, manualQty, total, mfdDate);
         }
     }
+}
+function FormatMFDDate(element) {
+    var val = element.value.replace(/[^0-9]/g, '');
+    if (val.length > 2) {
+        val = val.substring(0, 2) + '/' + val.substring(2, 6);
+    }
+    element.value = val;
+}
+function checkMFDDate(element, Code) {
+    var mfdDate = $(element).val();
+    var manualQty = parseInt($("#txtManualQty_" + Code).val()) || 0;
+    var scanQty = parseInt($("#txtScanQty_" + Code).val()) || 0;
+
+    if (manualQty <= 0 && scanQty <= 0) return;
+
+    if (!mfdDate || mfdDate.length < 7) {
+        toastr.error("MFD Date is required! (MM/YYYY)");
+        $(element).focus();
+        return;
+    }
+    var scanQtyVal = parseInt($("#txtScanQty_" + Code).val()) || 0;
+    var receivedQty = parseInt($("#txtReceivedQty_" + Code).val()) || 0;
+    SaveManualValidationDetail(Code, scanQtyVal, manualQty, receivedQty, mfdDate);
 }
 function OnChangeNumericTextBox(event, element) {
     if (event.charCode == 13 || event.charCode == 46 || event.charCode == 8 || (event.charCode >= 48 && event.charCode <= 57)) {
@@ -193,18 +230,19 @@ function BizSolhandleEnterKey(event) {
         event.preventDefault();
     }
 }
-function SaveManualValidationDetail(Code, ScanQty, ManualQty, ReceivedQty) {
+function SaveManualValidationDetail(Code, ScanQty, ManualQty, ReceivedQty, MFDDate) {
     const payload = {
         Code: Code,
         ScanNo: "",
         ScanQty: ScanQty,
         ManualQty: ManualQty,
         ReceivedQty: ReceivedQty,
+        MFDDate: MFDDate || '',
         PickListNo: $("#txtPickListNo").val(),
         IsManual: $("#txtIsManual").is(":checked") ? 'Y' : 'N'
     }
     $.ajax({
-        url: `${appBaseURL}/api/MRNMaster/SaveScanBoxValidateDetailWithoutBox`,
+        url: `${appBaseURL}/api/MRNMaster/SaveManualBoxValidateDetail`,
         type: 'POST',
         contentType: "application/json",
         dataType: "json",
@@ -319,17 +357,17 @@ function MRNDetail() {
         success: function (response) {
             if (response.length > 0) {
                 $("#UnloadingTable1").show();
-                const StringFilterColumn = ["PickList No", "Vehicle No"];
+                const StringFilterColumn = ["LR Number"];
                 const NumericFilterColumn = [];
-                const DateFilterColumn = [];
+                const DateFilterColumn = ["MRN Date"];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code", "Validation Status"];
+                const hiddenColumns = ["Code", "Validation Status", "PickList No"];
                 const ColumnAlignment = {
                 };
                 const updatedResponse = response.map(item => ({
-                    ...item, Action: `<button class="btn btn-success icon-height mb-1"  title="Start Validation" onclick="StartValidation('${item["PickList No"]}','${item["Vehicle No"]}','${item.Code}')"><i class="fa fa-hourglass-start"></i></button>
+                    ...item, Action: `<button class="btn btn-success icon-height mb-1"  title="Start Validation" onclick="StartValidation('${item["PickList No"]}','${item["LR Number"]}','${item.Code}')"><i class="fa fa-hourglass-start"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header1", "table-body1", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -378,10 +416,47 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
-function ChangecolorTr() {
-    if (G_IDFORTRCOLOR != '') {
-        const firstTr = document.querySelector("#table-body > tr");
-        firstTr.style.backgroundColor = "#2be399";
-    }
-}
+//function ChangecolorTr() {
+//    if (G_IDFORTRCOLOR != '') {
+//        const firstTr = document.querySelector("#table-body > tr");
+//        firstTr.style.backgroundColor = "#2be399";
+//    }
+//}
+setInterval(ChangecolorTr1, 100);
 setInterval(ChangecolorTr, 100);
+
+function ChangecolorTr1() {
+    const rows = document.querySelectorAll('#table-body1 tr');
+        rows.forEach((row) => {
+            const tds = row.querySelectorAll('td');
+            const columnValue = tds[5]?.textContent.trim();
+            if (columnValue === 'VALIDATED') {
+                row.style.backgroundColor = '#07bb72';
+
+            } else if (columnValue === 'PARTIAL VALIDATE') {
+                row.style.backgroundColor = '#ebb861';
+
+            } else {
+                row.style.backgroundColor = '#f5c0bf';
+            }
+        });
+}
+
+function ChangecolorTr() {
+    const rows = document.querySelectorAll('#table-body tr');
+    rows.forEach((row) => {
+        const tds = row.querySelectorAll('td');
+        const columnValue = parseInt(tds[3]?.textContent.trim(), 10) || 0;
+        const receivedInput = tds[6]?.querySelector('input');
+        const value = receivedInput ? (parseInt(receivedInput.value, 10) || 0) : 0;
+        if (columnValue === value) {
+            row.style.backgroundColor = '#07bb72';
+
+        } else if (columnValue !== value && value > 0) {
+            row.style.backgroundColor = '#ebb861';
+
+        } else {
+            row.style.backgroundColor = '#f5c0bf';
+        }
+    });
+}

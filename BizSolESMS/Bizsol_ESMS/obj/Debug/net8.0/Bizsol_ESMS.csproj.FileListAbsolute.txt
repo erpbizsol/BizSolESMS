@@ -671,3 +671,4 @@ D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\Bizsol_ESMS.ge
 D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\ref\Bizsol_ESMS.dll
 d:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\bin\Debug\net8.0\QRCoder.dll
 D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\swae.build.ex.cache

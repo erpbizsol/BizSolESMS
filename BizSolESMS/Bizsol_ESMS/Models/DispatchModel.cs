@@ -7,5 +7,6 @@
         public string? OrderNo { get; set; }
         public string? AccountName { get; set; }
         public string? Address { get; set; }
+        public string? CompanyCode { get; set; }
     }
 }
