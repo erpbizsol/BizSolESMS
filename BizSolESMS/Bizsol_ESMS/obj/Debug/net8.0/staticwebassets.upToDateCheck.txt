@@ -281,6 +281,7 @@ wwwroot\assets\Script\CityMasterList.js
 wwwroot\assets\Script\ClientMaster.js
 wwwroot\assets\Script\common.js
 wwwroot\assets\Script\DailyReport.js
+wwwroot\assets\Script\Dispatch.js
 wwwroot\assets\Script\DispatchBoxValidation.js
 wwwroot\assets\Script\DispatchReport.js
 wwwroot\assets\Script\EmployeeMaster.js
@@ -288,6 +289,8 @@ wwwroot\assets\Script\GroupMaster.js
 wwwroot\assets\Script\Helpdesk.js
 wwwroot\assets\Script\HolidayMaster.js
 wwwroot\assets\Script\ItemConfig.js
+wwwroot\assets\Script\ItemLocator.js
+wwwroot\assets\Script\ItemMaster.js
 wwwroot\assets\Script\ItemOpeningBalance.js
 wwwroot\assets\Script\LocationMaster.js
 wwwroot\assets\Script\Login.js
@@ -296,6 +299,7 @@ wwwroot\assets\Script\MailConfiguration.js
 wwwroot\assets\Script\ManualSalesReturn.js
 wwwroot\assets\Script\MRNMaster.js
 wwwroot\assets\Script\OrderConformation.js
+wwwroot\assets\Script\OrderMaster.js
 wwwroot\assets\Script\PageSizeConfiguration.js
 wwwroot\assets\Script\PrefixConfiguration.js
 wwwroot\assets\Script\ProductEnquiry.js
@@ -373,7 +377,3 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\assets\Script\Dispatch.js
-wwwroot\assets\Script\ItemLocator.js
-wwwroot\assets\Script\ItemMaster.js
-wwwroot\assets\Script\OrderMaster.js

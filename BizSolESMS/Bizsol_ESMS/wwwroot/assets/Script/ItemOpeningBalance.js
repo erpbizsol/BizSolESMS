@@ -565,6 +565,33 @@ function validateExcelFormat(data) {
         return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
     }
 
+    const openingBalIdx = headers.indexOf('OpeningBalance');
+    const mrpIdx = headers.indexOf('MRP');
+    const itemCodeIdx = headers.indexOf('ItemCode');
+    const invalidRows = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (!row || row.every(cell => cell === undefined || cell === null || cell === '')) continue;
+
+        const itemCode = (row[itemCodeIdx] || '').toString().trim();
+        if (!itemCode) continue;
+
+        const obRaw = (row[openingBalIdx] !== undefined && row[openingBalIdx] !== null) ? row[openingBalIdx].toString().replace(/,/g, '').trim() : '';
+        const mrpRaw = (row[mrpIdx] !== undefined && row[mrpIdx] !== null) ? row[mrpIdx].toString().replace(/,/g, '').trim() : '';
+
+        if (obRaw === '' || isNaN(parseFloat(obRaw))) {
+            invalidRows.push(`Row ${i + 1}: Invalid OpeningBalance value "${row[openingBalIdx] ?? ''}"`);
+        }
+        if (mrpRaw === '' || isNaN(parseFloat(mrpRaw))) {
+            invalidRows.push(`Row ${i + 1}: Invalid MRP value "${row[mrpIdx] ?? ''}"`);
+        }
+    }
+
+    if (invalidRows.length > 0) {
+        return { isValid: false, message: invalidRows.join('\n') };
+    }
+
     return { isValid: true, message: "Excel format is valid." };
 }
 function GetImportFile() {
@@ -797,17 +824,29 @@ function validateCSV(event, callback) {
 
     reader.readAsText(file);
 }
+const floatColumns = ['OpeningBalance', 'MRP'];
+
 function convertToKeyValuePairs(data) {
     if (!Array.isArray(data) || data.length === 0) return [];
 
     const headers = data[0].map(header => cleanHeader(header));
 
-    return data.slice(1).map(row => {
-        return headers.reduce((obj, header, index) => {
-            let value = row[index] ? cleanValue(row[index].toString()) : "";
+    return data.slice(1)
+        .filter(row => row && row.some(cell => cell !== undefined && cell !== null && cell !== ''))
+        .map(row => {
+            return headers.reduce((obj, header, index) => {
+                let rawVal = (row[index] !== undefined && row[index] !== null && row[index] !== "")
+                    ? cleanValue(row[index].toString())
+                    : "";
 
-            obj[header] = value;
-            return obj;
-        }, {});
-    });
+                if (floatColumns.includes(header)) {
+                    const numericStr = rawVal.replace(/,/g, '');
+                    const parsed = parseFloat(numericStr);
+                    obj[header] = isNaN(parsed) ? "" : parsed;
+                } else {
+                    obj[header] = rawVal;
+                }
+                return obj;
+            }, {});
+        });
 }

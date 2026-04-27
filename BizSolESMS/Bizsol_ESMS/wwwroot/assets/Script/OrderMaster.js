@@ -8,9 +8,12 @@ let JsonData = [];
 let AccountList = [];
 let ItemDetail = [];
 let G_OrderData = [];
+let G_OrderExcelColumnsS = [];
+let G_OrderExcelColumnsM = [];
 $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("Order Entry");
+    ValidateOrderExcelFormat();
     $('#txtOrderNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtOrderDate").focus();
@@ -166,6 +169,7 @@ function ShowOrderMasterlist(Type) {
     });
 
 }
+
 async function Create() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -206,6 +210,7 @@ function BackMaster() {
     ShowOrderMasterlist('Load');
     $("#txtsave").show();
 }
+
 async function Edit(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -266,6 +271,7 @@ async function Edit(code) {
         }
     });
 }
+
 async function deleteItem(code, Order) {
     $('table').on('click', 'tr', function () {
         $('table tr').removeClass('highlight');
@@ -1073,19 +1079,18 @@ function ClearDataImport() {
     GetCurrentDate();
     GetAccountMasterList();
 }
-function validateExcelFormat(data) {
-    if (data.length < 1) {
-        return { isValid: false, message: "The Excel file is empty." };
+function getRequiredOrderExcelColumns() {
+    const clientType = $("#txtClientType").val();
+    if (clientType === 'S') {
+        if (G_OrderExcelColumnsS.length > 0) {
+            return G_OrderExcelColumnsS;
+        }
+        return ['Part#', 'OrderQty', 'PartDescription'];
     }
-    const headers = data[0].map(header => header.replace(/[\s.]+/g, ''));
-    const requiredColumns = ['PicklistNo', 'ItemLineNo', 'ItemCode', 'Description', 'InvoiceNo', 'OrderNo'];
-    const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-
-    if (missingColumns.length > 0) {
-        return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
+    if (G_OrderExcelColumnsM.length > 0) {
+        return G_OrderExcelColumnsM;
     }
-
-    return { isValid: true, message: "Excel format is valid." };
+    return ['Order', 'Part', 'PartDescription', 'Date', 'AccountName'];
 }
 function GetImportFile() {
     const ClientType = $("#txtClientType").val();
@@ -1096,18 +1101,26 @@ function GetImportFile() {
     if (ClientType == '') {
         toastr.error("Please select client type !");
         $("#txtClientType").focus();
+        $("#txtExcelFile").val();
+        JsonData = [];
         return;
     } else if (OrderNo == '' && ClientType == 'S') {
         toastr.error("Please enter order no !");
         $("#txtImportOrderNo").focus();
+        $("#txtExcelFile").val();
+        JsonData = [];
         return;
     } else if (ClientName == '' && ClientType == 'S') {
         toastr.error("Please select client name !");
         $("#txtImportClientName").focus();
+        $("#txtExcelFile").val();
+        JsonData = [];
         return;
     } else if (!ImportWarehouse) {
         toastr.error("Please select a Warehouse !");
         $("#txtImportWarehouse").focus();
+        $("#txtExcelFile").val();
+        JsonData = [];
         return;
     } else if (JsonData.length == 0) {
         toastr.error("Please select xlx file !");
@@ -1212,6 +1225,7 @@ function SaveImportFile() {
         },
     });
 }
+
 async function ImportExcel() {
     $("#txtListpage").hide();
     $("#txtCreatepage").hide();
@@ -1398,30 +1412,49 @@ function createTable(response) {
     }
 }
 function validateExcelFormat(data) {
-    var ClientType = $("#txtClientType").val();
     if (data.length < 1) {
         return { isValid: false, message: "The Excel file is empty." };
     }
-    const headers = data[0].map(header => header.replace(/[\s.]+/g, ''));
-    if (ClientType === 'S'){
-        const requiredColumns = ['Part#', 'OrderQty', 'PartDescription'];
-        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-
-        if (missingColumns.length > 0) {
-            return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
-        }
+    const headers = data[0].map(h => cleanHeader(String(h == null ? "" : h)));
+    const required = getRequiredOrderExcelColumns();
+    const requiredKeys = required.map(c => cleanHeader(c));
+    const missingLabels = required.filter((col, i) => !headers.includes(requiredKeys[i]));
+    if (missingLabels.length > 0) {
+        return { isValid: false, message: `Missing required columns: ${missingLabels.join(', ')}` };
     }
-    else {
-        const requiredColumns = ['Order', 'Part', 'PartDescription', 'Date','AccountName'];
-        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-
-        if (missingColumns.length > 0) {
-            return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
-        }
-    }
-    
-
     return { isValid: true, message: "Excel format is valid." };
+}
+function ValidateOrderExcelFormat() {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ValidateOrderExcelFormat?ClientType=S`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response && response.length > 0) {
+                G_OrderExcelColumnsS = response.map(function (item) { return item.FieldName; });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('ValidateOrderExcelFormat (S):', error);
+        }
+    });
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/ValidateOrderExcelFormat?ClientType=M`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response && response.length > 0) {
+                G_OrderExcelColumnsM = response.map(function (item) { return item.FieldName; });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('ValidateOrderExcelFormat (M):', error);
+        }
+    });
 }
 function cleanHeader(header) {
     return header.replace(/[^a-zA-Z0-9]/g, "").trim(); 
@@ -1434,15 +1467,8 @@ function validateCSV(event, callback) {
         return;
     }
 
-    let expectedHeaders = [];
-    if ($("#txtClientType").val() === 'S') {
-        expectedHeaders = ["Part", "OrderQty", "PartDescription"];
-    } else {
-        expectedHeaders = [
-            "Order", "Part", "Date", "PartDescription", "AccountName", "Code",
-            "OrderQuantity", "ReservedQty", "Status", "ContactLastName", "CashCustomerName"
-        ];
-    }
+    const required = getRequiredOrderExcelColumns();
+    const expectedHeaders = required.map(c => cleanHeader(c));
 
     const reader = new FileReader();
     reader.onload = function (e) {
