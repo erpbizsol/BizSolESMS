@@ -82,7 +82,16 @@ namespace Bizsol_ESMS.Controllers
                     }
                 }
             }
-            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "OrderReport.rdlc");
+
+            string qrCompanyName = ds.Tables[9].Rows.Count > 0
+                ? ds.Tables[9].Rows[0]["CompanyCode"]?.ToString() ?? ""
+                : "";
+
+            string reportPath = qrCompanyName.IndexOf("DadaSales", StringComparison.OrdinalIgnoreCase) >= 0
+                ? Path.Combine(Directory.GetCurrentDirectory(), "Reports", "OrderReportTata.rdlc")
+                : @Path.Combine(Directory.GetCurrentDirectory(), "Reports", "OrderReport.rdlc"); 
+
+            //string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "OrderReport.rdlc");
 
             LocalReport report = new LocalReport();
             report.ReportPath = reportPath;
@@ -124,9 +133,17 @@ namespace Bizsol_ESMS.Controllers
                 }
             }
 
+            string qrCompanyName = ds.Tables[9].Rows.Count > 0
+                ? ds.Tables[9].Rows[0]["CompanyCode"]?.ToString() ?? ""
+                : "";
+
+            string updatedPath = qrCompanyName.IndexOf("DadaSales", StringComparison.OrdinalIgnoreCase) >= 0
+                ? @"C:\E-SMS_Publish\Reports\OrderReportTata.rdlc"
+                : @"C:\E-SMS_Publish\Reports\OrderReport.rdlc";
+
             //string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "OrderReport.rdlc");
             //string updatedPath = reportPath.Replace(@"WorkerService", "BizSol_ESMS");
-            string updatedPath = @"C:\E-SMS_Publish\Reports\OrderReport.rdlc";
+            //string updatedPath = @"C:\E-SMS_Publish\Reports\OrderReport.rdlc";
             //string updatedPath = @"C:\ESMS_RDLC\Reports\OrderReport.rdlc";
 
             LocalReport report = new LocalReport();
@@ -153,7 +170,7 @@ namespace Bizsol_ESMS.Controllers
         {
             JObject data = JObject.Parse(AuthKey);
             string connectionString = data["DefultMysqlTemp"]?.ToString();
-
+            string reportPath="";
             DataSet ds = new DataSet();
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
@@ -171,7 +188,14 @@ namespace Bizsol_ESMS.Controllers
                     }
                 }
             }
-            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReport.rdlc");
+            string companyName = ds.Tables[0].Rows.Count > 0
+                ? ds.Tables[0].Rows[0]["CompanyCode"]?.ToString() ?? ""
+                : "";
+
+            if (companyName.IndexOf("DadaSales", StringComparison.OrdinalIgnoreCase) >= 0)
+                reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReportTata.rdlc");
+            else
+                reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReportTata.rdlc");
 
             LocalReport report = new LocalReport();
             report.ReportPath = reportPath;
@@ -214,7 +238,13 @@ namespace Bizsol_ESMS.Controllers
             string? companyCode = CompanyCode ?? data["CompanyCode"]?.ToString();
             ApplyPsrReportQrPayload(ds, Code, companyCode);
 
-            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReport.rdlc");
+            string qrCompanyName = ds.Tables[0].Rows.Count > 0
+                ? ds.Tables[0].Rows[0]["CompanyCode"]?.ToString() ?? ""
+                : "";
+
+            string reportPath = qrCompanyName.IndexOf("DadaSales", StringComparison.OrdinalIgnoreCase) >= 0
+                ? Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReportTata.rdlc")
+                : Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReport.rdlc");
 
             LocalReport report = new LocalReport();
             report.ReportPath = reportPath;
@@ -281,15 +311,22 @@ namespace Bizsol_ESMS.Controllers
             dt.Columns.Add("BoxNo");
             dt.Columns.Add("AccountName");
             dt.Columns.Add("Address");
+            dt.Columns.Add("CompanyCode");
 
             foreach (var item in model)
             {
                 var img = Convert.FromBase64String(item.QRCode.Replace("data:image/png;base64,", ""));
-                dt.Rows.Add(img, item.OrderNo, item.BoxNo,item.AccountName,item.Address);
+                dt.Rows.Add(img, item.OrderNo, item.BoxNo,item.AccountName,item.Address,item.CompanyCode);
             }
 
+            string qrCompanyName = dt.Rows.Count > 0
+                ? dt.Rows[0]["CompanyCode"]?.ToString() ?? ""
+                : "";
+
             LocalReport report = new LocalReport();
-            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "DispatchQR.rdlc");
+            string reportPath = qrCompanyName.IndexOf("DadaSales", StringComparison.OrdinalIgnoreCase) >= 0
+                ? Path.Combine(Directory.GetCurrentDirectory(), "Reports", "DispatchQRTata.rdlc")
+                : Path.Combine(Directory.GetCurrentDirectory(), "Reports", "DispatchQR.rdlc");
             report.ReportPath = reportPath;
 
             report.DataSources.Add(new ReportDataSource("DispatchQRData", dt));

@@ -10,6 +10,13 @@ th {
     /*min-width: 190px !important;*/
 }
 
+/* Anchor filter panels to the header cell content (not the raw th box). Fixes overlap into the
+   previous column when th is sticky / table-cell positioning is ambiguous. */
+.filter-table-heading-div {
+    position: relative;
+    overflow: visible;
+}
+
 
 
 .filter-dropdown label {
@@ -28,7 +35,9 @@ th {
     padding: 6px 0;
     max-height: 181px;
     overflow-y: auto;
-    overflow-x: auto;
+    /* overflow-x: auto caused horizontal bar + scroll position to reset on label click */
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
 }
 
 .checkbox-container, hr {
@@ -59,6 +68,8 @@ th {
     display: none;
 }
 
+/* Open from the header cell’s left edge so the panel does not extend past the scrollport’s
+   left padding (right:0 + width would grow leftward and get clipped by .fixed-height-table overflow). */
 .filter-dropdown {
     display: none;
     position: absolute;
@@ -67,7 +78,9 @@ th {
     padding: 15px;
     top: 26px;
     /*top: 58px;*/
-    z-index: 1;
+    left: 0;
+    right: auto;
+    z-index: 1050;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     width: 200px;
@@ -122,10 +135,12 @@ i:hover {
     position: absolute;
     background-color: white;
     border: 1px solid #ccc;
-    z-index: 1;
+    z-index: 1050;
     padding: 8px;
     width: 215px;
     top: 26px;
+    left: 0;
+    right: auto;
     /*    top: 58px;*/
 }
 
@@ -154,7 +169,8 @@ i:hover {
     padding: 6px 0;
     max-height: 181px;
     overflow-y: auto;
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
 }
 
     .checkbox-container-double label {
@@ -166,6 +182,11 @@ i:hover {
     .checkbox-container-double input[type="checkbox"] {
         margin-right: 5px;
     }
+
+/* When tbody rows reorder (sort/filter), Chrome’s scroll anchoring can shift scrollLeft in overflow:auto — disable on the grid shell. */
+.table-wrapper.fixed-height-table {
+    overflow-anchor: none;
+}
 
 /*.table-wrapper {
     width: 100%;
@@ -238,16 +259,33 @@ i:hover {
     position: absolute;
     top: 13px;
     /*    top: 5px;*/
-    /*    right: -72px;*/
-    right: -84px;
+    /* Anchor to trigger’s end so Asc/Desc/Filter stays inside the grid scrollport (was right:-84px). */
+    left: auto;
+    right: 0;
     background-color: #eff1f5;
     min-width: 150px;
     box-shadow: 0px 8px 16px rgb(34 34 34 / 20%);
     border-radius: 4px;
-    z-index: 1;
+    z-index: 1060;
     display: flex;
     flex-direction: column;
     color: #000;
+}
+
+/* On mobile the column headers are too narrow for right:0 — the menu extends left and
+   covers adjacent columns. Flip it to open rightward instead. */
+@media (max-width: 768px) {
+    .dropdown-content {
+        right: auto;
+        left: 0;
+    }
+
+    .filter-dropdown,
+    .filter-dropdown-double {
+        left: 0;
+        right: auto;
+        width: 185px;
+    }
 }
 
 .dropdown-item {

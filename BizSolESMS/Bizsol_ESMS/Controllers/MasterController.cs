@@ -14,6 +14,14 @@ namespace Bizsol_ESMS.Controllers
 
         #endregion UOM
 
+        #region HSNMaster
+        public IActionResult HSNMaster()
+        {
+
+            return View();
+        }
+        #endregion HSNMaster
+
         #region LocationMaster
         public IActionResult LocationMasterList()
         {

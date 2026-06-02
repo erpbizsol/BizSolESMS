@@ -57,8 +57,8 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-3 col-sm-6">
-                                <label for="txtOrderNo" class="col-form-label-sm fw-bold">Order No</label>
-                                <input type="text" id="txtOrderNo" disabled class="box_border form-control form-control-sm" autocomplete="off" placeholder="Order No..">
+                                <label for="txtOrderNo" class="col-form-label-sm fw-bold esms-order-level-field-label">Order No</label>
+                                <input type="text" id="txtOrderNo" disabled class="box_border form-control form-control-sm esms-order-level-placeholder" autocomplete="off" placeholder="Order No..">
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtPartyName" class="col-form-label-sm fw-bold">Party Name</label>
@@ -169,7 +169,7 @@
                                 <input type="text" disabled id="txtManualUserName" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Made By..">
                             </div>
                             <div class="col-md-3 col-sm-6">
-                                <label for="txtManualOrderNo" class="col-form-label-sm fw-bold">Order No</label> <span class="text-danger">*</span>
+                                <label for="txtManualOrderNo" class="col-form-label-sm fw-bold esms-order-level-field-label">Order No</label> <span class="text-danger">*</span>
                                 <select id="txtManualOrderNo" class="form-control form-control-sm box_border" multiple style="width: 300px;" placeholder="Select locations..">
                                 </select>
                             </div>
@@ -191,8 +191,8 @@
             </div>
         </div>
     </div>
-    <div class="modal position-absolute" id="staticBackdrop" style="padding-top:30px;" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+    <div class="modal fade" id="staticBackdrop" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="modal-header tab-header" style="background-color:#033764">

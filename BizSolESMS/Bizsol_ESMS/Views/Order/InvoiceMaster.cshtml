@@ -1,0 +1,338 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<style>
+    /* Select2 in filter bar: match Bootstrap form-control-sm height & alignment with date inputs */
+    .webiz-invoice-page #invoiceFilterBar .select2-container {
+        width: 100% !important;
+        margin-bottom: 0;
+    }
+    .webiz-invoice-page #invoiceFilterBar .select2-container--default .select2-selection--single {
+        height: calc(1.5em + 0.5rem + 2px);
+        min-height: calc(1.5em + 0.5rem + 2px);
+        padding: 0.25rem 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    .webiz-invoice-page #invoiceFilterBar .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #444;
+        line-height: 1.5;
+        padding-left: 0;
+        padding-right: 1.25rem;
+    }
+    .webiz-invoice-page #invoiceFilterBar .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0.35rem;
+    }
+
+    @@media (max-width: 991.98px) {
+        .webiz-invoice-page #modalInvoiceGen .modal-dialog { margin: 0.5rem; max-width: calc(100% - 1rem); }
+    }
+
+    .webiz-invoice-page #modalInvoiceGen .modal-content {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(3, 55, 100, 0.16);
+    }
+    .webiz-invoice-page #modalInvoiceGen .modal-body {
+        padding: 1.25rem 1.5rem 1rem;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-hsn-cell .select2-container {
+        width: 100% !important;
+        min-width: 140px;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-hsn-cell .select2-container--default .select2-selection--single {
+        min-height: calc(1.5em + 0.55rem + 2px);
+        padding: 0.125rem 0.4rem;
+        border: 1px solid #cdd8e3;
+        border-radius: 6px;
+        background: #fff;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-hsn-cell .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 1.5;
+        padding-left: 2px;
+        color: #1a3350;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-hsn-cell .select2-container--default.select2-container--focus .select2-selection--single,
+    .webiz-invoice-page #modalInvoiceGen .inv-hsn-cell .select2-container--default.select2-container--open .select2-selection--single {
+        border-color: #033764;
+        box-shadow: 0 0 0 0.15rem rgba(3, 55, 100, 0.15);
+    }
+    /* Select2 dropdown above modal backdrop */
+    .webiz-invoice-page #modalInvoiceGen .select2-dropdown {
+        border-color: #cdd8e3;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(3, 55, 100, 0.12);
+    }
+
+    /* —— Generate Invoice modal — item grid (matches reference shell) —— */
+    .webiz-invoice-page #modalInvoiceGen .invoice-item-grid-shell {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(3, 55, 100, 0.12);
+        box-shadow: 0 4px 18px rgba(3, 55, 100, 0.07);
+    }
+    .webiz-invoice-page #modalInvoiceGen .invoice-item-grid-wrap {
+        max-height: min(52vh, 480px);
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-items-table {
+        font-size: 0.8125rem;
+        margin-bottom: 0;
+        --inv-thead-bg: #033764;
+        --inv-thead-border: rgba(255, 255, 255, 0.14);
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-items-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: var(--inv-thead-bg) !important;
+        color: #fff !important;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: none;
+        padding: 0.65rem 0.55rem;
+        border-color: var(--inv-thead-border) !important;
+        vertical-align: middle;
+        white-space: nowrap;
+        box-shadow: 0 1px 0 var(--inv-thead-border);
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-items-table tbody td {
+        padding: 0.48rem 0.45rem;
+        vertical-align: middle;
+        border-color: #e8eef4;
+        color: #1e293b;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-items-table tbody tr:nth-child(even) {
+        background-color: #fafcfe;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-items-table .inv-cell-readonly {
+        background: linear-gradient(180deg, #f6f9fc 0%, #f0f5fa 100%);
+        color: #334155;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-line-input.form-control-sm {
+        border-radius: 6px;
+        border: 1px solid #cdd8e3;
+        min-height: calc(1.5em + 0.55rem + 2px);
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-line-input.form-control-sm:focus {
+        border-color: #033764;
+        box-shadow: 0 0 0 0.15rem rgba(3, 55, 100, 0.12);
+    }
+    /* GST %: % prefix same height / vertical center as input */
+    .webiz-invoice-page #modalInvoiceGen .inv-gst-cell .inv-gst-wrap.input-group {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        max-width: 8rem;
+        margin-left: auto;
+        width: 100%;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-gst-cell .inv-gst-wrap > .input-group-text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 0 0.48rem;
+        line-height: 1;
+        align-self: stretch;
+        border: 1px solid #cdd8e3;
+        border-right: 0;
+        background: linear-gradient(180deg, #f0f4fa 0%, #e8eef6 100%);
+        color: #033764;
+        font-weight: 700;
+        font-size: 0.875rem;
+        border-radius: 6px 0 0 6px !important;
+    }
+    .webiz-invoice-page #modalInvoiceGen .inv-gst-cell .inv-gst-wrap .inv-gst.inv-line-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: calc(1.5em + 0.5rem + 2px);
+        height: 100%;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        margin: 0;
+        line-height: 1.5;
+        border-radius: 0 6px 6px 0 !important;
+    }
+    .webiz-invoice-page #modalInvoiceGen .modal-footer-inv {
+        border-top: 1px solid rgba(3, 55, 100, 0.1);
+        background: linear-gradient(180deg, #fcfdfe 0%, #f6f9fc 100%);
+    }
+    .webiz-invoice-page #modalInvoiceGen .invoice-total-bar {
+        background: linear-gradient(90deg, rgba(3, 55, 100, 0.06) 0%, rgba(3, 55, 100, 0.02) 100%);
+        border: 1px solid rgba(3, 55, 100, 0.1);
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-size: 0.9375rem;
+    }
+</style>
+<div class="container webiz-invoice-page">
+    <div class="mt-2 mt-md-3" id="invoiceListPage">
+        <div class="card border-0 shadow-sm mb-3 p-1">
+            <div class="card-body pb-0">
+                <div class="row g-3 align-items-start" id="invoiceFilterBar">
+                    <div class="col-sm-6 col-lg-3">
+                        <label for="txtInvFromDate" class="form-label form-label-sm mb-1 fw-semibold">From Date</label>
+                        <input type="text" id="txtInvFromDate" class="form-control form-control-sm box_border" autocomplete="off" placeholder="DD-MM-YYYY">
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <label for="txtInvToDate" class="form-label form-label-sm mb-1 fw-semibold">To Date</label>
+                        <input type="text" id="txtInvToDate" class="form-control form-control-sm box_border" autocomplete="off" placeholder="DD-MM-YYYY">
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <label for="ddlInvClientName" class="form-label form-label-sm mb-1 fw-semibold">Client Name</label>
+                        <select id="ddlInvClientName" class="form-control form-control-sm box_border" data-placeholder="All clients">
+                            <option value="">All clients</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-lg-auto d-flex flex-column">
+                        <label class="form-label form-label-sm mb-1 fw-semibold invisible text-nowrap" aria-hidden="true">Filter</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="button" class="btn btn-primary btn-height px-3" id="btnInvApplyFilter">Apply</button>
+                            <button type="button" class="btn btn-secondary btn-height px-3" id="btnInvResetFilter">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0 shadow-sm" id="invoiceGridCard">
+            <div class="card-body p-0">
+                <div class="table-wrapper fixed-height-table">
+                    <table id="table" class="table mb-0">
+                        <thead id="table-header"></thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+                <div class="paginator px-3 py-2 border-top border-light" id="paginator-table"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invoice generation modal -->
+<div class="modal fade" id="modalInvoiceGen" tabindex="-1" aria-labelledby="modalInvoiceGenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down">
+        <div class="modal-content">
+            <div class="modal-header tab-header py-2" style="background-color:#033764;">
+                <h5 class="modal-title text-white mb-0" id="modalInvoiceGenLabel">Generate GST Invoice</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6 col-lg-3">
+                        <label class="form-label form-label-sm fw-semibold mb-1">Client Name</label>
+                        <div id="lblInvModalClient" class="form-control form-control-sm bg-light border">—</div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <label for="txtInvVehicleNo" class="form-label form-label-sm fw-semibold mb-1">Vehicle Number <span class="text-danger">*</span></label>
+                        <input type="text" id="txtInvVehicleNo" class="form-control form-control-sm box_border" maxlength="40" placeholder="e.g. MH12AB1234" autocomplete="off">
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <label for="txtInvInvoiceDate" class="form-label form-label-sm fw-semibold mb-1">Invoice Date <span class="text-danger">*</span></label>
+                        <input type="text" id="txtInvInvoiceDate" class="form-control form-control-sm box_border" autocomplete="off" placeholder="DD-MM-YYYY" required>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <label for="txtInvInvoiceNo" class="form-label form-label-sm fw-semibold mb-1">Invoice No <span class="text-danger">*</span></label>
+                        <input type="text" id="txtInvInvoiceNo" class="form-control form-control-sm box_border" maxlength="40" autocomplete="off" required>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
+                    <h6 class="fw-semibold text-dark mb-0">Item details</h6>
+                    <span class="small text-muted d-none d-md-inline">Choose HSN to apply GST · Search in HSN column</span>
+                </div>
+                <div class="invoice-item-grid-shell">
+                    <div class="invoice-item-grid-wrap overflow-auto">
+                        <table class="table table-bordered table-sm mb-0 align-middle inv-items-table" id="tblInvoiceItems">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Item Code</th>
+                                    <th scope="col">Item Name</th>
+                                    <th class="text-end" scope="col">Qty</th>
+                                    <th class="text-end" scope="col">MRP</th>
+                                    <th class="text-end" scope="col">Scan MRP</th>
+                                    <th class="text-end" scope="col">Disc %</th>
+                                    <th class="text-end" scope="col">Disc Amt</th>
+                                    <th scope="col" style="min-width:11rem;">HSN</th>
+                                    <th class="text-end" scope="col" style="min-width:6.25rem;">GST %</th>
+                                    <th class="text-end" scope="col">Tax Amt</th>
+                                    <th class="text-end" scope="col">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblInvoiceItemsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <div class="invoice-total-bar d-flex align-items-baseline gap-2">
+                        <span class="fw-semibold text-secondary">Invoice Total</span>
+                        <span class="fw-bold fs-6 text-dark" style="letter-spacing:.02em;" id="lblInvoiceTotal">0.00</span>
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <label for="txtInvTerms" class="form-label form-label-sm fw-semibold mb-1">Terms &amp; conditions</label>
+                        <textarea id="txtInvTerms" class="form-control form-control-sm box_border" rows="3" placeholder="Optional — printed on invoice"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="txtInvBank" class="form-label form-label-sm fw-semibold mb-1">Bank details</label>
+                        <textarea id="txtInvBank" class="form-control form-control-sm box_border" rows="3" placeholder="Optional — e.g. Bank name, A/C, IFSC"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-inv flex-wrap justify-content-end gap-2 py-3">
+                <button type="button" class="btn btn-secondary btn-height px-4 rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success btn-height px-4 rounded-pill fw-semibold" id="btnInvSave">Save invoice</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print options modal -->
+<div class="modal fade" id="modalPrintInvoice" tabindex="-1" aria-labelledby="modalPrintInvoiceLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header tab-header py-2" style="background-color:#033764;">
+                <h5 class="modal-title text-white mb-0" id="modalPrintInvoiceLabel">Print options</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-3">Choose columns to show on the printed invoice. At least one option must stay on.</p>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chkPrintHsn" checked>
+                    <label class="form-check-label" for="chkPrintHsn">HSN Code</label>
+                </div>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chkPrintDiscount" checked>
+                    <label class="form-check-label" for="chkPrintDiscount">Discount (% and amount)</label>
+                </div>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chkPrintMrp" checked>
+                    <label class="form-check-label" for="chkPrintMrp">MRP</label>
+                </div>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chkPrintTax" checked>
+                    <label class="form-check-label" for="chkPrintTax">GST % and Tax amount</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-height" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-height" id="btnInvPrintConfirm" disabled>Print</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="invoicePrintRoot" class="d-none"></div>
+
+<script src="~/assets/js/blockui.js"></script>
+<script src="~/assets/js/filter.js"></script>
+<script src="~/assets/Script/InvoiceMaster.js"></script>

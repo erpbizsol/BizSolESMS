@@ -21,6 +21,13 @@ namespace Bizsol_ESMS.Controllers
         }
         #endregion  Dispatch 
 
+        #region  InvoiceMaster 
+        public IActionResult InvoiceMaster()
+        {
+            return View();
+        }
+        #endregion  InvoiceMaster 
+
         #region  ItemOpeningBalance 
         public IActionResult ItemOpeningBalance()
         {
@@ -62,6 +69,20 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion  StockAudit 
+
+        #region  PaymentEntry
+        public IActionResult PaymentEntry()
+        {
+            return View();
+        }
+        #endregion  PaymentEntry
+
+        #region  PaymentEntryAdjestment
+        public IActionResult PaymentEntryAdjestment()
+        {
+            return View();
+        }
+        #endregion  PaymentEntryAdjestment
 
         #region  DispatchBoxValidation 
         public IActionResult DispatchBoxValidation()

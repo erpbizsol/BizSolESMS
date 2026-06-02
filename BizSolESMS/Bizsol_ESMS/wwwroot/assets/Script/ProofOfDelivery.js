@@ -49,7 +49,7 @@
     function buildRowsFromParsedPod(parsed) {
         return [
             { label: 'Client name', value: parsed.ClientName, primary: true },
-            { label: 'Order No.', value: parsed.OrderNo },
+            { label: (typeof window.getLevelOfOrderNoLabel === 'function' ? window.getLevelOfOrderNoLabel() + '.' : 'Order No.'), value: parsed.OrderNo },
             { label: 'Challan No.', value: parsed.ChallanNo },
             { label: 'No. of boxes', value: parsed.NoOfBoxes },
             { label: 'Total scanned products', value: parsed.TotalScannedProducts }

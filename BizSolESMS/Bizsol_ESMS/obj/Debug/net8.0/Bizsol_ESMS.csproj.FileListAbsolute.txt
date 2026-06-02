@@ -670,4 +670,13 @@ D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\Bizsol_E.89E39
 D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\Bizsol_ESMS.genruntimeconfig.cache
 D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\ref\Bizsol_ESMS.dll
 d:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\bin\Debug\net8.0\QRCoder.dll
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\appsettings.Development.json
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\appsettings.json
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\Bizsol_ESMS.staticwebassets.runtime.json
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\Bizsol_ESMS.staticwebassets.endpoints.json
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\Bizsol_ESMS.exe
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\Bizsol_ESMS.deps.json
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\Bizsol_ESMS.runtimeconfig.json
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\Bizsol_ESMS.dll
+C:\Users\Meetu\AppData\Local\Temp\Bizsol_ESMS_verify_build\Bizsol_ESMS.pdb
 D:\All Project\BizSolESMS\BizSolESMS\Bizsol_ESMS\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
