@@ -2,48 +2,203 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="~/assets/css/esms-dashboard.css" rel="stylesheet" />
-<div alt="banner" class="banner">
 
-    <!-- start page title -->
-    <!-- end page title -->
-
-    <div class="row">
-        <div class="col-md-12">
-            @* <img src="/assets/images/users/erpBanner.png" alt="banner" class="banner"/> *@
-            @* <img src="~/assets/images/users/erp-banner1.png" alt="banner" class="banner"/> *@
+<div class="esms-dash-webiz p-1">
+    <!-- KPI strip -->
+    <div class="wd-kpi-grid">
+        <div class="wd-kpi wd-kpi--green">
+            <div class="wd-kpi-label">Orders Today</div>
+            <div class="wd-kpi-val">247</div>
+            <div class="wd-kpi-delta wd-kpi-delta--up">↑ 18% vs yesterday</div>
+        </div>
+        <div class="wd-kpi wd-kpi--blue">
+            <div class="wd-kpi-label">Dispatched</div>
+            <div class="wd-kpi-val">189</div>
+            <div class="wd-kpi-delta wd-kpi-delta--up">↑ 12% on time</div>
+        </div>
+        <div class="wd-kpi wd-kpi--amber">
+            <div class="wd-kpi-label">Pending Picking</div>
+            <div class="wd-kpi-val">34</div>
+            <div class="wd-kpi-delta wd-kpi-delta--down">↑ 6 in last hour</div>
+        </div>
+        <div class="wd-kpi wd-kpi--purple">
+            <div class="wd-kpi-label">Total Sale (MTD)</div>
+            <div class="wd-kpi-val">₹84L</div>
+            <div class="wd-kpi-delta wd-kpi-delta--up">↑ 22% vs last month</div>
+        </div>
+        <div class="wd-kpi wd-kpi--red">
+            <div class="wd-kpi-label">Low Stock Alerts</div>
+            <div class="wd-kpi-val">7</div>
+            <div class="wd-kpi-delta wd-kpi-delta--down">Action needed</div>
         </div>
     </div>
 
-    @*  <div class="row">
-    <div class="col-xl-3 col-md-6">
-
-    <div class="card card-h-100">
-
-    <div class="card-body">
-    <div class="row align-items-center">
-    <div class="col-6">
-    <span class="text-muted mb-3 lh-1 d-block text-truncate">My Wallet</span>
-    <h4 class="mb-3">
-    $<span class="counter-value" data-target="865.2">0</span>k
-    </h4>
+    <div class="wd-section-hdr">
+        <div class="wd-section-title"><span class="wd-dot-live" aria-hidden="true"></span>Live Goods Flow — Inward to Dispatch</div>
+        <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Order/Dispatch" class="wd-section-link">View full flow →</a>
     </div>
 
-    <div class="col-6">
-    <div id="mini-chart1" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
+    <div class="wd-pipeline-row">
+        <div class="wd-pipeline-step wd-step-unload">
+            <div class="wd-ps-label">Unloading</div>
+            <div class="wd-ps-num">312</div>
+            <div class="wd-ps-sub">units in</div>
+            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
+        </div>
+        <div class="wd-pipeline-step wd-step-sort">
+            <div class="wd-ps-label">Sorting / QC</div>
+            <div class="wd-ps-num">243</div>
+            <div class="wd-ps-sub">units sorted</div>
+            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
+        </div>
+        <div class="wd-pipeline-step wd-step-pick">
+            <div class="wd-ps-label">Picking</div>
+            <div class="wd-ps-num">189</div>
+            <div class="wd-ps-sub">units picked</div>
+            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
+        </div>
+        <div class="wd-pipeline-step wd-step-pack">
+            <div class="wd-ps-label">Packing</div>
+            <div class="wd-ps-num">154</div>
+            <div class="wd-ps-sub">units packed</div>
+            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
+        </div>
+        <div class="wd-pipeline-step wd-step-dispatch">
+            <div class="wd-ps-label">Dispatched</div>
+            <div class="wd-ps-num">148</div>
+            <div class="wd-ps-sub">units out</div>
+            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
+        </div>
     </div>
-    </div>
-    <div class="text-nowrap">
-    <span class="badge bg-success-subtle text-success">+$20.9k</span>
-    <span class="ms-1 text-muted font-size-13">Since last week</span>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div> *@
 
-    
+    <div class="wd-two-col">
+        <div class="wd-card">
+            <div class="wd-section-hdr" style="margin-bottom: 14px;">
+                <div class="wd-section-title">Recent Orders</div>
+                <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Order/OrderMaster" class="wd-section-link">See all →</a>
+            </div>
+            <table class="wd-data-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="wd-mono">#ORD-8821</td>
+                        <td>Rajesh Traders</td>
+                        <td>24</td>
+                        <td><span class="wd-pill wd-pill--green"><span class="wd-pill-dot"></span>Dispatched</span></td>
+                    </tr>
+                    <tr>
+                        <td class="wd-mono">#ORD-8820</td>
+                        <td>Sonu Distributors</td>
+                        <td>8</td>
+                        <td><span class="wd-pill wd-pill--blue"><span class="wd-pill-dot"></span>Packing</span></td>
+                    </tr>
+                    <tr>
+                        <td class="wd-mono">#ORD-8819</td>
+                        <td>MK Wholesale</td>
+                        <td>36</td>
+                        <td><span class="wd-pill wd-pill--amber"><span class="wd-pill-dot"></span>Picking</span></td>
+                    </tr>
+                    <tr>
+                        <td class="wd-mono">#ORD-8818</td>
+                        <td>Priya Stores</td>
+                        <td>12</td>
+                        <td><span class="wd-pill wd-pill--purple"><span class="wd-pill-dot"></span>Sorting</span></td>
+                    </tr>
+                    <tr>
+                        <td class="wd-mono">#ORD-8817</td>
+                        <td>Gupta &amp; Sons</td>
+                        <td>5</td>
+                        <td><span class="wd-pill wd-pill--gray"><span class="wd-pill-dot"></span>Inward</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
+        <div>
+            <div class="wd-tally-card">
+                <div class="wd-tally-logo">⬡ TALLY ERP 9 / PRIME</div>
+                <div class="wd-tally-muted">Two-way live integration active</div>
+                <div class="wd-tally-status-row">
+                    <div class="wd-tally-live">
+                        <span style="width:6px;height:6px;border-radius:50%;background:#6EE7B7;display:inline-block;animation:webiz-pulse 2s infinite;" aria-hidden="true"></span>
+                        Connected &amp; syncing
+                    </div>
+                    <div class="wd-tally-sync-time">Last sync: 2 min ago</div>
+                </div>
+                <div class="wd-tally-stat">
+                    <div class="wd-ts-box"><div class="wd-ts-label">Invoices Synced</div><div class="wd-ts-val">1,248</div></div>
+                    <div class="wd-ts-box"><div class="wd-ts-label">Vouchers Today</div><div class="wd-ts-val">89</div></div>
+                    <div class="wd-ts-box"><div class="wd-ts-label">Ledgers Mapped</div><div class="wd-ts-val">342</div></div>
+                    <div class="wd-ts-box"><div class="wd-ts-label">GST Filed</div><div class="wd-ts-val">GSTR-1 ✓</div></div>
+                </div>
+            </div>
+
+            <div class="wd-card-sm">
+                <div class="wd-section-title" style="margin-bottom: 10px;">Top Selling Items (MTD)</div>
+                <div class="d-flex flex-column gap-1">
+                    <div class="wd-top-row"><span class="wd-top-rank">1</span><span class="wd-top-name">HDPE Pipe 2"</span><span class="wd-top-amt">₹4.2L</span></div>
+                    <div class="wd-top-row"><span class="wd-top-rank">2</span><span class="wd-top-name">Valve 25mm</span><span class="wd-top-amt">₹3.8L</span></div>
+                    <div class="wd-top-row"><span class="wd-top-rank">3</span><span class="wd-top-name">GI Fitting 1"</span><span class="wd-top-amt">₹3.1L</span></div>
+                    <div class="wd-top-row"><span class="wd-top-rank">4</span><span class="wd-top-name">Reducer 3/4"</span><span class="wd-top-amt">₹2.7L</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wd-three-col">
+        <div class="wd-card-sm">
+            <div class="wd-section-title" style="margin-bottom: 12px;">MTD Performance</div>
+            <div class="wd-stat-grid">
+                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Orders</div><div class="wd-stat-tile-val">1,842</div></div>
+                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Revenue</div><div class="wd-stat-tile-val">₹84L</div></div>
+                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Dispatched</div><div class="wd-stat-tile-val">1,798</div></div>
+                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Returns</div><div class="wd-stat-tile-val wd-stat-tile-val--danger">23</div></div>
+            </div>
+        </div>
+        <div class="wd-card-sm">
+            <div class="wd-section-title" style="margin-bottom: 12px;">YTD Performance</div>
+            <div class="wd-stat-grid">
+                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Orders</div><div class="wd-stat-tile-val">18.4K</div></div>
+                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Revenue</div><div class="wd-stat-tile-val">₹9.2Cr</div></div>
+                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Top Region</div><div class="wd-stat-tile-val wd-stat-tile-val--accent">Delhi</div></div>
+                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Growth</div><div class="wd-stat-tile-val wd-stat-tile-val--growth">+28%</div></div>
+            </div>
+        </div>
+        <div class="wd-card-sm">
+            <div class="wd-section-title" style="margin-bottom: 10px;">⚠️ Non-Moving Stock</div>
+            <div class="d-flex flex-column gap-2 pt-1">
+                <div class="wd-nm-row">
+                    <span class="wd-nm-name">Elbow 90° 2"</span>
+                    <span class="wd-nm-days text-danger">148 days</span>
+                    <span class="wd-pill wd-pill--red" style="font-size: 10px;">Critical</span>
+                </div>
+                <div class="wd-nm-row">
+                    <span class="wd-nm-name">PVC Cap 1.5"</span>
+                    <span class="wd-nm-days text-warning fw-semibold">92 days</span>
+                    <span class="wd-pill wd-pill--amber" style="font-size: 10px;">High</span>
+                </div>
+                <div class="wd-nm-row">
+                    <span class="wd-nm-name">Bushing 3/4"</span>
+                    <span class="wd-nm-days text-warning fw-semibold">74 days</span>
+                    <span class="wd-pill wd-pill--amber" style="font-size: 10px;">High</span>
+                </div>
+                <div class="wd-nm-row">
+                    <span class="wd-nm-name">Union SS 1"</span>
+                    <span class="wd-nm-days" style="color: var(--webiz-mid, #6b7080);">61 days</span>
+                    <span class="wd-pill wd-pill--gray" style="font-size: 10px;">Medium</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 <script>
     var authKeyData = null;
     try {
@@ -57,14 +212,11 @@
     let UserMaster_Code = '@ViewBag.UserMaster_Code';
 
     $(document).ready(function () {
-        // Get IP address first, then make API calls
         fetch('https://api.ipify.org')
             .then(response => response.text())
             .then(ip => {
                 var ipAddress = ip.trim();
-                
-                // Update user IsActive status to 'Y' (logged in) with IP address
-                // Try API endpoint first, fallback to LoginController if API fails
+
                 $.ajax({
                     url: `@ViewBag.AppBaseURL/api/Master/UpdateIsActiveUser?UserMaster_Code=${UserMaster_Code}&IsActive=Y&IPAddress=${ipAddress}`,
                     type: 'GET',
@@ -77,16 +229,12 @@
                         console.log("User IsActive updated to Y via API");
                     },
                     error: function (xhr, status, error) {
-                        // API endpoint not available - this is expected if API server is not running
-                        // User status is already set during login, so this is optional
-                        // Silent fail - not critical for dashboard functionality
-                        if (xhr.status !== 0) { // Only log if it's a real HTTP error, not connection refused
+                        if (xhr.status !== 0) {
                             console.warn("API endpoint not available, user status already set during login");
                         }
                     }
                 });
 
-                // Get user module rights and redirect to default page
                 $.ajax({
                     url: `@ViewBag.AppBaseURL/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${UserMaster_Code}`,
                     type: 'GET',
@@ -113,10 +261,8 @@
             })
             .catch(error => {
                 console.error("Error fetching IP address:", error);
-                // Continue with API calls even if IP fetch fails
                 var ipAddress = '';
-                
-                // Try API endpoint first, fallback to LoginController if API fails
+
                 $.ajax({
                     url: `@ViewBag.AppBaseURL/api/Master/UpdateIsActiveUser?UserMaster_Code=${UserMaster_Code}&IsActive=Y&IPAddress=${ipAddress}`,
                     type: 'GET',
@@ -129,10 +275,7 @@
                         console.log("User IsActive updated to Y via API");
                     },
                     error: function (xhr, status, error) {
-                        // API endpoint not available - this is expected if API server is not running
-                        // User status is already set during login, so this is optional
-                        // Silent fail - not critical for dashboard functionality
-                        if (xhr.status !== 0) { // Only log if it's a real HTTP error, not connection refused
+                        if (xhr.status !== 0) {
                             console.warn("API endpoint not available, user status already set during login");
                         }
                     }
@@ -163,4 +306,3 @@
     });
 
 </script>
-

@@ -5,8 +5,50 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let Data = [];
+function getItemLocatorMode() {
+    var el = document.querySelector('input[name="txtScan"]:checked');
+    return el ? String(el.value) : '1';
+}
+function toggleItemLocatorInputMode() {
+    var mode = getItemLocatorMode();
+    var itemMode = mode === '3';
+    $('#wrapperScanProduct').toggleClass('d-none', itemMode);
+    $('#wrapperItemLocatorItem').toggleClass('d-none', !itemMode);
+    if (itemMode) {
+        $('#txtScanProduct').val('');
+    } else {
+        var $ddl = $('#ddlItemLocatorItem');
+        if ($ddl.data('select2')) {
+            $ddl.val(null).trigger('change');
+        } else {
+            $ddl.val('');
+        }
+    }
+}
+function esmsApplyItemLocatorScanFocus() {
+    if (location.hash !== '#esms-scan-focus') return;
+    if (getItemLocatorMode() === '3') return;
+    var scanEl = document.getElementById('txtScanProduct');
+    if (scanEl) {
+        scanEl.focus();
+        try { scanEl.select(); } catch (e) { }
+    }
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { }
+}
+
 $(document).ready(function () {
-    $("#ERPHeading").text("Product Rack Information");
+    $("#ERPHeading").text("Locate product rack");
+    esmsApplyItemLocatorScanFocus();
+    $(window).on('hashchange', esmsApplyItemLocatorScanFocus);
+    $('input[name="txtScan"]').on('change', function () {
+        toggleItemLocatorInputMode();
+    });
+    PopulateItemLocatorItemDropdown();
+    $('#ddlItemLocatorItem').on('change', function () {
+        if (getItemLocatorMode() !== '3') return;
+        var v = ($(this).val() || '').toString().trim();
+        if (v) BoxValidationDetail();
+    });
     $('#txtScanProduct').on('input', function (e) {
             BoxValidationDetail();
     });
@@ -20,6 +62,7 @@ $(document).ready(function () {
         $(this).attr('inputmode', '');
     });
     GetModuleMasterCode();
+    toggleItemLocatorInputMode();
     $("#btnCreateNew").on("click", function () {
         CreateNewlocation();
     });
@@ -27,15 +70,64 @@ $(document).ready(function () {
         Savelocation();
     });
 });
+
+function PopulateItemLocatorItemDropdown() {
+    var $ddl = $('#ddlItemLocatorItem');
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowItemMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            $ddl.empty().append('<option value="">Search by name or item code…</option>');
+            if (response && response.length > 0) {
+                $.each(response, function (key, val) {
+                    var itemCode = val["ItemCode"] != null ? String(val["ItemCode"]).trim()
+                        : (val["Item Code"] != null ? String(val["Item Code"]).trim() : '');
+                    var itemName = val["ItemName"] != null ? val["ItemName"] : (val["Item Name"] != null ? val["Item Name"] : '');
+                    var disp = itemName + (itemCode ? ' (' + itemCode + ')' : '');
+                    var scanVal = itemCode !== '' ? itemCode : String(val["Code"]);
+                    $ddl.append(new Option(disp, scanVal));
+                });
+            }
+            if ($ddl.data('select2')) {
+                $ddl.select2('destroy');
+            }
+            $ddl.select2({
+                width: '100%',
+                placeholder: 'Search item or code…',
+                allowClear: true
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("ItemLocator ShowItemMaster:", error);
+            toastr.error("Could not load item list.");
+        }
+    });
+}
 function BoxValidationDetail() {
-    if ($("#txtScanProduct").val() == '') {
-        toastr.error("Please scan box/item !");
-        $("#txtScanProduct").focus();
-        return;
+    var uiMode = getItemLocatorMode();
+    var apiCode = uiMode;
+    var scanNo = '';
+    if (uiMode === '3') {
+        scanNo = ($('#ddlItemLocatorItem').val() || '').toString().trim();
+        if (!scanNo) {
+            toastr.error("Please select item !");
+            $('#ddlItemLocatorItem').trigger('focus');
+            return;
+        }
+    } else {
+        if ($("#txtScanProduct").val() == '') {
+            toastr.error("Please scan box/item !");
+            $("#txtScanProduct").focus();
+            return;
+        }
+        scanNo = $("#txtScanProduct").val();
     }
     const payload = {
-        Code: document.querySelector('input[name="txtScan"]:checked').value,
-        ScanNo: $("#txtScanProduct").val()
+        Code: apiCode,
+        ScanNo: scanNo
     }
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowItemDetailsOnScan`,
@@ -80,16 +172,26 @@ function BoxValidationDetail() {
                       return renamedItem;
                     });
                     BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
-                    $("#txtScanProduct").focus();
+                    if (uiMode !== '3') {
+                        $("#txtScanProduct").focus();
+                    }
                 } else {
-                    $("#txtScanProduct").focus();
-                    $("#txtScanProduct").val("");
+                    if (uiMode === '3') {
+                        $('#ddlItemLocatorItem').trigger('focus');
+                    } else {
+                        $("#txtScanProduct").focus();
+                        $("#txtScanProduct").val("");
+                    }
                     showToast(response[0].Msg);
                     $("#UnloadingTable").hide();
                 }
             } else {
-                $("#txtScanProduct").focus();
-                $("#txtScanProduct").val("");
+                if (uiMode === '3') {
+                    $('#ddlItemLocatorItem').trigger('focus');
+                } else {
+                    $("#txtScanProduct").focus();
+                    $("#txtScanProduct").val("");
+                }
                 $("#UnloadingTable").hide();
                 toastr.error("Record not found...!");
             }
@@ -97,8 +199,12 @@ function BoxValidationDetail() {
         error: function (xhr, status, error) {
             showToast("INVALID BOX NO !");
             $("#UnloadingTable").hide();
-            $("#txtScanProduct").focus();
-            $("#txtScanProduct").val("");
+            if (uiMode === '3') {
+                $('#ddlItemLocatorItem').trigger('focus');
+            } else {
+                $("#txtScanProduct").focus();
+                $("#txtScanProduct").val("");
+            }
         }
     });
 
@@ -133,6 +239,7 @@ function GetModuleMasterCode() {
         UserModuleMaster_Code = result.Code;
     }
 }
+
 async function CreateLocation(Code) {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {

@@ -76,6 +76,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEhvbGlkYXlNYXN0ZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/HSNMaster.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEhTTk1hc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Master/ItemConfigList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEl0ZW1Db25maWdMaXN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -168,6 +172,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcRGlzcGF0Y2hCb3hWYWxpZGF0aW9uLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/InvoiceMaster.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcSW52b2ljZU1hc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/ItemLocator.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcSXRlbUxvY2F0b3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -182,6 +190,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/OrderMaster.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcT3JkZXJNYXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/PaymentEntry.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcUGF5bWVudEVudHJ5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/PaymentEntryAdjestment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcUGF5bWVudEVudHJ5QWRqZXN0bWVudC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Order/SalesReturnMaster.cshtml]
@@ -206,6 +222,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Report/LocationReport.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XExvY2F0aW9uUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Report/OutstandingReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XE91dHN0YW5kaW5nUmVwb3J0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/All Project/BizSolESMS/BizSolESMS/Bizsol_ESMS/Views/Report/StockAuditReport.cshtml]

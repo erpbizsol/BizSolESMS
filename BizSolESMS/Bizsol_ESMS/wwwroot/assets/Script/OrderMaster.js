@@ -120,6 +120,10 @@ $(document).ready(function () {
     $("#thItemCode").text(G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code');
     $("#thItemName").text(G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name');
 
+    if (typeof window.applyEsmsLevelOfOrderNoLabelsToDom === 'function') {
+        window.applyEsmsLevelOfOrderNoLabelsToDom();
+    }
+
 });
 function ShowOrderMasterlist(Type) {
     blockUI();
@@ -192,6 +196,9 @@ async function Create() {
     $("#txtWarehouse").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     $("#txtsave").show();
+    if (typeof window.applyEsmsLevelOfOrderNoLabelsToDom === 'function') {
+        window.applyEsmsLevelOfOrderNoLabelsToDom();
+    }
 }
 function BackMaster() {
     $("#txtListpage").show();
@@ -436,7 +443,7 @@ function Save() {
     var Warehouse = $("#txtWarehouse").val();
 
     if (!OrderDate) {
-        toastr.error("Please Select an Order Date!");
+        toastr.error(typeof window.esmsPleaseSelectOrderDateMsg === 'function' ? window.esmsPleaseSelectOrderDateMsg() : "Please Select an Order Date!");
         $("#txtOrderDate").focus();
         return;
     } else if (!ClientName) {
@@ -449,12 +456,12 @@ function Save() {
         return;
     }
     else if (!BuyerPONo) {
-        toastr.error("Please enter a Buyer PO No!");
+        toastr.error(typeof window.esmsPleaseEnterBuyerPONoMsg === 'function' ? window.esmsPleaseEnterBuyerPONoMsg() : "Please enter a Buyer PO No!");
         $("#txtBuyerPONo").focus();
         return;
     }
     else if (!BuyerPODate) {
-        toastr.error("Please Select a Buyer PO Date!");
+        toastr.error(typeof window.esmsPleaseSelectBuyerPODateMsg === 'function' ? window.esmsPleaseSelectBuyerPODateMsg() : "Please Select a Buyer PO Date!");
         $("#txtBuyerPODate").focus();
         return;
     }
@@ -1105,7 +1112,7 @@ function GetImportFile() {
         JsonData = [];
         return;
     } else if (OrderNo == '' && ClientType == 'S') {
-        toastr.error("Please enter order no !");
+        toastr.error(typeof window.esmsPleaseEnterLevelOfOrderMsg === 'function' ? window.esmsPleaseEnterLevelOfOrderMsg() : "Please enter order no !");
         $("#txtImportOrderNo").focus();
         $("#txtExcelFile").val();
         JsonData = [];

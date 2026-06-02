@@ -657,11 +657,13 @@ async function StartDispatchPanding(Code, Mode) {
                     }
                     const ColumnAlignment = {
                         "Ord Qty": "right;width:30px;",
+                        "Order Quantity": "right;width:30px;",
                         "Bal Qty": "right;width:30px;",
+                        "Balance Quantity": "right;width:30px;",
                         "Scan Qty": "right;width:70px;",
                         "Packing Qty": "right;width:70px;",
 						"Manual Qty": "right;width:70px;",
-						"MRP": "right;width:70px;",
+						"MRP": "right;min-width:120px;width:120px;",
                     };
                     const renameMap = {
                         "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
@@ -1003,11 +1005,13 @@ async function StartDispatchTransit(Code, DispatchMaster_Code, Mode) {
                     }
                     const ColumnAlignment = {
                         "Ord Qty": "right;width:30px;",
+                        "Order Quantity": "right;width:30px;",
                         "Bal Qty": "right;width:30px;",
+                        "Balance Quantity": "right;width:30px;",
                         "Scan Qty": "right;width:70px;",
                         "Packing Qty": "right;width:70px;",
 						"Manual Qty": "right;width:70px;",
-						"MRP": "right;width:70px;",
+						"MRP": "right;min-width:120px;width:120px;",
                     };
                     const renameMap = {
                         "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
@@ -1270,11 +1274,13 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     }
                     const ColumnAlignment = {
                         "Ord Qty": "right;width:30px;",
+                        "Order Quantity": "right;width:30px;",
                         "Bal Qty": "right;width:30px;",
+                        "Balance Quantity": "right;width:30px;",
                         "Scan Qty": "right;width:70px;",
                         "Packing Qty": "right;width:70px;",
 						"Manual Qty": "right;width:70px;",
-						"MRP": "right;width:70px;",
+						"MRP": "right;min-width:120px;width:120px;",
                     };
                     const renameMap = {
                         "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
@@ -1467,7 +1473,9 @@ async function ViewDespatchTransit(Code, Mode) {
                     }
                     const ColumnAlignment = {
                         "Ord Qty": "right;width:30px;",
+                        "Order Quantity": "right;width:30px;",
                         "Bal Qty": "right;width:30px;",
+                        "Balance Quantity": "right;width:30px;",
                         "Scan Qty": "right;width:70px;",
                         "Packing Qty": "right;width:70px;",
                         "Manual Qty": "right;width:70px;",

@@ -7,7 +7,74 @@ $(document).ready(function () {
     ItemMasterConfig();
     GetIsActiveDetails();
     GetFixparameter();
+    if (typeof window.applyEsmsLevelOfOrderNoLabelsToDom === 'function') {
+        window.applyEsmsLevelOfOrderNoLabelsToDom();
+    }
+    bindVerticalMenuScrollPersistence();
 });
+
+/** Persist left-rail scroll (SimpleBar) so it does not jump to top after navigation or submenu toggle. */
+var ESMS_MENU_SCROLL_KEY = 'esmsVerticalMenuScroll';
+
+function getVerticalMenuScrollHost() {
+    var root = document.querySelector('#layout-wrapper .vertical-menu [data-simplebar]');
+    if (!root) return null;
+    return root.querySelector('.simplebar-content-wrapper');
+}
+
+function readSavedMenuScroll() {
+    var v = sessionStorage.getItem(ESMS_MENU_SCROLL_KEY);
+    var n = v == null ? NaN : parseInt(v, 10);
+    return isFinite(n) && n >= 0 ? n : 0;
+}
+
+function saveVerticalMenuScroll() {
+    var host = getVerticalMenuScrollHost();
+    if (host) {
+        sessionStorage.setItem(ESMS_MENU_SCROLL_KEY, String(host.scrollTop));
+    }
+}
+
+function scheduleRestoreVerticalMenuScroll() {
+    var y = readSavedMenuScroll();
+    if (y <= 0) return;
+
+    function apply() {
+        var host = getVerticalMenuScrollHost();
+        if (host) {
+            host.scrollTop = y;
+        }
+    }
+
+    requestAnimationFrame(function () {
+        requestAnimationFrame(apply);
+    });
+    setTimeout(apply, 0);
+    setTimeout(apply, 50);
+    setTimeout(apply, 150);
+}
+
+function bindVerticalMenuScrollPersistence() {
+    var host = getVerticalMenuScrollHost();
+    if (!host || host.dataset.esmsScrollBound === '1') return;
+    host.dataset.esmsScrollBound = '1';
+    var t = null;
+    host.addEventListener(
+        'scroll',
+        function () {
+            if (t) clearTimeout(t);
+            t = setTimeout(saveVerticalMenuScroll, 120);
+        },
+        { passive: true }
+    );
+}
+
+$(document).on('click', '#sidebar-menu a[href]', function () {
+    var href = ($(this).attr('href') || '').trim();
+    if (!href || href.indexOf('javascript:') === 0 || href === '#') return;
+    saveVerticalMenuScroll();
+});
+
 var authKeyData1 = JSON.parse(sessionStorage.getItem('authKey'));
 var authKeyData = sessionStorage.getItem('authKey');
     //const jsonString = '{"DefultMysqlTemp":"Server=220.158.165.98;Port = 65448;database=bizsolesms_test;user=sa;password=biz1981;","AuthToken":"xyz","UserMaster_Code":"4","UserID":"Ankit"}';
@@ -58,7 +125,7 @@ var authKeyData = sessionStorage.getItem('authKey');
         var lower = s.toLowerCase();
         if (semanticOnlyRoot) {
             if (lower === 'master' || lower.indexOf('master') === 0) return 'layers';
-            if (lower.indexOf('transaction') === 0) return 'shuffle';
+            if (lower.indexOf('transaction') === 0) return 'tool';
             if (lower.indexOf('report') === 0) return 'bar-chart-2';
             if (lower.indexOf('config') === 0) return 'settings';
             if (lower.indexOf('admin') === 0) return 'shield';
@@ -89,16 +156,17 @@ function UserMenuRightsList() {
                 if (value.length > 0) {
                     sessionStorage.setItem('UserModuleMaster', JSON.stringify(value));
                     var menuHtml = '';
+                    menuHtml += '<li class="esms-webiz-menu-heading" role="presentation"><span class="esms-webiz-menu-heading-inner">Main menu</span></li>';
                     $.each(value, function (index, item) {
                         if (item.MasterModuleCode === 0) {
                             var childMenuHtml = getChildMenu(value, item.Code);
                             var hasArrow = childMenuHtml ? 'has-arrow' : '';
+                            var chevron = childMenuHtml ? '<span class="esms-menu-chevron" aria-hidden="true"><i data-feather="chevron-right"></i></span>' : '';
                             menuHtml += '<li>';
                             menuHtml += '<a href="javascript:void(0);" class="menu-toggle ' + hasArrow + '">';
                             menuHtml += '<span class="iconBg"><i class="side-menu-icon" data-feather="' + featherIconForLabel(item.ModuleDesp, 'root', true) + '"></i></span>';
-                            menuHtml += '<span>' + item.ModuleDesp + '</span>';
-                            // Add arrow if submenu exists (always point right initially)
-                            //menuHtml += childMenuHtml ? '<i class="arrow-icon" data-feather="chevron-right"></i>' : '';
+                            menuHtml += '<span class="esms-menu-label">' + item.ModuleDesp + '</span>';
+                            menuHtml += chevron;
                             menuHtml += '</a>';
                             if (childMenuHtml) {
                                 menuHtml += '<ul class="sub-menu" style="display: none;">' + childMenuHtml + '</ul>'; // Submenus hidden by default
@@ -109,8 +177,10 @@ function UserMenuRightsList() {
 
                     $('#side-menu').html(menuHtml);
 
-                    feather.replace();
                     setActiveMenu();
+                    feather.replace();
+                    bindVerticalMenuScrollPersistence();
+                    scheduleRestoreVerticalMenuScroll();
                     //$('.menu-toggle').click(function (e) {
                     //    var parentLi = $(this).parent();
 
@@ -141,18 +211,26 @@ function UserMenuRightsList() {
 
                         e.preventDefault();
 
-                        if (subMenu.is(":visible")) {
-                            subMenu.slideUp();
-                            parentLi.removeClass('mm-active');
-                        } else {
-                            //$('#side-menu ul.sub-menu').slideUp();
-                            $('#side-menu li').removeClass('mm-active');
+                        var host = getVerticalMenuScrollHost();
+                        var st = host ? host.scrollTop : 0;
+                        var finish = function () {
+                            if (host) {
+                                host.scrollTop = st;
+                            }
+                            saveVerticalMenuScroll();
+                            feather.replace();
+                        };
 
-                            subMenu.slideDown();
+                        if (subMenu.is(':visible')) {
+                            subMenu.slideUp(200, function () {
+                                parentLi.removeClass('mm-active');
+                                finish();
+                            });
+                        } else {
+                            $('#side-menu li').removeClass('mm-active');
+                            subMenu.slideDown(200, finish);
                             parentLi.addClass('mm-active');
                         }
-
-                        feather.replace();
                     });
                 }
             }
@@ -166,12 +244,12 @@ function getChildMenu(value, masterCode) {
             var subChildMenuHtml = getChildMenu(value, item.Code);
             var hasArrow = subChildMenuHtml ? 'has-arrow' : '';
             var subIcon = featherIconForLabel(item.ModuleDesp, 'c' + item.Code);
+            var subChevron = subChildMenuHtml ? '<span class="esms-menu-chevron esms-menu-chevron--nested" aria-hidden="true"><i data-feather="chevron-right"></i></span>' : '';
             childMenuHtml += '<li>';
             childMenuHtml += '<a href="' + baseUrl + '/' + item.FormToOpen + '" class="menu-toggle ' + hasArrow + '">';
             childMenuHtml += '<span class="esms-submenu-icon"><i data-feather="' + subIcon + '"></i></span>';
-            childMenuHtml += '<span>' + item.ModuleDesp + '</span>';
-            // Add arrow if submenu exists (always point right initially)
-            //childMenuHtml += subChildMenuHtml ? '<i class="arrow-icon" data-feather="chevron-right"></i>' : '';
+            childMenuHtml += '<span class="esms-menu-label">' + item.ModuleDesp + '</span>';
+            childMenuHtml += subChevron;
             childMenuHtml += '</a>';
             if (subChildMenuHtml) {
                 childMenuHtml += '<ul class="sub-menu" style="display: none;">' + subChildMenuHtml + '</ul>';
@@ -183,6 +261,8 @@ function getChildMenu(value, masterCode) {
 }
 function setActiveMenu() {
     var currentUrl = window.location.pathname;
+    var host = getVerticalMenuScrollHost();
+    var holdScroll = readSavedMenuScroll();
 
     $('#side-menu ul.sub-menu').hide();
 
@@ -197,6 +277,14 @@ function setActiveMenu() {
             $(this).parents('ul.sub-menu').show();
         }
     });
+
+    if (host && holdScroll > 0) {
+        requestAnimationFrame(function () {
+            if (host) {
+                host.scrollTop = holdScroll;
+            }
+        });
+    }
 }
 async function GetPerPageSize() {
     $.ajax({
@@ -304,9 +392,15 @@ function GetFixparameter() {
             if (response.length > 0) {
                 sessionStorage.setItem('Fixparameter', JSON.stringify(response));
             }
+            if (typeof window.applyEsmsLevelOfOrderNoLabelsToDom === 'function') {
+                window.applyEsmsLevelOfOrderNoLabelsToDom();
+            }
         },
         error: function (xhr, status, error) {
             toastr.error('Error Api/Fixparameter');
+            if (typeof window.applyEsmsLevelOfOrderNoLabelsToDom === 'function') {
+                window.applyEsmsLevelOfOrderNoLabelsToDom();
+            }
         }
     });
 }

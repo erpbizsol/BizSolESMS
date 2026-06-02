@@ -10,8 +10,8 @@
     <!--toastr-->
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
     <link href="~/assets/css/toastr.min.css" rel="stylesheet" />
-    @* Google Fonts — ESMS Profenna-style (display + UI) *@
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    @* Google Fonts — Webiz shell (DM Sans) + legacy fallbacks *@
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link href="~/assets/libs/datatables.net-bs4/css/datatables.bootstrap4.min.css" rel="stylesheet" />
     <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" />
     <!-- Responsive datatable examples -->
@@ -32,33 +32,44 @@
     <link href="~/assets/css/esms-motion.css" rel="stylesheet" />
     <link href="~/assets/css/esms-page-patterns.css" rel="stylesheet" />
     <link href="~/assets/css/esms-forms-ui.css" rel="stylesheet" />
+    <link href="~/assets/css/esms-webiz-theme.css?v=1.1" rel="stylesheet" />
     <script src="~/assets/js/jquery-3.6.0.min.js"></script>
 </head>
-<body class="esms-profenna-body">
-    <div id="layout-wrapper" class="esms-profenna">
+<body class="esms-profenna-body esms-webiz" data-sidebar-size="lg">
+    <div id="layout-wrapper" class="esms-profenna esms-webiz">
         <header id="page-topbar">
             <div class="navbar-header">
-                <div class="d-flex">
-                    <!-- LOGO -->
-                    <div class="navbar-brand-box">
-                        <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Dashbord/Dashbord" class="logo logo-dark esms-brand-link">
-                            <span class="esms-brand-logo">
-                                <img src="~/assets/images/final_logo-circle.jpg" alt="WeBiz" height="34">
-                            </span>
-                            <span class="logo-txt esms-brand-title">WeBiz</span>
-                        </a>
+                <div class="d-flex align-items-stretch esms-webiz-navbar-left flex-shrink-1">
+                    <div class="esms-webiz-header-menu-zone d-flex align-items-stretch flex-shrink-1">
+                        @* lg: dark strip = logo rail + hamburger (matches sidebar); sm: logo cell | hamburger + title *@
+                        <div class="esms-webiz-topbar-rail d-flex align-items-stretch flex-shrink-0">
+                            <div class="navbar-brand-box">
+                                <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Dashbord/Dashbord" class="logo logo-dark esms-brand-link">
+                                    <span class="esms-brand-logo">
+                                        <img src="~/assets/images/final_logo-circle.jpg" alt="WeBiz" height="34">
+                                    </span>
+                                    <span class="logo-txt esms-brand-title">WeBiz</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="esms-webiz-topbar-mid d-flex align-items-stretch flex-grow-1 min-w-0">
+                            <button type="button" class="btn btn-sm px-2 px-sm-3 font-size-16 header-item toggleBtn esms-webiz-sidebar-toggle"
+                                    id="vertical-menu-btn"
+                                    aria-label="Toggle navigation sidebar"
+                                    aria-controls="esms-sidebar-panel"
+                                    title="Wide screen: switch between full menu labels and compact icons. Small screen: open or close the menu.">
+                                <svg class="esms-hamburger-svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <div class="esms-page-title-wrap d-flex flex-column justify-content-center align-self-stretch">
+                                @* <p class="esms-kicker d-none d-md-block">BizSol ESMS</p> *@
+                                <h4 class="mb-0 font-size-16" id="ERPHeading">Dashboard</h4>
+                                <p class="esms-webiz-page-sub d-none d-md-block mb-0" id="esms-webiz-page-sub" aria-live="polite"></p>
+                            </div>
+                        </div>
                     </div>
-
-                    <button type="button" class="btn btn-sm px-3 font-size-16 header-item toggleBtn"
-                            id="vertical-menu-btn">
-                        <i class="fa fa-fw fa-bars"></i>
-                    </button>
-
-                    <div class="esms-page-title-wrap">
-                        @* <p class="esms-kicker d-none d-md-block">BizSol ESMS</p> *@
-                        <h4 class="mb-sm-0 font-size-16" id="ERPHeading">Dashboard</h4>
-                    </div>
-
                 </div>
 
                 <div class="d-flex">
@@ -82,6 +93,21 @@
                                 </div>
                             </form>
                         </div>
+                    </div>
+
+                    <div class="esms-webiz-header-tools d-none d-md-flex align-items-center gap-2 me-1 flex-shrink-0">
+                        <button type="button" class="esms-webiz-scan-btn" id="esms-webiz-scan-trigger" title="Focus barcode field">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                            Scan Item
+                        </button>
+                        <button type="button" class="esms-webiz-scan-btn" id="esms-webiz-invoice-trigger" title="Open Invoice (GST)">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Invoice
+                        </button>
+                        <button type="button" class="esms-webiz-notif-btn" id="esms-webiz-notif-btn" title="Notifications" aria-label="Notifications">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <span class="esms-webiz-notif-dot" aria-hidden="true"></span>
+                        </button>
                     </div>
 
                     <div class="dropdown d-none d-sm-inline-block">
@@ -181,7 +207,7 @@
 
        
 
-        <div class="vertical-menu">
+        <div class="vertical-menu" id="esms-sidebar-panel" role="navigation" aria-label="Main menu">
             <div data-simplebar class="h-100">
                 <div id="sidebar-menu">
                     <ul class="metismenu list-unstyled" id="side-menu">
@@ -455,12 +481,84 @@
         $("#ERPUserName").text(sessionStorage.getItem('UserName'));
         $("#ERPCompanyCode").text('('+sessionStorage.getItem('EsmsCompanyName')+')');
 
+        (function () {
+            var sub = document.getElementById('esms-webiz-page-sub');
+            if (!sub) return;
+            var d = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            if (document.querySelector('.esms-dash-webiz')) {
+                sub.textContent = 'Real-time warehouse overview · ' + d;
+                return;
+            }
+            sub.textContent = 'Operations overview · ' + d;
+        })();
+        var UrlforRedirect = '@Html.Raw(ViewBag.AppBaseURLMenu)';
+        if (!UrlforRedirect) {
+            UrlforRedirect = sessionStorage.getItem('AppBaseURLMenu') || '';
+        }
+        $(document).on('click', '#esms-webiz-scan-trigger', function () {
+             var itemLocatorUrl = UrlforRedirect+'/Order/ItemLocator';
+            window.location.href = itemLocatorUrl + '#esms-scan-focus';
+        });
+
+        $(document).on('click', '#esms-webiz-invoice-trigger', function () {
+
+             window.location.href = UrlforRedirect+'/Order/InvoiceMaster';
+        });
+
         /* Hamburger: clear stuck Bootstrap .active when focus leaves */
         $(document).on('focusout blur', '#vertical-menu-btn', function () {
             $(this).removeClass('active');
         });
+
+        /* Keep aria-expanded in sync with real sidebar state (app.js toggles body classes). */
+        (function syncSidebarToggleAria() {
+            var mq = window.matchMedia('(max-width: 991.98px)');
+            function go() {
+                var btn = document.getElementById('vertical-menu-btn');
+                if (!btn || !document.getElementById('esms-sidebar-panel')) return;
+                if (mq.matches) {
+                    btn.setAttribute('aria-expanded', document.body.classList.contains('sidebar-enable') ? 'true' : 'false');
+                } else {
+                    btn.setAttribute('aria-expanded', (document.body.getAttribute('data-sidebar-size') !== 'sm') ? 'true' : 'false');
+                }
+            }
+            go();
+            $(document).on('click', '#vertical-menu-btn', function () {
+                window.setTimeout(go, 0);
+            });
+            $(document).on('click', '#sidebar-overlay', function () {
+                window.setTimeout(go, 0);
+            });
+            $(window).on('resize', go);
+            if (mq.addEventListener) mq.addEventListener('change', go);
+            else mq.addListener(go);
+        })();
+
+        /* Highlight “Master” in page titles (mint word + underline) — matches reference shell */
+        (function webizHeadingAccentMaster() {
+            function esc(s) {
+                return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+            function wrap() {
+                var el = document.getElementById('ERPHeading');
+                var lw = document.getElementById('layout-wrapper');
+                if (!el || !lw || !lw.classList.contains('esms-webiz')) return;
+                if (el.querySelector('.esms-webiz-heading-em')) return;
+                var t = (el.textContent || '').trim();
+                var i = t.indexOf('Master');
+                if (i < 0) return;
+                el.innerHTML = esc(t.slice(0, i)) + '<span class="esms-webiz-heading-em">Master</span>' + esc(t.slice(i + 6));
+            }
+            wrap();
+            var h = document.getElementById('ERPHeading');
+            if (h && window.MutationObserver) {
+                var obs = new MutationObserver(function () { window.requestAnimationFrame(wrap); });
+                obs.observe(h, { childList: true, subtree: true, characterData: true });
+            }
+        })();
     </script>
     <script src="~/assets/script/logout.js"></script>
+    <script src="~/assets/js/esms-fixparameter-labels.js"></script>
     <script src="~/assets/js/menu.js"></script>
     <script>
         /* SM sidebar: clamp first-level submenu height to space below row (CSS positions list under “Master”) */

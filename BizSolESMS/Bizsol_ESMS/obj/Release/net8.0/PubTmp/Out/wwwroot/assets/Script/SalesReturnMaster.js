@@ -189,7 +189,7 @@ function GetImportFile() {
     const ClientName = $("#txtClientName").val();
     const Reason = $("#txtReason").val();
     if (OrderNo == '') {
-        toastr.error("Please select order no.!");
+        toastr.error(typeof window.esmsPleaseSelectLevelOfOrderMsg === 'function' ? window.esmsPleaseSelectLevelOfOrderMsg() : "Please select order no.!");
         $("#txtOrderNo").focus();
         $("#txtExcelFile").val("");
         JsonData = [];
@@ -247,7 +247,7 @@ function SaveImportFile() {
     const ClientName = $("#txtClientName").val();
     const Reason = $("#txtReason").val();
     if (OrderNo == '') {
-        toastr.error("Please select order no.!");
+        toastr.error(typeof window.esmsPleaseSelectLevelOfOrderMsg === 'function' ? window.esmsPleaseSelectLevelOfOrderMsg() : "Please select order no.!");
         $("#txtOrderNo").focus();
         $("#txtExcelFile").val("");
         JsonData = [];

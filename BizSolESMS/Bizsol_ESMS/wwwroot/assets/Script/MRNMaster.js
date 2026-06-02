@@ -291,11 +291,11 @@ function ShowMRNMasterlist(Type) {
                 const updatedResponse = response.map(item => ({
                     ...item,
                     "Unloading Status": `<a style="cursor:pointer;" onclick=ShowCaseNoData(${item.Code},${item["PickList No"]})>${item["Unloading Status"]}</a>`,
-                    "Validation Status": `<a style="cursor:pointer;" onclick=ShowCaseNoDataQty(${item.Code})>${item["Validation Status"]}</a>`
-                    ,Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
+                    "Validation Status": `<a style="cursor:pointer;" onclick=ShowCaseNoDataQty(${item.Code})>${item["Validation Status"]}</a>`,
+                    Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}','${item["Unloading Status"]}')"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.Code}','${item[`Challan No`]}','${item["Unloading Status"]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
-                    <button class="btn btn-success icon-height mb-1"  title="GENERATE QR" onclick="DownloadQR('${item.Code}')"><i class="fa fa-qrcode" aria-hidden="true"></i> </button>
+                    <button class="btn btn-success icon-height mb-1"  title="GENERATE QR" onclick="DownloadQR('${item.Code}')"><i class="fa fa-qrcode" aria-hidden="true"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -2097,28 +2097,32 @@ function ChangecolorTr() {
             const columnValue1 = targetTd1.textContent.trim();
             
             if (columnValue === 'UNLOADED') {
-                targetTd.style.backgroundColor = '#009358';
-                targetTd.style.color = '#fff';
+                targetTd.style.backgroundColor = 'rgba(22, 163, 74, 0.14)';
+                targetTd.style.color = '#065f46';
             } else if (columnValue === "PARTIAL UNLOADED") {
-                targetTd.style.backgroundColor = '#9ef3a5';
+                targetTd.style.backgroundColor = 'rgba(251, 191, 36, 0.2)';
+                targetTd.style.color = '#92400e';
             } else {
-                targetTd.style.backgroundColor = '#d5d5f5';
+                targetTd.style.backgroundColor = 'rgba(139, 92, 246, 0.07)';
+                targetTd.style.color = 'inherit';
             }
             if (columnValue1 === 'VALIDATED') {
-                targetTd1.style.backgroundColor = '#009358';
-                targetTd1.style.color = '#fff';
+                targetTd1.style.backgroundColor = 'rgba(22, 163, 74, 0.14)';
+                targetTd1.style.color = '#065f46';
             } else if (columnValue1 === "PARTIAL VALIDATE") {
-                targetTd1.style.backgroundColor = '#9ef3a5';
+                targetTd1.style.backgroundColor = 'rgba(251, 191, 36, 0.2)';
+                targetTd1.style.color = '#92400e';
             } else {
-                targetTd1.style.backgroundColor = '#d5d5f5';
+                targetTd1.style.backgroundColor = 'rgba(139, 92, 246, 0.07)';
+                targetTd1.style.color = 'inherit';
             }
-            targetTd.style.fontWeight = 'bold';
-            targetTd1.style.fontWeight = 'bold';
+            targetTd.style.fontWeight = '600';
+            targetTd1.style.fontWeight = '600';
         }
     });
 }
 
-setInterval(ChangecolorTr, 100);
+setInterval(ChangecolorTr, 450);
 function ShowCaseNoData(Code, PickListNo) {
     $("#hfMRNMaster_Code").val(Code);
     $("#hfPicklistNo").val(PickListNo)
