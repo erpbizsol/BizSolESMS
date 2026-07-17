@@ -32,6 +32,7 @@ wwwroot\assets\css\esms-motion.css
 wwwroot\assets\css\esms-page-patterns.css
 wwwroot\assets\css\esms-proof-of-delivery.css
 wwwroot\assets\css\esms-reference-design.css
+wwwroot\assets\css\esms-webiz-theme.css
 wwwroot\assets\css\Filter.css
 wwwroot\assets\css\icons.min.css
 wwwroot\assets\css\Loader.css
@@ -273,6 +274,7 @@ wwwroot\assets\libs\twitter-bootstrap-wizard\prettify.css
 wwwroot\assets\libs\twitter-bootstrap-wizard\prettify.js
 wwwroot\assets\libs\wnumb\wNumb.min.js
 wwwroot\assets\Script\AccountMaster.js
+wwwroot\assets\Script\BankMaster.js
 wwwroot\assets\Script\BoxUnloading.js
 wwwroot\assets\Script\BoxValidation.js
 wwwroot\assets\Script\BoxValidationWithoutBox.js
@@ -280,8 +282,11 @@ wwwroot\assets\Script\BrandMaster.js
 wwwroot\assets\Script\CategoryMaster.js
 wwwroot\assets\Script\CityMasterList.js
 wwwroot\assets\Script\ClientMaster.js
+wwwroot\assets\Script\ClientTypeMaster.js
 wwwroot\assets\Script\common.js
+wwwroot\assets\Script\CompanyMaster.js
 wwwroot\assets\Script\DailyReport.js
+wwwroot\assets\Script\Dashbord.js
 wwwroot\assets\Script\Dispatch.js
 wwwroot\assets\Script\DispatchBoxValidation.js
 wwwroot\assets\Script\DispatchReport.js
@@ -290,6 +295,8 @@ wwwroot\assets\Script\GroupMaster.js
 wwwroot\assets\Script\Helpdesk.js
 wwwroot\assets\Script\HolidayMaster.js
 wwwroot\assets\Script\HsnMaster.js
+wwwroot\assets\Script\InvoiceMaster.js
+wwwroot\assets\Script\InvoiceReport.js
 wwwroot\assets\Script\ItemConfig.js
 wwwroot\assets\Script\ItemLocator.js
 wwwroot\assets\Script\ItemMaster.js
@@ -300,7 +307,9 @@ wwwroot\assets\Script\Logout.js
 wwwroot\assets\Script\MailConfiguration.js
 wwwroot\assets\Script\ManualSalesReturn.js
 wwwroot\assets\Script\MRNMaster.js
+wwwroot\assets\Script\OrderCancellation.js
 wwwroot\assets\Script\OrderConformation.js
+wwwroot\assets\Script\OrderDispatch.js
 wwwroot\assets\Script\OrderMaster.js
 wwwroot\assets\Script\OutstandingReport.js
 wwwroot\assets\Script\PageSizeConfiguration.js
@@ -309,6 +318,7 @@ wwwroot\assets\Script\PaymentEntryAdjestment.js
 wwwroot\assets\Script\PrefixConfiguration.js
 wwwroot\assets\Script\ProductEnquiry.js
 wwwroot\assets\Script\ProofOfDelivery.js
+wwwroot\assets\Script\SaleLossReport.js
 wwwroot\assets\Script\SalesReturnMaster.js
 wwwroot\assets\Script\StateMaster.js
 wwwroot\assets\Script\StockAudit.js
@@ -382,5 +392,3 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\assets\css\esms-webiz-theme.css
-wwwroot\assets\Script\InvoiceMaster.js

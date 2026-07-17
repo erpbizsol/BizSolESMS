@@ -679,7 +679,7 @@ async function StartDispatchPanding(Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" data-old-mrp="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
                         renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" readonly onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`;
                         renamedItem["Manual Qty"] = `
@@ -1027,7 +1027,7 @@ async function StartDispatchTransit(Code, DispatchMaster_Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" data-old-mrp="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
                         renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" readonly class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Manual Qty"] = `
@@ -1132,7 +1132,7 @@ function GetDespatchTransitOrderList(Mode) {
             if (response.length > 0) {
                 originalTransitData = response;
                 $("#DataTable").show();
-                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No","Status"];
                 const NumericFilterColumn = ["Order Qty", "TDQty"];
                 const DateFilterColumn = ["Despatch Date"];
                 const Button = false;
@@ -1182,7 +1182,7 @@ function GetCompletedDespatchOrderList(Mode) {
             if (response.length > 0) {
                 originalCompletedData = response;
                 $("#DataTable").show();
-                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No","Status"];
                 const NumericFilterColumn = ["Order Qty", "TDQ"];
                 const DateFilterColumn = [];
                 const Button = false;
@@ -1296,7 +1296,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" data-old-mrp="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
                         renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" readonly class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Manual Qty"] = `
@@ -2029,6 +2029,7 @@ function SaveManual() {
                 }
                 CloseManualModal();
             } else if (response[0].Status == 'N') {
+                CloseManualModal();
                 showToast(response[0].Msg);
                 G_DispatchMaster_Code = response[0].DispatchMaster_Code;
                 if (G_Tab == 1) {
@@ -2428,20 +2429,23 @@ function GetTotalLineOfPart(OrderMaster_Code) {
             $("#txtTotalPartLine").text(response[0].PartCount);
         },
         error: function (xhr, status, error) {
-            showToast("Error in api/OrderMaster/SaveManualRateAndQty");
+            showToast("Error in api/OrderMaster/GetTotalLineOfPart");
         }
     });
 }
 function SaveMRPByItemInput(element, itemCode) {
-    var mrp = $(element).val();
-    if (mrp === undefined || mrp === null || mrp === '') {
+    var newMrp = ($(element).val() || '').trim();
+    if (newMrp === '') {
         return;
     }
-    if (isNaN(parseFloat(mrp))) {
+    if (isNaN(parseFloat(newMrp))) {
         toastr.error("Please enter a valid MRP!");
         $(element).focus();
         return;
     }
+    var oldMrp = ($(element).attr('data-old-mrp') || $(element).closest('tr').attr('data-mrp') || '').trim();
+    if (parseFloat(oldMrp || 0) === parseFloat(newMrp)) return;
+
     if (!G_DispatchMaster_Code || parseInt(G_DispatchMaster_Code) <= 0) {
         toastr.error("Invalid Dispatch reference!");
         return;
@@ -2449,7 +2453,9 @@ function SaveMRPByItemInput(element, itemCode) {
     var payload = {
         DispatchMaster_Code: G_DispatchMaster_Code,
         ItemCode: itemCode,
-        Mrp: mrp,
+        OldMRP: oldMrp,
+        NewMRP: newMrp,
+        Mrp: newMrp,
         UserMaster_Code: UserMaster_Code
     };
     $.ajax({

@@ -611,3 +611,853 @@ body .modal {
     border-radius: 12px;
 }
 
+/* ══════════════════════════════════════════════
+   Order Cancellation page — esms-oc-* classes
+   ══════════════════════════════════════════════ */
+#layout-wrapper.esms-profenna .esms-oc-page {
+    padding: 0.6rem 1rem 2rem;
+}
+
+
+/* Count badge */
+#layout-wrapper.esms-profenna .esms-oc-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+/* ── Cards ── */
+#layout-wrapper.esms-profenna .esms-oc-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 0.65rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.05), 0 4px 12px rgba(15,23,42,0.04);
+}
+
+/* Card top bar */
+#layout-wrapper.esms-profenna .esms-oc-card-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.48rem 0.9rem;
+    background: linear-gradient(90deg, #f1f5f9 0%, #f8fafc 100%);
+    border-bottom: 1px solid #e2e8f0;
+}
+#layout-wrapper.esms-profenna .esms-oc-bar-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #475569;
+}
+
+/* ── Order info strip ── */
+#layout-wrapper.esms-profenna .esms-oc-info-body {
+    padding: 0.65rem 0.9rem;
+}
+#layout-wrapper.esms-profenna .esms-oc-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem 1rem;
+}
+#layout-wrapper.esms-profenna .esms-oc-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+}
+#layout-wrapper.esms-profenna .esms-oc-info-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+}
+#layout-wrapper.esms-profenna .esms-oc-info-value {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #1e293b;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: default;
+    box-shadow: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
+/* ── Cancellation details body ── */
+#layout-wrapper.esms-profenna .esms-oc-cancel-body {
+    padding: 0.65rem 0.9rem 0.75rem;
+}
+#layout-wrapper.esms-profenna .esms-oc-field-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.25rem;
+}
+#layout-wrapper.esms-profenna .esms-oc-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.65rem;
+    border-radius: 6px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+#layout-wrapper.esms-profenna .esms-oc-hint i {
+    color: #2563eb;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+/* ── Select2 scoped to OC page ── */
+#layout-wrapper.esms-profenna .esms-oc-page .select2-container {
+    width: 100% !important;
+}
+#layout-wrapper.esms-profenna .esms-oc-page .select2-container--default .select2-selection--single {
+    height: calc(1.5em + 0.5rem + 2px);
+    min-height: calc(1.5em + 0.5rem + 2px);
+    padding: 0.15rem 0.45rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+}
+#layout-wrapper.esms-profenna .esms-oc-page .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 1.5;
+    padding-left: 0;
+    font-size: 0.8125rem;
+    color: #1e293b;
+}
+#layout-wrapper.esms-profenna .esms-oc-page .select2-container--default.select2-container--open .select2-selection--single,
+#layout-wrapper.esms-profenna .esms-oc-page .select2-container--focus .select2-selection--single {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
+}
+
+/* ── Cancel qty input ── */
+#layout-wrapper.esms-profenna .esms-oc-page .oc-cancel-qty {
+    width: 5rem;
+    max-width: 100%;
+    padding: 0.2rem 0.4rem;
+    border-radius: 5px;
+    border: 1px solid #94a3b8;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    display: block;
+    margin: 0 auto;
+}
+#layout-wrapper.esms-profenna .esms-oc-page .oc-cancel-qty:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220,38,38,0.12);
+    outline: none;
+}
+#layout-wrapper.esms-profenna .esms-oc-page .oc-cancel-qty.is-invalid {
+    border-color: #dc2626;
+    background: #fff5f5;
+}
+
+/* ── Search bar in card bar ── */
+#layout-wrapper.esms-profenna .esms-oc-card-bar {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+#layout-wrapper.esms-profenna .esms-oc-search-wrap {
+    position: relative;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+#layout-wrapper.esms-profenna .esms-oc-search-icon {
+    position: absolute;
+    left: 0.55rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    color: #94a3b8;
+    pointer-events: none;
+}
+#layout-wrapper.esms-profenna .esms-oc-search-input {
+    width: 13rem;
+    padding: 0.3rem 0.65rem 0.3rem 1.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: #1e293b;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    line-height: 1.4;
+}
+#layout-wrapper.esms-profenna .esms-oc-search-input::placeholder {
+    color: #94a3b8;
+}
+#layout-wrapper.esms-profenna .esms-oc-search-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.14);
+}
+
+/* ── Action button in list ── */
+#layout-wrapper.esms-profenna .esms-oc-action-btn {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+/* ── Re-Open button ── */
+#layout-wrapper.esms-profenna .esms-oc-reopen-btn {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 5px;
+    white-space: nowrap;
+    background: #f59e0b;
+    color: #fff;
+    border: none;
+}
+#layout-wrapper.esms-profenna .esms-oc-reopen-btn:hover {
+    background: #d97706;
+    color: #fff;
+}
+
+/* ── Warning badge ── */
+#layout-wrapper.esms-profenna .esms-oc-badge--warn {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+/* ── Tab bar ── */
+#layout-wrapper.esms-profenna .esms-oc-tabs {
+    display: flex;
+    gap: 0.35rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0;
+}
+#layout-wrapper.esms-profenna .esms-oc-tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.45rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    border-radius: 0;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+#layout-wrapper.esms-profenna .esms-oc-tab-btn:hover {
+    color: #3b82f6;
+}
+#layout-wrapper.esms-profenna .esms-oc-tab-btn.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+/* ── Paginator strip ── */
+#layout-wrapper.esms-profenna .esms-oc-paginator {
+    background: #fafbfc;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.8rem;
+    margin-top: 0 !important;
+}
+
+/* ── Empty state ── */
+#layout-wrapper.esms-profenna .esms-oc-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #94a3b8;
+}
+#layout-wrapper.esms-profenna .esms-oc-empty-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.75rem;
+    opacity: 0.45;
+}
+#layout-wrapper.esms-profenna .esms-oc-empty-text {
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 991.98px) {
+    #layout-wrapper.esms-profenna .esms-oc-info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    /* Tab bar — equal-width tabs, compact text */
+    #layout-wrapper.esms-profenna .esms-oc-tabs {
+        gap: 0;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-tab-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 0.5rem 0.35rem;
+        font-size: 0.72rem;
+        line-height: 1.25;
+        text-align: center;
+        white-space: normal;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-tab-btn i {
+        display: block;
+        margin: 0 auto 0.2rem !important;
+        font-size: 0.85rem;
+    }
+
+    /* Card bar — stack label + search full width */
+    #layout-wrapper.esms-profenna .esms-oc-card-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        padding: 0.55rem 0.65rem;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-bar-label {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem 0.5rem;
+        width: 100%;
+        line-height: 1.35;
+        font-size: 0.625rem;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-bar-label .esms-oc-badge {
+        margin-left: 0 !important;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-search-wrap {
+        margin-left: 0;
+        width: 100%;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-search-input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Grid — horizontal scroll, shorter viewport height */
+    #layout-wrapper.esms-profenna .esms-oc-card--table {
+        overflow: hidden;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-card--table .table-wrapper.fixed-height-table {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        height: auto !important;
+        max-height: min(320px, 48dvh);
+        min-height: 160px;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-card--table .fixed-width-table {
+        width: max-content;
+        min-width: 100%;
+    }
+
+    /* Paginator — wrap controls on small screens */
+    #layout-wrapper.esms-profenna .esms-oc-paginator.paginator {
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.35rem 0.45rem;
+        padding: 0.55rem 0.65rem !important;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-paginator .page-size-select {
+        flex: 1 1 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin: 0 0 0.15rem;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-paginator .page-info {
+        flex: 1 1 auto;
+        text-align: center;
+        min-width: 5.5rem;
+        margin: 0 0.25rem;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-paginator .paginator-btn {
+        margin: 0 !important;
+        padding: 0.2rem 0.35rem !important;
+    }
+
+    /* Compact row action buttons */
+    #layout-wrapper.esms-profenna .esms-oc-action-btn,
+    #layout-wrapper.esms-profenna .esms-oc-reopen-btn {
+        font-size: 0.68rem;
+        padding: 0.22rem 0.45rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #layout-wrapper.esms-profenna .esms-oc-page {
+        padding: 0.5rem 0.5rem 1.5rem;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem 0.6rem;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-cancel-body,
+    #layout-wrapper.esms-profenna .esms-oc-info-body {
+        padding: 0.55rem 0.65rem 0.6rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-oc-tab-btn {
+        font-size: 0.68rem;
+        padding: 0.45rem 0.25rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-oc-card--table .table-wrapper.fixed-height-table {
+        max-height: min(280px, 42dvh);
+    }
+
+    #layout-wrapper.esms-profenna .esms-oc-paginator .page-size-select label {
+        font-size: 0.72rem;
+    }
+    #layout-wrapper.esms-profenna .esms-oc-paginator .pageSize {
+        font-size: 0.72rem;
+        max-width: 4.5rem;
+    }
+}
+
+/* Box No stepper: minus | input | plus in one bordered group */
+.clsbox {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid #275481;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    height: 2rem;
+    vertical-align: middle;
+    box-shadow: 0 1px 2px rgba(3, 55, 100, 0.08);
+}
+
+.clsbox button {
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 100%;
+    border: 0;
+    background: #f1f5f9;
+    color: #033764;
+    font-size: 0.85rem;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.clsbox button:first-child {
+    border-right: 1px solid #cbd5e1;
+}
+
+.clsbox button:last-child {
+    border-left: 1px solid #cbd5e1;
+}
+
+.clsbox button:hover {
+    background: #e2e8f0;
+}
+
+.clsbox button:active {
+    background: #cbd5e1;
+}
+
+.clsbox input {
+    width: 3rem;
+    min-width: 3rem;
+    height: 100%;
+    border: 0;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #033764;
+    background: #fff;
+    padding: 0 0.25rem;
+    margin: 0;
+    box-shadow: none;
+}
+
+.clsbox input:focus {
+    outline: none;
+    background: #f8fafc;
+}
+
+/* —— Item Master — create form (flat layout) —— */
+#layout-wrapper.esms-profenna .esms-item-master-page {
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+#layout-wrapper.esms-profenna .esms-item-master-card {
+    background: #ffffff;
+    border: 1px solid #dbe3ef;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+}
+
+#layout-wrapper.esms-profenna .esms-item-master-card__body {
+    padding: 0.85rem 1rem 1rem;
+}
+
+#layout-wrapper.esms-profenna .esms-item-master-page .esms-field-group {
+    min-width: 0;
+    margin-bottom: 0.15rem;
+}
+
+#layout-wrapper.esms-profenna .esms-item-master-checks .esms-check-field {
+    min-height: 2.2rem;
+    display: flex;
+    align-items: center;
+}
+
+#layout-wrapper.esms-profenna .esms-item-master-checks .form-check-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+#layout-wrapper.esms-profenna .esms-item-master-page .select2-container--default .select2-selection--multiple {
+    min-height: 2rem;
+    border-radius: 8px !important;
+    border: 1px solid #94a3b8 !important;
+}
+
+@media (max-width: 767.98px) {
+    #layout-wrapper.esms-profenna .esms-item-master-card__body {
+        padding: 0.7rem 0.75rem 0.85rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-master-page .form-control,
+    #layout-wrapper.esms-profenna .esms-item-master-page .form-control-sm {
+        min-height: 2.35rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-master-checks .esms-check-field {
+        min-height: 2.5rem;
+    }
+}
+
+/* —— Item Master: Warehouse & Bin grid —— */
+#layout-wrapper.esms-profenna .esms-item-warehouse-card {
+    background: #ffffff;
+    border: 1px solid #dbe3ef;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card__header {
+    padding: 0.85rem 1rem;
+    background: linear-gradient(90deg, #f8fafc 0%, #eef2ff 100%);
+    border-bottom: 1px solid #e2e8f0;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card__title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card__subtitle {
+    margin: 0.2rem 0 0;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card__body {
+    padding: 0.75rem 1rem 0.85rem;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table-wrap {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow-x: auto;
+    overflow-y: visible;
+    background: #fff;
+    -webkit-overflow-scrolling: touch;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table {
+    margin-bottom: 0;
+    width: 100%;
+    min-width: 640px;
+    table-layout: fixed;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table thead th {
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid #6366f1;
+    padding: 0.55rem 0.65rem;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table tbody td {
+    padding: 0.5rem 0.65rem;
+    vertical-align: middle;
+    border-color: #eef2f7;
+    background: #fff;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table tbody tr:hover td {
+    background: #f8fafc;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-sno,
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-sno-cell {
+    width: 56px;
+    text-align: center;
+    font-weight: 600;
+    color: #475569;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-warehouse,
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-warehouse-cell {
+    width: 38%;
+    min-width: 180px;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-location,
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-location-cell {
+    width: 38%;
+    min-width: 180px;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-action,
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-action-cell {
+    width: 72px;
+    text-align: center;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .itemWhSNo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-warehouse-cell .select2-container,
+#layout-wrapper.esms-profenna .esms-item-warehouse-table .col-location-cell .select2-container {
+    width: 100% !important;
+    min-width: 0;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-table tbody tr.esms-item-wh-row td {
+    height: auto;
+    min-height: 2.75rem;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .btnDeleteItemWhRow {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #fecaca;
+    background: #ed1c1c;
+    color: #dc2626;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .btnDeleteItemWhRow:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+    color: #b91c1c;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card__footer {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+#layout-wrapper.esms-profenna .esms-btn-add-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+
+#layout-wrapper.esms-profenna .esms-btn-add-row:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-container {
+    width: 100% !important;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-container .select2-selection--single {
+    min-height: 2rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 8px !important;
+    border: 1px solid #94a3b8 !important;
+    background: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 1.45;
+    padding-left: 0;
+    padding-right: 1.35rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #0f172a;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-selection__clear {
+    display: none !important;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+    right: 0.35rem;
+}
+
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-container--default.select2-container--open .select2-selection--single,
+#layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-container--focus .select2-selection--single {
+    border-color: #4f46e5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
+}
+
+#layout-wrapper.esms-profenna .select2-dropdown.esms-item-wh-dropdown {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    overflow: hidden;
+}
+
+#layout-wrapper.esms-profenna .select2-dropdown.esms-item-wh-dropdown .select2-search__field {
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8125rem;
+}
+
+#layout-wrapper.esms-profenna .select2-dropdown.esms-item-wh-dropdown .select2-results__option {
+    font-size: 0.8125rem;
+    padding: 0.4rem 0.65rem;
+}
+
+#layout-wrapper.esms-profenna .select2-dropdown.esms-item-wh-dropdown .select2-results__option--highlighted.select2-results__option--selectable {
+    background: #eef2ff;
+    color: #312e81;
+}
+
+/* Mobile: keep table layout, scroll horizontally */
+@media (max-width: 767.98px) {
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card {
+        border-radius: 10px;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card__header {
+        padding: 0.7rem 0.85rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card__title {
+        font-size: 0.85rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card__title .fa-warehouse {
+        display: none;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card__subtitle {
+        font-size: 0.7rem;
+        line-height: 1.35;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card__body {
+        padding: 0.65rem 0.75rem 0.75rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-table-wrap {
+        border-radius: 8px;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-table {
+        min-width: 580px;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-table thead th,
+    #layout-wrapper.esms-profenna .esms-item-warehouse-table tbody td {
+        padding: 0.45rem 0.5rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-table .col-warehouse,
+    #layout-wrapper.esms-profenna .esms-item-warehouse-table .col-warehouse-cell,
+    #layout-wrapper.esms-profenna .esms-item-warehouse-table .col-location,
+    #layout-wrapper.esms-profenna .esms-item-warehouse-table .col-location-cell {
+        min-width: 160px;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card .select2-container .select2-selection--single {
+        min-height: 2.15rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card__footer {
+        margin-top: 0.65rem;
+    }
+
+    #layout-wrapper.esms-profenna .esms-btn-add-row {
+        width: 100%;
+        justify-content: center;
+        min-height: 2.4rem;
+        font-size: 0.8125rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #layout-wrapper.esms-profenna .esms-item-warehouse-card__body {
+        padding-left: 0.55rem;
+        padding-right: 0.55rem;
+    }
+}

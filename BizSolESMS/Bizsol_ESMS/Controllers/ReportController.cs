@@ -73,5 +73,19 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion OutstandingReports
+
+        #region InvoiceReport
+        public IActionResult InvoiceReport()
+        {
+            return View();
+        }
+        #endregion InvoiceReport
+
+        #region SaleLossReport
+        public IActionResult SaleLossReport()
+        {
+            return View();
+        }
+        #endregion SaleLossReport
     }
 }

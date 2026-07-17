@@ -31,6 +31,7 @@ var G_InvoiceItemDetailCache = [];
 var G_HsnMasterRows = [];
 var G_PackedOrdersRaw = [];
 var G_PrintSnapshots = {};
+var G_BankMasterList = [];
 var PRINT_OPTS_KEY = 'webiz_invoice_print_opts';
 /** List HSNS for invoice lines (expects rows like api/Master/ShowHSNMaster: HSN Code, GST Rate, Code PK, IsActive). */
 var API_HSN_MASTER_LIST = '/api/Master/ShowHSNMaster';
@@ -47,6 +48,8 @@ var bsModalGen = null;
 var bsModalPrint = null;
 var printOrderDispatchCode = null;
 var G_InvModalCtx = null;
+/** True while every invoice line has 0% disc — first non-zero entry applies to all lines. */
+var G_InvDiscSyncFromZero = false;
 function GetModuleMasterCodeForInvoice() {
     try {
         var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster') || '[]');
@@ -170,6 +173,125 @@ function formatMoney(n) {
     if (!isFinite(x)) x = 0;
     return x.toFixed(2);
 }
+function calcAmountRoundOff(amount) {
+    var amt = parseNum(amount);
+    var rounded = Math.round(amt);
+    var roundOff = Math.round((rounded - amt) * 100) / 100;
+    return { gross: amt, rounded: rounded, roundOff: roundOff };
+}
+/** Print summary: MRP, discount, taxable (excl. tax), tax split. */
+function calcInvoiceSummaryFromLines(lines) {
+    var totalMrp = 0;
+    var totalDiscount = 0;
+    var taxableAmount = 0;
+    var totalTax = 0;
+    (lines || []).forEach(function (ln) {
+        var qty = parseNum(ln.qty);
+        if (!(qty > 0)) qty = 1;
+        var scanMrp = parseNum(ln.scanMrp);
+        var mrp = parseNum(ln.mrp);
+        var discAmt = parseNum(ln.discAmt);
+        var taxAmt = parseNum(ln.taxAmt);
+        var amount = parseNum(ln.amount);
+        var discPct = parseNum(ln.discPct);
+        var gstPct = parseNum(ln.gstPct);
+
+        totalMrp += scanMrp * qty;
+        if (discAmt > 0) {
+            totalDiscount += discAmt;
+        } else if (discPct > 0) {
+            var discBase = mrp > 0 ? mrp : scanMrp;
+            totalDiscount += discBase * (discPct / 100) * qty;
+        }
+
+        if (amount > 0) {
+            taxableAmount += amount - taxAmt;
+            totalTax += taxAmt;
+        } else {
+            var discBase2 = mrp > 0 ? mrp : scanMrp;
+            var discUnit = discBase2 * (discPct / 100);
+            var taxableUnit = scanMrp - discUnit;
+            taxableAmount += taxableUnit * qty;
+            totalTax += taxableUnit * (gstPct / 100) * qty;
+        }
+    });
+    return {
+        totalMrp: totalMrp,
+        totalDiscount: totalDiscount,
+        taxableAmount: taxableAmount,
+        totalTax: totalTax,
+        cgst: totalTax / 2,
+        sgst: totalTax / 2
+    };
+}
+function resolveUpiIdFromSnap(snap) {
+    if (!snap) return '';
+    var fromSnap = String(snap.upiId || snap.UPIId || snap.UPIID || snap['UPI Id'] || '').trim();
+    if (fromSnap) return fromSnap;
+    var fp = (FixParameter && FixParameter[0]) ? FixParameter[0] : {};
+    return String(fp.UPIId || fp.UPIID || fp['UPI Id'] || '').trim();
+}
+function buildUpiPayUri(upiId, payeeName, amount, note) {
+    var id = String(upiId || '').trim();
+    if (!id) return '';
+    var params = ['pa=' + encodeURIComponent(id)];
+    var pn = String(payeeName || '').trim();
+    if (pn) params.push('pn=' + encodeURIComponent(pn.substring(0, 50)));
+    var amt = parseNum(amount);
+    if (amt > 0) params.push('am=' + encodeURIComponent(formatMoney(amt)));
+    params.push('cu=INR');
+    var tn = String(note || '').trim();
+    if (tn) params.push('tn=' + encodeURIComponent(tn.substring(0, 80)));
+    return 'upi://pay?' + params.join('&');
+}
+function generateUpiQrDataUrl(text, size) {
+    return new Promise(function (resolve, reject) {
+        if (typeof QRCode === 'undefined') {
+            reject(new Error('QRCode library not loaded'));
+            return;
+        }
+        var holder = document.getElementById('invoiceUpiQrGen');
+        if (!holder) {
+            reject(new Error('QR holder missing'));
+            return;
+        }
+        holder.innerHTML = '';
+        var div = document.createElement('div');
+        holder.appendChild(div);
+        try {
+            new QRCode(div, {
+                text: text,
+                width: size || 130,
+                height: size || 130,
+                correctLevel: QRCode.CorrectLevel.M
+            });
+            setTimeout(function () {
+                var canvas = div.querySelector('canvas');
+                var dataUrl = '';
+                if (canvas) {
+                    dataUrl = canvas.toDataURL('image/png');
+                } else {
+                    var img = div.querySelector('img');
+                    dataUrl = img ? img.src : '';
+                }
+                holder.innerHTML = '';
+                if (dataUrl) resolve(dataUrl);
+                else reject(new Error('QR render failed'));
+            }, 120);
+        } catch (err) {
+            holder.innerHTML = '';
+            reject(err);
+        }
+    });
+}
+function getInvoicePrintPayAmount(snap) {
+    var finalAmt = parseNum(snap && snap.total);
+    var showRoundOff = $('#chkPrintRoundOff').is(':checked');
+    if (showRoundOff) {
+        return calcAmountRoundOff(finalAmt).rounded;
+    }
+    return finalAmt;
+}
 function parseNum(v) {
     if (v == null || v === '' || v === 'NULL') return 0;
     var x = parseFloat(String(v).replace(/,/g, ''));
@@ -182,7 +304,7 @@ function clientNextInvoiceNo() {
 }
 function getBootstrapModal(el) {
     if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-        return new bootstrap.Modal(el);
+        return bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
     }
     return null;
 }
@@ -581,23 +703,27 @@ function initInvoiceLineHsnSelect2() {
     });
 }
 function recalcRow($tr) {
+    var qty = parseNum($tr.find('.inv-qty').text());
+    if (!(qty > 0)) qty = 1;
     var mrp = parseNum($tr.find('.inv-mrp').text());
     var scanMrp = parseNum($tr.find('.inv-scan-mrp').val());
     var discPct = parseNum($tr.find('.inv-disc-pct').val());
     /** Disc % is off list MRP when present; when MRP is 0 (e.g. dispatch-only data) use Scan MRP as base. */
     var discBase = mrp > 0 ? mrp : scanMrp;
-    var discAmt = discBase * (discPct / 100);
-    var taxable = scanMrp - discAmt;
+    var discAmtUnit = discBase * (discPct / 100);
+    var taxableUnit = scanMrp - discAmtUnit;
     var gstRaw = ($tr.find('.inv-gst').val() || '').trim();
     var gstPct = gstRaw === '' ? 0 : parseNum(gstRaw);
     if (!isFinite(gstPct) || isNaN(gstPct) || gstPct < 0) gstPct = 0;
-    var taxAmt = taxable * (gstPct / 100);
-    var amount = taxable + taxAmt;
-    $tr.find('.inv-disc-amt').text(formatMoney(discAmt));
-    $tr.find('.inv-tax-amt').text(formatMoney(taxAmt));
+    var taxAmtUnit = taxableUnit * (gstPct / 100);
+    var lineDiscAmt = discAmtUnit * qty;
+    var lineTaxAmt = taxAmtUnit * qty;
+    var amount = (taxableUnit + taxAmtUnit) * qty;
+    $tr.find('.inv-disc-amt').text(formatMoney(lineDiscAmt));
+    $tr.find('.inv-tax-amt').text(formatMoney(lineTaxAmt));
     $tr.find('.inv-line-amt').text(formatMoney(amount));
-    $tr.data('taxable', taxable);
-    return { taxable: taxable, taxAmt: taxAmt, amount: amount };
+    $tr.data('taxable', taxableUnit);
+    return { taxable: taxableUnit, taxAmt: lineTaxAmt, amount: amount };
 }
 function recalcInvoiceTotal() {
     var sum = 0;
@@ -607,9 +733,48 @@ function recalcInvoiceTotal() {
     });
     $('#lblInvoiceTotal').text(formatMoney(sum));
 }
+function refreshInvoiceDiscSyncFromZeroFlag() {
+    G_InvDiscSyncFromZero = true;
+    $('#tblInvoiceItemsBody tr').each(function () {
+        if (parseNum($(this).find('.inv-disc-pct').val()) !== 0) {
+            G_InvDiscSyncFromZero = false;
+            return false;
+        }
+    });
+}
+function maybeSyncInvoiceDiscPctFromZero($sourceInput) {
+    if (!G_InvDiscSyncFromZero) return;
+    var val = parseNum($sourceInput.val());
+    if (val <= 0) return;
+    $('#tblInvoiceItemsBody .inv-disc-pct').val(formatMoney(val));
+    G_InvDiscSyncFromZero = false;
+}
+function applyPendingInvoiceDiscBulkSync() {
+    if (!G_InvDiscSyncFromZero) return;
+    var pendingVal = 0;
+    $('#tblInvoiceItemsBody .inv-disc-pct').each(function () {
+        var v = parseNum($(this).val());
+        if (v > 0) {
+            pendingVal = v;
+            return false;
+        }
+    });
+    if (pendingVal > 0) {
+        $('#tblInvoiceItemsBody .inv-disc-pct').val(formatMoney(pendingVal));
+        G_InvDiscSyncFromZero = false;
+    }
+}
 function bindInvoiceItemEvents() {
     $('#tblInvoiceItemsBody').off('input change', '.inv-scan-mrp, .inv-disc-pct, .inv-gst');
-    $('#tblInvoiceItemsBody').on('input', '.inv-scan-mrp, .inv-disc-pct, .inv-gst', function () {
+    $('#tblInvoiceItemsBody').on('input', '.inv-scan-mrp, .inv-gst', function () {
+        recalcInvoiceTotal();
+    });
+    $('#tblInvoiceItemsBody').off('input change.invDiscBulk', '.inv-disc-pct');
+    $('#tblInvoiceItemsBody').on('input', '.inv-disc-pct', function () {
+        recalcInvoiceTotal();
+    });
+    $('#tblInvoiceItemsBody').on('change.invDiscBulk', '.inv-disc-pct', function () {
+        maybeSyncInvoiceDiscPctFromZero($(this));
         recalcInvoiceTotal();
     });
     $('#tblInvoiceItemsBody')
@@ -722,9 +887,12 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
                     $('#txtInvInvoiceNo').val(clientNextInvoiceNo());
                 }
                 $('#txtInvTerms').val(hdr.TermsAndconditions != null ? String(hdr.TermsAndconditions) : '');
-                $('#txtInvBank').val(hdr.Bankdetails != null ? String(hdr.Bankdetails) : '');
+                var existingBank = hdr.Bankdetails != null ? String(hdr.Bankdetails) : '';
+                $('#txtInvBank').val(existingBank);
+                applyInvoiceBankOnOpen(existingBank, !!(invMc > 0));
 
                 G_InvModalCtx.packedBy = rowModel.packedBy || '—';
+                G_InvModalCtx.upiId = String(hdr.UPIId || hdr.UPIID || hdr['UPI Id'] || '').trim();
 
                 lines = (response.InvoiceLines || response.invoiceLines || [])
                     .map(mapInvoiceGenerateApiLineToInvoiceLine)
@@ -745,6 +913,7 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
                 $('#txtInvInvoiceNo').val(clientNextInvoiceNo());
                 $('#txtInvTerms').val('');
                 $('#txtInvBank').val('');
+                applyInvoiceBankOnOpen('', false);
 
                 lines = (response.OrderDetial || response.OrderDetail || [])
                     .map(mapOrderDetailLineToInvoiceLine)
@@ -800,6 +969,7 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
             });
             $('#tblInvoiceItemsBody').html(body);
             bindInvoiceItemEvents();
+            refreshInvoiceDiscSyncFromZeroFlag();
             initInvoiceLineHsnSelect2();
             $('#tblInvoiceItemsBody tr').each(function () {
                 recalcRow($(this));
@@ -809,6 +979,10 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
             if (!useInvoiceGenerateShape) {
                 tryPrefillInvoiceFields(dispatchCode);
             }
+            forceClearPageBlockers();
+            if (modalGenEl && modalGenEl.parentElement && modalGenEl.parentElement !== document.body) {
+                document.body.appendChild(modalGenEl);
+            }
             if (bsModalGen) bsModalGen.show();
         },
         error: function (xhr) {
@@ -816,11 +990,13 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
             toastr.error('Unable to load order lines.');
         },
         complete: function () {
-            if (typeof unblockUI === 'function') unblockUI();
+            forceClearPageBlockers();
         }
     });
 }
 function validateBeforeSave() {
+    applyPendingInvoiceDiscBulkSync();
+    recalcInvoiceTotal();
     if (!($('#txtInvVehicleNo').val() || '').trim()) {
         toastr.error('Vehicle number is required.');
         return false;
@@ -913,7 +1089,8 @@ function buildClientSnapshotFromForm() {
         terms: $('#txtInvTerms').val() || '',
         bank: $('#txtInvBank').val() || '',
         lines: lines,
-        total: parseNum($('#lblInvoiceTotal').text())
+        total: parseNum($('#lblInvoiceTotal').text()),
+        upiId: G_InvModalCtx ? String(G_InvModalCtx.upiId || '').trim() : ''
     };
 }
 function saveGstInvoice() {
@@ -970,6 +1147,9 @@ function saveGstInvoice() {
                 if (row.InvoiceMaster_Code != null && G_InvModalCtx) {
                     G_InvModalCtx.invoiceMasterCode = row.InvoiceMaster_Code;
                 }
+                if (G_InvModalCtx && G_InvModalCtx.upiId) {
+                    snapshot.upiId = G_InvModalCtx.upiId;
+                }
                 toastr.success((row.Msg || row.msg || 'Invoice saved.') + '');
                 G_PrintSnapshots[G_InvModalCtx.dispatchMasterCode] = snapshot;
                 if (bsModalGen) bsModalGen.hide();
@@ -1004,6 +1184,10 @@ function loadPrintOptionsUi() {
         $('#chkPrintDiscount').prop('checked', !!o.discount);
         $('#chkPrintMrp').prop('checked', !!o.mrp);
         $('#chkPrintTax').prop('checked', !!o.tax);
+        $('#chkPrintRoundOff').prop('checked', o.roundOff !== false);
+        $('#chkPrintTerms').prop('checked', o.terms !== false);
+        $('#chkPrintBank').prop('checked', o.bank !== false);
+        $('#chkPrintUpiQr').prop('checked', o.upiQr !== false);
     } catch (e) { /* ignore */ }
 }
 function persistPrintOptionsUi() {
@@ -1013,9 +1197,53 @@ function persistPrintOptionsUi() {
             hsn: $('#chkPrintHsn').is(':checked'),
             discount: $('#chkPrintDiscount').is(':checked'),
             mrp: $('#chkPrintMrp').is(':checked'),
-            tax: $('#chkPrintTax').is(':checked')
+            tax: $('#chkPrintTax').is(':checked'),
+            roundOff: $('#chkPrintRoundOff').is(':checked'),
+            terms: $('#chkPrintTerms').is(':checked'),
+            bank: $('#chkPrintBank').is(':checked'),
+            upiQr: $('#chkPrintUpiQr').is(':checked')
         })
     );
+}
+function forceClearPageBlockers() {
+    if (typeof unblockUI === 'function') {
+        unblockUI();
+    }
+    $('#block-overlay').remove();
+    var openModals = document.querySelectorAll('.modal.show').length;
+    var backdrops = document.querySelectorAll('.modal-backdrop');
+    if (openModals === 0 && backdrops.length > 0) {
+        backdrops.forEach(function (b) { b.remove(); });
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('padding-right');
+        document.body.style.removeProperty('overflow');
+    } else if (backdrops.length > openModals) {
+        for (var i = openModals; i < backdrops.length; i++) {
+            backdrops[i].remove();
+        }
+    }
+}
+function setPrintModalBusy(busy) {
+    var $opts = $('#printModalOptions');
+    var $checks = $opts.find('.form-check-input');
+    $('#printModalLoading').toggleClass('d-none', !busy);
+    $opts.toggleClass('pe-none opacity-50', !!busy);
+    $checks.prop('disabled', !!busy);
+    if (busy) {
+        $('#btnInvPrintConfirm').prop('disabled', true);
+    } else {
+        updatePrintButtonEnabled();
+    }
+}
+function onPrintOptionChange(ev) {
+    var $columnChecks = $('#chkPrintHsn, #chkPrintDiscount, #chkPrintMrp, #chkPrintTax');
+    if ($columnChecks.filter(':checked').length < 1) {
+        if (ev && ev.target) {
+            $(ev.target).prop('checked', true);
+        }
+        toastr.warning('At least one print column must stay on.');
+    }
+    updatePrintButtonEnabled();
 }
 function updatePrintButtonEnabled() {
     var n = 0;
@@ -1023,7 +1251,8 @@ function updatePrintButtonEnabled() {
     if ($('#chkPrintDiscount').is(':checked')) n++;
     if ($('#chkPrintMrp').is(':checked')) n++;
     if ($('#chkPrintTax').is(':checked')) n++;
-    $('#btnInvPrintConfirm').prop('disabled', n < 1);
+    var busy = !$('#printModalLoading').hasClass('d-none');
+    $('#btnInvPrintConfirm').prop('disabled', busy || n < 1);
 }
 function tryFetchPrintSnapshot(dispatchCode, done) {
     $.ajax({
@@ -1066,23 +1295,29 @@ function normalizeInvoiceGenerateShapeForPrint(res) {
         }
         var discPct = parseNum(L.DiscountPercent != null ? L.DiscountPercent : L.Discount);
         var discBase = mrp > 0 ? mrp : scanMrp;
+        var discAmtUnit = discBase * (discPct / 100);
         var discAmt = parseNum(L.DiscountAmount);
+        if (!(qty > 0)) qty = 1;
         if (!(discAmt > 0) && discPct > 0 && discBase > 0) {
-            discAmt = discBase * (discPct / 100);
+            discAmt = discAmtUnit * qty;
         }
         var hsn = String(L.HSNCode || L.HSN || '').trim();
         var gstPct = parseNum(L.GST != null ? L.GST : L.GSTRate);
         if (!(gstPct > 0)) {
             gstPct = 18;
         }
-        var taxable = scanMrp - discAmt;
+        var taxableUnit = scanMrp - discAmtUnit;
         var taxAmt = parseNum(L.TaxAmount);
         var amount = parseNum(L.Amount);
-        if (!(taxAmt > 0) && !(amount > 0) && taxable >= 0) {
-            taxAmt = taxable * (gstPct / 100);
-            amount = taxable + taxAmt;
-        } else if (!(amount > 0) && taxable >= 0) {
-            amount = taxable + taxAmt;
+        if (!(taxAmt > 0) && !(amount > 0) && taxableUnit >= 0) {
+            var taxAmtUnit = taxableUnit * (gstPct / 100);
+            taxAmt = taxAmtUnit * qty;
+            amount = (taxableUnit + taxAmtUnit) * qty;
+        } else if (!(amount > 0) && taxableUnit >= 0) {
+            if (!(taxAmt > 0)) {
+                taxAmt = taxableUnit * (gstPct / 100) * qty;
+            }
+            amount = taxableUnit * qty + taxAmt;
         }
         return {
             itemCode: itemCode,
@@ -1132,7 +1367,8 @@ function normalizeInvoiceGenerateShapeForPrint(res) {
         bankACName:     String(h.ACName || h.BankACName || h.AccountName || '').trim(),
         bankName:       String(h.BankName || h.Bank || '').trim(),
         bankACNo:       String(h.ACNo || h.AccountNo || h.BankACNo || '').trim(),
-        bankIFSC:       String(h.IFSCCode || h.IFSC || h.IFSCode || '').trim()
+        bankIFSC:       String(h.IFSCCode || h.IFSC || h.IFSCode || '').trim(),
+        upiId:          String(h.UPIId || h.UPIID || h['UPI Id'] || '').trim()
     };
 }
 function normalizeServerPrintPayload(res) {
@@ -1175,17 +1411,22 @@ function normalizeServerPrintPayload(res) {
             bankACName:     String(res.ACName || res.AccountName || '').trim(),
             bankName:       String(res.BankName || '').trim(),
             bankACNo:       String(res.ACNo || res.AccountNo || '').trim(),
-            bankIFSC:       String(res.IFSCCode || res.IFSC || '').trim()
+            bankIFSC:       String(res.IFSCCode || res.IFSC || '').trim(),
+            upiId:          String(res.UPIId || res.UPIID || res['UPI Id'] || '').trim()
         };
     }
     return null;
 }
-function buildPrintHtml(snap) {
+function buildPrintHtml(snap, upiQrDataUrl) {
     if (!snap) return '';
     var showHsn = $('#chkPrintHsn').is(':checked');
     var showDisc = $('#chkPrintDiscount').is(':checked');
     var showMrp = $('#chkPrintMrp').is(':checked');
     var showTax = $('#chkPrintTax').is(':checked');
+    var showRoundOff = $('#chkPrintRoundOff').is(':checked');
+    var showTerms = $('#chkPrintTerms').is(':checked');
+    var showBank = $('#chkPrintBank').is(':checked');
+    var showUpiQr = $('#chkPrintUpiQr').is(':checked');
 
     /* ── Company info: snap (from API header) takes priority; FixParameter is fallback ── */
     var fp = (FixParameter && FixParameter[0]) ? FixParameter[0] : {};
@@ -1212,6 +1453,8 @@ function buildPrintHtml(snap) {
     var bankACNo       = snapOrFp('bankACNo','ACNo','acNo','AccountNo','accountNo','BankACNo','bankACNo') || '';
     var bankIFSC       = snapOrFp('bankIFSC','IFSCCode','ifscCode','IFSC','ifsc','IFSCode') || '';
     var clientAddress  = String(snap.clientAddress || '').trim();
+    var upiId          = resolveUpiIdFromSnap(snap);
+    var payAmount      = getInvoicePrintPayAmount(snap);
 
     /* ── Table header ── */
     var th = '<th class="tc">Sr<br>No</th>';
@@ -1221,68 +1464,162 @@ function buildPrintHtml(snap) {
     if (showMrp) th += '<th class="tr">MRP<br>Per Unit</th>';
     if (showDisc) th += '<th class="tr">Discount%</th>';
     if (showHsn)  th += '<th class="tc">HSN</th>';
-    if (showTax)  th += '<th class="tr">GST%</th><th class="tr">Tax Amt</th>';
+    if (showTax)  th += '<th class="tr">GST<br>%</th><th class="tr">Tax<br>Amt</th>';
     th += '<th class="tr">Total<br>Amount</th>';
+
+    var prodColCount = 4;
+    if (showMrp) prodColCount++;
+    if (showDisc) prodColCount++;
+    if (showHsn) prodColCount++;
+    if (showTax) prodColCount += 2;
+    prodColCount++;
 
     /* ── Table rows ── */
     var rows = '';
+    var totTax = 0;
     (snap.lines || []).forEach(function (ln, i) {
+        var taxAmt = parseNum(ln.taxAmt);
+        if (showTax) totTax += taxAmt;
         rows += '<tr>';
         rows += '<td class="tc">' + (i + 1) + '</td>';
         rows += '<td>' + (ln.itemName || '') + '</td>';
         rows += '<td class="tc">' + (ln.itemCode || '') + '</td>';
         rows += '<td class="tr">' + ln.qty + '</td>';
-        if (showMrp)  rows += '<td class="tr">' + formatMoney(ln.mrp) + '</td>';
+        if (showMrp) rows += '<td class="tr">' + formatMoney(ln.scanMrp) + '</td>';
         if (showDisc) rows += '<td class="tr">' + formatMoney(ln.discPct) + '</td>';
         if (showHsn)  rows += '<td class="tc">' + (ln.hsn || '') + '</td>';
-        if (showTax)  rows += '<td class="tr">' + formatMoney(ln.gstPct) + '</td>' + '<td class="tr">' + formatMoney(ln.taxAmt) + '</td>';
+        if (showTax) {
+            rows += '<td class="tr">' + formatMoney(ln.gstPct) + '</td>';
+            rows += '<td class="tr">' + formatMoney(taxAmt) + '</td>';
+        }
         rows += '<td class="tr fw">' + formatMoney(ln.amount) + '</td>';
         rows += '</tr>';
     });
 
+    var sumQty = 0;
+    var sumLineAmt = 0;
+    (snap.lines || []).forEach(function (ln) {
+        sumQty += parseNum(ln.qty);
+        sumLineAmt += parseNum(ln.amount);
+    });
+
+    var totCgst = totTax / 2;
+    var totSgst = totTax / 2;
     var finalAmt = parseNum(snap.total);
+    var invSummary = calcInvoiceSummaryFromLines(snap.lines || []);
+    if (totTax <= 0 && invSummary.totalTax > 0) {
+        totTax = invSummary.totalTax;
+        totCgst = invSummary.cgst;
+        totSgst = invSummary.sgst;
+    }
+    if (!(finalAmt > 0)) {
+        finalAmt = invSummary.taxableAmount + invSummary.totalTax;
+    }
+    var roundCalc = calcAmountRoundOff(finalAmt);
+    var displayFinalAmt = showRoundOff ? roundCalc.rounded : finalAmt;
+    var sideColW = '240px';
+
+    var lineTotalRow = '<tr class="line-total-row">';
+    lineTotalRow += '<td colspan="3" class="tl">Total</td>';
+    lineTotalRow += '<td class="tr">' + sumQty + '</td>';
+    if (showMrp) lineTotalRow += '<td></td>';
+    if (showDisc) lineTotalRow += '<td></td>';
+    if (showHsn) lineTotalRow += '<td></td>';
+    if (showTax) {
+        lineTotalRow += '<td></td>';
+        lineTotalRow += '<td class="tr">&#8377;&nbsp;' + formatMoney(totTax) + '</td>';
+    }
+    lineTotalRow += '<td class="tr">&#8377;&nbsp;' + formatMoney(sumLineAmt) + '</td>';
+    lineTotalRow += '</tr>';
+
+    function buildSummaryRowHtml(label, value, isNet) {
+        var cls = isNet ? ' class="net"' : '';
+        return '<tr' + cls + '><td class="lbl">' + label + '</td><td class="val">&#8377;&nbsp;' + formatMoney(value) + '</td></tr>';
+    }
+    var summaryRows = '';
+    summaryRows += buildSummaryRowHtml('Total MRP', invSummary.totalMrp, false);
+    summaryRows += buildSummaryRowHtml('Total Discount', invSummary.totalDiscount, false);
+    summaryRows += buildSummaryRowHtml('Taxable Amount', invSummary.taxableAmount, false);
+    if (showTax) {
+        summaryRows += buildSummaryRowHtml('CGST', totCgst, false);
+        summaryRows += buildSummaryRowHtml('SGST', totSgst, false);
+    }
+    if (showRoundOff) {
+        summaryRows += buildSummaryRowHtml('Round Off', roundCalc.roundOff, false);
+    }
+    summaryRows += buildSummaryRowHtml('Net Amount', displayFinalAmt, true);
 
     /* ── Styles ── */
     var css = [
-        '@page{size:A4;margin:10mm}',
-        '*{box-sizing:border-box}',
-        'body{font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#000;margin:0;padding:8px}',
-        '@media print{body{padding:0}}',
-        '.wrap{border:1.5px solid #000}',
-        /* Header */
-        '.hdr{border-bottom:1px solid #000;padding:10px 14px;text-align:center}',
-        '.hdr .doc-type{font-size:16px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}',
-        '.hdr .co-name{font-size:26px;font-weight:bold;text-transform:uppercase;margin-bottom:4px;letter-spacing:.5px}',
-        '.hdr .co-addr{font-size:13px;margin-bottom:3px}',
-        '.hdr .co-contact{font-size:13px;margin-bottom:2px}',
-        '.hdr .co-gstin{font-size:13px;margin-top:3px}',
-        /* Client / Invoice info row */
-        '.info-row{display:flex;border-bottom:1px solid #000}',
-        '.info-left{flex:1;padding:9px 14px;border-right:1px solid #000}',
-        '.info-right{width:250px;padding:9px 14px}',
-        '.info-line{margin-bottom:4px;font-size:13px}',
+        '@page{size:A4;margin:8mm}',
+        '*{box-sizing:border-box;margin:0;padding:0}',
+        'html,body{height:100%;margin:0;padding:0}',
+        'body{font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#000;padding:5px;display:flex;flex-direction:column;min-height:100%}',
+        '@media print{body{padding:0;min-height:100%}}',
+
+        /* Outer frame — fills page height via flex so footer reaches bottom */
+        '.wrap{border:1.5px solid #000;width:100%;display:flex;flex-direction:column;flex:1}',
+
+        /* Spacer between product table and footer — grows to fill empty space */
+        '.table-spacer{flex:1}',
+
+        /* Company header */
+        '.hdr{border-bottom:1.5px solid #000;padding:8px 12px;text-align:center}',
+        '.hdr .doc-type{font-size:13px;font-weight:bold;letter-spacing:1px;text-transform:uppercase}',
+        '.hdr .co-name{font-size:22px;font-weight:bold;text-transform:uppercase;letter-spacing:.4px;margin:3px 0}',
+        '.hdr .co-addr,.hdr .co-contact,.hdr .co-gstin{font-size:11px;margin-top:2px}',
+
+        /* Client / Invoice info */
+        '.info-row{display:table;width:100%;border-collapse:collapse;border-bottom:1px solid #000}',
+        '.info-left{display:table-cell;padding:7px 12px;border-right:1px solid #000;vertical-align:top;width:60%}',
+        '.info-right{display:table-cell;padding:7px 12px;vertical-align:top}',
+        '.info-line{margin-bottom:3px;font-size:12px;line-height:1.4}',
         '.lbl{font-weight:bold}',
-        /* Section title */
-        '.sec-title{background:#efefef;border-bottom:1px solid #000;padding:5px 14px;font-weight:bold;font-size:13px;letter-spacing:.4px}',
+
         /* Product table */
-        'table.prod{border-collapse:collapse;width:100%;font-size:12px}',
-        'table.prod th,table.prod td{border:1px solid #000;padding:5px 7px;vertical-align:top}',
-        'table.prod th{background:#efefef;text-align:center;font-size:12px}',
+        'table.prod{border-collapse:collapse;width:100%;font-size:11px}',
+        'table.prod th,table.prod td{border:1px solid #000;padding:4px 6px}',
+        'table.prod th{background:#e0e0e0;text-align:center;font-size:11px;font-weight:bold;vertical-align:middle}',
+        'table.prod th.sec-title-th{text-align:left;font-size:12px;padding:5px 12px;background:#e0e0e0}',
+        'table.prod tbody td{vertical-align:top}',
         '.tc{text-align:center!important}',
         '.tr{text-align:right!important}',
+        '.tl{text-align:left!important}',
         '.fw{font-weight:bold}',
-        /* Totals */
-        '.totals-area{border-bottom:1px solid #000;padding:6px 14px}',
-        'table.tot{width:100%;border-collapse:collapse;font-size:13px}',
-        'table.tot td{padding:3px 7px;border:none}',
+        'tr.line-total-row td{vertical-align:middle}',
+
+        /* Summary panel — right-aligned box */
+        '.summary-row{display:table;width:100%;border-collapse:collapse}',
+        '.summary-spacer{display:table-cell;border-right:1px solid #000}',
+        '.summary-box{display:table-cell;width:230px;vertical-align:top}',
+        'table.sum{border-collapse:collapse;width:100%;font-size:11.5px}',
+        'table.sum td{padding:4px 8px;border-bottom:1px solid #ddd;vertical-align:middle}',
+        'table.sum td.lbl{border-right:1px solid #000;white-space:nowrap;text-align:left}',
+        'table.sum td.val{text-align:right;min-width:90px}',
+        'table.sum tr:last-child td{border-bottom:none}',
+        'table.sum tr.net td{border-top:2px solid #000;border-bottom:2px solid #000}',
+
         /* Footer */
-        '.footer-row{display:flex;border-bottom:1px solid #000}',
-        '.footer-left{flex:1;padding:9px 14px;border-right:1px solid #000;font-size:12px;line-height:1.7}',
-        '.footer-right{width:200px;padding:9px 14px;font-size:13px;text-align:center;font-weight:bold}',
-        /* Signature */
-        '.sig-row{display:flex}',
-        '.sig-left{flex:1;padding:32px 14px 10px;border-right:1px solid #000;font-size:12px;text-align:center}',
-        '.sig-right{width:200px;padding:32px 14px 10px;font-size:12px;text-align:center}'
+        '.footer-row{display:table;width:100%;border-collapse:collapse;border-top:1.5px solid #000}',
+        '.footer-left{display:table-cell;padding:8px 12px;border-right:1px solid #000;font-size:11px;line-height:1.7;vertical-align:top}',
+        '.footer-right{display:table-cell;width:230px;padding:8px;text-align:center;vertical-align:top;font-size:11px}',
+        '.for-co{font-weight:bold;font-size:12px;margin-bottom:6px;line-height:1.4}',
+        '.footer-bank{margin-top:6px;padding-top:6px;border-top:1px solid #ccc}',
+        '.upi-box{border:1px solid #999;padding:6px;width:100%}',
+        '.upi-box .upi-title{font-size:10px;font-weight:bold;margin-bottom:4px}',
+        '.upi-box img{width:100px;height:100px;display:block;margin:0 auto 4px}',
+        '.upi-box .upi-id{font-size:9px;word-break:break-all;margin-bottom:2px}',
+        '.upi-box .upi-amt{font-size:11px;font-weight:bold}',
+
+        /* Signature row */
+        '.sig-row{display:table;width:100%;border-collapse:collapse;border-top:1px solid #000}',
+        '.sig-left{display:table-cell;padding:26px 12px 10px;border-right:1px solid #000;text-align:center;font-size:11px}',
+        '.sig-right{display:table-cell;width:230px;padding:26px 12px 10px;text-align:center;font-size:11px;font-weight:bold}',
+
+        /* Footer block: keep together, always at bottom */
+        '.footer-block{margin-top:auto}',
+        '@media print{.footer-block{break-inside:avoid;page-break-inside:avoid}',
+        'table.prod tbody tr{break-inside:avoid;page-break-inside:avoid}}'
     ].join('');
 
     var esc = function (s) {
@@ -1324,52 +1661,71 @@ function buildPrintHtml(snap) {
     html += '</div>';
 
     /* ── 3. Product details table ── */
-    html += '<div class="sec-title">Product Details</div>';
-    html += '<table class="prod"><thead><tr>' + th + '</tr></thead><tbody>' + rows + '</tbody></table>';
+    html += '<table class="prod"><thead>';
+    html += '<tr><th colspan="' + prodColCount + '" class="sec-title-th">Product Details</th></tr>';
+    html += '<tr>' + th + '</tr></thead><tbody>' + rows + lineTotalRow + '</tbody></table>';
 
-    /* ── 4. Totals ── */
-    html += '<div class="totals-area">';
-    html += '<table class="tot"><tbody>';
-    html += '<tr><td style="width:70%"></td><td class="tr fw">Final Amt:</td><td class="tr fw" style="font-size:15px">&#8377;&nbsp;' + formatMoney(finalAmt) + '</td></tr>';
-    html += '</tbody></table>';
+    /* Summary panel — right below the product table */
+    html += '<div class="summary-row">';
+    html += '<div class="summary-spacer"></div>';
+    html += '<div class="summary-box"><table class="sum"><tbody>' + summaryRows + '</tbody></table></div>';
     html += '</div>';
 
-    /* ── 6. Terms & footer ── */
+    /* Spacer — fills empty space, pushes footer to page bottom */
+    html += '<div class="table-spacer"></div>';
+
+    /* ── 4. Footer + signatures (pinned to bottom) ── */
+    html += '<div class="footer-block">';
+
+    /* Footer: terms/bank LEFT | company/QR RIGHT */
     html += '<div class="footer-row">';
     html += '<div class="footer-left">';
-    html += '<strong>Terms and Conditions</strong><br>';
-    if (snap.terms && snap.terms.trim()) {
-        html += esc(snap.terms).replace(/\n/g,'<br>') + '<br>';
-    } else {
-        html += 'The above mentioned good/material received in good intact condition.<br>';
-        html += 'Goods once sold will not be taken back. E.&amp;O.E. Subject to .....<br>';
+    if (showTerms) {
+        html += '<strong>Terms and Conditions</strong><br>';
+        if (snap.terms && snap.terms.trim()) {
+            html += esc(snap.terms).replace(/\n/g, '<br>');
+        } else {
+            html += '100% AFTER THE RECEIPT OF MATERIALS WITHIN 45 DAYS BY CHEQUE';
+        }
     }
-    var hasStructuredBank = bankACNo || bankIFSC;
-    if (hasStructuredBank) {
-        html += '<strong style="display:block;border-top:1px solid #ccc;margin-top:5px;padding-top:4px;">Bank Details :-</strong>';
-        html += 'A/C Name :- ' + esc(bankACName) + '<br>';
-        html += 'Bank Name :- ' + esc(bankName || 'NA') + '<br>';
-        html += 'A/C No. :- ' + esc(bankACNo) + '<br>';
-        html += 'IFSC Code :- ' + esc(bankIFSC);
-    } else if (bankName) {
-        html += '<strong style="display:block;border-top:1px solid #ccc;margin-top:5px;padding-top:4px;">Bank Details :-</strong>';
-        html += 'A/C Name :- ' + esc(bankACName) + '<br>';
-        html += 'Bank Name :- ' + esc(bankName) + '<br>';
-        html += 'A/C No. :- ' + esc(bankACNo) + '<br>';
-        html += 'IFSC Code :- ' + esc(bankIFSC);
-    } else if (snap.bank && snap.bank.trim()) {
-        html += '<strong style="display:block;border-top:1px solid #ccc;margin-top:5px;padding-top:4px;">Bank Details :-</strong>';
-        html += esc(snap.bank).replace(/\n/g,'<br>');
+    if (showBank) {
+        html += '<div class="footer-bank">';
+        html += '<strong>Bank Details :-</strong><br>';
+        var hasBankAC = bankACNo || bankIFSC;
+        if (hasBankAC) {
+            html += 'A/C Name :- ' + esc(bankACName) + '<br>';
+            html += 'Bank Name :- ' + esc(bankName || 'NA') + '<br>';
+            html += 'Account No. :- ' + esc(bankACNo) + '<br>';
+            html += 'IFSC Code :- ' + esc(bankIFSC);
+        } else if (bankName) {
+            html += 'Bank Name :- ' + esc(bankName) + '<br>';
+            html += 'A/C Name :- ' + esc(bankACName);
+        } else if (snap.bank && snap.bank.trim()) {
+            html += esc(snap.bank).replace(/\n/g, '<br>');
+        }
+        html += '</div>';
     }
     html += '</div>';
-    html += '<div class="footer-right">For ' + esc(companyName) + '</div>';
+    html += '<div class="footer-right">';
+    html += '<div class="for-co">For ' + esc(companyName) + '</div>';
+    if (showUpiQr && upiId && upiQrDataUrl) {
+        html += '<div class="upi-box">';
+        html += '<div class="upi-title">Scan &amp; Pay via UPI</div>';
+        html += '<img src="' + upiQrDataUrl + '" alt="UPI QR" />';
+        html += '<div class="upi-id">UPI ID: ' + esc(upiId) + '</div>';
+        html += '<div class="upi-amt">&#8377;&nbsp;' + formatMoney(payAmount) + '</div>';
+        html += '</div>';
+    }
+    html += '</div>';
     html += '</div>';
 
-    /* ── 7. Signature row ── */
+    /* Signature row */
     html += '<div class="sig-row">';
     html += '<div class="sig-left">Receiver\'s Signature</div>';
     html += '<div class="sig-right">Authorized Signatory</div>';
     html += '</div>';
+
+    html += '</div>'; /* .footer-block */
 
     html += '</div>'; /* .wrap */
     html += '<script>window.onload=function(){window.print();}<\/script>';
@@ -1392,20 +1748,38 @@ function invoiceMasterOpenPrint(dispatchCode) {
     printOrderDispatchCode = dispatchCode;
     loadPrintOptionsUi();
     updatePrintButtonEnabled();
+    forceClearPageBlockers();
 
-    if (typeof blockUI === 'function') blockUI();
+    var openPrintModal = function () {
+        if (modalPrintEl && modalPrintEl.parentElement && modalPrintEl.parentElement !== document.body) {
+            document.body.appendChild(modalPrintEl);
+        }
+        if (bsModalPrint) bsModalPrint.show();
+    };
+
+    if (G_PrintSnapshots[dispatchCode]) {
+        setPrintModalBusy(false);
+        openPrintModal();
+        return;
+    }
+
+    setPrintModalBusy(true);
+    openPrintModal();
+
     tryFetchPrintSnapshot(dispatchCode, function () {
-        if (typeof unblockUI === 'function') unblockUI();
+        forceClearPageBlockers();
         var snap = G_PrintSnapshots[dispatchCode];
         snap = mergePrintSnapshotOrderPackingFromGrid(dispatchCode, snap);
         if (snap) {
             G_PrintSnapshots[dispatchCode] = snap;
         }
+        setPrintModalBusy(false);
         if (!G_PrintSnapshots[dispatchCode]) {
+            if (bsModalPrint) bsModalPrint.hide();
             toastr.warning('No invoice data for print. Save invoice first or implement ' + API_GET_GST_PRINT + '.');
             return;
         }
-        if (bsModalPrint) bsModalPrint.show();
+        updatePrintButtonEnabled();
     });
 }
 function confirmInvoicePrint() {
@@ -1416,16 +1790,34 @@ function confirmInvoicePrint() {
         toastr.error('Nothing to print.');
         return;
     }
-    var html = buildPrintHtml(snap);
-    var w = window.open('', '_blank');
-    if (w) {
-        w.document.open();
-        w.document.write(html);
-        w.document.close();
-    } else {
-        toastr.warning('Allow pop-ups to print.');
+    var openPrintWindow = function (upiQrDataUrl) {
+        var html = buildPrintHtml(snap, upiQrDataUrl || '');
+        var w = window.open('', '_blank');
+        if (w) {
+            w.document.open();
+            w.document.write(html);
+            w.document.close();
+        } else {
+            toastr.warning('Allow pop-ups to print.');
+        }
+        if (bsModalPrint) bsModalPrint.hide();
+    };
+    var upiId = resolveUpiIdFromSnap(snap);
+    var showUpiQr = $('#chkPrintUpiQr').is(':checked');
+    if (!upiId || !showUpiQr) {
+        openPrintWindow('');
+        return;
     }
-    if (bsModalPrint) bsModalPrint.hide();
+    var fp = (FixParameter && FixParameter[0]) ? FixParameter[0] : {};
+    var companyName = String(snap.companyName || fp.CompanyName || G_CompanyCode || '').trim();
+    var payAmount = getInvoicePrintPayAmount(snap);
+    var upiUri = buildUpiPayUri(upiId, companyName, payAmount, 'Invoice ' + (snap.invoiceNo || ''));
+    generateUpiQrDataUrl(upiUri, 130).then(function (dataUrl) {
+        openPrintWindow(dataUrl);
+    }).catch(function () {
+        toastr.warning('UPI QR could not be generated. Printing invoice without QR.');
+        openPrintWindow('');
+    });
 }
 function initInvoiceDatePickers() {
     var common = {
@@ -1439,6 +1831,113 @@ function initInvoiceDatePickers() {
     $('#txtInvToDate').datepicker('setDate', todayDmy());
 }
 
+function invBankField(bank, key, altKey) {
+    if (!bank) return '';
+    var v = bank[key];
+    if (v == null && altKey) v = bank[altKey];
+    return v != null ? String(v).trim() : '';
+}
+
+function formatInvoiceBankDetails(bank) {
+    if (!bank) return '';
+    var name = invBankField(bank, 'Bank Name', 'BankName');
+    var acNo = invBankField(bank, 'Account No', 'AccountNo');
+    var ifsc = invBankField(bank, 'IFSC Code', 'IFSCCode');
+    var branch = invBankField(bank, 'Branch', 'Branch');
+    var type = invBankField(bank, 'Type', 'Type');
+    var lines = [];
+    if (name) lines.push(name);
+    if (acNo) lines.push('ACCOUNT No-' + acNo);
+    if (ifsc) lines.push('IFSC Code-' + ifsc);
+    if (branch) lines.push('Branch-' + branch);
+    if (type) lines.push('Type-' + type);
+    return lines.join('\n');
+}
+
+function isDefaultBank(bank) {
+    var d = invBankField(bank, 'Default Check', 'DefaultCheck');
+    return d === 'Y' || d.toLowerCase() === 'yes';
+}
+
+function fillInvoiceBankDropdown() {
+    var $ddl = $('#ddlInvBankName');
+    if (!$ddl.length) return;
+    var current = $ddl.val() || '';
+    $ddl.empty().append('<option value="">Select Bank</option>');
+    (G_BankMasterList || []).forEach(function (bank) {
+        var code = bank.Code != null ? String(bank.Code) : '';
+        var name = invBankField(bank, 'Bank Name', 'BankName');
+        if (!code || !name) return;
+        $ddl.append($('<option></option>').attr('value', code).text(name));
+    });
+    if (current && $ddl.find('option[value="' + current + '"]').length) {
+        $ddl.val(current);
+    }
+}
+
+function getBankByCode(code) {
+    code = String(code || '');
+    return (G_BankMasterList || []).find(function (b) { return String(b.Code) === code; }) || null;
+}
+
+function getDefaultBank() {
+    return (G_BankMasterList || []).find(function (b) { return isDefaultBank(b); }) || null;
+}
+
+function applySelectedBankDetails() {
+    var bank = getBankByCode($('#ddlInvBankName').val());
+    if (!bank) {
+        return;
+    }
+    $('#txtInvBank').val(formatInvoiceBankDetails(bank));
+}
+
+function applyInvoiceBankOnOpen(existingBankText, isExistingInvoice) {
+    fillInvoiceBankDropdown();
+    existingBankText = (existingBankText || '').trim();
+
+    if (isExistingInvoice && existingBankText) {
+        var matched = (G_BankMasterList || []).find(function (b) {
+            var name = invBankField(b, 'Bank Name', 'BankName');
+            return name && existingBankText.toUpperCase().indexOf(name.toUpperCase()) >= 0;
+        });
+        $('#ddlInvBankName').val(matched ? String(matched.Code) : '');
+        return;
+    }
+
+    // New invoice: auto-fill default bank from Bank Master
+    var defBank = getDefaultBank();
+    if (defBank) {
+        $('#ddlInvBankName').val(String(defBank.Code));
+        $('#txtInvBank').val(formatInvoiceBankDetails(defBank));
+    } else {
+        $('#ddlInvBankName').val('');
+        if (!existingBankText) {
+            $('#txtInvBank').val('');
+        }
+    }
+}
+
+function loadBankMasterForInvoice(done) {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowBankMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            G_BankMasterList = Array.isArray(response) ? response : [];
+            fillInvoiceBankDropdown();
+            if (typeof done === 'function') done();
+        },
+        error: function () {
+            G_BankMasterList = [];
+            fillInvoiceBankDropdown();
+            if (typeof done === 'function') done();
+        }
+    });
+}
+
 $(document).ready(function () {
     $('#ERPHeading').text('Invoice (GST)');
     GetModuleMasterCodeForInvoice();
@@ -1450,12 +1949,21 @@ $(document).ready(function () {
 
     initInvoiceDatePickers();
 
-    loadInvoiceClientDropDown(function () {
-        loadItemDetailsForInvoice(function () {
-            loadHsnMasterFromApi(function () {
-                fetchPackedOrdersAndRender();
+    loadBankMasterForInvoice(function () {
+        loadInvoiceClientDropDown(function () {
+            loadItemDetailsForInvoice(function () {
+                loadHsnMasterFromApi(function () {
+                    fetchPackedOrdersAndRender();
+                });
             });
         });
+    });
+
+    $('#ddlInvBankName').on('change', function () {
+        if (!$(this).val()) {
+            return;
+        }
+        applySelectedBankDetails();
     });
 
     $('#btnInvApplyFilter').on('click', function () {
@@ -1471,10 +1979,15 @@ $(document).ready(function () {
 
     $('#btnInvSave').on('click', saveGstInvoice);
 
-    $('#chkPrintHsn, #chkPrintDiscount, #chkPrintMrp, #chkPrintTax').on('change', updatePrintButtonEnabled);
+    $('#chkPrintHsn, #chkPrintDiscount, #chkPrintMrp, #chkPrintTax, #chkPrintRoundOff, #chkPrintTerms, #chkPrintBank, #chkPrintUpiQr').on('change', onPrintOptionChange);
     $('#btnInvPrintConfirm').on('click', confirmInvoicePrint);
 
+    $('#modalPrintInvoice').on('shown.bs.modal', forceClearPageBlockers);
+    $('#modalPrintInvoice').on('hidden.bs.modal', forceClearPageBlockers);
+
+    $('#modalInvoiceGen').on('shown.bs.modal', forceClearPageBlockers);
     $('#modalInvoiceGen').on('hidden.bs.modal', function () {
+        forceClearPageBlockers();
         destroyInvoiceLineHsnSelect2();
     });
 

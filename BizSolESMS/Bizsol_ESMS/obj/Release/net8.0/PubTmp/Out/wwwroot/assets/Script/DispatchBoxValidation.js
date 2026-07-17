@@ -1,4 +1,14 @@
 ﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var G_Fixparameter;
+try { G_Fixparameter = JSON.parse(sessionStorage.getItem('Fixparameter')); } catch (e) { G_Fixparameter = null; }
+function getFixParamValue(key) {
+    if (!G_Fixparameter || !G_Fixparameter[0]) return '';
+    var row = G_Fixparameter[0];
+    var camelKey = key.charAt(0).toLowerCase() + key.slice(1);
+    var v = row[key] != null ? row[key] : row[camelKey];
+    return (v != null && String(v).trim() !== '') ? String(v).trim() : '';
+}
+let G_IsShowInvoiceInDispatchValidation = getFixParamValue('IsShowInvoiceInDispatchValidation') === 'Y';
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -8,8 +18,19 @@ let G_DispatchData = [];
 const G_UserName = sessionStorage.getItem('UserName');
 let G_DispatchMaster_Code = 0;
 const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
+function applyInvoiceNoVisibility() {
+    if (G_IsShowInvoiceInDispatchValidation) {
+        $("#dvInvoiceNoField").show();
+        $("#spanInvoiceNoRequired").show();
+    } else {
+        $("#dvInvoiceNoField").hide();
+        $("#spanInvoiceNoRequired").hide();
+        $("#txtInvoiceNo").val('');
+    }
+}
 $(document).ready(function () {
     $("#ERPHeading").text("Dispatch Box Validation");
+    applyInvoiceNoVisibility();
     GetModuleMasterCode();
     DispatchDetail();
     $('#txtScanProduct').on('input', function (e) {
@@ -36,7 +57,9 @@ $(document).ready(function () {
         const DateFilterColumn = ["Packed Date"];
         const StringdoubleFilterColumn = [];
         const hiddenColumns = ["Code", "Address"];
-        const ColumnAlignment = {};
+        const ColumnAlignment = {
+            "BoxNo" : "right"
+        };
         const Button = false;
         const showButtons = [];
 
@@ -61,7 +84,11 @@ $(document).ready(function () {
     });
     $('#txtVehicleNo').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtInvoiceNo").focus();
+            if (G_IsShowInvoiceInDispatchValidation) {
+                $("#txtInvoiceNo").focus();
+            } else {
+                $("#txtDriverName").focus();
+            }
         }
     });
     $('#txtInvoiceNo').on('keydown', function (e) {
@@ -162,6 +189,7 @@ function DispatchDetail() {
                 const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Code","Address"];
                 const ColumnAlignment = {
+                    "BoxNo":"right"
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewData('${item["Code"]}')"><i class="fa fa-eye"></i></button>
@@ -254,6 +282,9 @@ async function View(Code) {
                     const StringdoubleFilterColumn = ["Part Name", "Part Code"];
                     let hiddenColumns = [];
                     const ColumnAlignment = {
+                        "Box No": "right",
+                        "Qty": "right",
+                        "MRP":"right"
                     };
                     const renameMap = {
                         "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
@@ -323,6 +354,9 @@ async function Edit(Code) {
                 const StringdoubleFilterColumn = ["Part Name", "Part Code"];
                 let hiddenColumns = ["Status","VehicleNo","InvoiceNo","DriverName","DriverContactNo","LorryMeter","UserName"];
                 const ColumnAlignment = {
+                    "Box No": "right",
+                    "Qty": "right",
+                    "MRP": "right"
                 };
                 const renameMap = {
                     "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
@@ -356,7 +390,7 @@ function SaveDispatchBox() {
         $("#txtVehicleNo").focus();
         $("#txtScanProduct").val("");
         return;
-    } else if ($("#txtInvoiceNo").val() === '') {
+    } else if (G_IsShowInvoiceInDispatchValidation && $("#txtInvoiceNo").val() === '') {
         toastr.error("Please enter invoice no..!");
         $("#txtInvoiceNo").focus();
         $("#txtScanProduct").val("");
@@ -584,6 +618,7 @@ function ShowData() {
                 const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Codes", "vehicleNo"];
                 const ColumnAlignment = {
+                    "Total Order":"right"
                 };
                 const updatedResponse = response.map(item => ({
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Print" onclick="Print('${item["Codes"]}')"><i class="fa fa-print"></i></button>`
@@ -815,8 +850,13 @@ function GetOrderDetailsDataByCodes(Code) {
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
                 let hiddenColumns = ["Code"];
+                if (!G_IsShowInvoiceInDispatchValidation) {
+                    hiddenColumns.push("Invoice No");
+                }
                 const ColumnAlignment = {
-                    "Invoice No":";width:150px;"
+                    "Invoice No": ";width:150px;",
+                    "Box Count": "right",
+                    "Total Rate":"right"
                 };
                 
                 const updatedResponse = response.map(item => {
@@ -825,7 +865,9 @@ function GetOrderDetailsDataByCodes(Code) {
                     for (const key in item) {
                          renamedItem[key] = item[key];
                     }
-                    renamedItem["Invoice No"] = `<input id="InvoiceNo_${item.Code}" value="${item["Invoice No"]}" class="form-control form-control-sm box_border"/>`;
+                    if (G_IsShowInvoiceInDispatchValidation) {
+                        renamedItem["Invoice No"] = `<input id="InvoiceNo_${item.Code}" value="${item["Invoice No"]}" class="form-control form-control-sm box_border"/>`;
+                    }
                     renamedItem["Action"] = `<button class="btn btn-success icon-height mb-1"  title="Complete audit" onclick="SaveManualDispatchBox('${item.Code}')"><i class="fa fa-save"></i></button>`;
                     return renamedItem;
                 });
@@ -860,7 +902,7 @@ function SaveManualDispatchBox(Code) {
         toastr.error("Please enter lorry meter reading !");
         $("#txtManualLorryMeter").focus();
         return;
-    } else if ($("#InvoiceNo_"+Code).val() === '') {
+    } else if (G_IsShowInvoiceInDispatchValidation && $("#InvoiceNo_"+Code).val() === '') {
         toastr.error("Please enter invoice number..!");
         $("#InvoiceNo_" + Code).focus();
         return;

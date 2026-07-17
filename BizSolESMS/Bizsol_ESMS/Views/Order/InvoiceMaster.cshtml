@@ -218,6 +218,15 @@
     </div>
 </div>
 
+<div id="invoicePrintRoot" class="d-none"></div>
+<div id="invoiceUpiQrGen" class="d-none" aria-hidden="true"></div>
+
+<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+<script src="~/assets/js/blockui.js"></script>
+<script src="~/assets/js/filter.js"></script>
+<script src="~/assets/Script/InvoiceMaster.js"></script>
+
+@section ModalDialogs {
 <!-- Invoice generation modal -->
 <div class="modal fade" id="modalInvoiceGen" tabindex="-1" aria-labelledby="modalInvoiceGenLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down">
@@ -283,6 +292,10 @@
                         <textarea id="txtInvTerms" class="form-control form-control-sm box_border" rows="3" placeholder="Optional — printed on invoice"></textarea>
                     </div>
                     <div class="col-md-6">
+                        <label for="ddlInvBankName" class="form-label form-label-sm fw-semibold mb-1">Bank Name</label>
+                        <select id="ddlInvBankName" class="form-control form-control-sm box_border mb-2">
+                            <option value="">Select Bank</option>
+                        </select>
                         <label for="txtInvBank" class="form-label form-label-sm fw-semibold mb-1">Bank details</label>
                         <textarea id="txtInvBank" class="form-control form-control-sm box_border" rows="3" placeholder="Optional — e.g. Bank name, A/C, IFSC"></textarea>
                     </div>
@@ -305,6 +318,11 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div id="printModalLoading" class="d-none text-center py-2 mb-2">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+                    <span class="ms-2 text-muted small">Loading invoice data...</span>
+                </div>
+                <div id="printModalOptions">
                 <p class="text-muted small mb-3">Choose columns to show on the printed invoice. At least one option must stay on.</p>
                 <div class="form-check form-switch mb-2">
                     <input class="form-check-input" type="checkbox" id="chkPrintHsn" checked>
@@ -322,6 +340,23 @@
                     <input class="form-check-input" type="checkbox" id="chkPrintTax" checked>
                     <label class="form-check-label" for="chkPrintTax">GST % and Tax amount</label>
                 </div>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chkPrintRoundOff" checked>
+                    <label class="form-check-label" for="chkPrintRoundOff">Amount Round Off</label>
+                </div>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chkPrintTerms" checked>
+                    <label class="form-check-label" for="chkPrintTerms">Terms &amp; conditions</label>
+                </div>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chkPrintBank" checked>
+                    <label class="form-check-label" for="chkPrintBank">Bank details</label>
+                </div>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chkPrintUpiQr" checked>
+                    <label class="form-check-label" for="chkPrintUpiQr">UPI QR Code</label>
+                </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-height" data-bs-dismiss="modal">Close</button>
@@ -330,9 +365,4 @@
         </div>
     </div>
 </div>
-
-<div id="invoicePrintRoot" class="d-none"></div>
-
-<script src="~/assets/js/blockui.js"></script>
-<script src="~/assets/js/filter.js"></script>
-<script src="~/assets/Script/InvoiceMaster.js"></script>
+}

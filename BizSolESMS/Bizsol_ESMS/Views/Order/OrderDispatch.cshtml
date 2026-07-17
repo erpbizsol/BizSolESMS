@@ -1,0 +1,503 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+<style>
+    .icon-tab { margin-top: -7px; }
+
+    #btnOdSave i {
+        color: #2b2d3a;
+    }
+    .esms-od-bar-label i { color: #1f8acb; }
+    .esms-od-empty-icon.fa-truck-fast { color: #3b82f6; }
+    .fa-circle-check.esms-od-empty-icon { color: #22c55e; }
+    .fa-boxes-stacked { color: #1f8acb; }
+
+    .esms-od-page .od-item-grid-shell {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(3, 55, 100, 0.12);
+        box-shadow: 0 4px 18px rgba(3, 55, 100, 0.07);
+    }
+    .esms-od-page .od-item-grid-wrap {
+        max-height: min(58vh, 520px);
+        overflow: auto;
+    }
+    .esms-od-page .od-items-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #033764 !important;
+        color: #fff !important;
+        font-weight: 600;
+        font-size: 0.78rem;
+        padding: 0.55rem 0.45rem;
+        white-space: nowrap;
+    }
+    .esms-od-page .od-items-table tbody td {
+        font-size: 0.8rem;
+        vertical-align: middle;
+        padding: 0.4rem 0.45rem;
+    }
+    .esms-od-page .od-dispatch-qty {
+        width: 4.5rem;
+        max-width: 100%;
+        padding: 0.2rem 0.4rem;
+        border-radius: 5px;
+        border: 1px solid #94a3b8;
+        font-weight: 600;
+        text-align: right;
+        margin: 0 auto;
+        display: block;
+    }
+    .esms-od-page .od-dispatch-qty:focus {
+        border-color: #033764;
+        box-shadow: 0 0 0 2px rgba(3, 55, 100, 0.12);
+        outline: none;
+    }
+    .esms-od-page .od-detail-form-card {
+        background-color: #e9e9ef;
+        border: 0;
+        margin-bottom: 0.75rem;
+    }
+    .esms-od-page .od-scan-input {
+        border: 2px solid #033764;
+        background: #f0f7ff;
+        font-weight: 600;
+    }
+    .esms-od-page .od-scan-input:focus {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+    }
+    .esms-od-page .od-scan-qty-input {
+        cursor: pointer;
+        min-width: 4.5rem;
+        padding: 0.2rem 0.4rem;
+        margin: 0 auto;
+        display: block;
+    }
+    .esms-od-page .od-mrp-input {
+        min-width: 5rem;
+        max-width: 7rem;
+        padding: 0.2rem 0.4rem;
+        margin: 0 auto;
+        display: block;
+    }
+    .esms-od-page .od-row-scanned {
+        background-color: #bbf7d0 !important;
+        box-shadow: inset 0 0 0 2px #16a34a;
+        animation: od-scan-flash 0.6s ease;
+    }
+    .esms-od-page .od-last-scanned {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.75rem;
+        margin-top: 0.5rem;
+        border-radius: 6px;
+        background: #ecfdf5;
+        border: 1px solid #86efac;
+        color: #166534;
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+    .esms-od-page .od-last-scanned:empty { display: none; }
+    @@keyframes od-scan-flash {
+        0% { background-color: #4ade80; }
+        100% { background-color: #bbf7d0; }
+    }
+    .esms-od-page .od-detail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        padding: 0.65rem 0.9rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+    }
+    .esms-od-page .od-add-item-wrap {
+        align-items: flex-end !important;
+        margin-top: 33px;
+    }
+    .esms-od-page .od-add-item-wrap .btn {
+        width: 100%;
+    }
+
+    /* Add Item modal */
+    #odAddItemModal .modal-dialog {
+        max-width: 480px;
+        overflow: visible;
+    }
+    #odAddItemModal .modal-content {
+        border: none;
+        border-radius: 12px;
+        overflow: visible;
+        box-shadow: 0 20px 50px rgba(3, 55, 100, 0.18);
+    }
+    #odAddItemModal .modal-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 0.85rem 1.25rem;
+    }
+    #odAddItemModal .modal-body {
+        padding: 1.25rem 1.5rem 0.5rem;
+        overflow: visible;
+        background: #f8fafc;
+    }
+    #odAddItemModal .modal-footer {
+        padding: 0.85rem 1.5rem 1.15rem;
+        background: #fff;
+        border-top: 1px solid #e2e8f0;
+    }
+    #odAddItemModal .od-add-item-hint {
+        font-size: 0.8125rem;
+        color: #64748b;
+        margin-bottom: 1rem;
+        line-height: 1.45;
+    }
+    #odAddItemModal .od-add-item-field {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+    }
+    #odAddItemModal .od-add-item-field + .od-add-item-field {
+        margin-top: 0.75rem;
+    }
+    #odAddItemModal .select2-container {
+        width: 100% !important;
+    }
+    #odAddItemModal .select2-container--default .select2-selection--single {
+        min-height: calc(1.5em + 0.65rem + 2px);
+        padding: 0.3rem 0.55rem;
+        border: 1px solid #cdd8e3;
+        border-radius: 8px;
+        background: #fff;
+    }
+    #odAddItemModal .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 1.5;
+        padding-left: 2px;
+        color: #1a3350;
+    }
+    #odAddItemModal .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #94a3b8;
+    }
+    #odAddItemModal .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0.45rem;
+    }
+    #odAddItemModal .select2-container--default.select2-container--focus .select2-selection--single,
+    #odAddItemModal .select2-container--default.select2-container--open .select2-selection--single {
+        border-color: #033764;
+        box-shadow: 0 0 0 0.15rem rgba(3, 55, 100, 0.12);
+    }
+    .od-add-item-select2-drop {
+        z-index: 10250 !important;
+        border: 1px solid #cdd8e3 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 28px rgba(3, 55, 100, 0.14) !important;
+    }
+    #odAddItemModal .select2-container--open {
+        z-index: 10251 !important;
+    }
+    #odAddItemModal.show ~ .select2-container--open,
+    body > .select2-container--open .od-add-item-select2-drop {
+        z-index: 10250 !important;
+    }
+    .od-add-item-select2-drop .select2-search--dropdown .select2-search__field {
+        border: 1px solid #cdd8e3;
+        border-radius: 6px;
+        padding: 0.35rem 0.5rem;
+        background: #fff !important;
+        pointer-events: auto !important;
+        cursor: text !important;
+        opacity: 1 !important;
+    }
+    .od-add-item-select2-drop .select2-results__option--highlighted.select2-results__option--selectable {
+        background-color: #033764 !important;
+    }
+    /* Hide Select2 clear (×) on Order Dispatch page */
+    .esms-od-page .select2-selection__clear {
+        display: none !important;
+    }
+    .od-add-item-select2-drop .select2-search--dropdown.select2-search--hide {
+        display: block !important;
+    }
+
+    #overlay.overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+    }
+    #toast.toast-container {
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #dc2626;
+        color: #fff;
+        padding: 35px 55px;
+        border-radius: 12px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10000;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+</style>
+
+<section class="breadcrumbs1" id="odToolbar" style="display:none;">
+    <div class="container-fluid">
+        <div class="fix-header">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="icon-tab">
+                        @* <a class="btn-icon me-1" onclick="OdSaveAndBack()" id="btnOdSave" title="Save">
+                            <i class='bx bx-save'></i>
+                        </a> *@
+                        <a class="btn-icon btn-danger" id="btnOdBack" onclick="OdBackToList()" title="Back">
+                            <i class='bx bx-arrow-back'></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 text-end">
+                    <span class="tabSec tab active" id="tabOdMode">NEW DISPATCH</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="esms-oc-page esms-od-page">
+
+    @* ── List view ── *@
+    <div id="odListPage">
+
+        <div class="esms-oc-card esms-oc-card--table" id="odListCard">
+            <div class="esms-oc-card-bar flex-wrap">
+                <span class="esms-oc-bar-label esms-od-bar-label">
+                    <i class="fa-solid fa-list me-1"></i>Pending orders for dispatch
+                    <span class="esms-oc-badge ms-2" id="odListCountBadge" style="display:none;"></span>
+                </span>
+                <button type="button" class="btn btn-success btn-sm btn-height px-3 ms-auto" id="btnOdCreateNew" title="Create dispatch">
+                    <i class="fa-solid fa-plus me-1"></i>Create New
+                </button>
+            </div>
+
+            <div id="odTableWrap" style="display:none;">
+                <div class="table-wrapper fixed-height-table">
+                    <table id="table" class="fixed-width-table table mb-0">
+                        <thead id="table-header"></thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+                <div class="paginator esms-oc-paginator px-3 py-2" id="paginator-table"></div>
+            </div>
+
+            <div class="esms-oc-empty" id="odEmptyState" style="display:none;">
+                <i class="fa-solid fa-truck-fast esms-oc-empty-icon esms-od-empty-icon"></i>
+                <p class="esms-oc-empty-text">No pending dispatches found. Click <strong>Create New</strong> to start one.</p>
+            </div>
+        </div>
+    </div>
+
+    @* ── Detail / Create view (in-page) — same field layout as Order Packing ── *@
+    <div id="odDetailPage" style="display:none;">
+        <input type="hidden" id="hfOdOrderCode" value="0" />
+        <input type="hidden" id="hfOdClientCode" value="0" />
+        <input type="hidden" id="hfOdDispatchCode" value="0" />
+
+        <audio id="SuccessVoice" style="display:none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
+
+        <div class="card shadow-sm od-detail-form-card">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtOdOrderNo" class="col-form-label-sm fw-bold esms-order-level-field-label">Invoice No<span class="text-danger">*</span></label>
+                                <input type="text" id="txtOdOrderNo" class="box_border form-control form-control-sm"
+                                       autocomplete="off" maxlength="100" placeholder="Invoice No..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mb-1">
+                                    <label for="txtOdClientName" class="col-form-label-sm fw-bold mb-0">Client Name<span class="text-danger">*</span></label>
+                                    <div class="form-check form-check-inline mb-0">
+                                        <input type="checkbox" class="form-check-input" id="chkOdManualClient" checked>
+                                        <label class="form-check-label col-form-label-sm" for="chkOdManualClient">Manual Client</label>
+                                    </div>
+                                </div>
+                                <div id="txtOdClientWrap">
+                                    <input type="text" id="txtOdClientName" autocomplete="off"
+                                           class="form-control form-control-sm box_border" maxlength="200" placeholder="Client Name..">
+                                </div>
+                                <div id="ddlOdClientWrap" style="display:none;">
+                                    <select id="ddlOdClientName" class="box_border form-control form-control-sm">
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="ddlOdWarehouse" class="col-form-label-sm fw-bold">Warehouse<span class="text-danger">*</span></label>
+                                <select id="ddlOdWarehouse" class="box_border form-control form-control-sm">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtOdPackedBy" class="col-form-label-sm fw-bold">Packed By</label><span class="text-danger">*</span>
+                                <input type="text" id="txtOdPackedBy" disabled class="box_border form-control form-control-sm"
+                                       autocomplete="off" maxlength="50" placeholder="Packed By..">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtOdScanProduct" class="col-form-label-sm fw-bold">Scan Product<span class="text-danger">*</span></label>
+                                <input type="text" id="txtOdScanProduct" class="box_border form-control form-control-sm"
+                                       autocomplete="off" maxlength="200" placeholder="Scan Product.." onfocus="this.select()">
+                            </div>
+                            <div class="col-md-2 col-sm-6">
+                                <label for="txtOdBoxNo" class="col-form-label-sm fw-bold">Box No<span class="text-danger">*</span></label>
+                                <span class="clsbox">
+                                    <button type="button" onclick="OdChangeBoxNo(-1)" title="Decrease">➖</button>
+                                    <input type="text" id="txtOdBoxNo" class="Number" value="1" min="1">
+                                    <button type="button" onclick="OdChangeBoxNo(1)" title="Increase">➕</button>
+                                </span>
+                            </div>
+                            <div class="col-md-2 col-sm-6 od-add-item-wrap">
+                                <button type="button" class="btn btn-primary btn-sm btn-height" id="btnOdAddItem" title="Add item manually">
+                                    <i class="fa-solid fa-plus me-1"></i>Add Item
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="odLastScannedBanner" class="od-last-scanned mx-1" style="display:none;">
+            <i class="fa-solid fa-barcode"></i>
+            <span id="odLastScannedText"></span>
+        </div>
+
+        <div class="esms-oc-card esms-oc-card--table">
+            <div class="esms-oc-card-bar">
+                <span class="esms-oc-bar-label esms-od-bar-label">
+                    <i class="fa-solid fa-boxes-stacked me-1"></i>Items to dispatch
+                </span>
+            </div>
+            <div class="od-item-grid-shell mx-0">
+                <div class="od-item-grid-wrap">
+                    <table class="table table-bordered table-sm mb-0 align-middle od-items-table w-100" id="tblOdItems">
+                        <thead id="tblOdItems-header"></thead>
+                        <tbody id="tblOdItems-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="od-detail-actions">
+                <button type="button" class="btn btn-outline-primary btn-sm btn-height" id="btnOdMarkComplete" style="display:none;">
+                    <i class="fa-solid fa-check me-1"></i>Mark as Complete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay"></div>
+    <div id="toast" class="toast-container"></div>
+</div>
+
+<div class="modal fade" id="odAddItemModal" tabindex="-1" aria-labelledby="odAddItemModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-focus="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header tab-header" style="background-color:#033764;">
+                <h5 class="modal-title text-white mb-0" id="odAddItemModalLabel">
+                    <i class="fa-solid fa-box-open me-2"></i>Add Item
+                </h5>
+                <button type="button" class="btn-close" aria-label="Close" onclick="OdCloseAddItemModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="od-add-item-field">
+                    <label for="ddlOdAddItemName" class="form-label form-label-sm fw-semibold mb-2">Item Name <span class="text-danger">*</span></label>
+                    <select id="ddlOdAddItemName" class="box_border form-control form-control-sm w-100">
+                        <option value="">Search item by name or code...</option>
+                    </select>
+                </div>
+                <div class="od-add-item-field">
+                    <div class="row g-3">
+                        <div class="col-md-4 col-sm-6">
+                            <label for="txtOdAddItemQty" class="form-label form-label-sm fw-semibold mb-1">Qty <span class="text-danger">*</span></label>
+                            <input type="text" id="txtOdAddItemQty" class="box_border form-control form-control-sm Number" autocomplete="off" maxlength="10" placeholder="Qty..">
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <label for="txtOdAddItemMRP" class="form-label form-label-sm fw-semibold mb-1">MRP <span class="text-danger">*</span></label>
+                            <input type="text" id="txtOdAddItemMRP" class="box_border form-control form-control-sm Amount" autocomplete="off" maxlength="10" placeholder="MRP..">
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <label for="txtOdAddItemBoxNo" class="form-label form-label-sm fw-semibold mb-1">Box No <span class="text-danger">*</span></label>
+                            <span class="clsbox">
+                                <button type="button" onclick="OdAddItemChangeBoxNo(-1)" title="Decrease">➖</button>
+                                <input type="text" id="txtOdAddItemBoxNo" class="Number" value="1" min="1">
+                                <button type="button" onclick="OdAddItemChangeBoxNo(1)" title="Increase">➕</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer flex-wrap justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary btn-height px-4" onclick="OdCloseAddItemModal()">Cancel</button>
+                <button type="button" class="btn btn-success btn-height px-4 fw-semibold" onclick="OdSaveAddItem()">
+                    <i class="fa-solid fa-plus me-1"></i>Add to dispatch
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="odManualModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modal-header tab-header" style="background-color:#033764">
+                    <level style="color:white">Manual</level>
+                    <button type="button" class="close modal-close btn-sm" aria-label="Close" onclick="OdCloseManualModal()"><span aria-hidden="true">x</span></button>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <span id="odTxtManualItemCode" style="display:inline;font-weight:bold"></span>
+                    <div class="col-md-12 col-sm-12">
+                        <label class="col-form-label-sm fw-bold">Box No <span class="text-danger">*</span></label>
+                        <br /><span class="clsbox">
+                            <button type="button" onclick="OdManualChangeValue(-1)" title="Decrease">➖</button>
+                            <input type="text" id="odTxtManualBoxNo" class="Number" value="1" min="1">
+                            <button type="button" onclick="OdManualChangeValue(1)" title="Increase">➕</button>
+                        </span>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label for="odTxtManualProductQuantity" class="col-form-label-sm fw-bold">Manual Product Quantity <span class="text-danger">*</span></label>
+                        <input type="text" id="odTxtManualProductQuantity" class="box_border form-control form-control-sm Number" autocomplete="off" maxlength="10" placeholder="Manual Product Quantity..">
+                        <input type="hidden" id="odHfManualProductCode">
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label for="odTxtManualProductMRP" class="col-form-label-sm fw-bold">Manual Product MRP <span class="text-danger">*</span></label>
+                        <input type="text" id="odTxtManualProductMRP" class="box_border form-control form-control-sm Amount" autocomplete="off" maxlength="10" placeholder="Manual Product MRP..">
+                    </div>
+                </div>
+                <div class="text-right">
+                    <button type="button" class="btn btn-primary btn-height" onclick="OdSaveManual()">Save</button>
+                    <button type="button" class="btn btn-danger btn-height" onclick="OdCloseManualModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/blockui.js"></script>
+<script src="~/assets/js/CheckOptionPermission.js"></script>
+<script src="~/assets/js/filter.js"></script>
+<script src="~/assets/Script/OrderDispatch.js"></script>

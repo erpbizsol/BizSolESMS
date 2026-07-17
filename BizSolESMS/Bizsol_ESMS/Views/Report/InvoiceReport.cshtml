@@ -1,0 +1,387 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+<link href="~/assets/css/esms-dashboard.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="~/assets/js/blockui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+
+<style>
+    .ipr-report-page {
+        --ipr-primary: #033764;
+        --ipr-primary-rgb: 3, 55, 100;
+        --ipr-violet: #7c3aed;
+        --ipr-emerald: #059669;
+        --ipr-sky: #0284c7;
+        --ipr-amber: #d97706;
+        --ipr-rose: #e11d48;
+        --ipr-surface: #ffffff;
+        --ipr-muted: #64748b;
+        --ipr-border: #e2e8f0;
+        max-width: 1440px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 4px 2rem;
+    }
+
+    #layout-wrapper.esms-webiz .main-content:has(.ipr-report-page) {
+        background: linear-gradient(160deg, #eef2ff 0%, #f0fdfa 35%, #fff7ed 70%, #f5f6fa 100%) !important;
+        background-image: none !important;
+    }
+
+    .ipr-report-page .ipr-filter-panel {
+        position: relative;
+        background: var(--ipr-surface);
+        border: 1px solid rgba(var(--ipr-primary-rgb), 0.12);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(var(--ipr-primary-rgb), 0.07);
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+    }
+
+    .ipr-report-page .ipr-filter-panel::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #0284c7, #6366f1, #7c3aed, #059669);
+    }
+
+    .ipr-report-page .ipr-filter-panel__head {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 1rem 0.35rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #0369a1;
+    }
+
+    .ipr-report-page .ipr-filter-panel__head i {
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0284c7, #6366f1);
+        color: #fff;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+    }
+
+    .ipr-report-page .ipr-filter-panel__body {
+        padding: 0 1rem 0.65rem;
+    }
+
+    .ipr-report-page .ipr-field-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.2rem;
+    }
+
+    .ipr-report-page .ipr-filter-panel .form-control {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        min-height: 30px;
+        height: 30px;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8125rem;
+    }
+
+    .ipr-report-page .ipr-filter-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .ipr-report-page .ipr-btn-spacer {
+        visibility: hidden;
+        display: block;
+        margin-bottom: 0.2rem;
+        line-height: 1.7;
+        font-size: 0.72rem;
+    }
+
+    .ipr-report-page .ipr-btn-show,
+    .ipr-report-page .ipr-btn-dl {
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 0.2rem 0.75rem;
+        min-height: 30px;
+        height: 30px;
+        line-height: 1.2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .ipr-report-page .ipr-btn-show {
+        background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0284c7 100%);
+        border: none;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .ipr-report-page .ipr-filter-panel .form-control:focus {
+        border-color: var(--ipr-primary);
+        box-shadow: 0 0 0 2px rgba(var(--ipr-primary-rgb), 0.1);
+    }
+
+    .ipr-report-page .ipr-btn-show:hover {
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+    }
+
+    .ipr-report-page .ipr-btn-dl {
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+        border: none;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .ipr-report-page .ipr-btn-dl:hover:not(:disabled) {
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+    }
+
+    .ipr-report-page .ipr-btn-dl:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .ipr-report-page .ipr-panel {
+        background: var(--ipr-surface);
+        border: 1px solid var(--ipr-border);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .ipr-report-page .ipr-panel__title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.65rem;
+        padding-bottom: 0.45rem;
+        border-bottom: 1px solid var(--ipr-border);
+    }
+
+    .ipr-report-page .ipr-panel__title .ipr-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8);
+    }
+
+    .ipr-report-page .ipr-panel--detail { border-left: 4px solid #7c3aed; }
+    .ipr-report-page .ipr-panel--detail .ipr-dot { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+
+    .ipr-report-page .ipr-panel__title span {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .ipr-report-page .ipr-grid-wrap {
+        border: 2px solid rgba(124, 58, 237, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(124, 58, 237, 0.08);
+    }
+
+    .ipr-report-page .ipr-grid-wrap .fixed-height-table {
+        max-height: 460px;
+    }
+
+    .ipr-report-page .ipr-grid-wrap .paginator {
+        background: linear-gradient(90deg, #eff6ff 0%, #f0fdfa 50%, #fdf4ff 100%);
+        border-top: 1px solid var(--ipr-border);
+    }
+
+    .ipr-report-page .ipr-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
+    .ipr-report-page .ipr-status-badge--pending {
+        background: #fef3c7;
+        color: #b45309;
+        border: 1px solid #fcd34d;
+    }
+
+    .ipr-report-page .ipr-status-badge--partial {
+        background: #dbeafe;
+        color: #1d4ed8;
+        border: 1px solid #93c5fd;
+    }
+
+    .ipr-report-page .ipr-status-badge--completed {
+        background: #d1fae5;
+        color: #047857;
+        border: 1px solid #6ee7b7;
+    }
+
+    .ipr-report-page #table-footer .ipr-grid-total-row td {
+        background: linear-gradient(90deg, #eff6ff 0%, #ecfdf5 50%, #fdf4ff 100%);
+        border-top: 2px solid #6366f1;
+        font-weight: 800;
+        font-size: 0.8125rem;
+        color: #1e293b;
+        padding: 0.65rem 0.75rem;
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+    }
+
+    .ipr-report-page .ipr-placeholder {
+        background: linear-gradient(145deg, #fff 0%, #eff6ff 40%, #ecfdf5 100%);
+        border: 2px dashed rgba(2, 132, 199, 0.35);
+        border-radius: 16px;
+        padding: 3.5rem 1.5rem;
+        text-align: center;
+    }
+
+    .ipr-report-page .ipr-placeholder__icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0284c7, #6366f1, #7c3aed);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(2, 132, 199, 0.4);
+    }
+
+    .ipr-report-page .ipr-placeholder h6 {
+        font-weight: 800;
+        background: linear-gradient(120deg, #0369a1, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.35rem;
+    }
+
+    .ipr-report-page .ipr-placeholder p {
+        color: var(--ipr-muted);
+        font-size: 0.85rem;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+
+    .ipr-report-page #iprReportContent {
+        display: none;
+        animation: iprFadeIn 0.35s ease;
+    }
+
+    @@keyframes iprFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="container-fluid ipr-report-page esms-dash-webiz mt-1 pb-3">
+    <div class="ipr-filter-panel">
+        <div class="ipr-filter-panel__head">
+            <i class="fa-solid fa-sliders"></i>
+            Report filters
+        </div>
+        <div class="ipr-filter-panel__body">
+            <div class="row g-2">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label class="ipr-field-label" for="txtFromDate">
+                        From Date <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="txtFromDate" class="form-control form-control-sm box_border"
+                           autocomplete="off" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label class="ipr-field-label" for="txtToDate">
+                        To Date <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="txtToDate" class="form-control form-control-sm box_border"
+                           autocomplete="off" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label class="ipr-field-label" for="ddlPaymentStatus">
+                        Payment Status <span class="text-danger">*</span>
+                    </label>
+                    <select id="ddlPaymentStatus" class="form-control form-control-sm box_border">
+                        <option value="All">All</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Partial">Partial</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-auto">
+                    <label class="ipr-field-label ipr-btn-spacer" aria-hidden="true">&nbsp;</label>
+                    <div class="ipr-filter-actions">
+                        <button type="button" class="btn ipr-btn-show" id="btnIprShow">
+                            <i class="fa-solid fa-chart-column me-1"></i>Show
+                        </button>
+                        <button type="button" class="btn ipr-btn-dl" id="btnIprDownload" disabled>
+                            <i class="fa-solid fa-file-excel me-1"></i>Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="iprReportContent">
+        <div class="ipr-panel ipr-panel--detail mb-0">
+            <div class="ipr-panel__title">
+                <span class="ipr-dot"></span>
+                <span>Invoice-wise Payment Detail</span>
+            </div>
+            <div class="ipr-grid-wrap" id="DataTable">
+                <div class="table-wrapper fixed-height-table">
+                    <table id="table" class="fixed-width-table table mb-0">
+                        <thead id="table-header"></thead>
+                        <tbody id="table-body"></tbody>
+                        <tfoot id="table-footer"></tfoot>
+                    </table>
+                </div>
+                <div class="paginator px-2 py-2" id="paginator-table"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="iprReportPlaceholder" class="ipr-placeholder">
+        <div class="ipr-placeholder__icon">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+        </div>
+        <h6>Ready to view invoice payments</h6>
+        <p>Choose <strong>From Date</strong>, <strong>To Date</strong>, and <strong>Payment Status</strong>, then click <strong>Show Report</strong> to load invoice-wise detail.</p>
+    </div>
+</div>
+
+<script src="~/assets/js/filter.js"></script>
+<script src="~/assets/Script/InvoiceReport.js"></script>

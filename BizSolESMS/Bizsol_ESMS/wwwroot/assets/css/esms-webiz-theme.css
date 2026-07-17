@@ -1228,7 +1228,7 @@ body.esms-webiz .modal-content .modal-body .modal-header .btn-close {
     transition: background 0.15s ease, opacity 0.15s ease;
 }
 
-body.esms-webiz .modal-header .btn-close:hover,
+body.esms-webiz .modal-header,
 body.esms-webiz .modal-content .modal-body .modal-header .btn-close:hover {
     opacity: 1;
     background: rgba(62, 207, 163, 0.16);
@@ -2149,6 +2149,54 @@ body.esms-webiz .swal-icon--error {
     min-width: 190px;
 }
 
+/* Floated sort + filter panels (filter.js) */
+#layout-wrapper.esms-webiz.esms-profenna .filter-dropdown.esms-filter-panel--floating,
+#layout-wrapper.esms-webiz.esms-profenna .filter-dropdown-double.esms-filter-panel--floating,
+#layout-wrapper.esms-webiz.esms-profenna .filter-division.esms-filter-panel--floating {
+    right: auto !important;
+    top: auto !important;
+    margin-top: 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+#layout-wrapper.esms-webiz.esms-profenna .filter-division.esms-filter-panel--floating .dropdown-content {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 0 !important;
+    box-shadow: none !important;
+}
+
+#layout-wrapper.esms-webiz.esms-profenna .filter-table-heading-div > .filter-division:not(.esms-filter-panel--floating) {
+    position: absolute !important;
+    top: calc(100% + 4px) !important;
+    right: 0 !important;
+    left: auto !important;
+    width: max-content !important;
+    min-width: 160px !important;
+    max-width: 220px !important;
+    margin-top: 0 !important;
+    z-index: 10091 !important;
+}
+
+#layout-wrapper.esms-webiz.esms-profenna .filter-table-heading-div > .filter-division .dropdown-content {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 160px !important;
+    margin-top: 0 !important;
+}
+
 /* Inline !important from Filter.js overrides right on open: 100px (cols 1–2), 0px (including last two). */
 #layout-wrapper.esms-webiz.esms-profenna .filter-dropdown,
 #layout-wrapper.esms-webiz.esms-profenna .filter-dropdown-double {
@@ -2296,6 +2344,73 @@ body.esms-webiz .swal-icon--error {
     justify-content: center;
 }
 
+/* ── Dispatch list grid: wrap long CONTENT (body cells), keep HEADERS one line ── */
+/* Header cells: NEVER wrap — keep column titles on a single line */
+#layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page #table.table thead th {
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+}
+
+/* Body cells: WRAP long content instead of clipping / forcing wide scroll */
+#layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page #table.table tbody td {
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    max-width: 320px;
+    vertical-align: top;
+}
+
+/* ── Mobile: toolbar / tab polish + tighter cell width ── */
+@media (max-width: 767px) {
+    /* Toolbar polish: full-width search/date fields + actions stacked neatly */
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page .webiz-dispatch-toolbar .card-body {
+        padding: 0.85rem 0.85rem 0.4rem;
+    }
+
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page #webizDispatchListActions {
+        justify-content: stretch !important;
+    }
+
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page #webizDispatchListActions > #txtDownload,
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page #webizDispatchListActions > .btn {
+        flex: 1 1 auto;
+    }
+
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page #webizDispatchListActions > #txtDownload .btn {
+        width: 100%;
+    }
+
+    /* Tab strip: keep all three status tabs side by side on a single row */
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page .webiz-dispatch-tabstrip {
+        flex-wrap: nowrap;
+        gap: 0.4rem;
+    }
+
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page .webiz-dispatch-tabstrip .nav-item {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page .webiz-dispatch-tabstrip .nav-item-btn {
+        width: 100%;
+        padding: 0.5rem 0.35rem;
+    }
+
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page .webiz-dispatch-tabstrip .nav-item-btn .tab {
+        font-size: 0.72rem;
+        line-height: 1.15;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    /* Narrower cells on phones so wrapped content fits the viewport */
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-dispatch-page #table.table tbody td {
+        max-width: 60vw;
+        min-width: 88px;
+    }
+}
+
 /* Sidebar: avoid horizontal nudge when long labels / active pill extend past rail */
 #layout-wrapper.esms-webiz.esms-profenna .vertical-menu .simplebar-content-wrapper {
     overflow-x: hidden !important;
@@ -2309,4 +2424,62 @@ body.esms-webiz .swal-icon--error {
 ::-webkit-scrollbar-thumb {
     background: var(--webiz-border);
     border-radius: 10px;
+}
+
+/* ─── Order Cancellation (webiz theme overrides) ─── */
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-card {
+    border-color: var(--webiz-grid-line);
+    background: var(--webiz-white);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-card-bar {
+    background: linear-gradient(90deg, #f4f5f8 0%, #f9fafb 100%);
+    border-bottom-color: var(--webiz-grid-line);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-info-value {
+    background: #f8f9fb;
+    border-color: var(--webiz-grid-line);
+    color: var(--webiz-text);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-hint {
+    background: rgba(62, 207, 163, 0.07);
+    border-color: rgba(62, 207, 163, 0.28);
+    color: #064e3b;
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-hint i {
+    color: var(--webiz-green-dark, #059669);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-badge {
+    background: rgba(62, 207, 163, 0.12);
+    color: var(--webiz-green-dark, #059669);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-page .select2-container--default.select2-container--open .select2-selection--single,
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-page .select2-container--focus .select2-selection--single {
+    border-color: var(--webiz-green, #3ecfa3);
+    box-shadow: 0 0 0 2px rgba(62, 207, 163, 0.18);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-paginator {
+    background: #fafafa;
+    border-top-color: var(--webiz-grid-line);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-search-input {
+    background: #f8f9fb;
+    border-color: var(--webiz-grid-line);
+    color: var(--webiz-text);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-search-input:focus {
+    border-color: var(--webiz-green, #3ecfa3);
+    box-shadow: 0 0 0 2px rgba(62, 207, 163, 0.15);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-tab-btn.active {
+    color: var(--webiz-green, #3ecfa3);
+    border-bottom-color: var(--webiz-green, #3ecfa3);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-tab-btn:hover {
+    color: var(--webiz-green, #3ecfa3);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-reopen-btn {
+    background: var(--webiz-amber, #f59e0b);
+}
+#layout-wrapper.esms-webiz.esms-profenna .esms-oc-reopen-btn:hover {
+    background: #d97706;
 }

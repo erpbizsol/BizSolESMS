@@ -12,7 +12,6 @@ var API_DELETE_PAYMENT      = '/api/PaymentEntry/DeletePaymentEntry';
 var API_GET_PAYMENT_BY_CODE = '/api/PaymentEntry/ShowPaymentEntryByCode';
 var API_GET_PARTY_LIST      = '/api/Master/GetAccountIsClientDropDown';
 var API_GET_INVOICE_BY_ACC  = '/api/PaymentEntry/GetInvoiceDetailsByAccountMaster';
-var API_GET_PAYMENT_MODE_LIST = '/api/PaymentEntry/GetPaymentModeList';
 var G_PEEditCode     = 0;
 var G_PEDeleteCode   = 0;
 var G_PEInvoiceRows  = [];
@@ -20,6 +19,15 @@ var G_PEListRows     = [];
 var G_PEIsBindingEdit = false;
 var G_PEEntryNoSave   = 0;
 var G_PEAdvanceManual = false;
+var G_PEPayModeOptions = [
+    'CH',
+    'DD',
+    'Fund T/R',
+    'NEFT',
+    'RTGS',
+    'ONLINE',
+    'CASH'
+];
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 function parseAmountStr(s) {
@@ -35,6 +43,22 @@ function formatAmt(v) {
 function formatRupee(v) {
     return '\u20B9 ' + formatAmt(v);
 }
+/** Bill payment status for grid coloring: pending (unpaid) or partial (partly paid). */
+function PEGetBillPayStatus(r) {
+    var status = String(r.PaymentStatus || r.Status || r['Payment Status'] || '').trim().toLowerCase();
+    if (status === 'pending' || status === 'partial') return status;
+
+    var adjAmt  = parseAmountStr(r.AmountAdjusted != null ? r.AmountAdjusted : (r.Deduction || 0));
+    var payable = parseAmountStr(r.PayableAmount || 0);
+    if (payable <= 0) return '';
+    return adjAmt > 0 ? 'partial' : 'pending';
+}
+function PEGetBillRowClass(status) {
+    if (status === 'partial') return 'pe-bill-partial';
+    if (status === 'pending') return 'pe-bill-pending';
+    return '';
+}
+
 /** Payable Amt from API row (supports spaced keys like "Payable Amt"). */
 function PEGetPayableFromRow(r) {
     if (r['Payable Amt'] != null && r['Payable Amt'] !== '') return parseAmountStr(r['Payable Amt']);
@@ -163,7 +187,7 @@ $(document).ready(function () {
         $('#txtPEFromDate').datepicker('setDate', monthStart);
         $('#txtPEToDate').datepicker('setDate', today);
         $('#ddlPEPartyFilter').val('').trigger('change');
-        $('#txtPEPayModeFilter').val('');
+        $('#ddlPEPayModeFilter').val('').trigger('change');
         PELoadList();
     });
 
@@ -187,6 +211,8 @@ function PESetPartyFieldDisabled(disabled) {
 function PEInitSelect2() {
     $('#ddlPEPartyFilter').select2({ theme: 'default', width: '100%' });
     $('#ddlPEPartyName').select2({ theme: 'default', width: '100%' });
+    $('#ddlPEPayModeFilter').select2({ theme: 'default', width: '100%' });
+    $('#ddlPEPayMode').select2({ theme: 'default', width: '100%' });
 
     $('#ddlPEPartyName').on('change', function () {
         if (G_PEIsBindingEdit) return;
@@ -224,70 +250,16 @@ function PELoadPartyDropdown() {
         }
     });
 }
-function PEMapPaymentModeDesp(item) {
-    if (!item) return '';
-    if (typeof item === 'string') return item;
-    return item.Desp || item['Payment Mode'] || item.PaymentMode || item.paymentMode
-        || item.Mode || item.Name || item.CreditNote || '';
-}
-function PEPositionPayModeSuggestion($input, $list) {
-    if (!$input || !$input.length) return;
-    if (!$list || !$list.length) return;
-    if (!$list.parent().is('body')) {
-        $list.appendTo('body');
-    }
-    var offset = $input.offset();
-    if (!offset) return;
-    $list.css({
-        position: 'absolute',
-        top: offset.top + $input.outerHeight(),
-        left: offset.left,
-        width: $input.outerWidth(),
-        zIndex: 99999
+function PEBuildPayModeOptions(emptyLabel) {
+    var html = '<option value="">' + emptyLabel + '</option>';
+    (G_PEPayModeOptions || []).forEach(function (mode) {
+        html += '<option value="' + $('<div>').text(mode).html() + '">' + $('<div>').text(mode).html() + '</option>';
     });
-}
-function PESetupPayModeAutoSuggestion(inputSelector, listSelector, data, focusNs) {
-    var $input = $(inputSelector);
-    var $list = $(listSelector);
-    if (!$input.length || !$list.length || !data.length) {
-        if ($list.length) $list.empty().hide();
-        return;
-    }
-    PEPositionPayModeSuggestion($input, $list);
-    SetUpAutoSuggestion($input, $list, data, 'StartWith');
-    $input.off('focus.' + focusNs).on('focus.' + focusNs, function () {
-        PEPositionPayModeSuggestion($input, $list);
-    });
+    return html;
 }
 function PELoadPaymentModeList() {
-    $.ajax({
-        url: appBaseURL + API_GET_PAYMENT_MODE_LIST,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (!response || !response.length) {
-                $('#txtPEPayModeList, #txtPEPayModeFilterList').empty().hide();
-                return;
-            }
-            var data = $.map(response, function (item) {
-                var desp = PEMapPaymentModeDesp(item);
-                return desp ? { Desp: desp } : null;
-            }).filter(Boolean);
-
-            if (!data.length) {
-                $('#txtPEPayModeList, #txtPEPayModeFilterList').empty().hide();
-                return;
-            }
-
-            PESetupPayModeAutoSuggestion('#txtPEPayMode', '#txtPEPayModeList', data, 'pePayMode');
-            PESetupPayModeAutoSuggestion('#txtPEPayModeFilter', '#txtPEPayModeFilterList', data, 'pePayModeFilter');
-        },
-        error: function () {
-            $('#txtPEPayModeList, #txtPEPayModeFilterList').empty().hide();
-        }
-    });
+    $('#ddlPEPayModeFilter').html(PEBuildPayModeOptions('All modes')).trigger('change');
+    $('#ddlPEPayMode').html(PEBuildPayModeOptions('-- Select --')).trigger('change');
 }
 function PEFillGrid() {
     var accountCode = $('#ddlPEPartyName').val();
@@ -345,6 +317,7 @@ function PERenderInvoiceGrid(res) {
             AmountAdjusted:   adjAmt,
             PayableAmount:    payable,
             PaymentAmount:     parseAmountStr(r.Amount || r['Amount'] || 0),
+            PaymentStatus:    r.PaymentStatus || r.Status || r['Payment Status'] || '',
             AccountMasterCode: r.AccountMaster_Code || r['AccountMaster_Code'] || 0,
             InvoiceMaster_Code: r.InvoiceMaster_Code || r['InvoiceMaster_Code'] || r.InvoiceCode || r.BillCode || 0
         };
@@ -364,7 +337,9 @@ function PERefreshInvoiceTable() {
 
     var html = '';
     $.each(G_PEInvoiceRows, function (i, r) {
-        html += '<tr>'
+        var payStatus = PEGetBillPayStatus(r);
+        var rowCls    = PEGetBillRowClass(payStatus);
+        html += '<tr' + (rowCls ? ' class="' + rowCls + '"' : '') + '>'
             + '<td>' + (i + 1) + '</td>'
             + '<td>' + r.BillNo + '</td>'
             + '<td>' + r.BillDate + '</td>'
@@ -472,7 +447,7 @@ function PELoadList(type) {
     var fromDate      = ($('#txtPEFromDate').val() || '').trim();
     var toDate        = ($('#txtPEToDate').val() || '').trim();
     var accountCode   = $('#ddlPEPartyFilter').val() || '';
-    var paymentMode   = ($('#txtPEPayModeFilter').val() || '').trim();
+    var paymentMode   = ($('#ddlPEPayModeFilter').val() || '').trim();
 
     if (!fromDate) {
         PEToastError('Please select from date.');
@@ -579,7 +554,7 @@ function PEResetForm() {
     $('#txtPEEntryNo').val('');
     $('#txtPEDate').datepicker('setDate', new Date());
     $('#ddlPEPartyName').val('').trigger('change');
-    $('#txtPEPayMode').val('');
+    $('#ddlPEPayMode').val('').trigger('change');
     $('#txtPERefNo').val('');
     $('#txtPEAmount').val('');
     $('#txtPENarration').val('');
@@ -640,7 +615,7 @@ function PEEditEntry(code) {
             $('#txtPEDate').datepicker('update', PEFormatApiDate(pm.EntryDate || pm.entryDate || ''));
             $('#ddlPEPartyName').val(pm.AccountMaster_Code || pm.accountMaster_Code || '').trigger('change.select2');
             PESetPartyFieldDisabled(true);
-            $('#txtPEPayMode').val(payMode);
+            $('#ddlPEPayMode').val(payMode).trigger('change');
             $('#txtPERefNo').val(pm.RefNo || pm.refno || pm.Refno || '');
             $('#txtPEAmount').val(formatAmt(pm.Amount || pm.amount || 0));
             $('#txtPENarration').val(pm.Narration || pm.narration || '');
@@ -689,6 +664,7 @@ function PERenderEditBillGrid(paymentDetails, accountCode) {
             AmountAdjusted:     parseAmountStr(pd.AmountAdjusted || pd['AmountAdjusted'] || 0),
             PayableAmount:      PEGetPayableFromRow(pd),
             PaymentAmount:      PEGetPaymentAmtFromRow(pd),
+            PaymentStatus:      pd.PaymentStatus || pd.Status || pd['Payment Status'] || '',
             AdjustmentCode:     pd.Code || pd.code || 0,
             BillMaster_Code:    pd.BillMaster_Code || pd.billMaster_Code || G_PEEditCode || 0,
             AccountMasterCode:  accountCode || pd.AccountMaster_Code || pd.accountMaster_Code || 0,
@@ -704,7 +680,7 @@ function PESavePaymentEntry() {
     var amount    = parseAmountStr($('#txtPEAmount').val());
     var partyCode = $('#ddlPEPartyName').val();
 
-    var payMode   = ($('#txtPEPayMode').val() || '').trim();
+    var payMode   = ($('#ddlPEPayMode').val() || '').trim();
     var refNo     = $('#txtPERefNo').val().trim();
     var narration = $('#txtPENarration').val().trim();
 

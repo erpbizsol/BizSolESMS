@@ -147,9 +147,11 @@
                             </div>
                             <div class="col-md-2 col-sm-6">
                                 <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No<span class="text-danger">*</span></label>
-                                 <br/><button onclick="changeValue(-1)" style="border: 1px solid #275481;border-radius:4px;">➖</button>
-                                <input type="text" id="txtBoxNo" class="Number" style="border: 1px solid #275481;width:45px;border-radius:4px;text-align:center;" value="1" min="1">
-                                <button onclick="changeValue(1)" style="border: 1px solid #275481;border-radius:4px;">➕</button>
+                                <span class="clsbox">
+                                    <button type="button" onclick="changeValue(-1)" title="Decrease">➖</button>
+                                    <input type="text" id="txtBoxNo" class="Number" value="1" min="1">
+                                    <button type="button" onclick="changeValue(1)" title="Increase">➕</button>
+                                </span>
                             </div>
                             <div class="col-md-2 col-sm-6 mt-1">
                                 <label for="txtTotalPartLine" class="fw-bold">Total Part Line</label>
@@ -213,9 +215,11 @@
                         <span id="txtManualBalanceQuantity" style="display:inline;font-weight:bold"></span>
                         <div class="col-md-12 col-sm-12">
                             <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No <span class="text-danger">*</span></label>
-                            <br /><button onclick="ManualChangeValue(-1)" style="border: 1px solid #275481;border-radius:4px;">➖</button>
-                            <input type="text" id="txtManualBoxNo" class="Number" style="border: 1px solid #275481;width:45px;border-radius:4px;text-align:center;" value="1" min="1">
-                            <button onclick="ManualChangeValue(1)" style="border: 1px solid #275481;border-radius:4px;">➕</button>
+                            <br/><span class="clsbox">
+                                <button type="button" onclick="ManualChangeValue(-1)" title="Decrease">➖</button>
+                                <input type="text" id="txtManualBoxNo" class="Number" value="1" min="1">
+                                <button type="button" onclick="ManualChangeValue(1)" title="Increase">➕</button>
+                            </span>
                         </div>
                         <div class="col-md-12 col-sm-12">
                             <label for="txtManualProductQuantity" class="col-form-label-sm fw-bold">Manual Product Quantity <span class="text-danger">*</span></label>
@@ -274,6 +278,16 @@
     <div id="overlay" class="overlay"></div>
     <div id="toast" class="toast-container"></div>
 </div>
+<style>
+    /* Above Bootstrap modals (10100) so scan-error toast stays visible when a modal is open */
+    #overlay.overlay {
+        z-index: 10200 !important;
+    }
+
+    #toast.toast-container {
+        z-index: 10205 !important;
+    }
+</style>
 <div style="display:none;">
       <input type="text" id="txtCode" placeholder="Enter Text">
        <div id="qrcodeview" style="margin-top:20px"></div>

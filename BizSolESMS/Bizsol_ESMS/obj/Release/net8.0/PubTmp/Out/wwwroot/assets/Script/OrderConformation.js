@@ -230,9 +230,9 @@ function renderGrid(data) {
         return;
     }
 
-    const StringFilterColumn = ['Client Name'];
-    const NumericFilterColumn = [];
-    const DateFilterColumn = ['Order Date', 'Buyer PO Date'];
+    const StringFilterColumn = ['Client Name', "Invoice No", "Order No","Party Name","Challan No",	"Packed By"	];
+    const NumericFilterColumn = ["TDQ"];
+    const DateFilterColumn = ['Order Date', "Packed Date", 'Buyer PO Date', "Dispatch Date"];
     const Button = false;
     const showButtons = [];
     const StringdoubleFilterColumn = [];
@@ -242,7 +242,7 @@ function renderGrid(data) {
     const updatedResponse = data.map(function (item) {
         return {
             ...item,
-            OTP: item.OTP == 'Validate' ? `<button type="button" class="btn btn-success icon-height mb-1" title="Validate" onclick="openOtpModal(${item.Code})">${item.OTP}</button>` : `${item.OTP}`
+            OTP: item.OTP == 'Validate' ? `<button type="button" class="btn btn-success mb-1" style="height: 30px;line-height: 1px;" title="Validate" onclick="openOtpModal(${item.Code})">${item.OTP}</button>` : `${item.OTP}`
         };
     });
 

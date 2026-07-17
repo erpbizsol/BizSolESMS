@@ -4,14 +4,68 @@
     margin: auto;
 }
 
-th {
-    position: relative;
-    background-color: #f2f2f2;
-    /*min-width: 190px !important;*/
+/* Floated sort + filter panels (see filter.js). */
+.filter-dropdown.esms-filter-panel--floating,
+.filter-dropdown-double.esms-filter-panel--floating,
+.filter-division.esms-filter-panel--floating {
+    display: block !important;
+    box-sizing: border-box;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-/* Anchor filter panels to the header cell content (not the raw th box). Fixes overlap into the
-   previous column when th is sticky / table-cell positioning is ambiguous. */
+.filter-division.esms-filter-panel--floating .dropdown-content {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 0 !important;
+    box-shadow: none;
+}
+
+/* In-header fallback when not floated */
+.filter-table-heading-div > .filter-division:not(.esms-filter-panel--floating) {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    left: auto;
+    z-index: 1060;
+    width: max-content;
+    min-width: 160px;
+    max-width: 220px;
+}
+
+.filter-table-heading-div > .filter-division .dropdown-content {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 160px;
+}
+
+th {
+    position: relative;
+    overflow: visible;
+}
+
+.table-wrapper.fixed-height-table,
+.table-responsive {
+    overflow-anchor: none;
+}
+
+thead th:has(.filter-table-heading-div) {
+    overflow: visible !important;
+    z-index: 2;
+}
+
 .filter-table-heading-div {
     position: relative;
     overflow: visible;
@@ -184,9 +238,7 @@ i:hover {
     }
 
 /* When tbody rows reorder (sort/filter), Chrome’s scroll anchoring can shift scrollLeft in overflow:auto — disable on the grid shell. */
-.table-wrapper.fixed-height-table {
-    overflow-anchor: none;
-}
+/* (overflow-anchor on .table-wrapper.fixed-height-table — see top of file) */
 
 /*.table-wrapper {
     width: 100%;
@@ -251,8 +303,14 @@ i:hover {
 }
 
 .filter-division {
-    position: relative;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    left: auto;
     display: inline-block;
+    width: max-content;
+    min-width: 160px;
+    z-index: 1060;
 }
 
 .dropdown-content {

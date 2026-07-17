@@ -419,7 +419,6 @@ function StartDispatchAll(G_SalesReturnMaster_Code) {
     });
 
 }
-
 function GetDispatchOrderLists(Code) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetSalesData?p_Code=${Code}`,
@@ -481,11 +480,10 @@ function StartDispatchOrderNo() {
             const data = response.data || response;
 
             if (data.Status === 'Y') {
-                showToast(data.Msg);
-                $("#SuccessVoice")[0].play();
+                toastr.success(data.Msg)
                 GetDispatchOrderLists(G_value); 
             } else {
-                showToast(data.Msg);
+                toastr.error(data.Msg)
                 $("#txtScanProduct").val("").focus();
                 GetDispatchOrderLists(G_value); 
             }

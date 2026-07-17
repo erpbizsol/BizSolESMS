@@ -1,0 +1,225 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+<style>
+    .icon-tab {
+        margin-top: -7px;
+    }
+
+    /* ── Toolbar icons ── */
+    #btnOcSave i {
+        color: #ffffff;
+    }
+
+    /* ── Tab button icons ── */
+    .esms-oc-tab-btn i {
+        color: #1f8acb;
+    }
+    .esms-oc-tab-btn.active i {
+        color: #4ba6ef;
+    }
+
+    /* ── Card bar label icons ── */
+    .esms-oc-bar-label i {
+        color: #1f8acb;
+    }
+
+    /* ── Empty-state icons ── */
+    .esms-oc-empty-icon.fa-box-open {
+        color: #f59e0b;
+    }
+
+    /* ── Cancellation details card icon ── */
+    .fa-circle-xmark {
+        color: #dc2626;
+    }
+
+    /* ── Items card icon ── */
+    .fa-boxes-stacked {
+        color: #1f8acb;
+    }
+</style>
+<section class="breadcrumbs1" id="ocToolbar" style="display:none;">
+    <div class="container-fluid">
+        <div class="fix-header">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="SaveOrderCancellation()" id="btnOcSave" title="Save">
+                            <i class='bx bx-save'></i>
+                        </a>
+                        <a class="btn-icon btn-danger" id="btnOcBack" onclick="BackToList()" title="Back">
+                            <i class='bx bx-arrow-back'></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 text-end">
+                    <span class="tabSec tab active" id="tabOc">CANCEL ORDER</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="esms-oc-page">
+
+    @* ── List View ── *@
+    <div id="ocListPage" class="esms-oc-section">
+
+        @* ── Tab bar ── *@
+        <div class="esms-oc-tabs mb-2">
+            <button class="esms-oc-tab-btn active" id="tabBtnActive" onclick="SwitchOcTab('active')">
+                <i class="fa-solid fa-list-check me-1"></i>Active Orders
+            </button>
+            <button class="esms-oc-tab-btn" id="tabBtnCancelled" onclick="SwitchOcTab('cancelled')">
+                <i class="fa-solid fa-rotate-left me-1"></i>Re-Open Cancelled
+            </button>
+        </div>
+
+        @* ── Active orders card ── *@
+        <div id="ocActiveSection">
+            <div class="esms-oc-card esms-oc-card--table" id="ocOrderTable" style="display:none;">
+                <div class="esms-oc-card-bar">
+                    <span class="esms-oc-bar-label">
+                        <i class="fa-solid fa-list-check me-1"></i>Orders available to cancel
+                        <span class="esms-oc-badge ms-2" id="ocListCountBadge" style="display:none;"></span>
+                    </span>
+                    <div class="esms-oc-search-wrap">
+                        <i class="fa-solid fa-magnifying-glass esms-oc-search-icon"></i>
+                        <input type="text" id="txtOcListSearch" class="esms-oc-search-input"
+                               placeholder="Search orders…" autocomplete="off"
+                               oninput="OcListSearch(this.value)">
+                    </div>
+                </div>
+                <div class="table-wrapper fixed-height-table">
+                    <table id="table" class="fixed-width-table table mb-0">
+                        <thead id="table-header"></thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+                <div class="paginator esms-oc-paginator px-3 py-2" id="paginator-table"></div>
+            </div>
+
+            <div class="esms-oc-empty" id="ocEmptyState" style="display:none;">
+                <i class="fa-solid fa-box-open esms-oc-empty-icon"></i>
+                <p class="esms-oc-empty-text">No orders are currently available for cancellation.</p>
+            </div>
+        </div>
+
+        @* ── Cancelled / Re-Open orders card ── *@
+        <div id="ocCancelledSection" style="display:none;">
+            <div class="esms-oc-card esms-oc-card--table" id="ocReOpenTable" style="display:none;">
+                <div class="esms-oc-card-bar">
+                    <span class="esms-oc-bar-label">
+                        <i class="fa-solid fa-rotate-left me-1"></i>Cancelled orders — click Re-Open to restore
+                        <span class="esms-oc-badge esms-oc-badge--warn ms-2" id="ocReOpenCountBadge" style="display:none;"></span>
+                    </span>
+                    <div class="esms-oc-search-wrap">
+                        <i class="fa-solid fa-magnifying-glass esms-oc-search-icon"></i>
+                        <input type="text" id="txtOcReOpenSearch" class="esms-oc-search-input"
+                               placeholder="Search cancelled orders…" autocomplete="off"
+                               oninput="OcReOpenSearch(this.value)">
+                    </div>
+                </div>
+                <div class="table-wrapper fixed-height-table">
+                    <table id="reOpenTable" class="fixed-width-table table mb-0">
+                        <thead id="reOpenTable-header"></thead>
+                        <tbody id="reOpenTable-body"></tbody>
+                    </table>
+                </div>
+                <div class="paginator esms-oc-paginator px-3 py-2" id="paginator-reOpenTable"></div>
+            </div>
+
+            <div class="esms-oc-empty" id="ocReOpenEmptyState" style="display:none;">
+                <i class="fa-solid fa-circle-check esms-oc-empty-icon" style="color:#22c55e;"></i>
+                <p class="esms-oc-empty-text">No cancelled orders found.</p>
+            </div>
+        </div>
+    </div>
+
+    @* ── Detail View ── *@
+    <div id="ocDetailPage" class="esms-oc-section" style="display:none;">
+        <input type="hidden" id="hfOrderMasterCode" value="0" />
+
+        @* Order info strip *@
+        <div class="esms-oc-card">
+            <div class="esms-oc-card-bar">
+                <span class="esms-oc-bar-label">
+                    <i class="fa-solid fa-receipt me-1"></i>Order information
+                </span>
+            </div>
+            <div class="esms-oc-info-body">
+                <div class="esms-oc-info-grid">
+                    <div class="esms-oc-info-item">
+                        <span class="esms-oc-info-label esms-order-level-field-label">Order No</span>
+                        <input type="text" id="txtOcOrderNo" class="esms-oc-info-value esms-order-level-placeholder-long" readonly>
+                    </div>
+                    <div class="esms-oc-info-item">
+                        <span class="esms-oc-info-label">Client Name</span>
+                        <input type="text" id="txtOcClientName" class="esms-oc-info-value" readonly>
+                    </div>
+                    <div class="esms-oc-info-item">
+                        <span class="esms-oc-info-label esms-order-date-field-label">Order Date</span>
+                        <input type="text" id="txtOcOrderDate" class="esms-oc-info-value" readonly>
+                    </div>
+                    <div class="esms-oc-info-item">
+                        <span class="esms-oc-info-label esms-buyer-po-no-field-label">Buyer PO No</span>
+                        <input type="text" id="txtOcBuyerPONo" class="esms-oc-info-value" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Cancellation details *@
+        <div class="esms-oc-card">
+            <div class="esms-oc-card-bar">
+                <span class="esms-oc-bar-label">
+                    <i class="fa-solid fa-circle-xmark me-1"></i>Cancellation details
+                </span>
+            </div>
+            <div class="esms-oc-cancel-body">
+                <div class="row g-2 align-items-start">
+                    <div class="col-lg-5 col-md-6">
+                        <label for="txtOcReason" class="esms-oc-field-label">
+                            Reason <span class="text-danger">*</span>
+                        </label>
+                        <select id="txtOcReason" class="box_border form-control form-control-sm"></select>
+                    </div>
+                    <div class="col-lg-7 col-md-6">
+                        <label for="txtOcRemark" class="esms-oc-field-label">Remark</label>
+                        <input type="text" id="txtOcRemark" class="box_border form-control form-control-sm"
+                               autocomplete="off" maxlength="250" placeholder="Optional remark…">
+                    </div>
+                </div>
+                <div class="esms-oc-hint mt-2">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Enter <strong>New Cancel Qty</strong> for each line below. Quantity cannot exceed the pending amount.
+                </div>
+            </div>
+        </div>
+
+        @* Items grid *@
+        <div class="esms-oc-card esms-oc-card--table" id="ocItemTable">
+            <div class="esms-oc-card-bar">
+                <span class="esms-oc-bar-label">
+                    <i class="fa-solid fa-boxes-stacked me-1"></i>Items to cancel
+                </span>
+            </div>
+            <div class="table-wrapper fixed-height-table">
+                <table id="ocItemGrid" class="fixed-width-table table mb-0">
+                    <thead id="ocItemTable-header"></thead>
+                    <tbody id="ocItemTable-body"></tbody>
+                </table>
+            </div>
+            <div class="paginator esms-oc-paginator px-3 py-2" id="paginator-ocItemGrid"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="~/assets/js/blockui.js"></script>
+<script src="~/assets/script/OrderCancellation.js"></script>
+<script src="~/assets/js/filter.js"></script>

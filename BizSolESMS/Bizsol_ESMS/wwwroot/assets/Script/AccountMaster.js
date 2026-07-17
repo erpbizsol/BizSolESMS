@@ -152,9 +152,21 @@ $(document).ready(function () {
     });
     GetModuleMasterCode();
     ShowCityMasterlist();
+    GetClientTypeDropDownList();
     toggleClientType();
     $("#txtIsClient").change(function () {
         toggleClientType();
+    });
+    $('#txtClientType').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            $("#txtCreditDays").focus();
+        }
+    });
+    $('#txtCreditDays').on('keydown', function (e) {
+        if (e.key === "Enter") {
+            let firstInput = $('#tblorderbooking #Orderdata tr:first input').first();
+            firstInput.focus();
+        }
     });
     BrandList();
     $('.select-checkbox-multi').click(function () {
@@ -198,13 +210,14 @@ function ShowAccountMasterlist(Type) {
             if (response.length > 0) {
                 $("#txtAccounttable").show();
                 const StringFilterColumn = ["Account Name", "Display Name","Client Type"];
-                const NumericFilterColumn = [];
+                const NumericFilterColumn = ["Credit Days"];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
                 const hiddenColumns = ["Code", "DataImported","PAN No"];
                 const ColumnAlignment = {
+                    "Credit Days": 'right',
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',
                     "Qty In Box": 'right',
@@ -263,6 +276,7 @@ async function CreateItemMaster() {
     $("#txtPANNo").prop("disabled", false);
     $("#txtIsClient").prop("disabled", false);
     $("#txtIsVendor").prop("disabled", false);
+    $("#txtCreditDays").prop("disabled", false);
     disableFields(false);
     $("#txtheaderdiv").show();
   
@@ -273,9 +287,31 @@ function toggleClientType() {
     } else {
         $("#txtClientType").prop("disabled", true);  
         $("#txtClientType").val("");  
-
-     
     }
+}
+function GetClientTypeDropDownList() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowClientTypeMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            const select = $('#txtClientType');
+            select.empty().append('<option value="">Select Client Type</option>');
+            if (response.length > 0) {
+                response.forEach(item => {
+                    const clientType = item["Client Type"] || item.ClientType || "";
+                    if (clientType) {
+                        select.append(`<option value="${clientType}">${clientType}</option>`);
+                    }
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error loading client types:", error);
+        }
+    });
 }
 function BackMaster() {
     $("#txtListpage").show();
@@ -306,6 +342,7 @@ function BackMaster() {
     $("#txtPANNo").prop("disabled", false);
     $("#txtIsClient").prop("disabled", false);
     $("#txtIsVendor").prop("disabled", false);
+    $("#txtCreditDays").prop("disabled", false);
 }
 
 async function Edit(code) {
@@ -336,6 +373,7 @@ async function Edit(code) {
                     $("#txtPANNo").val(accountMaster.PANNo || "");
                     $("#txtIsMSME").val(accountMaster.IsMSME || "");
                     $("#txtClientType").val(accountMaster.ClientType);
+                    $("#txtCreditDays").val(accountMaster.CreditDays ?? accountMaster["Credit Days"] ?? "");
                     let codes = [];
 
                     if (Array.isArray(accountMaster.BrandName)) {
@@ -540,6 +578,7 @@ function ClearData() {
     $("#txtIsMSME").val("");
     $("#Orderdata").empty();
     $("#txtClientType").val("");
+    $("#txtCreditDays").val("");
 }
 function Save() {
     var codes = GetEmpCodes();
@@ -679,8 +718,8 @@ function Save() {
         PANNo: $("#txtPANNo").val(),
         IsClient: "Y", 
         IsVendor: "N", 
-        BrandMaster_Code: Brand
-       
+        BrandMaster_Code: Brand,
+        CreditDays: $("#txtCreditDays").val() || 0
     }];
     // Collect Address Details Data
     const addressData = [];
@@ -1272,6 +1311,8 @@ async function View(code) {
                     $("#txtAccountName").val(accountMaster.AccountName || "").prop("disabled", true);
                     $("#txtDisplayName").val(accountMaster.DisplayName || "").prop("disabled", true);
                     $("#txtPANNo").val(accountMaster.PANNo || "").prop("disabled", true);
+                    $("#txtClientType").val(accountMaster.ClientType || "").prop("disabled", true);
+                    $("#txtCreditDays").val(accountMaster.CreditDays ?? accountMaster["Credit Days"] ?? "").prop("disabled", true);
                     $("#txtIsMSME").val(accountMaster.IsMSME || "").prop("disabled", true);
                     $("#dropdownButton").val(accountMaster.BrandName || "").prop("disabled", true);
                     $("#txtIsClient").prop("disabled", true);
