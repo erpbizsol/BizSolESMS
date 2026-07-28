@@ -997,10 +997,6 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
 function validateBeforeSave() {
     applyPendingInvoiceDiscBulkSync();
     recalcInvoiceTotal();
-    if (!($('#txtInvVehicleNo').val() || '').trim()) {
-        toastr.error('Vehicle number is required.');
-        return false;
-    }
     var invDateStr = ($('#txtInvInvoiceDate').val() || '').trim();
     if (!invDateStr) {
         toastr.error('Invoice date is required.');

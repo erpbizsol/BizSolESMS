@@ -70,6 +70,31 @@ $(document).ready(function () {
         $(this).attr('inputmode', '');
     });
 });
+function SrEscHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function SrStatusBadge(status) {
+    var raw = String(status == null ? '' : status).trim();
+    var key = raw.toLowerCase();
+    var cls = 'od-status-badge--default';
+    var icon = 'fa-circle-info';
+
+    if (key === 'pending scaning' || key === 'pending scanning' || key === 'pending') {
+        cls = 'od-status-badge--scanning';
+        icon = 'fa-barcode';
+    } else if (key === 'invoice pending' || key === 'in progress' || key === 'partial') {
+        cls = 'od-status-badge--invoice-pending';
+        icon = 'fa-clock';
+    } else if (key === 'invoice generated' || key === 'completed' || key === 'complete') {
+        cls = 'od-status-badge--invoice-generated';
+        icon = 'fa-circle-check';
+    }
+
+    if (!raw) return "<span class='od-status-badge od-status-badge--default'>—</span>";
+    return "<span class='od-status-badge " + cls + "'><i class='fa-solid " + icon + "'></i>" + SrEscHtml(raw) + "</span>";
+}
+
 function ShowSalesReturnMasterlist(Type) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowSalesReturnMaster`,
@@ -80,7 +105,7 @@ function ShowSalesReturnMasterlist(Type) {
         success: function (response) {
             if (response.length > 0) {
                 $("#txtordertable").show();
-                const StringFilterColumn = ["Client Name","Order No"];
+                const StringFilterColumn = ["Client Name","Order No","Status"];
                 const NumericFilterColumn = ["Return Item Qty"];
                 const DateFilterColumn = ["Return Date"];
                 const Button = false;
@@ -90,10 +115,14 @@ function ShowSalesReturnMasterlist(Type) {
                 const ColumnAlignment = {
                     "Return Item Qty":"right"
                 };
-                const updatedResponse = response.map(item => ({
-                    ...item, Action: `<button class="btn btn-success icon-height mb-1"  title="sales return validation" onclick="StartSalesValidation('${item.Code}')"><i class="fa fa-hourglass-start"></i></button>
-                    `
-                }));
+                const updatedResponse = response.map(item => {
+                    const statusRaw = item.Status != null ? item.Status : '';
+                    const isCompleted = String(statusRaw).trim().toLowerCase() === 'completed';
+                    const actionBtn = isCompleted
+                        ? `<button class="btn btn-primary icon-height mb-1" title="View" onclick="ViewSalesValidation('${item.Code}')"><i class="fa fa-eye"></i></button>`
+                        : `<button class="btn btn-success icon-height mb-1" title="sales return validation" onclick="StartSalesValidation('${item.Code}')"><i class="fa fa-hourglass-start"></i></button>`;
+                    return { ...item, Status: SrStatusBadge(statusRaw), Action: actionBtn };
+                });
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 
             } else {
@@ -492,6 +521,8 @@ async function ImportExcel() {
     }
     $("#txtListpage").hide();
     $("#txtCreatepage").hide();
+    $("#txtManualPage").hide();
+    $("#txtheaderdivManual").hide();
     $("#txtImportPage").show();
     $("#txtheaderdiv2").show();
 }
@@ -501,6 +532,8 @@ function BackImport() {
     $("#txtImportPage").hide();
     $("#ImportTable").hide();
     $("#txtheaderdiv2").hide();
+    $("#txtManualPage").hide();
+    $("#txtheaderdivManual").hide();
     $("#txtSalesValidate").hide();
     ClearDataImport();
 }
@@ -518,6 +551,7 @@ function BackMaster() {
     $("#txtSalesValidate").hide();
     $("#SalesTable").hide();
     ClearData();
+    SetSalesValidationViewMode(false);
 }
 function ClearData() {
     $('#txtSalesOrderNo').val("");
@@ -527,6 +561,14 @@ function ClearData() {
     $('#txtSalesReason').val("0");
     $("#txthfCode").val("0");
     $("#SalesTable-body").empty();
+}
+function SetSalesValidationViewMode(isView) {
+    $("#txtScanProduct").prop("disabled", isView);
+    $("#txtIsManual").prop("disabled", isView);
+    if (isView) {
+        $("#txtIsManual").prop("checked", false);
+        $('#txtScanProduct').attr('inputmode', '');
+    }
 }
 function convertDateFormat1(dateString) {
     const [day, month, year] = dateString.split('/');
@@ -732,16 +774,21 @@ function validateCSV(event, callback) {
 function disableFields(disabled) {
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", disabled).css("pointer-events", disabled ? "none" : "auto");
 }
-async function StartSalesValidation(Code) {
-    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+async function ViewSalesValidation(Code) {
+    await StartSalesValidation(Code, 'VIEW');
+}
+async function StartSalesValidation(Code, mode = 'NEW') {
+    const isView = String(mode || 'NEW').toUpperCase() === 'VIEW';
+    const { hasPermission, msg } = await CheckOptionPermission(isView ? 'View' : 'New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
-    $("#tab1").text("NEW");
+    $("#tab1").text(isView ? "View" : "NEW");
     $("#txtListpage").hide();
     $("#txtSalesValidate").show();
     $("#txtheaderdiv").show();
+    SetSalesValidationViewMode(isView);
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/ShowSalesReturnMasterDetail?Code=${Code}`,
         type: 'GET',
@@ -794,8 +841,9 @@ async function StartSalesValidation(Code) {
                         <input type="text" id="txtScanQty_${item.SalesReturnDetailMaster_Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Recived Qty"] = `
                         <input type="text" id="txtRecivedQty_${item.SalesReturnDetailMaster_Code}" value="${item["Recived Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Recived Qty..">`,
-                            renamedItem["Reason"]= `<select onchange="UpdateReason(this);" value="${item.ReasonMaster_Code}" id="txtReason_${item.SalesReturnDetailMaster_Code}" class="txtReason box_border form-control form-control-sm">
-                                </select>`;
+                            renamedItem["Reason"]= isView
+                                ? `<select disabled value="${item.ReasonMaster_Code}" id="txtReason_${item.SalesReturnDetailMaster_Code}" class="txtReason box_border form-control form-control-sm"></select>`
+                                : `<select onchange="UpdateReason(this);" value="${item.ReasonMaster_Code}" id="txtReason_${item.SalesReturnDetailMaster_Code}" class="txtReason box_border form-control form-control-sm"></select>`;
                         return renamedItem;
                     });
                     BizsolCustomFilterGrid.CreateDataTable("SalesTable-header", "SalesTable-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);

@@ -235,34 +235,6 @@
         color: white;
     }
 
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
-        display: none;
-    }
-
-    .toast-container {
-        position: fixed;
-        top: 45%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #d35950;
-        color: white;
-        padding: 35px 55px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        display: none;
-        z-index: 10000;
-        font-size: 18px;
-        text-align: center;
-        opacity: 0;
-        transition: opacity 0.3s ease-in-out;
-    }
     /* End Active tab styles */
 </style>
 
@@ -274,29 +246,39 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-3 col-sm-6">
-                                <label class="col-form-label-sm fw-bold">Date<span class="text-danger">*</span></label>
-                                <input disabled type="txtDate" id="txtDate" class="form-control form-control-sm box_border" autocomplete="off">
+                                <label for="txtDate" class="col-form-label-sm fw-bold">Date<span class="text-danger">*</span></label>
+                                <input type="text" id="txtDate" class="form-control form-control-sm box_border" autocomplete="off" disabled>
                             </div>
 
                             <div class="col-md-3 col-sm-6">
-                                <label class="col-form-label-sm fw-bold">Client Name<span class="text-danger">*</span></label>
-                                <select id="txtVendorName" class="form-control form-control-sm box_border">
+                                <label for="txtClientName" class="col-form-label-sm fw-bold">Client Name<span class="text-danger">*</span></label>
+                                <select id="txtClientName" class="form-control form-control-sm box_border">
                                 </select>
                             </div>
 
                             <div class="col-md-3 col-sm-6">
-                                <label class="col-form-label-sm fw-bold">Address<span class="text-danger">*</span></label>
+                                <label for="txtAddress" class="col-form-label-sm fw-bold">Address<span class="text-danger">*</span></label>
                                 <input type="text" id="txtAddress" class="form-control form-control-sm box_border" placeholder="Address.." autocomplete="off" disabled>
                             </div>
 
                             <div class="col-md-3 col-sm-6">
-                                <label class="col-form-label-sm fw-bold esms-order-level-field-label">Order No<span class="text-danger">*</span></label>
+                                <label for="txtOrderNo" class="col-form-label-sm fw-bold esms-order-level-field-label">Order No<span class="text-danger">*</span></label>
                                 <select id="txtOrderNo" class="form-control form-control-sm box_border">
                                 </select>
                             </div>
                         </div>
 
                         <div class="row mt-2">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtWarehouse" class="col-form-label-sm fw-bold">Warehouse<span class="text-danger">*</span></label>
+                                <select id="txtWarehouse" class="form-control form-control-sm box_border">
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtReason" class="col-form-label-sm fw-bold">Reason<span class="text-danger">*</span></label>
+                                <select id="txtReason" class="form-control form-control-sm box_border">
+                                </select>
+                            </div>
                             <div class="col-md-3 col-sm-6">
                                 <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
                                 <audio id="BoxNoVoice" style="display: none;"><source src="~/assets/audio/BoxNoVoice.mp3" type="audio/mpeg" /></audio>
@@ -305,7 +287,7 @@
                             </div>
                             <div class="col-md-3 col-sm-6">
                                 <label for="txtPackedBy" class="col-form-label-sm fw-bold">Scan By<span class="text-danger">*</span></label>
-                                <input type="text" id="txtPackedBy" disabled class="box_border form-control form-control-sm" autocomplete="off" maxlength="50" placeholder="Packed By..">
+                                <input type="text" id="txtPackedBy" class="box_border form-control form-control-sm" autocomplete="off" maxlength="50" placeholder="Packed By.." disabled>
                             </div>
                         </div>
                     </div>
@@ -314,13 +296,13 @@
         </div>
 
     </div>
-    <div class="  text-end col-md-12" id="txtshow" style="display:none;">
+    <div class="text-end col-md-12" id="txtshow" style="display:none;">
         <label></label>
-        <button type="button" class="btn btn-primary btn-height" title="Save All" id="txtSaveAll">Save All</button>
+        <button type="button" class="btn btn-primary btn-height" title="Save All" id="txtSaveAll">Save</button>
     </div>
-    <div class="  text-end col-md-12" id="txtshowa" style="display:none;">
+    <div class="text-end col-md-12" id="txtshowa" style="display:none;">
         <label></label>
-        <button type="button" class="btn btn-primary btn-height" title="Save All" id="txtSaveAlls">Save All</button>
+        <button type="button" class="btn btn-primary btn-height" title="Save All" id="txtSaveAlls">Save</button>
     </div>
     <div class="card-body mt-2" id="DataTable">
         <div class="table-wrapper fixed-height-table">
@@ -340,15 +322,4 @@
 <div id="overlay" class="overlay"></div>
 <div id="toast" class="toast-container"></div>
 <script src="~/assets/js/filter.js"></script>
-<script src="~/assets/script/manualsalesreturn.js"></script>
-
-<script>
-    const tabs = document.querySelectorAll('.nav-item-btn');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-        });
-    });
-
-</script>
+<script src="~/assets/Script/ManualSalesReturn.js"></script>

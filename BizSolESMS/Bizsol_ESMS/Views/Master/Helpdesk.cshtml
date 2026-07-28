@@ -4,9 +4,394 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="~/assets/script/Helpdesk.js"></script>
+<style>
+    .hd-page {
+        --hd-green: #16a34a;
+        --hd-green-soft: #dcfce7;
+        --hd-amber: #d97706;
+        --hd-amber-soft: #fef3c7;
+        --hd-red: #dc2626;
+        --hd-red-soft: #fee2e2;
+        --hd-ink: #1f2937;
+        --hd-muted: #6b7280;
+        --hd-line: #e5e7eb;
+        --hd-surface: #ffffff;
+        --hd-bg: #f3f4f6;
+    }
+
+    .hd-page .hd-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+        padding: 14px 16px;
+        background: var(--hd-surface);
+        border: 1px solid var(--hd-line);
+        border-radius: 10px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .hd-page .hd-toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .hd-page .hd-toolbar-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: linear-gradient(145deg, #22c55e, #15803d);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 10px rgba(22, 163, 74, 0.25);
+    }
+
+    .hd-page .hd-toolbar h5 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--hd-ink);
+        letter-spacing: -0.01em;
+    }
+
+    .hd-page .hd-toolbar p {
+        margin: 2px 0 0;
+        font-size: 0.78rem;
+        color: var(--hd-muted);
+    }
+
+    .hd-page .hd-create-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 8px !important;
+        font-weight: 600;
+        padding: 0.4rem 1rem !important;
+        box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);
+    }
+
+    .hd-page .hd-table-card {
+        background: var(--hd-surface);
+        border: 1px solid var(--hd-line);
+        border-radius: 10px;
+        padding: 8px 10px 4px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+    }
+
+    .hd-page #txtTable .table thead th {
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
+        color: #374151 !important;
+        white-space: nowrap;
+    }
+
+    .hd-page #txtTable .table tbody td {
+        vertical-align: middle !important;
+        font-size: 0.84rem;
+        color: #374151;
+        padding-top: 0.55rem !important;
+        padding-bottom: 0.55rem !important;
+    }
+
+    .hd-page #txtTable .table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    /* Status pills — high specificity so theme button rules cannot crush them */
+    .hd-page .hd-status,
+    #txtTable .hd-status {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        min-width: 92px !important;
+        width: auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-width: none !important;
+        padding: 6px 14px !important;
+        margin: 0 !important;
+        border: 0 !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+        letter-spacing: 0.2px !important;
+        white-space: nowrap !important;
+        box-shadow: none !important;
+        text-transform: none !important;
+        vertical-align: middle;
+    }
+
+    .hd-page .hd-status::before,
+    #txtTable .hd-status::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0;
+    }
+
+    .hd-page .hd-status-pending,
+    #txtTable .hd-status-pending {
+        background: #fef3c7 !important;
+        color: #92400e !important;
+        cursor: pointer;
+    }
+
+    .hd-page .hd-status-pending:hover,
+    #txtTable .hd-status-pending:hover {
+        background: #fde68a !important;
+    }
+
+    .hd-page .hd-status-done,
+    #txtTable .hd-status-done {
+        background: #dcfce7 !important;
+        color: #166534 !important;
+        cursor: default;
+    }
+
+    .hd-page .hd-action-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .hd-page .hd-action-btn {
+        width: 30px !important;
+        height: 28px !important;
+        min-height: 28px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 6px !important;
+        border: none !important;
+        color: #fff !important;
+        cursor: pointer;
+    }
+
+    .hd-page .hd-action-edit {
+        background: #22c55e !important;
+    }
+
+    .hd-page .hd-action-view {
+        background: #0ea5e9 !important;
+    }
+
+    .hd-page .hd-action-attach {
+        background: #7c3aed !important;
+    }
+
+    .hd-attach-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 14px;
+    }
+
+    .hd-attach-item {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .hd-attach-name {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+        word-break: break-word;
+    }
+
+    .hd-attach-img {
+        max-width: 100%;
+        max-height: 220px;
+        border-radius: 8px;
+        object-fit: contain;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        cursor: zoom-in;
+    }
+
+    #hdAttachmentModal .modal-dialog {
+        max-width: 820px;
+    }
+
+    #hdAttachmentModal .modal-header {
+        background: linear-gradient(90deg, #ecfdf5, #fff);
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    #hdAttachmentModal .modal-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .hd-page .hd-ticket-no {
+        font-weight: 600;
+        color: #0f766e;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .hd-page .hd-form-card {
+        background: var(--hd-surface);
+        border: 1px solid var(--hd-line);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    }
+
+    .hd-page .hd-form-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 18px;
+        background: linear-gradient(90deg, #ecfdf5, #fff);
+        border-bottom: 1px solid var(--hd-line);
+    }
+
+    .hd-page .hd-form-head .hd-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(145deg, #22c55e, #15803d);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .hd-page .hd-form-head h6 {
+        margin: 0;
+        font-weight: 700;
+        color: var(--hd-ink);
+        font-size: 1rem;
+    }
+
+    .hd-page .hd-form-head p {
+        margin: 3px 0 0;
+        font-size: 0.76rem;
+        color: var(--hd-muted);
+    }
+
+    .hd-page .hd-form-body {
+        padding: 18px;
+        background: var(--hd-bg);
+    }
+
+    .hd-page .hd-field label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.8rem;
+        font-weight: 650;
+        color: #374151;
+    }
+
+    .hd-page .hd-field .form-control,
+    .hd-page .hd-field .box_border {
+        border-radius: 8px;
+        border-color: #d1d5db;
+        background: #fff;
+    }
+
+    .hd-page .hd-field .form-control:focus,
+    .hd-page .hd-field select:focus {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 0.15rem rgba(34, 197, 94, 0.18);
+    }
+
+    .hd-page #txtDescription {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .hd-page .hd-upload {
+        position: relative;
+        border: 1.5px dashed #cbd5e1;
+        border-radius: 10px;
+        background: #fff;
+        padding: 22px 14px;
+        text-align: center;
+        transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+        cursor: pointer;
+    }
+
+    .hd-page .hd-upload:hover {
+        border-color: #22c55e;
+        background: #f0fdf4;
+        box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.15);
+    }
+
+    .hd-page .hd-upload input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    .hd-page .hd-upload-icon {
+        width: 44px;
+        height: 44px;
+        margin: 0 auto 10px;
+        border-radius: 50%;
+        background: #dcfce7;
+        color: #15803d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+    }
+
+    .hd-page .hd-upload-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--hd-ink);
+        margin: 0;
+    }
+
+    .hd-page .hd-upload-hint {
+        font-size: 0.74rem;
+        color: var(--hd-muted);
+        margin: 4px 0 0;
+    }
+
+    .hd-page #txtFilesInfo {
+        display: block;
+        margin-top: 8px;
+        font-size: 0.76rem;
+        color: var(--hd-muted);
+        word-break: break-word;
+    }
+
+    .hd-page #txtFilesInfo.has-files {
+        color: #15803d;
+        font-weight: 600;
+    }
+
+    .hd-page .hd-req {
+        color: #dc2626;
+    }
+</style>
+
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
-    <div class="container-fluid" style="">
-        <div class="fix-header">
+    <div class="container-fluid">
+        <div class="form-header">
             <div class="row">
                 <div class="col-md-6 col-6">
                     <div class="icon-tab">
@@ -21,52 +406,82 @@
         </div>
     </div>
 </section>
-<div class="container">
+
+<div class="container hd-page">
     <div class="mt-3" id="txtListpage">
-        <div class="row">
-            <div class="col-sm-12 text-end">
-                <label></label>
-                <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="Create()">CREATE NEW</button>
+        <div class="hd-toolbar">
+            <div class="hd-toolbar-left">
+                <span class="hd-toolbar-icon"><i class="fa-solid fa-headset"></i></span>
+                <div>
+                    <h5>Helpdesk Tickets</h5>
+                    <p>Raise and track support queries for application pages</p>
+                </div>
             </div>
+            <button type="button" class="btn btn-success btn-height hd-create-btn" title="CREATE NEW" onclick="Create()">
+                <i class="fa-solid fa-plus"></i> CREATE NEW
+            </button>
         </div>
-        <div class="card-body mt-2" id="txtTable">
+
+        <div class="hd-table-card card-body" id="txtTable">
             <div class="table-wrapper fixed-height-table">
                 <table id="table" class="fixed-width-table table">
-                    <thead id="table-header">
-                    </thead>
-                    <tbody id="table-body">
-                    </tbody>
+                    <thead id="table-header"></thead>
+                    <tbody id="table-body"></tbody>
                 </table>
             </div>
-            <!-- Paginator -->
-            <div class="paginator" id="paginator-table">
-            </div>
+            <div class="paginator" id="paginator-table"></div>
         </div>
     </div>
+
     <div id="txtCreatepage" style="display:none;">
-        <div class="card shadow-sm" style="background-color:#e9e9ef">
-            <div class="tabs">
-                <div class="row p-1">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-3 col-sm-6">
-                                <input type="hidden" id="hfCode" value="0" />
-                                <label for="ddlPage" class="col-form-label-sm fw-bold">Page</label> <span class="text-danger">*</span>
-                                <select id="ddlPage" class="box_border form-control form-control-sm">
-                                </select>
-                            </div>
-                            <div class="col-md-9 col-sm-6">
-                                <label for="txtDescription" class="col-form-label-sm fw-bold">
-                                    Query Description
-                                </label> <span class="text-danger">*</span>
-                                <textarea id="txtDescription" class="box_border form-control form-control-sm" autocomplete="off" maxlength="500" placeholder="Please Enter Description" ></textarea>
-                            </div>
+        <div class="hd-form-card mt-3">
+            <div class="hd-form-head">
+                <span class="hd-icon"><i class="fa-solid fa-ticket"></i></span>
+                <div>
+                    <h6>Raise Support Ticket</h6>
+                    <p>Select the page, describe the issue, and attach files if needed</p>
+                </div>
+            </div>
+            <div class="hd-form-body">
+                <input type="hidden" id="hfCode" value="0" />
+                <div class="row g-3">
+                    <div class="col-md-4 col-sm-12 hd-field">
+                        <label for="ddlPage">Page <span class="hd-req">*</span></label>
+                        <select id="ddlPage" class="box_border form-control form-control-sm"></select>
+                    </div>
+                    <div class="col-md-8 col-sm-12 hd-field">
+                        <label for="txtDescription">Query Description <span class="hd-req">*</span></label>
+                        <textarea id="txtDescription" class="box_border form-control form-control-sm" autocomplete="off" maxlength="500" placeholder="Describe your issue clearly..."></textarea>
+                    </div>
+                    <div class="col-md-12 hd-field">
+                        <label for="txtFiles">Attachments</label>
+                        <div class="hd-upload">
+                            <input type="file" id="txtFiles" multiple />
+                            <div class="hd-upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                            <p class="hd-upload-title">Click to upload or drag files here</p>
+                            <p class="hd-upload-hint">You can select multiple files</p>
                         </div>
+                        <small id="txtFilesInfo"></small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script src="~/assets/js/filter.js"></script>
 
+<div class="modal fade" id="hdAttachmentModal" tabindex="-1" aria-labelledby="hdAttachmentTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hdAttachmentTitle">Attachments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="hdAttachmentBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/filter.js"></script>

@@ -287,12 +287,10 @@ wwwroot\assets\Script\common.js
 wwwroot\assets\Script\CompanyMaster.js
 wwwroot\assets\Script\DailyReport.js
 wwwroot\assets\Script\Dashbord.js
-wwwroot\assets\Script\Dispatch.js
 wwwroot\assets\Script\DispatchBoxValidation.js
 wwwroot\assets\Script\DispatchReport.js
 wwwroot\assets\Script\EmployeeMaster.js
 wwwroot\assets\Script\GroupMaster.js
-wwwroot\assets\Script\Helpdesk.js
 wwwroot\assets\Script\HolidayMaster.js
 wwwroot\assets\Script\HsnMaster.js
 wwwroot\assets\Script\InvoiceMaster.js
@@ -309,7 +307,6 @@ wwwroot\assets\Script\ManualSalesReturn.js
 wwwroot\assets\Script\MRNMaster.js
 wwwroot\assets\Script\OrderCancellation.js
 wwwroot\assets\Script\OrderConformation.js
-wwwroot\assets\Script\OrderDispatch.js
 wwwroot\assets\Script\OrderMaster.js
 wwwroot\assets\Script\OutstandingReport.js
 wwwroot\assets\Script\PageSizeConfiguration.js
@@ -319,6 +316,7 @@ wwwroot\assets\Script\PrefixConfiguration.js
 wwwroot\assets\Script\ProductEnquiry.js
 wwwroot\assets\Script\ProofOfDelivery.js
 wwwroot\assets\Script\SaleLossReport.js
+wwwroot\assets\Script\SalesReturnManual.js
 wwwroot\assets\Script\SalesReturnMaster.js
 wwwroot\assets\Script\StateMaster.js
 wwwroot\assets\Script\StockAudit.js
@@ -392,3 +390,6 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\assets\Script\Dispatch.js
+wwwroot\assets\Script\Helpdesk.js
+wwwroot\assets\Script\OrderDispatch.js

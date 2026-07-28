@@ -12,6 +12,7 @@ const API_SAVE_MANUAL_RATE = '/api/ScanToBill/SaveManualRateAndQtySacnToBill';
 const API_DELETE_DISPATCH_QTY = '/api/ScanToBill/DeleteItemFormScanToBill';
 const API_UPDATE_DISPATCH_MRP = '/api/OrderMaster/UpdateDispatchMRPByItemAsync';
 const API_ADD_DISPATCH_ITEM = '/api/ScanToBill/AddItemScanToBill';
+const OD_DIRECT_BILLING_INVOICE_NO = 'Direct Billing';
 
 let G_OdDispatchMaster_Code = 0;
 let G_OdDetailRows = [];
@@ -21,6 +22,7 @@ let G_OdItemList = [];
 let G_OdAddItemSelect2Ready = false;
 let G_OdLastScannedLineCode = 0;
 let G_OdScanBusy = false;
+let G_OdViewMode = false;
 
 $(document).ready(function () {
     $('#ERPHeading').text('Scan To Bill');
@@ -33,6 +35,9 @@ $(document).ready(function () {
     $('#btnOdCreateNew').on('click', OdOpenCreatePage);
     $('#btnOdMarkComplete').on('click', OdMarkCompleteFromPage);
     $('#btnOdAddItem').on('click', OdOpenAddItemModal);
+    if (typeof initInvoicePrintModal === 'function') {
+        initInvoicePrintModal();
+    }
     $('#txtOdClientName').on('change', OdOnClientSelected);
     $('#ddlOdClientName').on('change', function () {
         $('#hfOdClientCode').val($(this).val() || '0');
@@ -73,7 +78,7 @@ $(document).ready(function () {
     OdSetupEnterNavigation();
 });
 function OdGetDetailFocusOrder() {
-    var order = ['txtOdOrderNo'];
+    var order = [];
     if ($('#chkOdManualClient').is(':checked')) {
         order.push('txtOdClientName');
     } else {
@@ -181,6 +186,7 @@ function GetOdModuleMasterCode() {
     }
 }
 function OdChangeBoxNo(delta) {
+    if (G_OdViewMode) return;
     var input = document.getElementById('txtOdBoxNo');
     if (!input) return;
     var value = parseInt(input.value, 10) || 1;
@@ -316,7 +322,7 @@ function OdFillHeaderFromResponse(header) {
         $('#hfOdOrderCode').val(header.Code);
     }
 
-    $('#txtOdOrderNo').val(header.OrderNo || header.InvoiceNo || $('#txtOdOrderNo').val() || '');
+    $('#txtOdOrderNo').val(header.OrderNo || header.InvoiceNo || header['Invoice No'] || OD_DIRECT_BILLING_INVOICE_NO);
 
     var clientName = header.ClientName || header.AccountName || header['Client Name'] || '';
     var isManual = header.Ismanual === 'Y' || header.IsManual === 'Y' || header.Ismanual === true;
@@ -352,9 +358,11 @@ function OdFillHeaderFromResponse(header) {
 
 function OdApplyHeaderFieldLock() {
     var locked = parseInt(G_OdDispatchMaster_Code, 10) > 0;
-    $('#txtOdOrderNo, #txtOdClientName').prop('disabled', locked);
+    $('#txtOdOrderNo').prop('disabled', true);
+    $('#txtOdClientName').prop('disabled', locked);
     $('#chkOdManualClient').prop('disabled', locked);
     $('#ddlOdClientName, #ddlOdWarehouse').prop('disabled', locked);
+    $('#txtOdPackedBy').prop('disabled', true);
 
     if ($('#ddlOdClientName').data('select2')) {
         $('#ddlOdClientName').trigger('change.select2');
@@ -380,11 +388,6 @@ function OdBackToList() {
     OdLoadList();
 }
 function OdValidateOrderBillFields(requireScan) {
-    if (!$('#txtOdOrderNo').val().trim()) {
-        toastr.error('Please enter Invoice No.');
-        $('#txtOdOrderNo').focus();
-        return false;
-    }
     if ($('#chkOdManualClient').is(':checked')) {
         if (!$('#txtOdClientName').val().trim()) {
             toastr.error('Please enter Client Name.');
@@ -461,13 +464,17 @@ function OdLoadDetailData(code, highlightLineCode) {
             G_OdDetailRows = details;
 
             var hl = highlightLineCode || G_OdLastScannedLineCode;
-            if (hl) {
+            if (hl && !G_OdViewMode) {
                 var item = details.find(function (r) { return String(r.Code) === String(hl); });
                 if (item) OdShowScannedBanner(item);
             }
 
             OdRenderItemGrid(details, hl);
-            setTimeout(function () { $('#txtOdScanProduct').focus(); }, 250);
+            if (G_OdViewMode) {
+                OdApplyViewModeChrome();
+            } else {
+                setTimeout(function () { $('#txtOdScanProduct').focus(); }, 250);
+            }
         },
         error: function () {
             unblockUI();
@@ -476,6 +483,37 @@ function OdLoadDetailData(code, highlightLineCode) {
         }
     });
 }
+function OdStatusBadge(status) {
+    var raw = String(status == null ? '' : status).trim();
+    var key = raw.toLowerCase();
+    var cls = 'od-status-badge--default';
+    var icon = 'fa-circle-info';
+
+    if (key === 'pending scaning' || key === 'pending scanning') {
+        cls = 'od-status-badge--scanning';
+        icon = 'fa-barcode';
+    } else if (key === 'invoice pending') {
+        cls = 'od-status-badge--invoice-pending';
+        icon = 'fa-clock';
+    } else if (key === 'invoice generated') {
+        cls = 'od-status-badge--invoice-generated';
+        icon = 'fa-circle-check';
+    }
+
+    if (!raw) return "<span class='od-status-badge od-status-badge--default'>—</span>";
+    return "<span class='od-status-badge " + cls + "'><i class='fa-solid " + icon + "'></i>" + OdEscHtml(raw) + "</span>";
+}
+
+function OdIsPendingScaning(status) {
+    var key = String(status == null ? '' : status).trim().toLowerCase();
+    return key === 'pending scaning' || key === 'pending scanning';
+}
+
+function OdIsInvoiceGenerated(status) {
+    var key = String(status == null ? '' : status).trim().toLowerCase();
+    return key === 'invoice generated';
+}
+
 function OdRenderList(rows) {
     var $tableWrap = $('#odTableWrap');
     var $empty = $('#odEmptyState');
@@ -494,22 +532,45 @@ function OdRenderList(rows) {
 
     var updated = rows.map(function (item) {
         var dispatchCode = item.Code || 0;
-        var orderNo = OdEscAttr(item['Order No'] || item.OrderNo || item.InvoiceNo || '');
-        return Object.assign({}, item, {
-            Action: '<button class="btn btn-sm btn-primary esms-oc-action-btn icon-height mb-1 me-1" title="Edit" onclick="OdOpenDispatch(' + dispatchCode + ')">'
+        var invoiceNo = item['Invoice No'] || item.InvoiceNo || item['Order No'] || item.OrderNo || '';
+        var invoiceNoAttr = OdEscAttr(invoiceNo);
+        var statusRaw = item.Status != null ? item.Status : '';
+        var canEditComplete = OdIsPendingScaning(statusRaw);
+
+        var actions = '<div class="od-list-actions">';
+        if (canEditComplete) {
+            actions += '<button type="button" class="btn btn-sm btn-primary esms-oc-action-btn od-list-action-btn icon-height" title="Edit" onclick="OdOpenDispatch(' + dispatchCode + ')">'
                 + '<i class="fa-solid fa-pencil"></i></button>'
-                + '<button class="btn btn-sm btn-danger icon-height mb-1 me-1" title="Delete" onclick="OdDeleteDispatch(' + dispatchCode + ',\'' + orderNo + '\',this)">'
+                + '<button type="button" class="btn btn-sm btn-danger od-list-action-btn icon-height" title="Delete" onclick="OdDeleteDispatch(' + dispatchCode + ',\'' + invoiceNoAttr + '\',this)">'
                 + '<i class="fa-regular fa-circle-xmark"></i></button>'
-                + '<button class="btn btn-sm btn-primary icon-height mb-1" title="Mark As Complete" onclick="OdMarkComplete(' + dispatchCode + ')">'
-                + '<i class="fa fa-check"></i></button>'
+                + '<button type="button" class="btn btn-sm btn-success od-list-action-btn icon-height" title="Mark As Complete" onclick="OdMarkComplete(' + dispatchCode + ')">'
+                + '<i class="fa fa-check"></i></button>';
+        } else {
+            actions += '<button type="button" class="btn btn-sm btn-info od-list-action-btn icon-height" title="View" onclick="OdViewDispatch(' + dispatchCode + ')">'
+                + '<i class="fa-solid fa-eye"></i></button>';
+            if (OdIsInvoiceGenerated(statusRaw)) {
+                actions += '<button type="button" class="btn btn-sm btn-success od-list-action-btn icon-height" title="Download Invoice" onclick="invoiceMasterOpenPrint(\'' + dispatchCode + '\')">'
+                    + '<i class="fa-solid fa fa-download"></i></button>';
+            }
+        }
+        actions += '</div>';
+
+        var row = Object.assign({}, item, {
+            'Invoice No': invoiceNo,
+            Status: OdStatusBadge(statusRaw),
+            Action: actions
         });
+        // Avoid duplicate Order No column in Direct Billing list
+        delete row['Order No'];
+        delete row.OrderNo;
+        return row;
     });
 
     var hidden = UserType === 'A' ? ['Code', 'AccountMaster_Code'] : ['Code', 'AccountMaster_Code', 'Order Date'];
     BizsolCustomFilterGrid.CreateDataTable(
         'table-header', 'table-body', updated,
         false, [],
-        ['Challan No', 'Client Name', 'Vehicle No', 'Order No', 'BuyerPO No'],
+        ['Challan No', 'Client Name', 'Vehicle No', 'Invoice No', 'BuyerPO No', 'Status'],
         ['TOQ', 'TBQ'],
         [], [], hidden,
         { TOQ: 'right', TBQ: 'right' }
@@ -529,6 +590,7 @@ async function OdOpenCreatePage() {
 }
 
 async function OdOpenDispatch(dispatchMasterCode) {
+    G_OdViewMode = false;
     G_OdDispatchMaster_Code = parseInt(dispatchMasterCode, 10) || 0;
     G_OdLastScannedLineCode = 0;
     $('#hfOdDispatchCode').val(G_OdDispatchMaster_Code);
@@ -538,20 +600,72 @@ async function OdOpenDispatch(dispatchMasterCode) {
 
     OdShowDetailPage(G_OdDispatchMaster_Code === 0 ? 'NEW DISPATCH' : 'DISPATCH');
     $('#btnOdSave').show();
-    $('#btnOdMarkComplete').hide();
+    $('#btnOdMarkComplete').css('display', 'inline-flex');
+    OdApplyEditModeChrome();
 
     if (G_OdDispatchMaster_Code === 0) {
         OdResetDetailFields();
+        $('#txtOdOrderNo').val(OD_DIRECT_BILLING_INVOICE_NO);
         $('#txtOdPackedBy').val(G_UserName || '');
         OdApplyHeaderFieldLock();
-        setTimeout(function () { $('#txtOdOrderNo').focus(); }, 200);
+        setTimeout(function () {
+            if ($('#chkOdManualClient').is(':checked')) {
+                $('#txtOdClientName').focus();
+            } else {
+                $('#ddlOdClientName').focus();
+            }
+        }, 200);
         return;
     }
 
     OdApplyHeaderFieldLock();
     OdLoadDetailData(G_OdDispatchMaster_Code);
 }
+
+async function OdViewDispatch(dispatchMasterCode) {
+    var code = parseInt(dispatchMasterCode, 10) || 0;
+    if (!code) {
+        toastr.error('Invalid dispatch record.');
+        return;
+    }
+
+    var perm = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+    if (!perm.hasPermission) { toastr.error(perm.msg); return; }
+
+    G_OdViewMode = true;
+    G_OdDispatchMaster_Code = code;
+    G_OdLastScannedLineCode = 0;
+    $('#hfOdDispatchCode').val(G_OdDispatchMaster_Code);
+
+    OdShowDetailPage('VIEW');
+    $('#btnOdSave').hide();
+    $('#btnOdMarkComplete').hide();
+    OdApplyViewModeChrome();
+    OdLoadDetailData(G_OdDispatchMaster_Code);
+}
+
+function OdApplyEditModeChrome() {
+    $('#btnOdAddItem').show();
+    $('#txtOdScanProduct, #txtOdBoxNo').prop('disabled', false);
+    $('#txtOdOrderNo, #txtOdPackedBy').prop('disabled', true);
+    $('.clsbox button').prop('disabled', false);
+    OdApplyHeaderFieldLock();
+}
+
+function OdApplyViewModeChrome() {
+    $('#btnOdAddItem').hide();
+    $('#btnOdMarkComplete').hide();
+    $('#txtOdOrderNo, #txtOdClientName, #txtOdScanProduct, #txtOdBoxNo').prop('disabled', true);
+    $('#txtOdPackedBy').prop('disabled', true);
+    $('#chkOdManualClient').prop('disabled', true);
+    $('#ddlOdClientName, #ddlOdWarehouse').prop('disabled', true);
+    $('.clsbox button').prop('disabled', true);
+    if ($('#ddlOdClientName').data('select2')) $('#ddlOdClientName').trigger('change.select2');
+    if ($('#ddlOdWarehouse').data('select2')) $('#ddlOdWarehouse').trigger('change.select2');
+}
+
 function OdResetDetailFields() {
+    G_OdViewMode = false;
     G_OdDispatchMaster_Code = 0;
     G_OdDetailRows = [];
     G_OdLastScannedLineCode = 0;
@@ -561,14 +675,15 @@ function OdResetDetailFields() {
     $('#chkOdManualClient').prop('checked', true);
     $('#txtOdClientWrap').show();
     $('#ddlOdClientWrap').hide();
-    $('#txtOdOrderNo, #txtOdClientName, #txtOdPackedBy, #txtOdScanProduct').val('');
+    $('#txtOdClientName, #txtOdPackedBy, #txtOdScanProduct').val('');
+    $('#txtOdOrderNo').val(OD_DIRECT_BILLING_INVOICE_NO);
     $('#ddlOdClientName').val('').trigger('change');
     $('#ddlOdWarehouse').val('').trigger('change');
     $('#txtOdBoxNo').val('1');
     $('#tblOdItems-body, #tblOdItems-header').empty();
     $('#odLastScannedBanner').hide();
     $('#odLastScannedText').text('');
-    OdApplyHeaderFieldLock();
+    OdApplyEditModeChrome();
 }
 function OdItemLabel(key) {
     if (!G_ItemConfig.length) return key;
@@ -625,21 +740,26 @@ function OdRenderItemGrid(details, highlightLineCode) {
             + '<td>' + OdEscHtml(item[itemNameKey]) + '</td>'
             + '<td class="text-end">'
             + '<input type="text" id="txtOdScanQty_' + item.Code + '" value="' + scanQty + '" readonly '
-            + 'class="box_border form-control form-control-sm text-right BizSolFormControl od-scan-qty-input" autocomplete="off" placeholder="Scan Qty..">'
+            + (G_OdViewMode ? 'disabled ' : '')
+            + 'class="box_border form-control form-control-sm text-right BizSolFormControl'
+            + (G_OdViewMode ? '' : ' od-scan-qty-input')
+            + '" autocomplete="off" placeholder="Scan Qty..">'
             + '</td>'
             + '<td class="text-end"><span id="txtOdPackingQty_' + item.Code + '">' + packingQty + '</span></td>'
             + '<td class="text-end"><span id="txtOdBoxNo_' + item.Code + '">' + OdEscHtml(boxNo) + '</span></td>'
             + '<td class="text-end">'
             + '<input type="text" id="txtOdMRPQty_' + item.Code + '" value="' + OdEscAttr(mrp) + '" '
             + 'data-old-mrp="' + OdEscAttr(mrp) + '" '
-            + 'onkeypress="return OdOnChangeNumericTextBox(event,this);" '
-            + 'onkeyup="if(event.key===\'Enter\') OdOpenManualForMRP(this,\'' + OdEscAttr(itemCode) + '\');" '
-            + 'onfocusout="OdOpenManualForMRP(this,\'' + OdEscAttr(itemCode) + '\');" '
+            + (G_OdViewMode
+                ? 'disabled '
+                : 'onkeypress="return OdOnChangeNumericTextBox(event,this);" '
+                    + 'onkeyup="if(event.key===\'Enter\') OdOpenManualForMRP(this,\'' + OdEscAttr(itemCode) + '\');" '
+                    + 'onfocusout="OdOpenManualForMRP(this,\'' + OdEscAttr(itemCode) + '\');" ')
             + 'class="box_border form-control form-control-sm text-right BizSolFormControl od-mrp-input" autocomplete="off" placeholder="MRP..">'
             + '</td>'
             + '<td>' + OdEscHtml(location) + '</td>'
             + '<td class="text-center">'
-            + (item.ROWSTATUS === 'RED' ? '' : '<button type="button" class="btn btn-sm btn-danger icon-height mb-1" title="Delete item qty" onclick="OdDeleteLineQty(' + item.Code + ')"><i class="fa-solid fa-trash"></i></button>')
+            + (G_OdViewMode || item.ROWSTATUS === 'RED' ? '' : '<button type="button" class="btn btn-sm btn-danger icon-height mb-1" title="Delete item qty" onclick="OdDeleteLineQty(' + item.Code + ')"><i class="fa-solid fa-trash"></i></button>')
             + '</td>'
             + '</tr>';
     });
@@ -722,7 +842,7 @@ function OdPlayScanSuccessSound() {
 }
 
 function OdProcessScan() {
-    if (G_OdScanBusy) return;
+    if (G_OdViewMode || G_OdScanBusy) return;
 
     var scanNo = ($('#txtOdScanProduct').val() || '').trim();
     if (!OdValidateOrderBillFields(true)) return;
@@ -789,6 +909,7 @@ function OdManualChangeValue(delta) {
 }
 
 async function OdManualUpdateQtyAndMRP(itemCode, mrp) {
+    if (G_OdViewMode) return;
     var perm = await CheckOptionPermission('Manual', UserMaster_Code, UserModuleMaster_Code);
     if (!perm.hasPermission) {
         toastr.error(perm.msg);
@@ -942,6 +1063,7 @@ function OdSaveMRPByItemInput(element, itemCode) {
     });
 }
 function OdOpenManualForMRP(element, itemCode) {
+    if (G_OdViewMode) return;
     var mrp = $(element).val();
     if (mrp === undefined || mrp === null || mrp === '') return;
     if (isNaN(parseFloat(mrp))) {
@@ -1091,6 +1213,7 @@ function OdRenderAddItemDropdown() {
 }
 
 async function OdOpenAddItemModal() {
+    if (G_OdViewMode) return;
     if (!OdValidateOrderBillFields(false)) return;
 
     var perm = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
@@ -1184,6 +1307,7 @@ function OdSaveAddItem() {
 }
 
 async function OdDeleteLineQty(lineCode) {
+    if (G_OdViewMode) return;
     var perm = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (!perm.hasPermission) {
         toastr.error(perm.msg);
@@ -1212,7 +1336,10 @@ async function OdDeleteLineQty(lineCode) {
     });
 }
 function OdMarkCompleteFromPage() {
-    if (!G_OdDispatchMaster_Code) return;
+    if (!G_OdDispatchMaster_Code) {
+        toastr.error('Please scan or add at least one item before marking as complete.');
+        return;
+    }
     OdMarkComplete(G_OdDispatchMaster_Code);
 }
 
@@ -1266,18 +1393,31 @@ async function OdMarkComplete(dispatchCode) {
     var perm = await CheckOptionPermission('Complete', UserMaster_Code, UserModuleMaster_Code);
     if (!perm.hasPermission) { toastr.error(perm.msg); return; }
 
+    if (!confirm('Do you want to Complete and Save & Print Invoice?')) return;
+
+    blockUI();
     $.ajax({
         url: appBaseURL + '/api/OrderMaster/GetMarkasCompeteByOrderNo?Code=' + encodeURIComponent(dispatchCode),
         type: 'POST',
         beforeSend: function (xhr) { xhr.setRequestHeader('Auth-Key', authKeyData); },
         success: function (response) {
+            unblockUI();
             if (response.Status === 'Y') {
                 toastr.success(response.Msg);
-                OdBackToList();
+                if (typeof saveInvoiceMasterThenPrint === 'function') {
+                    saveInvoiceMasterThenPrint(dispatchCode, function () {
+                        OdBackToList();
+                    });
+                } else {
+                    OdBackToList();
+                }
             } else {
-                toastr.error('Unable to mark as complete.');
+                toastr.error(response.Msg || 'Unable to mark as complete.');
             }
         },
-        error: function () { toastr.error('Error completing dispatch.'); }
+        error: function () {
+            unblockUI();
+            toastr.error('Error completing dispatch.');
+        }
     });
 }

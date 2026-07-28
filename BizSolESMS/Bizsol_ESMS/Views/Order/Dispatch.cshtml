@@ -72,7 +72,12 @@
                                 </div>
                                 <div class="nav-item" id="despatchTransit">
                                     <button type="button" class="nav-item-btn" aria-pressed="false">
-                                        <div id="tab1" class="tab">Partial Packed</div>
+                                        <div id="tabPartialPacked" class="tab">Partial Packed</div>
+                                    </button>
+                                </div>
+                                <div class="nav-item" id="orderPacking" style="display:none;">
+                                    <button type="button" class="nav-item-btn" aria-pressed="false">
+                                        <div id="tabOrderPacking" class="tab">Order Packing</div>
                                     </button>
                                 </div>
                                 <div class="nav-item" id="completedDespatch">
@@ -96,7 +101,6 @@
                     </tbody>
                 </table>
             </div>
-            <!-- Paginator -->
             <div class="paginator webiz-dispatch-paginator px-3 py-2 border-top border-light" id="paginator-table">
             </div>
             </div>
@@ -145,7 +149,7 @@
                                 <input type="checkbox" id="txtIsManual" name="txtIsManual" class="box_border" />
                                 <label for="txtIsManual"><nobr>Show Keyboard</nobr></label>
                             </div>
-                            <div class="col-md-2 col-sm-6">
+                            <div class="col-md-2 col-sm-6" id="dvBoxNoField">
                                 <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No<span class="text-danger">*</span></label>
                                 <span class="clsbox">
                                     <button type="button" onclick="changeValue(-1)" title="Decrease">➖</button>
@@ -213,8 +217,8 @@
                     <div class="row" style="margin-top:10px;">
                         <span id="txtManualItemCode" style="display:inline;font-weight:bold"></span>
                         <span id="txtManualBalanceQuantity" style="display:inline;font-weight:bold"></span>
-                        <div class="col-md-12 col-sm-12">
-                            <label for="txtBoxNo" class="col-form-label-sm fw-bold">Box No <span class="text-danger">*</span></label>
+                        <div class="col-md-12 col-sm-12" id="dvManualBoxNoField">
+                            <label for="txtManualBoxNo" class="col-form-label-sm fw-bold">Box No <span class="text-danger">*</span></label>
                             <br/><span class="clsbox">
                                 <button type="button" onclick="ManualChangeValue(-1)" title="Decrease">➖</button>
                                 <input type="text" id="txtManualBoxNo" class="Number" value="1" min="1">

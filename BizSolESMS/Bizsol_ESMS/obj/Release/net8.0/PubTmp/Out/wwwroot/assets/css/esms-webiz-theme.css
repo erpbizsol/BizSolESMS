@@ -1888,13 +1888,16 @@ body.esms-webiz .swal-icon--error {
 #layout-wrapper.esms-webiz.esms-profenna .tabSec1 {
     background: linear-gradient(135deg, var(--webiz-green) 0%, var(--webiz-green-dark) 100%);
     box-shadow: 0 4px 14px rgba(27, 158, 117, 0.35);
-    color: var(--webiz-dark);
+    color: #ecedf1;
 }
 
 #layout-wrapper.esms-webiz.esms-profenna .btn-icon {
+    font-size: 14px;
+    border-radius: 6px;
     background: linear-gradient(135deg, var(--webiz-green) 0%, var(--webiz-green-dark) 100%);
     box-shadow: 0 2px 8px rgba(27, 158, 117, 0.3);
-    color: var(--webiz-dark);
+    color: #fff !important;
+    padding: 5px;
 }
 
 #layout-wrapper.esms-webiz.esms-profenna .nav-item-btn {

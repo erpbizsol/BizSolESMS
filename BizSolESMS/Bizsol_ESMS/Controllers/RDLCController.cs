@@ -190,10 +190,10 @@ namespace Bizsol_ESMS.Controllers
                 }
             }
             string companyName = ds.Tables[0].Rows.Count > 0
-                ? ds.Tables[0].Rows[0]["CompanyCode"]?.ToString() ?? ""
-                : "";
+                ? ds.Tables[0].Rows[0]["IsPSRQRShow"]?.ToString() ?? "N"
+                : "N";
 
-            if (companyName.IndexOf("DadaSales", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (companyName=="Y")
                 reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReportTata.rdlc");
             else
                 reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReportTata.rdlc");
@@ -240,10 +240,10 @@ namespace Bizsol_ESMS.Controllers
             ApplyPsrReportQrPayload(ds, Code, companyCode);
 
             string qrCompanyName = ds.Tables[0].Rows.Count > 0
-                ? ds.Tables[0].Rows[0]["CompanyCode"]?.ToString() ?? ""
-                : "";
+                ? ds.Tables[0].Rows[0]["IsPSRQRShow"]?.ToString() ?? "N"
+                : "N";
 
-            string reportPath = qrCompanyName.IndexOf("DadaSales", StringComparison.OrdinalIgnoreCase) >= 0
+            string reportPath = qrCompanyName=="Y"
                 ? Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReportTata.rdlc")
                 : Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PSRReport.rdlc");
 
