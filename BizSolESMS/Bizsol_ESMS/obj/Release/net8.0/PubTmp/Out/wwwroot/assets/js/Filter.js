@@ -26,6 +26,185 @@ const BizsolCustomFilterGrid = {
 }
 
 window.BizsolCustomFilterGrid = BizsolCustomFilterGrid;
+
+/* Float column filter/sort panels on body so .fixed-height-table overflow does not clip them. */
+(function (window, $) {
+    if (!$) return;
+
+    var PANEL_SELECTOR = '.filter-dropdown, .filter-dropdown-double, .filter-division';
+    var repositionTimer = null;
+    var FLOAT_STYLE_PROPS = ['position', 'top', 'left', 'right', 'bottom', 'width', 'max-width', 'min-width', 'margin-top', 'z-index', 'display'];
+
+    function resolveFilterAnchor($panel) {
+        var origin = $panel.data('esmsFilterOrigin');
+        var $anchor = $();
+
+        if (origin && origin.parent) {
+            var $parent = $(origin.parent);
+            if ($panel.hasClass('filter-division')) {
+                $anchor = $parent.find('.table-filter-arrow, .webiz-col-filter-trigger').first();
+                if (!$anchor.length) {
+                    $anchor = $parent;
+                }
+            } else {
+                $anchor = $parent.closest('th');
+                if (!$anchor.length) {
+                    $anchor = $parent.find('.webiz-col-filter-trigger, .table-filter-arrow').first();
+                }
+                if (!$anchor.length) {
+                    $anchor = $parent;
+                }
+            }
+        }
+
+        if (!$anchor.length) {
+            $anchor = $panel.closest('th');
+            if ($anchor.length && $panel.hasClass('filter-division')) {
+                var $arrow = $anchor.find('.table-filter-arrow, .webiz-col-filter-trigger').first();
+                if ($arrow.length) {
+                    $anchor = $arrow;
+                }
+            }
+        }
+        if (!$anchor.length) {
+            $anchor = $panel.parent();
+        }
+
+        return $anchor;
+    }
+
+    function storeFilterOrigin($panel) {
+        if ($panel.data('esmsFilterOrigin')) return;
+        var el = $panel[0];
+        $panel.data('esmsFilterOrigin', {
+            parent: el.parentNode,
+            next: el.nextSibling
+        });
+    }
+
+    function clearFloatStyles(el) {
+        if (!el || !el.style) return;
+        FLOAT_STYLE_PROPS.forEach(function (prop) {
+            el.style.removeProperty(prop);
+        });
+    }
+
+    window.esmsRestoreFilterPanel = function esmsRestoreFilterPanel($panel) {
+        if (!$panel || !$panel.length) return;
+        var origin = $panel.data('esmsFilterOrigin');
+        var el = $panel[0];
+
+        clearFloatStyles(el);
+        $panel.removeClass('esms-filter-panel--floating');
+
+        if (origin && origin.parent) {
+            if (origin.next) {
+                origin.parent.insertBefore(el, origin.next);
+            } else {
+                origin.parent.appendChild(el);
+            }
+        }
+        $panel.removeData('esmsFilterOrigin');
+    };
+
+    function getPanelWidth($panel) {
+        if ($panel.hasClass('filter-division')) {
+            return 190;
+        }
+        if ($panel.hasClass('filter-dropdown-double')) {
+            return 220;
+        }
+        return 200;
+    }
+
+    function getPanelHeight($panel) {
+        if ($panel.hasClass('filter-division')) {
+            return $panel.outerHeight() || 130;
+        }
+        return $panel.outerHeight() || 280;
+    }
+
+    window.esmsFloatFilterPanel = function esmsFloatFilterPanel($panel) {
+        if (!$panel || !$panel.length || !$panel.is(':visible')) return;
+
+        storeFilterOrigin($panel);
+        var $anchor = resolveFilterAnchor($panel);
+        if (!$anchor.length || !$anchor[0]) return;
+
+        if ($panel.parent()[0] !== document.body) {
+            $panel.appendTo(document.body);
+        }
+
+        $panel.addClass('esms-filter-panel--floating');
+
+        var anchorRect = $anchor[0].getBoundingClientRect();
+        var panelWidth = getPanelWidth($panel);
+        var panelHeight = getPanelHeight($panel);
+        var gap = 6;
+        var viewportW = window.innerWidth || document.documentElement.clientWidth;
+        var viewportH = window.innerHeight || document.documentElement.clientHeight;
+        var top = anchorRect.bottom + gap;
+        var left = anchorRect.right - panelWidth;
+
+        if (left < 8) left = 8;
+        if (left + panelWidth > viewportW - 8) left = viewportW - panelWidth - 8;
+        if (top + panelHeight > viewportH - 8) {
+            top = anchorRect.top - panelHeight - gap;
+            if (top < 8) top = Math.max(8, viewportH - panelHeight - 8);
+        }
+
+        var el = $panel[0];
+        el.style.setProperty('display', 'block', 'important');
+        el.style.setProperty('position', 'fixed', 'important');
+        el.style.setProperty('top', top + 'px', 'important');
+        el.style.setProperty('left', left + 'px', 'important');
+        el.style.setProperty('right', 'auto', 'important');
+        el.style.setProperty('bottom', 'auto', 'important');
+        el.style.setProperty('width', panelWidth + 'px', 'important');
+        el.style.setProperty('max-width', Math.min(panelWidth, viewportW - 16) + 'px', 'important');
+        el.style.setProperty('min-width', Math.min(panelWidth, viewportW - 16) + 'px', 'important');
+        el.style.setProperty('margin-top', '0', 'important');
+        el.style.setProperty('z-index', '100000', 'important');
+    };
+
+    function repositionVisibleFilterPanels() {
+        $(PANEL_SELECTOR + ':visible').each(function () {
+            esmsFloatFilterPanel($(this));
+        });
+    }
+
+    function scheduleReposition() {
+        if (repositionTimer) window.clearTimeout(repositionTimer);
+        repositionTimer = window.setTimeout(repositionVisibleFilterPanels, 16);
+    }
+
+    window.esmsShowFilterPanel = function esmsShowFilterPanel($panel) {
+        if (!$panel || !$panel.length) return;
+        $panel.show();
+        window.requestAnimationFrame(function () {
+            esmsFloatFilterPanel($panel);
+            window.requestAnimationFrame(function () {
+                esmsFloatFilterPanel($panel);
+            });
+        });
+    };
+
+    window.esmsHideFilterPanel = function esmsHideFilterPanel($panel) {
+        if (!$panel || !$panel.length) return;
+        esmsRestoreFilterPanel($panel);
+        $panel.hide();
+    };
+
+    window.esmsIsFilterUiClick = function esmsIsFilterUiClick(target) {
+        return $(target).closest(
+            '.filter-dropdown, .filter-dropdown-double, .filter-division, .table-filter-arrow, .fafilter, .dropdown-content, .filter-division, .filter-inputs, .checkbox-container, .checkbox-container-double'
+        ).length > 0;
+    };
+
+    $(window).on('resize.esmsFilterPanels scroll.esmsFilterPanels', scheduleReposition);
+    $(document).on('scroll.esmsFilterPanels', '.table-wrapper.fixed-height-table, .table-responsive, .fixed-height-table', scheduleReposition);
+})(window, window.jQuery);
+
 window.populateFilterOptions = function populateFilterOptions(columnName, bodyId) {
 
     var uniqueValues = new Set();
@@ -61,13 +240,20 @@ window.toggleFilter = function (columnName, bodyId) {
     closeAllFilters();
     closeAllFiltersDouble();
     populateFilterOptions(columnName, bodyId);
-    $('#filter-' + columnName.replace(/\s+/g, '')).toggle();
-    $('#filterDropdown-' + columnName.replace(/\s+/g, '')).toggle();
+    var colKey = columnName.replace(/\s+/g, '');
+    $('#filterDropdown-' + colKey).each(function () {
+        esmsHideFilterPanel($(this));
+    });
+    esmsShowFilterPanel($('#filter-' + colKey));
 };
 window.closeAllFilters = function closeAllFilters() {
-    $('.filter-dropdown').hide();
+    $('.filter-dropdown').each(function () {
+        esmsHideFilterPanel($(this));
+    });
     $('.filter-input').val('');
-    $('.filter-dropdown-double').hide();
+    $('.filter-dropdown-double').each(function () {
+        esmsHideFilterPanel($(this));
+    });
     $('.checkbox-container-double').hide();
 }
 $(document).on('input', '.filter-input', function () {
@@ -78,18 +264,18 @@ $(document).on('input', '.filter-input', function () {
         $(this).toggle(checkboxLabel.includes(searchValue));
     });
 });
-$(document).click(function (event) {
-    if (!$(event.target).closest('.filter-dropdown,.table-filter-arrow, .fafilter').length) {
-        $('.filter-division').hide();
-        closeAllFilters();
-    }
+$(document).on('click.esmsFilterClose', function (event) {
+    if (esmsIsFilterUiClick(event.target)) return;
+    $('.filter-division').each(function () {
+        esmsHideFilterPanel($(this));
+    });
+    closeAllFilters();
 });
-$(document).click(function (event) {
-    if (!$(event.target).closest('.filter-dropdown, .fafilter').length) {
-        closeAllFilters();
-    }
+$(document).on('click.esmsFilterCloseDouble', function (event) {
+    if (esmsIsFilterUiClick(event.target)) return;
+    closeAllFiltersDouble();
 });
-$('.filter-dropdown').click(function (event) {
+$(document).on('click.esmsFilterPanelStop', '.filter-dropdown, .filter-dropdown-double, .filter-division', function (event) {
     event.stopPropagation();
 });
 window.checkAllCheckboxesOnLoad = function checkAllCheckboxesOnLoad() {
@@ -99,22 +285,21 @@ window.checkAllCheckboxesOnLoad = function checkAllCheckboxesOnLoad() {
 checkAllCheckboxesOnLoad();
 window.toggleFilterDouble = function (columnName) {
     closeAllFiltersDouble();
-    $('#filter-double-' + columnName.replace(/\s+/g, '')).toggle();
-    $('.filter-dropdown').hide();
-    $('#filterDropdown-' + columnName.replace(/\s+/g, '')).toggle();
+    var colKey = columnName.replace(/\s+/g, '');
+    $('#filterDropdown-' + colKey).each(function () {
+        esmsHideFilterPanel($(this));
+    });
+    esmsShowFilterPanel($('#filter-double-' + colKey));
 };
-$(document).click(function (event) {
-    if (!$(event.target).closest('.filter-dropdown-double, .fafilter').length) {
-        closeAllFiltersDouble();
-    }
-});
 
 var columnFilters = {};
 window.populateDateFilter = function (columnName, bodyId) {
     closeAllFilters();
     closeAllFiltersDouble();
-    $('#filter-' + columnName.replace(/\s+/g, '')).toggle();
-    $('#filterDropdown-' + columnName.replace(/\s+/g, '')).toggle();
+    var colKey = columnName.replace(/\s+/g, '');
+    $('#filterDropdown-' + colKey).each(function () {
+        esmsHideFilterPanel($(this));
+    });
     var uniqueDates = new Set();
     const tableId = $('#' + bodyId).closest('table').attr('id');
     window[`filteredData_${tableId}`].forEach(function (row) {
@@ -200,6 +385,7 @@ window.populateDateFilter = function (columnName, bodyId) {
         $('#' + targetId).toggle();
         $(this).toggleClass('fa-plus fa-minus');
     });
+    esmsShowFilterPanel($('#filter-' + colKey));
 }
 window.applyFilters = function applyFilters(bodyId) {
     var column1 = "";
@@ -249,8 +435,11 @@ window.applyFilters = function applyFilters(bodyId) {
 window.toggleFilterNumeric = function (filterId, ColumnName) {
     closeAllFilters();
     closeAllFiltersDouble();
-    $('#filterDropdown-' + ColumnName.replace(/\s+/g, '')).toggle();
-    $('#' + filterId).toggle();
+    var colKey = ColumnName.replace(/\s+/g, '');
+    $('#filterDropdown-' + colKey).each(function () {
+        esmsHideFilterPanel($(this));
+    });
+    esmsShowFilterPanel($('#' + filterId));
     toggleNumericInputs(ColumnName);
 };
 window.toggleNumericInputs = function (columnName) {
@@ -313,10 +502,9 @@ window.applyNumericFilter = function (columnName, bodyId) {
     closeAllFilters();
 };
 window.ClearFilter = function ClearFilter(bodyId) {
-    $('.filter-dropdown').hide();
-    $('.filter-input').val('');
+    closeAllFilters();
+    closeAllFiltersDouble();
     $('.filter-input-double').val('');
-    $('.filter-dropdown-double').hide();
     const tableId = $('#' + bodyId).closest('table').attr('id');
     window[`filteredData_${tableId}`] = window[`filteredDataTemp_${tableId}`];
     renderTable(window[`filteredData_${tableId}`], bodyId);
@@ -436,7 +624,9 @@ window.applyfilterdouble = function applyfilterdouble(columnName, bodyId) {
     closeAllFiltersDouble();
 };
 window.closeAllFiltersDouble = function closeAllFiltersDouble() {
-    $('.filter-dropdown-double').hide();
+    $('.filter-dropdown-double').each(function () {
+        esmsHideFilterPanel($(this));
+    });
     $('.checkbox-container-double').hide();
 }
 window.applyfilterdate = function applyfilterdate(columnName, bodyId) {
@@ -785,11 +975,17 @@ window.createPaginator = function createPaginator(tableId, bodyId) {
     $('#paginator-' + tableId).append(filterHtml);
 }
 window.OpenFilter = function OpenFilter(columnName) {
-    $(".filter-division").hide();
-    $("#filterDropdown-" + columnName).show();
+    $('.filter-division').each(function () {
+        if (this.id !== 'filterDropdown-' + columnName) {
+            esmsHideFilterPanel($(this));
+        }
+    });
+    esmsShowFilterPanel($('#filterDropdown-' + columnName));
 }
 window.CloseFilter = function CloseFilter() {
-    $(".filter-division").hide();
+    $('.filter-division').each(function () {
+        esmsHideFilterPanel($(this));
+    });
 }
 window.createPaginatorDropdown = function createPaginatorDropdown(tableId) {
     const selectElement = document.getElementById(`pageSize-${tableId}`);

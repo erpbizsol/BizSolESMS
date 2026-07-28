@@ -7,7 +7,6 @@
 <link href="~/assets/css/loader.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <script src="~/assets/js/blockui.js"></script>
-<script src="~/assets/js/autosuggestion.js"></script>
 
 <style>
     .webiz-payment-page {
@@ -156,7 +155,40 @@
         padding: .45rem .75rem; border-bottom: 2px solid rgba(3,55,100,.12);
     }
     #tblPEInvoice tbody td { font-size: .84rem; padding: .4rem .75rem; vertical-align: middle; }
-    #tblPEInvoice tbody tr:hover { background: rgba(3,55,100,.03); }
+
+    /* Full-row bill status (overrides global table theme) */
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-pending,
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-pending td {
+        background-color: #fee2e2 !important;
+        color: #b91c1c !important;
+        font-weight: 600;
+    }
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-partial,
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-partial td {
+        background-color: #ffedd5 !important;
+        color: #c2410c !important;
+        font-weight: 600;
+    }
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-pending:hover td,
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-partial:hover td {
+        box-shadow: none !important;
+    }
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-pending:hover,
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-pending:hover td {
+        background-color: #fecaca !important;
+        color: #991b1b !important;
+    }
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-partial:hover,
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-partial:hover td {
+        background-color: #fed7aa !important;
+        color: #9a3412 !important;
+    }
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-pending .pe-input,
+    #layout-wrapper.esms-webiz.esms-profenna .webiz-payment-page #tblPEInvoice tbody tr.pe-bill-partial .pe-input {
+        background-color: #fff !important;
+        color: #1e293b !important;
+        border-color: rgba(0, 0, 0, 0.15) !important;
+    }
 
     /* ── Responsive ── */
     @@media (max-width: 767.98px) {
@@ -213,10 +245,10 @@
                         </select>
                     </div>
                     <div class="col-sm-6 col-lg-2">
-                        <label class="form-label form-label-sm mb-1 fw-semibold" for="txtPEPayModeFilter">Credit Note</label>
-                        <input type="text" id="txtPEPayModeFilter" class="form-control form-control box_border"
-                               autocomplete="off" maxlength="50" placeholder="All">
-                        <ul id="txtPEPayModeFilterList" class="AutoSuggestion-list"></ul>
+                        <label class="form-label form-label-sm mb-1 fw-semibold" for="ddlPEPayModeFilter">Payment Mode</label>
+                        <select id="ddlPEPayModeFilter" class="form-control form-control box_border" data-placeholder="All modes">
+                            <option value="">All modes</option>
+                        </select>
                     </div>
                     <div class="col-12 col-lg-auto">
                         <label class="form-label form-label-sm mb-1 invisible" aria-hidden="true">x</label>
@@ -280,10 +312,10 @@
                     </select>
                 </div>
                 <div class="col-md-3 col-6">
-                    <label class="pe-field-label" for="txtPEPayMode">Credit Note <span class="req">*</span></label>
-                    <input type="text" id="txtPEPayMode" class="pe-input" autocomplete="off" maxlength="50"
-                           placeholder="Credit Note">
-                    <ul id="txtPEPayModeList" class="AutoSuggestion-list"></ul>
+                    <label class="pe-field-label" for="ddlPEPayMode">Payment Mode <span class="req">*</span></label>
+                    <select id="ddlPEPayMode" class="form-control" data-placeholder="-- Select --">
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="col-md-4 col-6">
                     <label class="pe-field-label" for="txtPERefNo">Ref No <span class="req">*</span></label>

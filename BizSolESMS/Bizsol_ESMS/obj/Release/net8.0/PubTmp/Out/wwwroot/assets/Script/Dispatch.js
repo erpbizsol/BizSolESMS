@@ -1,7 +1,17 @@
 var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
-const FixParameter = JSON.parse(sessionStorage.getItem('Fixparameter'));
-let G_CompanyCode = FixParameter[0].CompanyCode == null ? "" : FixParameter[0].CompanyCode;
+var FixParameter;
+try { FixParameter = JSON.parse(sessionStorage.getItem('Fixparameter')); } catch (e) { FixParameter = null; }
+function getFixParamValue(key) {
+    if (!FixParameter || !FixParameter[0]) return '';
+    var row = FixParameter[0];
+    var camelKey = key.charAt(0).toLowerCase() + key.slice(1);
+    var v = row[key] != null ? row[key] : row[camelKey];
+    return (v != null && String(v).trim() !== '') ? String(v).trim() : '';
+}
+let G_CompanyCode = getFixParamValue('CompanyCode');
+let G_IsPickingEnable = getFixParamValue('IsPickingEnable') === 'Y';
+let G_WorkflowTab = 'picking'; // 'picking' | 'packing' (used only when IsPickingEnable = Y)
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
@@ -16,10 +26,11 @@ let G_DispatchMaster_Code = 0;
 let G_Tab = 1;
 let All = 0;
 let G_IDFORTRCOLOR = '';
-let G_UPDATEBOX = 'N';
+let G_UPDATEBOX = 'N'; // Old mode (IsPickingEnable=N): N = SaveScanQty; Y only on Edit Box No screen
 let originalDispatchData = [];
 let originalTransitData = [];
 let originalCompletedData = [];
+let originalOrderPackingData = [];
 
 let G_OrderMaster = [];
 
@@ -28,6 +39,14 @@ $(document).ready(function () {
     GetDispatchOrderLists('GETCLIENT');
     GetOrderNoList1();
     $("#ERPHeading").text("Order Packing");
+    // IsPickingEnable = Y: show Order Packing tab; rename Partial Packed → Partial Picked
+    if (G_IsPickingEnable) {
+        $("#orderPacking").show();
+        $("#tabPartialPacked").text("Partial Picked");
+    } else {
+        $("#orderPacking").hide();
+        $("#tabPartialPacked").text("Partial Packed");
+    }
     $('#txtChallanDate').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtClientName").focus();
@@ -79,6 +98,13 @@ $(document).ready(function () {
         $("#txtToDate1").hide();
         $("#txtDownloadDate1").hide();
     });
+    $("#orderPacking").click(function () {
+        GetOrderPackingList('OrderPacking');
+        $("#txtshowhide").hide();
+        $("#txtDownload").hide();
+        $("#txtToDate1").hide();
+        $("#txtDownloadDate1").hide();
+    });
     $("#completedDespatch").click(function () {
 
         GetCompletedDespatchOrderList('CompletedDespatch');
@@ -88,12 +114,15 @@ $(document).ready(function () {
         $("#txtDownloadDate1").show();
     });
     $('#txtScanProduct').on('input', function (e) {
-        if (G_UPDATEBOX == 'N') {
+        if (G_IsPickingEnable && G_WorkflowTab === 'packing') {
+            ScanUpdateBoxNo();
+        } else if (G_UPDATEBOX == 'N') {
             SaveScanQty();
         } else {
             ScanUpdateBoxNo();
         }
     });
+    applyPickingWorkflowChrome();
     $("#txtOrderNo").on("change", function () {
         let value = $(this).val();
         let isValid = false;
@@ -112,7 +141,7 @@ $(document).ready(function () {
     });
     $("#ShowAll").click(function () {
         All = 1;
-        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS")
+        StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS");
     });
     //$('#txtScanProduct').on('focus', function (e) {
     //    if ($("#txtIsManual").is(':checked')) {
@@ -185,7 +214,33 @@ $(document).ready(function () {
                 , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
+                        ${G_IsPickingEnable
+                            ? `<button class="btn btn-primary icon-height mb-1"  title="Picking Complete" onclick="MarkasPickingCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`
+                            : `<button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`}
+                        ${G_IsPickingEnable ? '' : `<button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>`}
+                    `
+            }));
+
+        } else if (G_Tab === 4) {
+            filteredData = originalOrderPackingData.filter(item =>
+                Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+            );
+            StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+            NumericFilterColumn = ["Order Qty", "TDQty"];
+            DateFilterColumn = ["Despatch Date"];
+            hiddenColumns = (UserType === "A") ? ["Code", "D_Code"] : ["Code", "D_Code", "Dispatch Date"];
+            ColumnAlignment = {
+                "TDQ": 'right'
+            };
+
+            updatedResponse = filteredData.map(item => ({
+                ...item
+                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Order Packing" onclick="StartOrderPackingFromList('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
+                        ${G_IsPickingEnable
+                            ? `<button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`
+                            : ''}
                         <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
                     `
             }));
@@ -233,7 +288,6 @@ $(document).ready(function () {
     });
 });
 function BackMaster() {
-    G_UPDATEBOX = 'N';
     G_IDFORTRCOLOR = '';
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
@@ -243,14 +297,207 @@ function BackMaster() {
     $("#btnShowAll").hide();
     $("#txtOrderNo").prop("disabled", true);
     $("#txtScanProduct").prop("disabled", false);
+    // Reset workflow from parameter + current list tab (not sticky previous edit mode)
+    applyPickingWorkflowChrome();
     if (G_Tab == 3) {
         GetCompletedDespatchOrderList('CompletedDespatch');
+    }
+    if (G_Tab == 4) {
+        GetOrderPackingList('OrderPacking');
     }
     if (G_Tab == 2) {
         GetDespatchTransitOrderList('DespatchTransit');
     }
     if (G_Tab == 1) {
         GetDispatchOrderLists('GETCLIENT');
+    }
+}
+
+/**
+ * Sync picking/packing from list tab — only when FixParameter IsPickingEnable = Y.
+ * IsPickingEnable = N → normal mode, Box No always shown (no tab hide/show).
+ * IsPickingEnable = Y:
+ *   Tab 1 Pending / Tab 2 Partial Packed → picking (Box No hidden)
+ *   Tab 4 Order Packing / Tab 3 Order Packed → packing (Box No shown)
+ */
+function syncWorkflowFromListTab() {
+    if (!G_IsPickingEnable) {
+        G_WorkflowTab = 'picking';
+        return;
+    }
+    if (G_Tab == 4 || G_Tab == 3) {
+        G_WorkflowTab = 'packing';
+    } else {
+        G_WorkflowTab = 'picking';
+    }
+}
+
+/** Apply Box No chrome from IsPickingEnable parameter + list tab. */
+function applyPickingWorkflowChrome(syncFromTab) {
+    if (syncFromTab !== false) {
+        syncWorkflowFromListTab();
+    }
+    // Parameter off: keep OLD behavior — Box No visible, normal scan via SaveScanQty (G_UPDATEBOX=N)
+    // Only Edit Box No screen uses G_UPDATEBOX=Y → ScanUpdateBoxNo
+    if (!G_IsPickingEnable) {
+        $("#dvBoxNoField").show();
+        $("#dvManualBoxNoField").show();
+        if ($("#tab1").text() === "Edit BoxNo") {
+            G_UPDATEBOX = 'Y';
+        } else {
+            G_UPDATEBOX = 'N';
+        }
+        return;
+    }
+    // Parameter on: Box No by list tab (picking hide / packing show)
+    if (G_WorkflowTab === 'picking') {
+        G_UPDATEBOX = 'N';
+        $("#dvBoxNoField").hide();
+        $("#dvManualBoxNoField").hide();
+        $("#txtBoxNo").val(0);
+        $("#txtManualBoxNo").val(0);
+    } else {
+        G_UPDATEBOX = 'Y';
+        $("#dvBoxNoField").show();
+        $("#dvManualBoxNoField").show();
+        ensureOrderPackingBoxNoDefault();
+    }
+}
+
+/**
+ * Switch picking/packing mode (IsPickingEnable=Y). Used from list tabs, not create-page UI tabs.
+ * Picking: scan/save qty with BoxNo=0.
+ * Packing: update BoxNo only for already-picked rows.
+ */
+function SwitchDispatchWorkflowTab(tab, skipReload) {
+    if (!G_IsPickingEnable) return;
+    G_WorkflowTab = (tab === 'packing') ? 'packing' : 'picking';
+    applyPickingWorkflowChrome(false);
+
+    if (G_WorkflowTab === 'picking') {
+        if (!skipReload && G_DispatchMaster_Code > 0) {
+            reloadDispatchDetailGrid();
+        } else if (!skipReload && $("#hfCode").val() && $("#hfCode").val() !== '0') {
+            reloadDispatchDetailGrid();
+        }
+    } else {
+        // Order Packing uses same DDETAILS grid as edit/view (not BOXDETAILS)
+        if (!skipReload && G_DispatchMaster_Code > 0) {
+            reloadDispatchDetailGrid();
+        } else if (!skipReload) {
+            toastr.info("Pick items first, then open Packing to assign Box No.");
+        }
+    }
+    $("#txtScanProduct").focus();
+}
+
+function reloadDispatchDetailGrid() {
+    var code = $("#hfCode").val();
+    if (!code || code === '0') return;
+    if (G_Tab == 1) {
+        StartDispatchPanding(code, "ORDERDETAILS");
+    } else if (G_Tab == 2 || G_Tab == 4) {
+        StartDispatchTransit(code, G_DispatchMaster_Code, All == 1 ? "AllDDETAILS" : "DDETAILS");
+    } else if (G_Tab == 3) {
+        StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
+    }
+}
+
+/** List tab: Order Packing (between Partial Packed and Order Packed). Shown only when IsPickingEnable=Y. */
+function GetOrderPackingList(Mode) {
+    $("#txtSearch").val("");
+    G_Tab = 4;
+    G_WorkflowTab = 'packing';
+    blockUI();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                originalOrderPackingData = response;
+                $("#DataTable").show();
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No", "Status"];
+                const NumericFilterColumn = ["Order Qty", "TDQty"];
+                const DateFilterColumn = ["Despatch Date"];
+                const Button = false;
+                const showButtons = [];
+                const StringdoubleFilterColumn = [];
+                let hiddenColumns = [];
+                if (UserType == "A") {
+                    hiddenColumns = ["Code", "D_Code"];
+                } else {
+                    hiddenColumns = ["Code", "D_Code", "Dispatch Date"];
+                }
+                const ColumnAlignment = {
+                    "TDQ": 'right'
+                };
+                const updatedResponse = response.map(item => ({
+                    ...item
+                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Order Packing" onclick="StartOrderPackingFromList('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
+                        ${G_IsPickingEnable
+                            ? `<button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`
+                            : ''}
+                        <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
+                    `
+                }));
+                BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+            } else {
+                originalOrderPackingData = [];
+                $("#DataTable").hide();
+                toastr.error("Record not found...!");
+            }
+            unblockUI();
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            unblockUI();
+        }
+    });
+}
+
+/** Open dispatch from Order Packing list tab — same DDETAILS grid as View (not BOXDETAILS). */
+async function StartOrderPackingFromList(Code, DispatchMaster_Code, Mode) {
+    G_Tab = 4;
+    G_WorkflowTab = 'packing';
+    // IsPickingEnable=Y → "Start packing"; else → "Edit"
+    const optionName = G_IsPickingEnable ? 'Start packing' : 'Edit';
+    const { hasPermission, msg } = await CheckOptionPermission(optionName, UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    await StartDispatchTransit(Code, DispatchMaster_Code, Mode, true);
+    ensureOrderPackingBoxNoDefault();
+}
+
+function isPickingMode() {
+    return G_IsPickingEnable && G_WorkflowTab === 'picking';
+}
+
+function isPackingMode() {
+    return G_IsPickingEnable && G_WorkflowTab === 'packing';
+}
+
+function getWorkflowBoxNo() {
+    if (isPickingMode()) return 0;
+    return $("#txtBoxNo").val();
+}
+
+/** Order Packing: Box No must be at least 1 (0 / empty / null → 1). */
+function ensureOrderPackingBoxNoDefault() {
+    if (G_Tab != 4 && !isPackingMode()) return;
+    var n = parseInt($("#txtBoxNo").val(), 10);
+    if (!n || n < 1) {
+        $("#txtBoxNo").val(1);
+    }
+    var m = parseInt($("#txtManualBoxNo").val(), 10);
+    if (!m || m < 1) {
+        $("#txtManualBoxNo").val(1);
     }
 }
 function GetAccountMasterList() {
@@ -510,6 +757,7 @@ function showToast(Msg) {
 function GetDispatchOrderLists(Mode) {
     $("#txtSearch").val("");
     G_Tab = 1;
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -549,10 +797,12 @@ function GetDispatchOrderLists(Mode) {
                 toastr.error("Record not found...!");
                 originalDispatchData = [];
             }
+            unblockUI();
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
             originalDispatchData = [];
+            unblockUI();
         }
     });
 }
@@ -619,6 +869,7 @@ async function StartDispatchPanding(Code, Mode) {
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
     $("#dvIsDelete").hide();
+    applyPickingWorkflowChrome();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -636,9 +887,10 @@ async function StartDispatchPanding(Code, Mode) {
                     $("#txtClientDispatchName").val(OrderMaster.AccountName || "");
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtPackedBy").val(G_UserName);
-                    $("#txtBoxNo").val(OrderMaster.BoxNo);
+                    $("#txtBoxNo").val(isPickingMode() ? 0 : (OrderMaster.BoxNo || 1));
                     GetTotalLineOfPart(OrderMaster.Code);
                 }
+                applyPickingWorkflowChrome();
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     $("#tblDispatchData").show();
                     var Response = response.OrderDetial;
@@ -679,7 +931,7 @@ async function StartDispatchPanding(Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" data-old-mrp="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
                         renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" readonly onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`;
                         renamedItem["Manual Qty"] = `
@@ -803,7 +1055,7 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
         },
         success: function (response) {
             if (response[0].Status == 'Y') {
-                if (G_Tab == 2) {
+                if (G_Tab == 2 || G_Tab == 4) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
                     } else if (All == 1) {
@@ -815,7 +1067,7 @@ function SaveEditManualQty(Code, ScanQty, ManualQty, DispatchQty) {
                 G_IDFORTRCOLOR = 'GET';
             } else {
                 showToast(response[0].Msg);
-                if (G_Tab == 2) {
+                if (G_Tab == 2 || G_Tab == 4) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
                     } else if (All == 1) {
@@ -875,13 +1127,22 @@ function SaveNewManualQty(Code, ScanQty, ManualQty, DispatchQty) {
 
 }
 function SaveScanQty() {
+    if (isPackingMode()) {
+        ScanUpdateBoxNo();
+        return;
+    }
     if ($("#txtScanProduct").val() == '') {
         toastr.error("Please scan product !");
         $("#txtScanProduct").focus();
         return;
-    } else if ($("#txtBoxNo").val() === '') {
+    }
+    var boxNo = getWorkflowBoxNo();
+    if (!isPickingMode() && (boxNo === '' || boxNo === null || boxNo === undefined)) {
         toastr.error("Please enter box no..!");
         return;
+    }
+    if (isPickingMode()) {
+        boxNo = 0;
     }
     const payload = {
         Code: $("#hfCode").val(),
@@ -892,11 +1153,12 @@ function SaveScanQty() {
         DispatchMaster_Code: G_DispatchMaster_Code,
         UserMaster_Code: UserMaster_Code,
         PackedBy: '',
-        BoxNo: $("#txtBoxNo").val()
+        BoxNo: boxNo
     }
+    var scanMode = isPickingMode() ? 'PICK' : 'Scan';
     blockUI();
     $.ajax({
-        url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch?Mode=Scan`,
+        url: `${appBaseURL}/api/OrderMaster/ScanItemForDispatch?Mode=${scanMode}`,
         type: 'POST',
         contentType: "application/json",
         dataType: "json",
@@ -911,7 +1173,7 @@ function SaveScanQty() {
                 if (G_Tab == 1) {
                     StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                 }
-                else if (G_Tab == 2) {
+                else if (G_Tab == 2 || G_Tab == 4) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
                     } else if (All == 1) {
@@ -947,22 +1209,33 @@ function SaveScanQty() {
     });
 
 }
-async function StartDispatchTransit(Code, DispatchMaster_Code, Mode) {
+async function StartDispatchTransit(Code, DispatchMaster_Code, Mode, skipPermissionCheck) {
     G_DispatchMaster_Code = DispatchMaster_Code;
-    G_Tab = 2;
+    // Preserve Order Packing list tab (G_Tab=4); otherwise treat as Partial Packed
+    if (G_Tab !== 4) {
+        G_Tab = 2;
+    }
     $("#hfCode").val(Code);
     var Code1 = Code;
-    $("#btnShowAll").show();
-    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
-    if (hasPermission == false) {
-        toastr.error(msg);
-        return;
+    if (!skipPermissionCheck) {
+        const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+        if (hasPermission == false) {
+            toastr.error(msg);
+            return;
+        }
     }
     $("#tab1").text("Edit");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
     $("#dvIsDelete").hide();
+    // Order Packing: always hide SHOW ALL; Partial Packed: always show it
+    if (G_Tab == 4) {
+        $("#btnShowAll").hide();
+    } else {
+        $("#btnShowAll").show();
+    }
+    applyPickingWorkflowChrome();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code1}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -982,7 +1255,8 @@ async function StartDispatchTransit(Code, DispatchMaster_Code, Mode) {
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
-                    $("#txtBoxNo").val(OrderMaster.BoxNo);
+                    $("#txtBoxNo").val(isPickingMode() ? 0 : (OrderMaster.BoxNo || 1));
+                    ensureOrderPackingBoxNoDefault();
                     $("#txtScanProduct").prop("disabled", false);
                     GetTotalLineOfPart(OrderMaster.Code);
                     disableFields(false);
@@ -1027,7 +1301,7 @@ async function StartDispatchTransit(Code, DispatchMaster_Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" data-old-mrp="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
                         renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" readonly class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Manual Qty"] = `
@@ -1122,6 +1396,7 @@ function checkValidateqtyTransit1(element, Code) {
 function GetDespatchTransitOrderList(Mode) {
     $("#txtSearch").val("");
     G_Tab = 2;
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -1132,7 +1407,7 @@ function GetDespatchTransitOrderList(Mode) {
             if (response.length > 0) {
                 originalTransitData = response;
                 $("#DataTable").show();
-                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No","Status"];
                 const NumericFilterColumn = ["Order Qty", "TDQty"];
                 const DateFilterColumn = ["Despatch Date"];
                 const Button = false;
@@ -1152,8 +1427,10 @@ function GetDespatchTransitOrderList(Mode) {
                     , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
-                        <button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>
-                        <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
+                        ${G_IsPickingEnable
+                            ? `<button class="btn btn-primary icon-height mb-1"  title="Picking Complete" onclick="MarkasPickingCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`
+                            : `<button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`}
+                        ${G_IsPickingEnable ? '' : `<button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>`}
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -1162,9 +1439,11 @@ function GetDespatchTransitOrderList(Mode) {
                 $("#DataTable").hide();
                 toastr.error("Record not found...!");
             }
+            unblockUI();
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+            unblockUI();
         }
     });
 
@@ -1172,6 +1451,7 @@ function GetDespatchTransitOrderList(Mode) {
 function GetCompletedDespatchOrderList(Mode) {
     $("#txtSearch").val("");
     G_Tab = 3;
+    blockUI();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetClientWiseShowOrder?Mode=${Mode}`,
         type: 'GET',
@@ -1182,7 +1462,7 @@ function GetCompletedDespatchOrderList(Mode) {
             if (response.length > 0) {
                 originalCompletedData = response;
                 $("#DataTable").show();
-                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No"];
+                const StringFilterColumn = ["Challan No", "Client Name", "Vehicle No", "Order No", "BuyerPO No","Status"];
                 const NumericFilterColumn = ["Order Qty", "TDQ"];
                 const DateFilterColumn = [];
                 const Button = false;
@@ -1213,9 +1493,11 @@ function GetCompletedDespatchOrderList(Mode) {
                 $("#DataTable").hide();
                 toastr.error("Record not found...!");
             }
+            unblockUI();
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+            unblockUI();
         }
     });
 
@@ -1234,6 +1516,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
     $("#dvIsDelete").hide();
+    applyPickingWorkflowChrome();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -1252,7 +1535,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
                     $("#txtScanProduct").prop("disabled", false);
-                    $("#txtBoxNo").val(OrderMaster.BoxNo);
+                    $("#txtBoxNo").val(isPickingMode() ? 0 : (OrderMaster.BoxNo || 1));
                     GetTotalLineOfPart(OrderMaster.Code);
                     disableFields(false);
                 }
@@ -1296,7 +1579,7 @@ async function StartDispatchCompleteTransit(Code, Mode) {
                                 renamedItem[key] = item[key];
                             }
                         }
-						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
+						renamedItem["MRP"] = ` <input type="text" id="txtMRPQty_${item.Code}" value="${item["MRP"] == "NULL" ? "" : item["MRP"]}" data-old-mrp="${item["MRP"] == "NULL" ? "" : item["MRP"]}" onkeypress="return OnChangeNumericTextBox(event,this);" onkeyup="if(event.key==='Enter') OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" onfocusout="OpenManualForMRP(this,'${item["Item Code"]}', ${item["Bal Qty"]});" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="MRP..">`;
                         renamedItem["Scan Qty"] = `
                         <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" onclick="ManualUpdateQtyAndMRP('${item["Item Code"]}', ${item["Bal Qty"]}, ${item["MRP"] == "NULL" ? 0 : item["MRP"]})" readonly class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`,
                             renamedItem["Manual Qty"] = `
@@ -1374,6 +1657,7 @@ async function StartDispatchOrderNo() {
         return;
     }
     ClearData();
+    G_Tab = 1;
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
@@ -1382,6 +1666,7 @@ async function StartDispatchOrderNo() {
     $("#txtScanProduct").prop("disabled", false);
     $("#dvIsDelete").hide();
     disableFields(false);
+    applyPickingWorkflowChrome();
 }
 function CreateOrderNo(Code) {
     StartDispatchPanding(Code, "ORDERDETAILS");
@@ -1420,6 +1705,7 @@ function GetOrderNoList1() {
     });
 
 }
+
 async function ViewDespatchTransit(Code, Mode) {
     G_DispatchMaster_Code = Code;
     const { hasPermission, msg } = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
@@ -1432,6 +1718,7 @@ async function ViewDespatchTransit(Code, Mode) {
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
     $("#dvIsDelete").hide();
+    applyPickingWorkflowChrome();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -1450,7 +1737,8 @@ async function ViewDespatchTransit(Code, Mode) {
                     $("#txtChallanNo").val(OrderMaster.ChallanNo || "");
                     $("#txtChallanDate").val(OrderMaster.ChallanDate || "");
                     $("#txtPackedBy").val(OrderMaster.PackedBy);
-                    $("#txtBoxNo").val(OrderMaster.BoxNo);
+                    $("#txtBoxNo").val(isPickingMode() ? 0 : (OrderMaster.BoxNo || 1));
+                    ensureOrderPackingBoxNoDefault();
                     GetTotalLineOfPart(OrderMaster.Code);
                     $("#txtScanProduct").prop("disabled", true);
                     disableFields(true);
@@ -1519,6 +1807,7 @@ async function ViewDespatchTransit(Code, Mode) {
         }
     });
 }
+
 async function DeleteItem(code, Order, button) {
     let tr = button.closest("tr");
     tr.classList.add("highlight");
@@ -1544,6 +1833,8 @@ async function DeleteItem(code, Order, button) {
                     toastr.success(response.Msg);
                     if (G_Tab == 2) {
                         GetDespatchTransitOrderList('DespatchTransit');
+                    } else if (G_Tab == 4) {
+                        GetOrderPackingList('OrderPacking');
                     } else if (G_Tab == 3) {
                         GetCompletedDespatchOrderList('CompletedDespatch');
                     }
@@ -1562,6 +1853,7 @@ async function DeleteItem(code, Order, button) {
         $('tr').removeClass('highlight');
     }
 }
+
 async function MarkasCompete(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Complete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -1577,15 +1869,45 @@ async function MarkasCompete(code) {
         success: function (response) {
             if (response.Status === 'Y') {
                 toastr.success(response.Msg);
-                GetDespatchTransitOrderList('DespatchTransit');
+                if (G_Tab == 4) {
+                    GetOrderPackingList('OrderPacking');
+                } else {
+                    GetDespatchTransitOrderList('DespatchTransit');
+                }
             } else {
-                toastr.error("Unexpected response format.");
+                toastr.error(response.Msg || "Unexpected response format.");
             }
 
         },
         error: function (xhr, status, error) {
-            toastr.error("Error deleting item:");
+            toastr.error("Error marking as complete.");
 
+        }
+    });
+}
+
+async function MarkasPickingCompete(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Picking Complete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetMarkasPickingCompeteByOrderNo?Code=${code}`,
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.Status === 'Y') {
+                toastr.success(response.Msg);
+                GetDespatchTransitOrderList('DespatchTransit');
+            } else {
+                toastr.error(response.Msg || "Unexpected response format.");
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("Error marking picking complete.");
         }
     });
 }
@@ -1608,8 +1930,51 @@ function ManualChangeValue(delta) {
     if (value < 1) value = 1;
     input.value = value;
 }
+function getDispatchGridColumnIndex(headerText) {
+    let idx = -1;
+    const want = String(headerText || '').trim().toLowerCase();
+    document.querySelectorAll('#DispatchTable-Header th').forEach((th, i) => {
+        if ((th.textContent || '').trim().toLowerCase() === want) idx = i;
+    });
+    return idx;
+}
+
+function getRowBoxNoValue(row, boxNoIdx) {
+    if (boxNoIdx >= 0) {
+        const cell = row.querySelectorAll('td')[boxNoIdx];
+        if (cell) {
+            const input = cell.querySelector('input');
+            const raw = input ? input.value : cell.textContent;
+            const n = parseInt(String(raw || '').replace(/[^0-9]/g, ''), 10);
+            return isNaN(n) ? 0 : n;
+        }
+    }
+    const codeEl = row.querySelector('[id^="txtScanQty_"], [id^="txtDispatchQty_"], [id^="txtBoxNo_"]');
+    if (codeEl && typeof Data !== 'undefined' && Array.isArray(Data)) {
+        const code = codeEl.id.split('_').pop();
+        const item = Data.find(d => String(d.Code) === String(code));
+        if (item) {
+            const n = parseInt(item["Box No"], 10);
+            return isNaN(n) ? 0 : n;
+        }
+    }
+    return 0;
+}
+
 function ChangecolorTr() {
     const rows = document.querySelectorAll('#DispatchTable-Body tr');
+    if (!rows.length) return;
+
+    // Order Packing: current/packed rows green when Box No > 0, others red (same colors as other tabs)
+    if (G_Tab == 4) {
+        const boxNoIdx = getDispatchGridColumnIndex('Box No');
+        rows.forEach((row) => {
+            const boxVal = getRowBoxNoValue(row, boxNoIdx);
+            row.style.backgroundColor = boxVal > 0 ? '#07bb72' : '#f5c0bf';
+        });
+        return;
+    }
+
     if (G_UPDATEBOX == 'N') {
         rows.forEach((row) => {
             const tds = row.querySelectorAll('td');
@@ -1657,12 +2022,13 @@ async function ShowUpdateBoxNo(Code, Mode) {
         toastr.error(msg);
         return;
     }
-    G_UPDATEBOX = 'Y';
     $("#tab1").text("Edit BoxNo");
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
     $("#dvIsDelete").show();
+    G_UPDATEBOX = 'Y';
+    applyPickingWorkflowChrome();
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=${Mode}&DispatchMaster_Code=${G_DispatchMaster_Code}`,
         type: 'GET',
@@ -1682,6 +2048,7 @@ async function ShowUpdateBoxNo(Code, Mode) {
                     $("#txtScanProduct").prop("disabled", false);
                     GetTotalLineOfPart(OrderMaster.Code);
                     disableFields(false);
+                    G_UPDATEBOX = 'Y';
                 }
                 if (response.OrderDetial && response.OrderDetial.length > 0) {
                     $("#tblDispatchData").show();
@@ -1766,7 +2133,7 @@ function UpdateBoxNo(e, Code) {
         success: function (response) {
             if (response[0].Status == 'Y') {
                 toastr.success(response[0].Msg);
-                ShowUpdateBoxNo(G_DispatchMaster_Code, "BOXDETAILS");
+                refreshGridAfterBoxNoUpdate();
             } else {
 
             }
@@ -1781,8 +2148,12 @@ function ScanUpdateBoxNo() {
         toastr.error("Please scan product !");
         $("#txtScanProduct").focus();
         return;
-    } else if ($("#txtBoxNo").val() === '') {
+    } else if ($("#txtBoxNo").val() === '' || $("#txtBoxNo").val() === '0') {
         toastr.error("Please enter box no..!");
+        return;
+    }
+    if (G_DispatchMaster_Code <= 0) {
+        toastr.error("No picked items found. Complete Picking first.");
         return;
     }
     const payload = {
@@ -1802,23 +2173,123 @@ function ScanUpdateBoxNo() {
         success: function (response) {
             if (response[0].Status == 'Y') {
                 $("#SuccessVoice")[0].play();
-                ShowUpdateBoxNo(G_DispatchMaster_Code, "BOXDETAILS");
+                G_IDFORTRCOLOR = 'GET';
+                refreshGridAfterBoxNoUpdate();
                 $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
             } else if (response[0].Status == 'N') {
+                G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
                 $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
             } else {
+                G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
                 $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
             }
         },
         error: function (xhr, status, error) {
+            G_IDFORTRCOLOR = '';
             showToast("INVALID SCAN NO !");
             $("#txtScanProduct").val("");
             $("#txtScanProduct").focus();
+        }
+    });
+}
+
+/** Keep current screen grid: Order Packing/edit use DDETAILS; dedicated Update Box No keeps BOXDETAILS. */
+function refreshGridAfterBoxNoUpdate() {
+    if ($("#tab1").text() === "Edit BoxNo") {
+        ShowUpdateBoxNo(G_DispatchMaster_Code, "BOXDETAILS");
+        return;
+    }
+    reloadDispatchDetailGrid();
+}
+
+/** Packing tab: show already-picked rows so only BoxNo can be assigned (no EDITBOXNO permission gate). */
+function LoadPickedItemsForPacking(Code) {
+    if (!Code || Code <= 0) {
+        toastr.info("Pick items first, then open Packing to assign Box No.");
+        return;
+    }
+    G_DispatchMaster_Code = Code;
+    G_UPDATEBOX = 'Y';
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetOrderDetailsForDispatch?Code=${Code}&Mode=BOXDETAILS&DispatchMaster_Code=${G_DispatchMaster_Code}`,
+        type: 'GET',
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response) {
+                if (response.OrderMaster && response.OrderMaster.length > 0) {
+                    const OrderMaster = response.OrderMaster[0];
+                    $("#hfCode").val(OrderMaster.Code || $("#hfCode").val() || "");
+                    if (OrderMaster.OrderNo) {
+                        SelectOptionByText('txtOrderNo', OrderMaster.OrderNo);
+                    }
+                    $("#txtClientDispatchName").val(OrderMaster.AccountName || $("#txtClientDispatchName").val() || "");
+                    $("#txtChallanNo").val(OrderMaster.ChallanNo || $("#txtChallanNo").val() || "");
+                    $("#txtScanProduct").prop("disabled", false);
+                    if (OrderMaster.Code) {
+                        GetTotalLineOfPart(OrderMaster.Code);
+                    }
+                }
+                if (response.OrderDetial && response.OrderDetial.length > 0) {
+                    $("#tblDispatchData").show();
+                    var Response = response.OrderDetial;
+                    Data = response.OrderDetial;
+                    const StringFilterColumn = [];
+                    const NumericFilterColumn = ["Ord Qty", "Bal Qty"];
+                    const DateFilterColumn = [];
+                    const Button = false;
+                    const showButtons = [];
+                    const StringdoubleFilterColumn = ["Item Name", "Item Code"];
+                    let hiddenColumns = [];
+                    if (UserType == "A") {
+                        hiddenColumns = ["Code", "ROWSTATUS", "Manual Qty"];
+                    } else {
+                        hiddenColumns = ["Code", "Manual Qty", "ROWSTATUS"];
+                    }
+                    const ColumnAlignment = {
+                        "Box No": "right;width:70px;",
+                        "Scan Qty": "right;width:70px;",
+                    };
+                    const renameMap = {
+                        "Item Name": G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name',
+                        "Item Code": G_ItemConfig[0].ItemCodeHeader ? G_ItemConfig[0].ItemCodeHeader : 'Item Code',
+                    };
+                    const updatedResponse = Response.map(item => {
+                        const renamedItem = {};
+                        for (const key in item) {
+                            if (renameMap.hasOwnProperty(key)) {
+                                renamedItem[renameMap[key]] = item[key];
+                            } else {
+                                renamedItem[key] = item[key];
+                            }
+                        }
+                        renamedItem["Scan Qty"] = `
+                        <input type="text" id="txtScanQty_${item.Code}" value="${item["Scan Qty"]}" disabled class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Scan Qty..">`;
+                        renamedItem["Box No"] = `
+                        <input type="text" onfocusout="UpdateBoxNo(this,${item.Code})" oninput="NumericValue(this)" id="txtBoxNo_${item.Code}" value="${item["Box No"]}" class="box_border form-control form-control-sm text-right BizSolFormControl" autocomplete="off" placeholder="Box No..">`;
+                        return renamedItem;
+                    });
+                    BizsolCustomFilterGrid.CreateDataTable("DispatchTable-Header", "DispatchTable-Body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+                } else {
+                    $("#tblDispatchData").hide();
+                    toastr.info("No picked items found for packing.");
+                }
+            } else {
+                toastr.error("Record not found...!");
+                $("#tblDispatchData").hide();
+            }
+        },
+        error: function () {
+            toastr.error("Record not found...!");
+            $("#tblDispatchData").hide();
         }
     });
 }
@@ -1927,7 +2398,7 @@ async function DeleteItemQty(code) {
                     if (G_Tab == 1) {
                         StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                     }
-                    else if (G_Tab == 2) {
+                    else if (G_Tab == 2 || G_Tab == 4) {
                         if (All == 0) {
                             StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
                         } else if (All == 1) {
@@ -1966,8 +2437,12 @@ function openSavePopup() {
     saveModal.show();
 }
 function SaveManual() {
+    //if (isPackingMode()) {
+    //    toastr.error("Manual quantity save is not allowed in Packing. Only Box No can be updated.");
+    //    return;
+    //}
     var orderNo = $("#txtOrderNo").val();
-    var boxNo = $("#txtManualBoxNo").val();
+    var boxNo = isPickingMode() ? 0 : $("#txtManualBoxNo").val();
     var quantity = $("#txtManualProductQuantity").val();
     var mrp = $("#txtManualProductMRP").val();
     var itemCode = $("#hfManualProductCode").val();
@@ -1988,7 +2463,7 @@ function SaveManual() {
         $("#txtManualProductMRP").focus();
         return;
     }
-    if (!boxNo || isNaN(parseInt(boxNo)) || parseInt(boxNo) < 1) {
+    if (!isPickingMode() && (!boxNo || isNaN(parseInt(boxNo)) || parseInt(boxNo) < 1)) {
         toastr.error("Please enter a valid box number!");
         return;
     }
@@ -2018,7 +2493,7 @@ function SaveManual() {
                 if (G_Tab == 1) {
                     StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                 }
-                else if (G_Tab == 2) {
+                else if (G_Tab == 2 || G_Tab == 4) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
                     } else if (All == 1) {
@@ -2029,12 +2504,13 @@ function SaveManual() {
                 }
                 CloseManualModal();
             } else if (response[0].Status == 'N') {
+                CloseManualModal();
                 showToast(response[0].Msg);
                 G_DispatchMaster_Code = response[0].DispatchMaster_Code;
                 if (G_Tab == 1) {
                     StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
                 }
-                else if (G_Tab == 2) {
+                else if (G_Tab == 2 || G_Tab == 4) {
                     if (All == 0) {
                         StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
                     } else if (All == 1) {
@@ -2428,20 +2904,23 @@ function GetTotalLineOfPart(OrderMaster_Code) {
             $("#txtTotalPartLine").text(response[0].PartCount);
         },
         error: function (xhr, status, error) {
-            showToast("Error in api/OrderMaster/SaveManualRateAndQty");
+            showToast("Error in api/OrderMaster/GetTotalLineOfPart");
         }
     });
 }
 function SaveMRPByItemInput(element, itemCode) {
-    var mrp = $(element).val();
-    if (mrp === undefined || mrp === null || mrp === '') {
+    var newMrp = ($(element).val() || '').trim();
+    if (newMrp === '') {
         return;
     }
-    if (isNaN(parseFloat(mrp))) {
+    if (isNaN(parseFloat(newMrp))) {
         toastr.error("Please enter a valid MRP!");
         $(element).focus();
         return;
     }
+    var oldMrp = ($(element).attr('data-old-mrp') || $(element).closest('tr').attr('data-mrp') || '').trim();
+    if (parseFloat(oldMrp || 0) === parseFloat(newMrp)) return;
+
     if (!G_DispatchMaster_Code || parseInt(G_DispatchMaster_Code) <= 0) {
         toastr.error("Invalid Dispatch reference!");
         return;
@@ -2449,7 +2928,9 @@ function SaveMRPByItemInput(element, itemCode) {
     var payload = {
         DispatchMaster_Code: G_DispatchMaster_Code,
         ItemCode: itemCode,
-        Mrp: mrp,
+        OldMRP: oldMrp,
+        NewMRP: newMrp,
+        Mrp: newMrp,
         UserMaster_Code: UserMaster_Code
     };
     $.ajax({
@@ -2469,7 +2950,7 @@ function SaveMRPByItemInput(element, itemCode) {
 			if (res && res.Status == 'Y') {
 				if (G_Tab == 1) {
 					StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS");
-				} else if (G_Tab == 2) {
+				} else if (G_Tab == 2 || G_Tab == 4) {
 					if (All == 0) {
 						StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS");
 					} else {

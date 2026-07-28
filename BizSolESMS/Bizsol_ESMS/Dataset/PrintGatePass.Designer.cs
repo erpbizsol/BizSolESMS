@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace DatasetClass.Dataset {
+namespace Bizsol_ESMS.Dataset {
     
     
     /// <summary>
@@ -303,6 +303,10 @@ namespace DatasetClass.Dataset {
             
             private global::System.Data.DataColumn columnCode;
             
+            private global::System.Data.DataColumn columnCompanyName;
+            
+            private global::System.Data.DataColumn columnIsShowInvoiceInDispatchValidation;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public PrintGatePassDataTable() {
@@ -428,6 +432,22 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn CompanyNameColumn {
+                get {
+                    return this.columnCompanyName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn IsShowInvoiceInDispatchValidationColumn {
+                get {
+                    return this.columnIsShowInvoiceInDispatchValidation;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -463,7 +483,7 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public PrintGatePassRow AddPrintGatePassRow(string AccountName, string Date, string VehicleNo, string DriverName, string DriverContactNo, string LorryMeter, string BuyerPONo, string BoxCount, string InvoiceNo, string TotalRate, string Code) {
+            public PrintGatePassRow AddPrintGatePassRow(string AccountName, string Date, string VehicleNo, string DriverName, string DriverContactNo, string LorryMeter, string BuyerPONo, string BoxCount, string InvoiceNo, string TotalRate, string Code, string CompanyName, string IsShowInvoiceInDispatchValidation) {
                 PrintGatePassRow rowPrintGatePassRow = ((PrintGatePassRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         AccountName,
@@ -476,7 +496,9 @@ namespace DatasetClass.Dataset {
                         BoxCount,
                         InvoiceNo,
                         TotalRate,
-                        Code};
+                        Code,
+                        CompanyName,
+                        IsShowInvoiceInDispatchValidation};
                 rowPrintGatePassRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowPrintGatePassRow);
                 return rowPrintGatePassRow;
@@ -510,6 +532,8 @@ namespace DatasetClass.Dataset {
                 this.columnInvoiceNo = base.Columns["InvoiceNo"];
                 this.columnTotalRate = base.Columns["TotalRate"];
                 this.columnCode = base.Columns["Code"];
+                this.columnCompanyName = base.Columns["CompanyName"];
+                this.columnIsShowInvoiceInDispatchValidation = base.Columns["IsShowInvoiceInDispatchValidation"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -537,6 +561,10 @@ namespace DatasetClass.Dataset {
                 base.Columns.Add(this.columnTotalRate);
                 this.columnCode = new global::System.Data.DataColumn("Code", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnCode);
+                this.columnCompanyName = new global::System.Data.DataColumn("CompanyName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCompanyName);
+                this.columnIsShowInvoiceInDispatchValidation = new global::System.Data.DataColumn("IsShowInvoiceInDispatchValidation", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnIsShowInvoiceInDispatchValidation);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_PrintGatePass");
                 this.ExtendedProperties.Add("Generator_UserTableName", "PrintGatePass");
             }
@@ -857,6 +885,39 @@ namespace DatasetClass.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string CompanyName {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.CompanyNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'CompanyName\' in table \'PrintGatePass\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.CompanyNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string IsShowInvoiceInDispatchValidation {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrintGatePass.IsShowInvoiceInDispatchValidationColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'IsShowInvoiceInDispatchValidation\' in table \'PrintGatePass\'" +
+                                " is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrintGatePass.IsShowInvoiceInDispatchValidationColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsAccountNameNull() {
                 return this.IsNull(this.tablePrintGatePass.AccountNameColumn);
             }
@@ -985,6 +1046,30 @@ namespace DatasetClass.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetCodeNull() {
                 this[this.tablePrintGatePass.CodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsCompanyNameNull() {
+                return this.IsNull(this.tablePrintGatePass.CompanyNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetCompanyNameNull() {
+                this[this.tablePrintGatePass.CompanyNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsIsShowInvoiceInDispatchValidationNull() {
+                return this.IsNull(this.tablePrintGatePass.IsShowInvoiceInDispatchValidationColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetIsShowInvoiceInDispatchValidationNull() {
+                this[this.tablePrintGatePass.IsShowInvoiceInDispatchValidationColumn] = global::System.Convert.DBNull;
             }
         }
         

@@ -11,7 +11,7 @@
         <div class="card-body-esms esms-item-locator-inner px-2 px-md-3 py-3">
                 <div class="d-flex flex-column flex-lg-row gap-2 gap-lg-3 mb-2 esms-item-locator-top">
                     <div class="flex-grow-1">
-                        <h5 class="esms-item-locator-title mb-0">Locate product rack</h5>
+                    <h5 class="esms-item-locator-title mb-0">Product Rack Information</h5>
                         <p class="esms-item-locator-sub mb-0 mt-1">Choose box, barcode, or master item — then scan or pick.</p>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
 
 <div class="modal fade" id="LocationModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content modal-content-width-sm mt-5" style="max-width: 400px;">
+        <div class="modal-content mt-5" style="max-width: 400px;">
             <div class="modal-header">
                 <h5 class="modal-title">Create Location (Bin)</h5>
                 <button type="button" class="close modal-close" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal"><span aria-hidden="true">x</span></button>
@@ -90,14 +90,20 @@
                         </select>
                     </div>
                 </div>
+                <div class="row d-none" id="divLocationModalWarehouse">
+                    <div class="col-md-12 col-12 pt-2">
+                        <label for="ddlLocationModalWarehouse" class="col-form-label-sm fw-bold mb-1">Warehouse <span class="text-danger">*</span></label>
+                        <select id="ddlLocationModalWarehouse" class="form-control form-control-sm box_border"></select>
+                    </div>
+                </div>
                 <div class="row">
-                    <div class="col-md-6 col-12 pt-2">
+                    <div class="col-md-5 col-12 pt-2">
                         <input type="text" id="txtLocationName" name="txtLocationName" class="box_border form-control mb-0 form-control-sm" value="" autocomplete="off" placeholder="Create new location..." />
                         <input type="hidden" id="hfItemCode" name="hfItemCode" class="box_border form-control form-control-sm mb-0" value="0" autocomplete="off" />
                     </div>
-                    <div class="col-md-6 col-12 pt-2">
-                        <button type="button" title="Create new location" class="btn btn-primary btn-height" id="btnCreateNew">Create</button>
-                        <button type="button" title="Save" class="btn btn-success btn-height" id="btnSaveLocation">Save</button>
+                    <div class="col-md-7 col-12 pt-2">
+                        <button type="button" title="Create new location" class="btn btn-info btn-height" id="btnCreateNew">Create</button>
+                        <button type="button" title="Save" class="btn btn-success btn-height" id="btnSaveLocation">Save</button>&nbsp;
                         <button type="button" title="Close" class="btn btn-danger btn-height" aria-label="Close" onclick="ClearLocationData()" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>

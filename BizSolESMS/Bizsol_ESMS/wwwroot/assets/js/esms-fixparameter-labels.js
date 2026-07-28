@@ -69,7 +69,7 @@
         var parsed = parseFixparameter();
         if (!parsed) return DEFAULT_BUYER_PO_NO_LABEL;
         var row = Array.isArray(parsed) ? parsed[0] : parsed;
-        var v = fixParameterString(row, 'LevelOfOrderNo');
+        var v = fixParameterString(row, 'LevelOfBuyerPONo');
         return v || DEFAULT_BUYER_PO_NO_LABEL;
     };
 
@@ -77,7 +77,7 @@
         var parsed = parseFixparameter();
         if (!parsed) return DEFAULT_BUYER_PO_DATE_LABEL;
         var row = Array.isArray(parsed) ? parsed[0] : parsed;
-        var v = fixParameterString(row, 'LevelOfOrderDate');
+        var v = fixParameterString(row, 'LevelOfBuyerPODate');
         return v || DEFAULT_BUYER_PO_DATE_LABEL;
     };
 
@@ -103,48 +103,36 @@
         return col;
     };
 
-    function replaceOrderNoTextInLabelElement(el, label) {
-        var node;
-        var re = /\bOrder\s*No\b/gi;
+    /**
+     * Idempotent text replace: skip nodes that already contain the applied label,
+     * otherwise repeated runs (draw.dt, CreateDataTable patch, etc.) keep re-prepending
+     * the label when it itself contains the original phrase (e.g. "DMS Order No.").
+     */
+    function replaceTextInLabelElement(el, re, testRe, label) {
         for (var i = 0; i < el.childNodes.length; i++) {
-            node = el.childNodes[i];
-            if (node.nodeType === 3 && /\bOrder\s*No\b/i.test(node.nodeValue)) {
+            var node = el.childNodes[i];
+            if (node.nodeType !== 3) continue;
+            if (label && node.nodeValue.indexOf(label) !== -1) continue;
+            if (testRe.test(node.nodeValue)) {
                 node.nodeValue = node.nodeValue.replace(re, label);
             }
         }
+    }
+
+    function replaceOrderNoTextInLabelElement(el, label) {
+        replaceTextInLabelElement(el, /\bOrder\s*No\b/gi, /\bOrder\s*No\b/i, label);
     }
 
     function replaceOrderDateTextInLabelElement(el, label) {
-        var node;
-        var re = /\bOrder\s*Date\b/gi;
-        for (var i = 0; i < el.childNodes.length; i++) {
-            node = el.childNodes[i];
-            if (node.nodeType === 3 && /\bOrder\s*Date\b/i.test(node.nodeValue)) {
-                node.nodeValue = node.nodeValue.replace(re, label);
-            }
-        }
+        replaceTextInLabelElement(el, /\bOrder\s*Date\b/gi, /\bOrder\s*Date\b/i, label);
     }
 
     function replaceBuyerPONoTextInLabelElement(el, label) {
-        var node;
-        var re = /\bBuyer\s*PO\s*No\b/gi;
-        for (var i = 0; i < el.childNodes.length; i++) {
-            node = el.childNodes[i];
-            if (node.nodeType === 3 && /\bBuyer\s*PO\s*No\b/i.test(node.nodeValue)) {
-                node.nodeValue = node.nodeValue.replace(re, label);
-            }
-        }
+        replaceTextInLabelElement(el, /\bBuyer\s*PO\s*No\b/gi, /\bBuyer\s*PO\s*No\b/i, label);
     }
 
     function replaceBuyerPODateTextInLabelElement(el, label) {
-        var node;
-        var re = /\bBuyer\s*PO\s*Date\b/gi;
-        for (var i = 0; i < el.childNodes.length; i++) {
-            node = el.childNodes[i];
-            if (node.nodeType === 3 && /\bBuyer\s*PO\s*Date\b/i.test(node.nodeValue)) {
-                node.nodeValue = node.nodeValue.replace(re, label);
-            }
-        }
+        replaceTextInLabelElement(el, /\bBuyer\s*PO\s*Date\b/gi, /\bBuyer\s*PO\s*Date\b/i, label);
     }
 
     function shouldReplaceHeaderCaption(t, prevApplied) {

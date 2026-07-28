@@ -10,7 +10,7 @@ function updateDerivedLocationName() {
     const l = ($("#txtLocation").val() || "").trim();
     let name = "";
     if (l) {
-        name = g ? `${g} / ${l}` : l;
+        name = g ? `${g}/${l}` : l;
     }
     $("#txtLocationName").val(name.slice(0, LOCATION_NAME_MAX));
 }
@@ -29,8 +29,48 @@ $(document).ready(function () {
     });
     LocationList('Load');
     GetModuleMasterCode();
+    GetWareHouseList();
     $("#txtLocationExcelFile").on("change", ImportLocationFile);
 });
+function autoSelectSingleWarehouse() {
+    const $wh = $('#txtWarehouse');
+    const options = $wh.find('option').filter(function () {
+        return ($(this).val() || "").trim() !== "";
+    });
+    if (options.length === 1) {
+        $wh.val(options.first().val()).trigger('change');
+    }
+}
+function GetWareHouseList() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetWareHouseDropDown`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                let option = '<option value="">Select</option>';
+                response.forEach(item => {
+                    option += '<option value="' + item.Code + '">' + item.Name + '</option>';
+                });
+                $('#txtWarehouse')[0].innerHTML = option;
+                $('#txtWarehouse').select2({
+                    width: '-webkit-fill-available'
+                });
+                if (response.length === 1) {
+                    $('#txtWarehouse').val(response[0].Code).trigger('change');
+                }
+            } else {
+                $('#txtWarehouse').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtWarehouse').empty();
+        }
+    });
+}
 function LocationList(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowLocationMaster`,
@@ -41,13 +81,13 @@ function LocationList(Type) {
         success: function (response) {
             if (response.length > 0) {
                 $("#txtlocationtable").show();
-                const StringFilterColumn = ["Location Group", "Location", "Location Name", "LocationGroup", "LocationName"];
+                const StringFilterColumn = ["Warehouse Name", "Location Group", "Location", "Location Name", "LocationGroup", "LocationName"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code"];
+                const hiddenColumns = ["Code", "WarehouseMaster_Code"];
                 const ColumnAlignment = {
                     "CreatedOn": 'center',
                     "DigitAfterDecimal": 'right',
@@ -73,11 +113,15 @@ function LocationList(Type) {
 
 }
 function Save() {
+        const Warehouse = $("#txtWarehouse").val();
         const LocationGroup = ($("#txtLocationGroup").val() || "").trim();
         updateDerivedLocationName();
         const Location = ($("#txtLocation").val() || "").trim();
         const LocationName = ($("#txtLocationName").val() || "").trim();
-        if (Location === "") {
+        if (!Warehouse) {
+            toastr.error('Please select a Warehouse.');
+            $("#txtWarehouse").focus();
+        } else if (Location === "") {
             toastr.error('Please enter Location.');
             $("#txtLocation").focus();
         } else if (LocationName === "") {
@@ -86,6 +130,7 @@ function Save() {
         } else {
             const payload = {
                 Code: $("#hftxtCode").val(),
+                WarehouseMaster_Code: Warehouse,
                 LocationGroup: LocationGroup,
                 Location: Location,
                 LocationName: LocationName
@@ -124,6 +169,7 @@ async function Create() {
         return;
     }
     ClearData();
+    autoSelectSingleWarehouse();
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
     $("#txtLocationImportPage").hide();
@@ -217,6 +263,7 @@ async function Edit(code) {
                 if (response.length > 0) {
                     response.forEach(function (item) {
                         $("#hftxtCode").val(item.Code);
+                        $("#txtWarehouse").val(item.WarehouseMaster_Code || item["WarehouseMaster_Code"] || "").trigger('change').prop("disabled", false);
                         $("#txtLocationGroup").val(item.LocationGroup != null ? item.LocationGroup : item["Location Group"] || "");
                         $("#txtLocation").val(item.Location != null ? item.Location : "");
                         $("#txtLocationName").val(item.LocationName != null ? item.LocationName : item["Location Name"] || "").prop("disabled", true);
@@ -246,6 +293,7 @@ function GetModuleMasterCode() {
 function ClearData() {
     $("#hftxtCode").val("0");
     $("#txtLocationGroup, #txtLocation, #txtLocationName").val("");
+    $("#txtWarehouse").val("").trigger('change');
 }
 async function View(code) {
 
@@ -273,6 +321,7 @@ async function View(code) {
                 if (response.length > 0) {
                     response.forEach(function (item) {
                         $("#hftxtCode").val(item.Code).prop("disabled", true);
+                        $("#txtWarehouse").val(item.WarehouseMaster_Code || item["WarehouseMaster_Code"] || "").trigger('change').prop("disabled", true);
                         $("#txtLocationGroup").val(item.LocationGroup != null ? item.LocationGroup : item["Location Group"] || "").prop("disabled", true);
                         $("#txtLocation").val(item.Location != null ? item.Location : "").prop("disabled", true);
                         $("#txtLocationName").val(item.LocationName != null ? item.LocationName : item["Location Name"] || "").prop("disabled", true);
@@ -294,10 +343,13 @@ async function View(code) {
 }
 function disableFields(viewOnly) {
     if (viewOnly) {
-        $("#txtLocationGroup, #txtLocation, #txtLocationName").prop("disabled", true);
+        $("#txtWarehouse, #txtLocationGroup, #txtLocation, #txtLocationName").prop("disabled", true);
     } else {
-        $("#txtLocationGroup, #txtLocation").prop("disabled", false);
+        $("#txtWarehouse, #txtLocationGroup, #txtLocation").prop("disabled", false);
         $("#txtLocationName").prop("disabled", true);
+    }
+    if ($("#txtWarehouse").data('select2')) {
+        $("#txtWarehouse").trigger('change.select2');
     }
     $("#txtCreatepage,#txtsave").not("#btnBack").prop("disabled", viewOnly).css("pointer-events", viewOnly ? "none" : "auto");
 }

@@ -1,9 +1,684 @@
 ﻿var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var G_Fixparameter;
+try { G_Fixparameter = JSON.parse(sessionStorage.getItem('Fixparameter')); } catch (e) { G_Fixparameter = null; }
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+let G_WarehouseList = [];
+let G_LocationMasterList = [];
+let G_LocationsByWarehouseCode = {};
+
+function getObjValue(obj, keys) {
+    if (!obj || typeof obj !== "object") return "";
+    for (let i = 0; i < keys.length; i++) {
+        const v = obj[keys[i]];
+        if (v != null && String(v).trim() !== "") return String(v).trim();
+    }
+    return "";
+}
+
+function getWarehouseItemCode(item) {
+    return getObjValue(item, ["Code", "code"]);
+}
+
+function getWarehouseItemName(item) {
+    return getObjValue(item, ["Name", "name", "Warehouse Name", "WarehouseName", "warehouseName"]);
+}
+
+function getLocationItemCode(item) {
+    return getObjValue(item, ["Code", "code"]);
+}
+
+function getLocationItemName(item) {
+    return getObjValue(item, ["Location Name", "LocationName", "locationName", "Name", "name"]);
+}
+
+function getLocationWarehouseCode(item) {
+    const directCode = getObjValue(item, [
+        "WarehouseMaster_Code",
+        "warehouseMaster_Code",
+        "WarehouseMasterCode",
+        "warehouseMasterCode"
+    ]);
+    if (directCode) return directCode;
+
+    const warehouseName = getObjValue(item, ["Warehouse Name", "WarehouseName", "warehouseName"]);
+    if (!warehouseName) return "";
+
+    const warehouse = G_WarehouseList.find(function (wh) {
+        return getWarehouseItemName(wh) === warehouseName;
+    });
+    return warehouse ? getWarehouseItemCode(warehouse) : "";
+}
+
+function getWarehouseNameByCode(warehouseCode) {
+    if (!warehouseCode) return "";
+    const warehouse = G_WarehouseList.find(function (wh) {
+        return String(getWarehouseItemCode(wh)) === String(warehouseCode);
+    });
+    return warehouse ? getWarehouseItemName(warehouse) : "";
+}
+
+function locationMatchesWarehouse(item, warehouseCode) {
+    if (!warehouseCode) return false;
+    const whCode = String(warehouseCode);
+    const locWhCode = getLocationWarehouseCode(item);
+    if (locWhCode && locWhCode === whCode) return true;
+
+    const warehouseName = getWarehouseNameByCode(whCode);
+    if (!warehouseName) return false;
+    return getObjValue(item, ["Warehouse Name", "WarehouseName", "warehouseName"]) === warehouseName;
+}
+
+function rebuildLocationWarehouseIndex() {
+    G_LocationsByWarehouseCode = {};
+    G_LocationMasterList.forEach(function (item) {
+        const whCode = getLocationWarehouseCode(item);
+        if (!whCode) return;
+        if (!G_LocationsByWarehouseCode[whCode]) {
+            G_LocationsByWarehouseCode[whCode] = [];
+        }
+        G_LocationsByWarehouseCode[whCode].push(item);
+    });
+}
+
+function unwrapAjaxWhenResult(result) {
+    if (result == null) return [];
+    if (Array.isArray(result) && result.length >= 1 && typeof result[1] === "string") {
+        return result[0] || [];
+    }
+    return Array.isArray(result) ? result : [];
+}
+
+function getItemWarehouseRows() {
+    return $("#tbItemWarehouseLocation tr.esms-item-wh-row");
+}
+
+function onItemWarehouseChanged($warehouseSelect) {
+    const warehouseCode = ($warehouseSelect.val() || "").trim();
+    const $row = $warehouseSelect.closest("tr.esms-item-wh-row");
+    const $location = $row.find(".txtItemWhLocation");
+    const readOnly = $warehouseSelect.prop("disabled");
+    destroyItemWhSelect2($location);
+    $location.html(buildLocationOptions(warehouseCode, ""));
+    initItemWhLocationSelect2($location, readOnly || !warehouseCode);
+}
+
+function getItemWhSelect2Options() {
+    return {
+        width: "100%",
+        allowClear: false,
+        dropdownParent: $("#divItemWarehouseGrid"),
+        dropdownCssClass: "esms-item-wh-dropdown",
+        minimumResultsForSearch: 0
+    };
+}
+
+function destroyItemWhSelect2($select) {
+    if (!$select || !$select.length || !$.fn.select2) return;
+    if ($select.data("select2")) {
+        $select.select2("destroy");
+    }
+}
+
+function destroyItemWarehouseGridSelect2() {
+    $("#tbItemWarehouseLocation .txtItemWhWarehouse, #tbItemWarehouseLocation .txtItemWhLocation").each(function () {
+        destroyItemWhSelect2($(this));
+    });
+}
+
+function initItemWhWarehouseSelect2($select, disabled) {
+    if (!$select || !$select.length || !$.fn.select2) return;
+    destroyItemWhSelect2($select);
+    $select.select2($.extend({}, getItemWhSelect2Options(), {
+        placeholder: "Search warehouse..."
+    }));
+    $select.prop("disabled", !!disabled);
+    if (disabled && $select.data("select2")) {
+        $select.trigger("change.select2");
+    }
+}
+
+function initItemWhLocationSelect2($select, disabled) {
+    if (!$select || !$select.length || !$.fn.select2) return;
+    destroyItemWhSelect2($select);
+    $select.select2($.extend({}, getItemWhSelect2Options(), {
+        placeholder: "Search location..."
+    }));
+    $select.prop("disabled", !!disabled);
+    if (disabled && $select.data("select2")) {
+        $select.trigger("change.select2");
+    }
+}
+
+function initItemWarehouseRowSelect2($row, readOnly) {
+    if (!$row || !$row.length) return;
+    const $warehouse = $row.find(".txtItemWhWarehouse");
+    const $location = $row.find(".txtItemWhLocation");
+    const hasWarehouse = !!($warehouse.val() || "").trim();
+    initItemWhWarehouseSelect2($warehouse, readOnly);
+    initItemWhLocationSelect2($location, readOnly || !hasWarehouse);
+}
+
+function getFixParamValue(key) {
+    if (!G_Fixparameter || !G_Fixparameter[0]) return '';
+    const row = G_Fixparameter[0];
+    const camelKey = key.charAt(0).toLowerCase() + key.slice(1);
+    const v = row[key] != null ? row[key] : row[camelKey];
+    return (v != null && String(v).trim() !== '') ? String(v).trim() : '';
+}
+
+function isWarehouseEnabled() {
+    return getFixParamValue('IsWarehouseEnabled') === 'Y';
+}
+
+function applyItemLocationMode() {
+    if (isWarehouseEnabled()) {
+        $("#divItemWarehouseGrid").show();
+        $("#divItemLocationField").hide();
+        clearItemLocationValue();
+    } else {
+        $("#divItemWarehouseGrid").hide();
+        $("#divItemLocationField").show();
+        clearItemWarehouseGrid();
+    }
+}
+
+function clearLocationModalWarehouse() {
+    const $wh = $("#ddlLocationModalWarehouse");
+    if ($wh.data("select2")) {
+        $wh.val("").trigger("change");
+    } else {
+        $wh.val("");
+    }
+}
+
+function autoSelectSingleLocationModalWarehouse() {
+    const $wh = $("#ddlLocationModalWarehouse");
+    const options = $wh.find("option").filter(function () {
+        return ($(this).val() || "").trim() !== "";
+    });
+    if (options.length === 1) {
+        $wh.val(options.first().val()).trigger("change");
+    }
+}
+
+function populateLocationModalWarehouseDropdown(list) {
+    const $select = $("#ddlLocationModalWarehouse");
+    if ($select.data("select2")) {
+        $select.select2("destroy");
+    }
+    $select.empty().append('<option value="">Select Warehouse</option>');
+    (list || []).forEach(function (item) {
+        const code = getWarehouseItemCode(item);
+        const name = getWarehouseItemName(item);
+        $select.append(new Option(name, code));
+    });
+    $select.select2({
+        width: "100%",
+        placeholder: "Select Warehouse",
+        allowClear: true,
+        dropdownParent: $("#LocationModal")
+    });
+    autoSelectSingleLocationModalWarehouse();
+}
+
+function loadLocationModalWarehouseDropdown() {
+    if (G_WarehouseList.length) {
+        populateLocationModalWarehouseDropdown(G_WarehouseList);
+        return $.Deferred().resolve().promise();
+    }
+    return loadWarehouseAndLocationCaches().done(function () {
+        populateLocationModalWarehouseDropdown(G_WarehouseList);
+    });
+}
+
+function applyLocationModalWarehouseMode() {
+    if (isWarehouseEnabled()) {
+        $("#divLocationModalWarehouse").removeClass("d-none").show();
+        loadLocationModalWarehouseDropdown();
+    } else {
+        $("#divLocationModalWarehouse").addClass("d-none").hide();
+        clearLocationModalWarehouse();
+    }
+}
+
+function buildWarehouseOptions(selectedCode) {
+    let html = '<option value="">Select Warehouse</option>';
+    G_WarehouseList.forEach(function (item) {
+        const code = getWarehouseItemCode(item);
+        const selected = selectedCode && String(selectedCode) === code ? ' selected' : '';
+        html += '<option value="' + code + '"' + selected + '>' + getWarehouseItemName(item) + '</option>';
+    });
+    return html;
+}
+
+function buildLocationOptions(warehouseCode, selectedCode) {
+    let html = '<option value="">Select Location</option>';
+    const whCode = warehouseCode ? String(warehouseCode) : '';
+    if (!whCode) return html;
+
+    const locations = G_LocationsByWarehouseCode[whCode] ||
+        G_LocationMasterList.filter(function (item) { return locationMatchesWarehouse(item, whCode); });
+
+    locations.forEach(function (item) {
+        const code = getLocationItemCode(item);
+        const selected = selectedCode && String(selectedCode) === code ? ' selected' : '';
+        html += '<option value="' + code + '"' + selected + '>' + getLocationItemName(item) + '</option>';
+    });
+    return html;
+}
+
+function renumberItemWarehouseRows() {
+    getItemWarehouseRows().each(function (index) {
+        $(this).find(".itemWhSNo").text(index + 1);
+    });
+}
+
+function bindItemWarehouseRowEvents($row) {
+    $row.find(".txtItemWhWarehouse").off("change.itemWh select2:select.itemWh").on("change.itemWh select2:select.itemWh", function () {
+        onItemWarehouseChanged($(this));
+    });
+}
+
+function addItemWarehouseRow(rowData, readOnly) {
+    rowData = rowData || {};
+    readOnly = !!readOnly;
+    const rowCount = getItemWarehouseRows().length + 1;
+    const warehouseCode = rowData.WarehouseMaster_Code || "";
+    const locationCode = rowData.LocationMaster_Code || "";
+    const disabledAttr = readOnly ? " disabled" : "";
+    const deleteBtn = readOnly
+        ? ""
+        : '<button type="button" class="btn btnDeleteItemWhRow" title="Delete row"><i class="fa-regular fa-circle-xmark"></i></button>';
+
+    const rowHtml = `
+        <tr class="esms-item-wh-row">
+            <td class="col-sno-cell text-center"><span class="itemWhSNo">${rowCount}</span></td>
+            <td class="col-warehouse-cell">
+                <select class="txtItemWhWarehouse form-control form-control-sm box_border"${disabledAttr}>
+                    ${buildWarehouseOptions(warehouseCode)}
+                </select>
+            </td>
+            <td class="col-location-cell">
+                <select class="txtItemWhLocation form-control form-control-sm box_border"${disabledAttr}>
+                    ${buildLocationOptions(warehouseCode, locationCode)}
+                </select>
+            </td>
+            <td class="col-action-cell text-center">${deleteBtn}</td>
+        </tr>`;
+    const $row = $(rowHtml);
+    $("#tbItemWarehouseLocation").append($row);
+    initItemWarehouseRowSelect2($row, readOnly);
+    bindItemWarehouseRowEvents($row);
+    renumberItemWarehouseRows();
+}
+
+function clearItemWarehouseGrid() {
+    destroyItemWarehouseGridSelect2();
+    $("#tbItemWarehouseLocation").empty();
+}
+
+function initItemWarehouseGrid(readOnly) {
+    clearItemWarehouseGrid();
+    if (!isWarehouseEnabled()) return;
+    addItemWarehouseRow({}, readOnly);
+}
+
+function setItemWarehouseGridDisabled(disabled) {
+    getItemWarehouseRows().each(function () {
+        const $row = $(this);
+        const $warehouse = $row.find(".txtItemWhWarehouse");
+        const $location = $row.find(".txtItemWhLocation");
+        destroyItemWhSelect2($warehouse);
+        destroyItemWhSelect2($location);
+        $warehouse.prop("disabled", disabled);
+        $location.prop("disabled", disabled);
+        initItemWhWarehouseSelect2($warehouse, disabled);
+        initItemWhLocationSelect2($location, disabled);
+    });
+    if (disabled) {
+        $("#btnAddItemWarehouseRow").hide();
+        $("#tbItemWarehouseLocation .btnDeleteItemWhRow").hide();
+    } else {
+        $("#btnAddItemWarehouseRow").show();
+        $("#tbItemWarehouseLocation .btnDeleteItemWhRow").show();
+    }
+}
+
+function hasItemWarehouseGridRows() {
+    return getItemWarehouseRows().length > 0;
+}
+
+function isItemWarehouseRowComplete($row) {
+    const warehouse = ($row.find(".txtItemWhWarehouse").val() || "").trim();
+    const location = ($row.find(".txtItemWhLocation").val() || "").trim();
+    return !!(warehouse && location);
+}
+
+function validateItemWarehouseGrid() {
+    const $rows = getItemWarehouseRows();
+    if (!$rows.length) {
+        toastr.error("Please add at least one warehouse and location row!");
+        return false;
+    }
+
+    let hasCompleteRow = false;
+    let isValid = true;
+    $rows.each(function () {
+        const $row = $(this);
+        const warehouse = ($row.find(".txtItemWhWarehouse").val() || "").trim();
+        const location = ($row.find(".txtItemWhLocation").val() || "").trim();
+
+        if (!warehouse && !location) {
+            return;
+        }
+        if (!warehouse) {
+            toastr.error("Please select Warehouse Name!");
+            $row.find(".txtItemWhWarehouse").focus();
+            isValid = false;
+            return false;
+        }
+        if (!location) {
+            toastr.error("Please select Location Name!");
+            $row.find(".txtItemWhLocation").focus();
+            isValid = false;
+            return false;
+        }
+        hasCompleteRow = true;
+    });
+
+    if (!isValid) return false;
+    if (!hasCompleteRow) {
+        toastr.error("Please add at least one warehouse and location row!");
+        return false;
+    }
+    return true;
+}
+
+function getItemWarehouseGridData() {
+    const rows = [];
+    getItemWarehouseRows().each(function () {
+        const warehouseCode = parseInt($(this).find(".txtItemWhWarehouse").val(), 10) || 0;
+        const locationCode = parseInt($(this).find(".txtItemWhLocation").val(), 10) || 0;
+        if (warehouseCode > 0 && locationCode > 0) {
+            rows.push({
+                WarehouseMaster_Code: warehouseCode,
+                LocationMaster_Code: locationCode
+            });
+        }
+    });
+    return rows;
+}
+
+function getItemWarehouseLocationCodesCsv() {
+    const codes = [];
+    const seen = {};
+    getItemWarehouseRows().each(function () {
+        const locationCode = parseInt($(this).find(".txtItemWhLocation").val(), 10) || 0;
+        if (locationCode > 0 && !seen[locationCode]) {
+            codes.push(locationCode);
+            seen[locationCode] = true;
+        }
+    });
+    return codes.join(", ");
+}
+
+function loadItemWarehouseGridFromLocationCodes(codesRaw, readOnly) {
+    const codes = parseLocationCodes(codesRaw);
+    clearItemWarehouseGrid();
+    if (!codes.length) {
+        initItemWarehouseGrid(readOnly);
+        return;
+    }
+
+    codes.forEach(function (code) {
+        const location = G_LocationMasterList.find(function (item) {
+            return String(getLocationItemCode(item)) === String(code);
+        });
+        addItemWarehouseRow({
+            WarehouseMaster_Code: location ? getLocationWarehouseCode(location) : "",
+            LocationMaster_Code: code
+        }, readOnly);
+    });
+    renumberItemWarehouseRows();
+}
+
+function loadItemWarehouseGrid(itemCode, readOnly) {
+    const deferred = $.Deferred();
+    const loadRows = function () {
+        if (!itemCode || itemCode === "0") {
+            initItemWarehouseGrid(readOnly);
+            deferred.resolve();
+            return;
+        }
+
+        $.ajax({
+            url: `${appBaseURL}/api/Master/GetItemLocationMaster_Code?Code=${itemCode}`,
+            type: "GET",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Auth-Key", authKeyData);
+            },
+            success: function (response) {
+                if (response.length > 0 && response[0].Codes != null && response[0].Codes !== "") {
+                    loadItemWarehouseGridFromLocationCodes(response[0].Codes, readOnly);
+                } else {
+                    initItemWarehouseGrid(readOnly);
+                }
+                deferred.resolve(response);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading item warehouse locations:", error);
+                initItemWarehouseGrid(readOnly);
+                deferred.reject(error);
+            }
+        });
+    };
+
+    if (G_WarehouseList.length && G_LocationMasterList.length) {
+        loadRows();
+    } else {
+        loadWarehouseAndLocationCaches().always(loadRows);
+    }
+
+    return deferred.promise();
+}
+
+function loadWarehouseAndLocationCaches() {
+    const warehouseReq = $.ajax({
+        url: `${appBaseURL}/api/Master/GetWareHouseDropDown`,
+        type: "GET",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Auth-Key", authKeyData);
+        }
+    });
+    const locationReq = $.ajax({
+        url: `${appBaseURL}/api/Master/ShowLocationMaster`,
+        type: "GET",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Auth-Key", authKeyData);
+        }
+    });
+
+    return $.when(warehouseReq, locationReq).done(function (warehouseRes, locationRes) {
+        G_WarehouseList = unwrapAjaxWhenResult(warehouseRes) || [];
+        G_LocationMasterList = unwrapAjaxWhenResult(locationRes) || [];
+        rebuildLocationWarehouseIndex();
+        if (getItemWarehouseRows().length) {
+            refreshItemWarehouseGridOptions();
+        }
+    });
+}
+
+function refreshItemWarehouseGridOptions() {
+    getItemWarehouseRows().each(function () {
+        const $row = $(this);
+        const $warehouse = $row.find(".txtItemWhWarehouse");
+        const $location = $row.find(".txtItemWhLocation");
+        const warehouseCode = $warehouse.val();
+        const locationCode = $location.val();
+        const whDisabled = $warehouse.prop("disabled");
+        const locDisabled = $location.prop("disabled");
+        destroyItemWhSelect2($warehouse);
+        destroyItemWhSelect2($location);
+        $warehouse.html(buildWarehouseOptions(warehouseCode));
+        $location.html(buildLocationOptions(warehouseCode, locationCode));
+        initItemWhWarehouseSelect2($warehouse, whDisabled);
+        initItemWhLocationSelect2($location, locDisabled);
+        bindItemWarehouseRowEvents($row);
+    });
+}
+
+function getItemLocationPlaceholder() {
+    const labelText = ($("#SubLocationItemHeaderlab").text() || "Location Item").trim();
+    return labelText || "Location Item";
+}
+
+function initItemLocationSelect2() {
+    const $select = $("#txtItemLocation");
+    if (!$select.length || !$.fn.select2) return;
+
+    if ($select.data("select2")) {
+        $select.select2("destroy");
+    }
+
+    $select.select2({
+        width: "100%",
+        closeOnSelect: false,
+        placeholder: getItemLocationPlaceholder(),
+        allowClear: true
+    });
+}
+
+function parseLocationCodes(codesRaw) {
+    if (codesRaw == null || codesRaw === "") return [];
+    if (Array.isArray(codesRaw)) return codesRaw.map(String);
+    if (typeof codesRaw === "number") return [String(codesRaw)];
+
+    const trimmed = String(codesRaw).trim();
+    if (!trimmed) return [];
+
+    try {
+        const jsonText = trimmed.startsWith("[")
+            ? trimmed.replace(/'/g, '"')
+            : "[" + trimmed.replace(/^\[|\]$/g, "").replace(/'/g, '"') + "]";
+        const parsed = JSON.parse(jsonText);
+        if (Array.isArray(parsed)) return parsed.map(String);
+    } catch (e) { }
+
+    return trimmed.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+}
+
+function hasItemLocationSelected() {
+    const val = $("#txtItemLocation").val();
+    return !!(val && val.length);
+}
+
+function getItemLocationCodesCsv() {
+    const val = $("#txtItemLocation").val();
+    if (!val || !val.length) return "";
+    return Array.isArray(val) ? val.join(", ") : String(val);
+}
+
+function setItemLocationCodes(codesRaw) {
+    const $select = $("#txtItemLocation");
+    if (!$select.length) return;
+
+    const codes = parseLocationCodes(codesRaw);
+    $select.val(codes).trigger("change");
+}
+
+function clearItemLocationValue() {
+    $("#txtItemLocation").val(null).trigger("change");
+}
+
+function setItemLocationDisabled(disabled) {
+    $("#txtItemLocation").prop("disabled", disabled).trigger("change.select2");
+}
+
+function loadItemLocationCodes(itemCode) {
+    const deferred = $.Deferred();
+
+    if (!itemCode || itemCode === "0") {
+        clearItemLocationValue();
+        return deferred.resolve().promise();
+    }
+
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetItemLocationMaster_Code?Code=${itemCode}`,
+        type: "GET",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Auth-Key", authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0 && response[0].Codes != null && response[0].Codes !== "") {
+                setItemLocationCodes(response[0].Codes);
+            } else {
+                clearItemLocationValue();
+            }
+            deferred.resolve(response);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error loading item locations:", error);
+            clearItemLocationValue();
+            deferred.reject(error);
+        }
+    });
+
+    return deferred.promise();
+}
+
+function saveItemMasterLocations(itemCode, isCheckExists) {
+    const deferred = $.Deferred();
+    isCheckExists = isCheckExists || "N";
+
+    const locationCodes = $("#txtItemLocation").val();
+    if (!locationCodes || !locationCodes.length || !itemCode || itemCode === "0") {
+        return deferred.resolve().promise();
+    }
+
+    const payload = {
+        Code: String(itemCode),
+        LocationName: locationCodes.join(", "),
+        Mode: "EDIT"
+    };
+
+    $.ajax({
+        url: `${appBaseURL}/api/Master/CreateLocationFromItemMaster?UserMaster_Code=${UserMaster_Code}&IsCheckExists=${isCheckExists}`,
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Auth-Key", authKeyData);
+        },
+        success: function (response) {
+            if (response[0].Status === "Y") {
+                deferred.resolve(response);
+            } else if (response[0].Status === "N") {
+                if (response[0].Msg == null) {
+                    saveItemMasterLocations(itemCode, "Y").then(deferred.resolve).fail(deferred.reject);
+                } else if (confirm(`${response[0].Msg}`)) {
+                    saveItemMasterLocations(itemCode, "Y").then(deferred.resolve).fail(deferred.reject);
+                } else {
+                    deferred.reject(response);
+                }
+            } else {
+                toastr.error(response[0].Msg);
+                deferred.reject(response);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", xhr.responseText);
+            toastr.error("An error occurred while saving item locations.");
+            deferred.reject(error);
+        }
+    });
+
+    return deferred.promise();
+}
 
 $(document).ready(function () {
     LocationList();
@@ -75,12 +750,12 @@ $(document).ready(function () {
     });
     $('#txtReorderLevel').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtItemLocation").focus();
+            $("#txtItemLocation").select2("open");
         }
     });
     $('#txtReorderQty').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtItemLocation").focus();
+            $("#txtItemLocation").select2("open");
         }
     });
     $('#txtItemLocation').on('keydown', function (e) {
@@ -200,21 +875,6 @@ $(document).ready(function () {
             $("#txtBrandList").val("")
         }
     });
-    $("#txtItemLocation").on("change", function () {
-        let value = $(this).val();
-        let isValid = false;
-        $("#txtItemLocationList option").each(function () {
-            if ($(this).val() === value) {
-
-                isValid = true;
-                return false;
-            }
-        });
-        if (!isValid) {
-            $(this).val("");
-            $("#txtItemLocationList").val("")
-        }
-    });
     $("#txtUOM").on("focus", function () {
          $(this).val("");
     });
@@ -228,9 +888,6 @@ $(document).ready(function () {
         $(this).val("");
     });
     $("#txtBrand").on("focus", function () {
-        $(this).val("");
-    });
-    $("#txtItemLocation").on("focus", function () {
         $(this).val("");
     });
     $("#txtBoxPacking").on("change", function () {
@@ -247,6 +904,39 @@ $(document).ready(function () {
     });
     $("#btnSaveLocation").on("click", function () {
         Savelocation();
+    });
+    $("#btnAddItemWarehouseRow").on("click", function () {
+        const $rows = getItemWarehouseRows();
+        if ($rows.length > 0) {
+            const $lastRow = $rows.last();
+            if (!isItemWarehouseRowComplete($lastRow)) {
+                toastr.error("Please fill Warehouse and Location in the current row before adding a new row.");
+                return;
+            }
+        }
+        addItemWarehouseRow();
+    });
+    $(document).on("click", ".btnDeleteItemWhRow", function () {
+        const $rows = getItemWarehouseRows();
+        if ($rows.length <= 1) {
+            toastr.error("At least one row is required.");
+            return;
+        }
+        const $row = $(this).closest("tr.esms-item-wh-row");
+        destroyItemWhSelect2($row.find(".txtItemWhWarehouse"));
+        destroyItemWhSelect2($row.find(".txtItemWhLocation"));
+        $row.remove();
+        renumberItemWarehouseRows();
+    });
+    $(document).on("change select2:select", "#tbItemWarehouseLocation .txtItemWhWarehouse", function () {
+        onItemWarehouseChanged($(this));
+    });
+
+    loadWarehouseAndLocationCaches().always(function () {
+        applyItemLocationMode();
+        if (isWarehouseEnabled()) {
+            initItemWarehouseGrid(false);
+        }
     });
 
     // listen on the INPUT (fires when typing or selecting a datalist entry)
@@ -325,12 +1015,11 @@ function UpdateLabelforItemMaster() {
                     }
                     if (item.SubLocationItemHeader) {
                         $("#SubLocationItemHeaderlab").text(item.SubLocationItemHeader);
-                        $("#txtItemLocation").attr("placeholder", item.SubLocationItemHeader);
                     }
                     else {
                         $("#SubLocationItemHeaderlab").text("Location Item");
-                        $("#txtItemLocation").attr("placeholder", "Location Item");
                     }
+                    initItemLocationSelect2();
                     if (item.ItemCodeHeader) {
                         $("#txtItemCodelab").text(item.ItemCodeHeader);
                         $("#txtItemCode").attr("placeholder", item.ItemCodeHeader);
@@ -465,8 +1154,8 @@ function Save() {
     var ReorderQty = $("#txtReorderQty").val();
     var GroupItem = $("#txtGroupItem").val();
     var SubGroupItem = $("#txtSubGroupItem").val();
-    var ItemLocation = $("#txtItemLocation").val();
-    var MRP = $("#txtMRP").val();
+    var ItemLocation = isWarehouseEnabled() ? hasItemWarehouseGridRows() : hasItemLocationSelected();
+    var MRP = parseFloat($("#txtMRP").val()) || 0;
     if (!ItemCode) {
         toastr.error('Please enter an Item Code!');
         $("#txtItemCode").focus();
@@ -503,9 +1192,12 @@ function Save() {
     //    toastr.error('Please enter a valid digit after decimal is 0.');
     //    $("#txtReorderLevel").focus();
     //}
-    else if (ItemLocation === "") {
+    else if (!isWarehouseEnabled() && !ItemLocation) {
         toastr.error('Please select a Item Location!');
-        $("#ItemLocation").focus();
+        $("#txtItemLocation").select2("open");
+    }
+    else if (isWarehouseEnabled() && !validateItemWarehouseGrid()) {
+        return;
     }
     else if (ReorderQty === "" || isNaN(ReorderQty) || parseInt(ReorderQty) < 0) {
         toastr.error('Please enter a valid digit after decimal is 0.');
@@ -518,6 +1210,7 @@ function Save() {
     else {
         var ReorderLevels = ReorderLevel === "" ? 0 : parseInt(ReorderLevel);
         var ReorderQtys = ReorderQty === "" ? 0 : parseInt(ReorderQty);
+        const warehouseGridData = getItemWarehouseGridData();
         const payload = {
             Code: $("#hfCode").val(),
             ItemCode: $("#txtItemCode").val(),
@@ -532,7 +1225,8 @@ function Save() {
             BrandName: $("#txtBrand").val(),
             ReorderLevel: ReorderLevels,
             ReorderQty: ReorderQtys,
-            LocationName: $("#txtItemLocation").val(),
+            LocationMaster_Codes: isWarehouseEnabled() ? getItemWarehouseLocationCodesCsv() : getItemLocationCodesCsv(),
+            ItemWarehouseLocationDetails: warehouseGridData,
             BoxPacking: $("#txtBoxPacking").is(":checked") ? "Y" : "N",
             batchApplicable: $("#txtBatchApplicable").is(":checked") ? "Y" : "N",
             maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N",
@@ -555,7 +1249,6 @@ function Save() {
                     toastr.success(response.Msg);
                     ShowItemMasterlist('Get');
                     BackMaster();
-                   
                 }
                 else {
                     toastr.error(response.Msg);
@@ -578,6 +1271,11 @@ async function CreateItemMaster() {
     }
     $("#tab1").text("NEW");
     ClearData();
+    applyItemLocationMode();
+    if (isWarehouseEnabled()) {
+        initItemWarehouseGrid(false);
+        setItemWarehouseGridDisabled(false);
+    }
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
@@ -595,7 +1293,7 @@ async function CreateItemMaster() {
     $("#txtBrand").prop("disabled", false);
     $("#txtReorderLevel").prop("disabled", false);
     $("#txtReorderQty").prop("disabled", false);
-    $("#txtItemLocation").prop("disabled", false);
+    setItemLocationDisabled(false);
     $("#txtBoxPacking").prop("disabled", false);
     //$("#txtQtyinBox").prop("disabled", false);
     $("#txtMaintainExpiry").prop("disabled", false);
@@ -608,6 +1306,11 @@ function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
+    applyItemLocationMode();
+    if (isWarehouseEnabled()) {
+        initItemWarehouseGrid(false);
+        setItemWarehouseGridDisabled(false);
+    }
     $("#hfCode").prop("disabled", false);
     $("#txtItemCode").prop("disabled", false);
     $("#txtItemName").prop("disabled", false);
@@ -622,7 +1325,7 @@ function BackMaster() {
     $("#txtBrand").prop("disabled", false);
     $("#txtReorderLevel").prop("disabled", false);
     $("#txtReorderQty").prop("disabled", false);
-    $("#txtItemLocation").prop("disabled", false);
+    setItemLocationDisabled(false);
     $("#txtBoxPacking").prop("disabled", false);
    /* $("#txtQtyinBox").prop("disabled", false);*/
     $("#txtMaintainExpiry").prop("disabled", false);
@@ -687,6 +1390,7 @@ async function Edit(code) {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
+    applyItemLocationMode();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemByCode?Code=` + code,
         type: 'GET',
@@ -708,7 +1412,14 @@ async function Edit(code) {
                 $("#txtBrand").val(item.BrandName);
                 $("#txtReorderLevel").val(item.ReorderLevel);
                 $("#txtReorderQty").val(item.ReorderQty);
-                $("#txtItemLocation").val(item.locationName);
+                if (isWarehouseEnabled()) {
+                    loadItemWarehouseGrid(item.Code, false).always(function () {
+                        setItemWarehouseGridDisabled(false);
+                    });
+                } else {
+                    loadItemLocationCodes(item.Code);
+                    setItemLocationDisabled(false);
+                }
                 $("#txtMRP").val(item.MRPNo);
                 //$("#txtBoxPacking").val(item.BoxPacking);
              
@@ -890,26 +1601,30 @@ function GetBrandDropDownList() {
 }
 function GetLocationDropDownList() {
     $.ajax({
-        url: `${appBaseURL}/api/Master/GetLocationDropDown`,
+        url: `${appBaseURL}/api/Master/ShowLocationMaster`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
-            if (response.length > 0) {
-                $('#txtItemLocationList').empty();
-                let options = '';
-                response.forEach(item => {
-                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
-                });
-                $('#txtItemLocationList').html(options);
-            } else {
-                $('#txtItemLocationList').empty();
+            const $select = $('#txtItemLocation');
+            if ($select.data('select2')) {
+                $select.select2('destroy');
             }
+            $select.empty();
+
+            if (response.length > 0) {
+                response.forEach(function (item) {
+                    $select.append(new Option(item["Location Name"], String(item.Code)));
+                });
+            }
+
+            initItemLocationSelect2();
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-            $('#txtItemLocationList').empty();
+            $('#txtItemLocation').empty();
+            initItemLocationSelect2();
         }
     });
 }
@@ -931,7 +1646,11 @@ function ClearData() {
     $("#txtBrand").val("");
     $("#txtReorderLevel").val("0");
     $("#txtReorderQty").val("0");
-    $("#txtItemLocation").val("");
+    clearItemLocationValue();
+    clearItemWarehouseGrid();
+    if (isWarehouseEnabled()) {
+        initItemWarehouseGrid(false);
+    }
     $("#txtBoxPacking").val("N");
     $("#txtQtyinBox").val("0");
 
@@ -976,6 +1695,7 @@ async function View(code) {
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
     $("#txtheaderdiv").show();
+    applyItemLocationMode();
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowItemByCode?Code=` + code,
         type: 'GET',
@@ -998,7 +1718,15 @@ async function View(code) {
                 $("#txtBrand").val(item.BrandName).prop("disabled", true);
                 $("#txtReorderLevel").val(item.ReorderLevel).prop("disabled", true);
                 $("#txtReorderQty").val(item.ReorderQty).prop("disabled", true);
-                $("#txtItemLocation").val(item.locationName).prop("disabled", true);
+                if (isWarehouseEnabled()) {
+                    loadItemWarehouseGrid(item.Code, true).always(function () {
+                        setItemWarehouseGridDisabled(true);
+                    });
+                } else {
+                    loadItemLocationCodes(item.Code).always(function () {
+                        setItemLocationDisabled(true);
+                    });
+                }
                 $("#txtBoxPacking").val(item.BoxPacking).prop("disabled", true);
               /*  $("#txtQtyinBox").val(item.QtyInBox).prop("disabled", true);*/
                 $("#txtMaintainExpiry").val(item.MaintainExpiry).prop("disabled", true);
@@ -1114,6 +1842,7 @@ async function CreateLocation(Code) {
         return;
     }
     LocationList();
+    applyLocationModalWarehouseMode();
     $("#hfItemCode").val(Code);
     $("#LocationModal").modal({
         backdrop: 'static',
@@ -1124,6 +1853,7 @@ function ClearLocationData() {
         G_IsCheckExists = 'N';
         $("#hfItemCode").val('0'),
         $("#txtLocationName").val('')
+        clearLocationModalWarehouse();
         $('#LocationModal').modal('hide');
         LocationList();
 }
@@ -1224,22 +1954,15 @@ function GetLocationCodes() {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
-            if (response.length > 0) {
-                let codesRaw = response[0].Codes;
-
-                if (typeof codesRaw === "string") {
-                    let fixed = codesRaw.trim().replace(/^\[|\]$/g, '').replace(/'/g, '"');
-                    let finalJson = "[" + fixed + "]";
-                    let codes = JSON.parse(finalJson);
-                    $('#mySelect2').val(codes).trigger('change');
-                } 
+            if (response.length > 0 && response[0].Codes != null && response[0].Codes !== "") {
+                const codes = parseLocationCodes(response[0].Codes);
+                $('#mySelect2').val(codes).trigger('change');
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
         }
     });
-
 }
 async function EditLocation(Code) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -1248,6 +1971,7 @@ async function EditLocation(Code) {
         return;
     }
     await LocationList();
+    applyLocationModalWarehouseMode();
     $("#hfItemCode").val(Code);
     $("#LocationModal").modal({
         backdrop: 'static',
@@ -1256,7 +1980,7 @@ async function EditLocation(Code) {
     GetLocationCodes();
 }
 async function CreateNewlocation() {
-    const LocationName = $("#txtLocationName").val();
+    const LocationName = $("#txtLocationName").val().trim();
 
     if (LocationName === '') {
         toastr.error('Please enter location name !');
@@ -1264,11 +1988,24 @@ async function CreateNewlocation() {
         return;
     }
 
+    let warehouseCode = '';
+    if (isWarehouseEnabled()) {
+        warehouseCode = ($("#ddlLocationModalWarehouse").val() || '').trim();
+        if (!warehouseCode) {
+            toastr.error('Please select Warehouse.');
+            $("#ddlLocationModalWarehouse").focus();
+            return;
+        }
+    }
+
     const payload = {
         Code: $("#hfItemCode").val(),
         LocationName: LocationName,
         Mode: "NEW"
     };
+    if (isWarehouseEnabled()) {
+        payload.WarehouseMaster_Code = warehouseCode;
+    }
 
     try {
         const response = await $.ajax({

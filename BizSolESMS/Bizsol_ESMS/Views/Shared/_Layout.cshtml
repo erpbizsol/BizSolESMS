@@ -44,7 +44,7 @@
                         @* lg: dark strip = logo rail + hamburger (matches sidebar); sm: logo cell | hamburger + title *@
                         <div class="esms-webiz-topbar-rail d-flex align-items-stretch flex-shrink-0">
                             <div class="navbar-brand-box">
-                                <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Dashbord/Dashbord" class="logo logo-dark esms-brand-link">
+                                <a id="logo_logo_dark_esms-brand-link" class="logo logo-dark esms-brand-link">
                                     <span class="esms-brand-logo">
                                         <img src="~/assets/images/final_logo-circle.jpg" alt="WeBiz" height="34">
                                     </span>
@@ -501,9 +501,11 @@
         });
 
         $(document).on('click', '#esms-webiz-invoice-trigger', function () {
-
              window.location.href = UrlforRedirect+'/Order/InvoiceMaster';
         });
+          $(document).on('click', '#logo_logo_dark_esms-brand-link', function () {
+                window.location.href = UrlforRedirect+'/Dashbord/Dashbord';
+         });
 
         /* Hamburger: clear stuck Bootstrap .active when focus leaves */
         $(document).on('focusout blur', '#vertical-menu-btn', function () {

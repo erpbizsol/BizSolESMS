@@ -68,6 +68,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Update="Dataset\PrintGatePass.Designer.cs">
+      <DependentUpon>PrintGatePass.xsd</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Dataset\PsrDetailData.Designer.cs">
       <DependentUpon>PsrDetailData.xsd</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -94,6 +99,10 @@
     <None Update="Dataset\OrderDataset.xsd">
       <SubType>Designer</SubType>
       <LastGenOutput>OrderDataset.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="Dataset\PrintGatePass.xsd">
+      <LastGenOutput>PrintGatePass.Designer.cs</LastGenOutput>
       <Generator>MSDataSetGenerator</Generator>
     </None>
     <None Update="Dataset\PsrDetailData.xsd">

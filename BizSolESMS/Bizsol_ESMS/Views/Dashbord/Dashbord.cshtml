@@ -1,203 +1,402 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+<link href="~/assets/css/Loader.css" rel="stylesheet" />
 <link href="~/assets/css/esms-dashboard.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="~/assets/js/BlockUI.js"></script>
 
-<div class="esms-dash-webiz p-1">
-    <!-- KPI strip -->
-    <div class="wd-kpi-grid">
-        <div class="wd-kpi wd-kpi--green">
-            <div class="wd-kpi-label">Orders Today</div>
-            <div class="wd-kpi-val">247</div>
-            <div class="wd-kpi-delta wd-kpi-delta--up">↑ 18% vs yesterday</div>
+<div class="esms-dash-webiz mt-2 mt-md-3">
+    <!-- Filters -->
+    <div class="wd-dash-filterpanel">
+        <div class="wd-dash-filterpanel__head">
+            <i class="fa-solid fa-sliders"></i>
+            Dashboard filters
         </div>
-        <div class="wd-kpi wd-kpi--blue">
-            <div class="wd-kpi-label">Dispatched</div>
-            <div class="wd-kpi-val">189</div>
-            <div class="wd-kpi-delta wd-kpi-delta--up">↑ 12% on time</div>
-        </div>
-        <div class="wd-kpi wd-kpi--amber">
-            <div class="wd-kpi-label">Pending Picking</div>
-            <div class="wd-kpi-val">34</div>
-            <div class="wd-kpi-delta wd-kpi-delta--down">↑ 6 in last hour</div>
-        </div>
-        <div class="wd-kpi wd-kpi--purple">
-            <div class="wd-kpi-label">Total Sale (MTD)</div>
-            <div class="wd-kpi-val">₹84L</div>
-            <div class="wd-kpi-delta wd-kpi-delta--up">↑ 22% vs last month</div>
-        </div>
-        <div class="wd-kpi wd-kpi--red">
-            <div class="wd-kpi-label">Low Stock Alerts</div>
-            <div class="wd-kpi-val">7</div>
-            <div class="wd-kpi-delta wd-kpi-delta--down">Action needed</div>
-        </div>
-    </div>
-
-    <div class="wd-section-hdr">
-        <div class="wd-section-title"><span class="wd-dot-live" aria-hidden="true"></span>Live Goods Flow — Inward to Dispatch</div>
-        <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Order/Dispatch" class="wd-section-link">View full flow →</a>
-    </div>
-
-    <div class="wd-pipeline-row">
-        <div class="wd-pipeline-step wd-step-unload">
-            <div class="wd-ps-label">Unloading</div>
-            <div class="wd-ps-num">312</div>
-            <div class="wd-ps-sub">units in</div>
-            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
-        </div>
-        <div class="wd-pipeline-step wd-step-sort">
-            <div class="wd-ps-label">Sorting / QC</div>
-            <div class="wd-ps-num">243</div>
-            <div class="wd-ps-sub">units sorted</div>
-            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
-        </div>
-        <div class="wd-pipeline-step wd-step-pick">
-            <div class="wd-ps-label">Picking</div>
-            <div class="wd-ps-num">189</div>
-            <div class="wd-ps-sub">units picked</div>
-            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
-        </div>
-        <div class="wd-pipeline-step wd-step-pack">
-            <div class="wd-ps-label">Packing</div>
-            <div class="wd-ps-num">154</div>
-            <div class="wd-ps-sub">units packed</div>
-            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
-        </div>
-        <div class="wd-pipeline-step wd-step-dispatch">
-            <div class="wd-ps-label">Dispatched</div>
-            <div class="wd-ps-num">148</div>
-            <div class="wd-ps-sub">units out</div>
-            <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
-        </div>
-    </div>
-
-    <div class="wd-two-col">
-        <div class="wd-card">
-            <div class="wd-section-hdr" style="margin-bottom: 14px;">
-                <div class="wd-section-title">Recent Orders</div>
-                <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Order/OrderMaster" class="wd-section-link">See all →</a>
+        <div class="wd-dash-filterpanel__body">
+            <div class="wd-filter-row">
+                <div class="wd-filter-field">
+                    <label for="txtDashFromDate">From Date</label>
+                    <input type="text" id="txtDashFromDate" class="form-control" autocomplete="off" placeholder="DD-MM-YYYY">
+                </div>
+                <div class="wd-filter-field">
+                    <label for="txtDashToDate">To Date</label>
+                    <input type="text" id="txtDashToDate" class="form-control" autocomplete="off" placeholder="DD-MM-YYYY">
+                </div>
+                <button type="button" class="btn wd-btn-apply" id="btnDashApply">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i>Apply
+                </button>
+                <button type="button" class="btn wd-btn-reset" id="btnDashReset">
+                    <i class="fa-solid fa-rotate-left me-1"></i>Reset
+                </button>
+                <span class="wd-filter-meta" id="dashFilterMeta">Select date range</span>
             </div>
-            <table class="wd-data-table">
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th>Items</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="wd-mono">#ORD-8821</td>
-                        <td>Rajesh Traders</td>
-                        <td>24</td>
-                        <td><span class="wd-pill wd-pill--green"><span class="wd-pill-dot"></span>Dispatched</span></td>
-                    </tr>
-                    <tr>
-                        <td class="wd-mono">#ORD-8820</td>
-                        <td>Sonu Distributors</td>
-                        <td>8</td>
-                        <td><span class="wd-pill wd-pill--blue"><span class="wd-pill-dot"></span>Packing</span></td>
-                    </tr>
-                    <tr>
-                        <td class="wd-mono">#ORD-8819</td>
-                        <td>MK Wholesale</td>
-                        <td>36</td>
-                        <td><span class="wd-pill wd-pill--amber"><span class="wd-pill-dot"></span>Picking</span></td>
-                    </tr>
-                    <tr>
-                        <td class="wd-mono">#ORD-8818</td>
-                        <td>Priya Stores</td>
-                        <td>12</td>
-                        <td><span class="wd-pill wd-pill--purple"><span class="wd-pill-dot"></span>Sorting</span></td>
-                    </tr>
-                    <tr>
-                        <td class="wd-mono">#ORD-8817</td>
-                        <td>Gupta &amp; Sons</td>
-                        <td>5</td>
-                        <td><span class="wd-pill wd-pill--gray"><span class="wd-pill-dot"></span>Inward</span></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
+    </div>
 
-        <div>
-            <div class="wd-tally-card">
-                <div class="wd-tally-logo">⬡ TALLY ERP 9 / PRIME</div>
-                <div class="wd-tally-muted">Two-way live integration active</div>
-                <div class="wd-tally-status-row">
-                    <div class="wd-tally-live">
-                        <span style="width:6px;height:6px;border-radius:50%;background:#6EE7B7;display:inline-block;animation:webiz-pulse 2s infinite;" aria-hidden="true"></span>
-                        Connected &amp; syncing
+    <!-- Operations KPIs -->
+    <div class="wd-panel wd-panel--ops">
+        <div class="wd-panel__title">
+            <div class="wd-panel__title-left">
+                <span class="wd-dot" aria-hidden="true"></span>
+                <span>Operations Overview</span>
+            </div>
+        </div>
+        <div class="wd-kpi-grid">
+            <div class="wd-kpi-premium wd-kpi-premium--green">
+                <div class="wd-kpi-premium__icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                <div>
+                    <div class="wd-kpi-label">Total Orders</div>
+                    <div class="wd-kpi-val" id="kpiTotalOrders">—</div>
+                    <div class="wd-kpi-delta" id="kpiTotalOrdersSub"></div>
+                </div>
+            </div>
+            <div class="wd-kpi-premium wd-kpi-premium--purple">
+                <div class="wd-kpi-premium__icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                <div>
+                    <div class="wd-kpi-label">Total Sale</div>
+                    <div class="wd-kpi-val" id="kpiTotalSale">—</div>
+                    <div class="wd-kpi-delta" id="kpiTotalSaleSub"></div>
+                </div>
+            </div>
+            <div class="wd-kpi-premium wd-kpi-premium--blue">
+                <div class="wd-kpi-premium__icon"><i class="fa-solid fa-truck-fast"></i></div>
+                <div>
+                    <div class="wd-kpi-label">Dispatched</div>
+                    <div class="wd-kpi-val" id="kpiDispatched">—</div>
+                    <div class="wd-kpi-delta" id="kpiDispatchedSub"></div>
+                </div>
+            </div>
+            <div class="wd-kpi-premium wd-kpi-premium--red">
+                <div class="wd-kpi-premium__icon"><i class="fa-solid fa-rotate-left"></i></div>
+                <div>
+                    <div class="wd-kpi-label">Sale Returns</div>
+                    <div class="wd-kpi-val" id="kpiReturns">—</div>
+                    <div class="wd-kpi-delta" id="kpiReturnsSub"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Outstanding -->
+    <div class="wd-panel wd-panel--finance">
+        <div class="wd-panel__title">
+            <div class="wd-panel__title-left">
+                <span class="wd-dot" aria-hidden="true"></span>
+                <span>Outstanding Summary</span>
+            </div>
+            <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Report/OutstandingReport" class="wd-section-link">View full report →</a>
+        </div>
+        <div class="wd-kpi-grid wd-kpi-grid--finance">
+            <div class="wd-kpi-premium wd-kpi-premium--indigo">
+                <div class="wd-kpi-premium__icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                <div>
+                    <div class="wd-kpi-label">Total Outstanding</div>
+                    <div class="wd-kpi-val" id="kpiOutstanding">—</div>
+                    <div class="wd-kpi-delta" id="kpiOutstandingSub">As on selected To Date</div>
+                </div>
+            </div>
+            <div class="wd-kpi-premium wd-kpi-premium--rose">
+                <div class="wd-kpi-premium__icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div>
+                    <div class="wd-kpi-label">Overdue Amount</div>
+                    <div class="wd-kpi-val" id="kpiOverdue">—</div>
+                    <div class="wd-kpi-delta wd-kpi-delta--down" id="kpiOverdueSub">Beyond credit days</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="wd-panel wd-panel--pipeline">
+        <div class="wd-panel__title">
+            <div class="wd-panel__title-left">
+                <span class="wd-dot wd-dot-live" aria-hidden="true"></span>
+                <span>Goods Flow — Order Status Pipeline</span>
+            </div>
+            <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Order/Dispatch" class="wd-section-link">View full flow →</a>
+        </div>
+        <div class="wd-pipeline-row" id="dashPipeline">
+            <div class="wd-pipeline-step wd-step-unload">
+                <div class="wd-ps-label">Loading…</div>
+                <div class="wd-ps-num">—</div>
+                <div class="wd-ps-sub">orders</div>
+                <div class="wd-ps-bar"><div class="wd-ps-fill"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders & customers -->
+    <div class="wd-dash-grid">
+        <div class="wd-dash-grid__span-6">
+            <div class="wd-panel wd-panel--orders wd-panel--inner">
+                <div class="wd-panel__title">
+                    <div class="wd-panel__title-left">
+                        <span class="wd-dot" aria-hidden="true"></span>
+                        <span>Order Status Summary</span>
                     </div>
-                    <div class="wd-tally-sync-time">Last sync: 2 min ago</div>
+                    <a href="@Html.Raw(ViewBag.AppBaseURLMenu)/Order/OrderMaster" class="wd-section-link">See all →</a>
                 </div>
-                <div class="wd-tally-stat">
-                    <div class="wd-ts-box"><div class="wd-ts-label">Invoices Synced</div><div class="wd-ts-val">1,248</div></div>
-                    <div class="wd-ts-box"><div class="wd-ts-label">Vouchers Today</div><div class="wd-ts-val">89</div></div>
-                    <div class="wd-ts-box"><div class="wd-ts-label">Ledgers Mapped</div><div class="wd-ts-val">342</div></div>
-                    <div class="wd-ts-box"><div class="wd-ts-label">GST Filed</div><div class="wd-ts-val">GSTR-1 ✓</div></div>
+                <div class="wd-table-wrap">
+                    <table class="wd-data-table">
+                        <thead>
+                            <tr>
+                                <th>Order Status</th>
+                                <th class="text-end">Orders</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashStatusSummary">
+                            <tr><td colspan="3" class="text-center text-muted py-3">Loading…</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
-            <div class="wd-card-sm">
-                <div class="wd-section-title" style="margin-bottom: 10px;">Top Selling Items (MTD)</div>
-                <div class="d-flex flex-column gap-1">
-                    <div class="wd-top-row"><span class="wd-top-rank">1</span><span class="wd-top-name">HDPE Pipe 2"</span><span class="wd-top-amt">₹4.2L</span></div>
-                    <div class="wd-top-row"><span class="wd-top-rank">2</span><span class="wd-top-name">Valve 25mm</span><span class="wd-top-amt">₹3.8L</span></div>
-                    <div class="wd-top-row"><span class="wd-top-rank">3</span><span class="wd-top-name">GI Fitting 1"</span><span class="wd-top-amt">₹3.1L</span></div>
-                    <div class="wd-top-row"><span class="wd-top-rank">4</span><span class="wd-top-name">Reducer 3/4"</span><span class="wd-top-amt">₹2.7L</span></div>
+        </div>
+        <div class="wd-dash-grid__span-6">
+            <div class="wd-panel wd-panel--inner">
+                <div class="wd-card-head">
+                    <div class="wd-card-head__title">
+                        <i class="fa-solid fa-users wd-icon--violet"></i>
+                        Order Parties With Details
+                    </div>
+                </div>
+                <ul class="nav nav-tabs wd-party-tab-nav" id="dashPartyTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="dashPartyMaxTab" data-bs-toggle="tab" data-bs-target="#dashPartyMax" type="button" role="tab" aria-controls="dashPartyMax" aria-selected="true">
+                            <span class="wd-party-tab-copy">
+                                <span class="wd-party-tab-title">Repeating Parties</span>
+                                <span class="wd-party-tab-days">Within 30 days</span>
+                            </span>
+                            <span class="wd-party-tab-badge" id="dashPartyMaxCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="dashPartyMinTab" data-bs-toggle="tab" data-bs-target="#dashPartyMin" type="button" role="tab" aria-controls="dashPartyMin" aria-selected="false">
+                            <span class="wd-party-tab-copy">
+                                <span class="wd-party-tab-title">Non-Repeating Parties</span>
+                                <span class="wd-party-tab-days">Within 90 days</span>
+                            </span>
+                            <span class="wd-party-tab-badge" id="dashPartyMinCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+                <div class="wd-party-tab-content wd-top-parties-scroll" id="dashPartyTabContent">
+                    <div class="tab-pane fade show active" id="dashPartyMax" role="tabpanel" aria-labelledby="dashPartyMaxTab">
+                        <div class="wd-table-wrap wd-party-table-wrap">
+                            <table class="wd-data-table wd-party-detail-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th class="text-end">Order Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashPartyMaxList">
+                                    <tr><td colspan="3" class="text-center text-muted py-3">Loading…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="dashPartyMin" role="tabpanel" aria-labelledby="dashPartyMinTab">
+                        <div class="wd-table-wrap wd-party-table-wrap">
+                            <table class="wd-data-table wd-party-detail-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th class="text-end">Order Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashPartyMinList">
+                                    <tr><td colspan="3" class="text-center text-muted py-3">Loading…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="wd-three-col">
-        <div class="wd-card-sm">
-            <div class="wd-section-title" style="margin-bottom: 12px;">MTD Performance</div>
-            <div class="wd-stat-grid">
-                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Orders</div><div class="wd-stat-tile-val">1,842</div></div>
-                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Revenue</div><div class="wd-stat-tile-val">₹84L</div></div>
-                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Dispatched</div><div class="wd-stat-tile-val">1,798</div></div>
-                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Returns</div><div class="wd-stat-tile-val wd-stat-tile-val--danger">23</div></div>
+    <!-- Analytics row -->
+    <div class="wd-dash-grid">
+        <div class="wd-dash-grid__span-4">
+            <div class="wd-panel wd-panel--analytics wd-panel--inner">
+                <div class="wd-card-head">
+                    <div class="wd-card-head__title">
+                        <i class="fa-solid fa-chart-line wd-icon--emerald"></i>
+                        Period Performance
+                    </div>
+                </div>
+                <div class="wd-stat-grid">
+                    <div class="wd-stat-tile"><div class="wd-stat-tile-label">Orders</div><div class="wd-stat-tile-val" id="perfOrders">—</div></div>
+                    <div class="wd-stat-tile"><div class="wd-stat-tile-label">Revenue</div><div class="wd-stat-tile-val" id="perfRevenue">—</div></div>
+                    <div class="wd-stat-tile"><div class="wd-stat-tile-label">Dispatched</div><div class="wd-stat-tile-val" id="perfDispatched">—</div></div>
+                    <div class="wd-stat-tile"><div class="wd-stat-tile-label">Returns</div><div class="wd-stat-tile-val wd-stat-tile-val--danger" id="perfReturns">—</div></div>
+                </div>
             </div>
         </div>
-        <div class="wd-card-sm">
-            <div class="wd-section-title" style="margin-bottom: 12px;">YTD Performance</div>
-            <div class="wd-stat-grid">
-                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Orders</div><div class="wd-stat-tile-val">18.4K</div></div>
-                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Revenue</div><div class="wd-stat-tile-val">₹9.2Cr</div></div>
-                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Top Region</div><div class="wd-stat-tile-val wd-stat-tile-val--accent">Delhi</div></div>
-                <div class="wd-stat-tile"><div class="wd-stat-tile-label">Growth</div><div class="wd-stat-tile-val wd-stat-tile-val--growth">+28%</div></div>
+        <div class="wd-dash-grid__span-8">
+            <div class="wd-panel wd-panel--inner wd-month-chart-card">
+                <div class="wd-card-head">
+                    <div class="wd-card-head__title">
+                        <i class="fa-solid fa-chart-column wd-icon--cyan"></i>
+                        Month-wise Sale
+                    </div>
+                </div>
+                <div id="chartDashMonthWiseSale" class="wd-month-chart">
+                    <div class="text-muted d-flex align-items-center justify-content-center" style="font-size: 0.8rem; min-height: 260px;">Loading…</div>
+                </div>
             </div>
         </div>
-        <div class="wd-card-sm">
-            <div class="wd-section-title" style="margin-bottom: 10px;">⚠️ Non-Moving Stock</div>
-            <div class="d-flex flex-column gap-2 pt-1">
-                <div class="wd-nm-row">
-                    <span class="wd-nm-name">Elbow 90° 2"</span>
-                    <span class="wd-nm-days text-danger">148 days</span>
-                    <span class="wd-pill wd-pill--red" style="font-size: 10px;">Critical</span>
+    </div>
+
+    <!-- Stock & sale loss -->
+    <div class="wd-dash-grid">
+        <div class="wd-dash-grid__span-6">
+            <div class="wd-panel wd-panel--stock wd-panel--inner">
+                <div class="wd-card-head">
+                    <div class="wd-card-head__title">
+                        <i class="fa-solid fa-triangle-exclamation wd-icon--rose"></i>
+                        Dead / Non-Moving Stock
+                    </div>
                 </div>
-                <div class="wd-nm-row">
-                    <span class="wd-nm-name">PVC Cap 1.5"</span>
-                    <span class="wd-nm-days text-warning fw-semibold">92 days</span>
-                    <span class="wd-pill wd-pill--amber" style="font-size: 10px;">High</span>
+                <div class="d-flex flex-column gap-2" id="dashDeadStock">
+                    <div class="text-muted" style="font-size: 0.8rem;">Loading…</div>
                 </div>
-                <div class="wd-nm-row">
-                    <span class="wd-nm-name">Bushing 3/4"</span>
-                    <span class="wd-nm-days text-warning fw-semibold">74 days</span>
-                    <span class="wd-pill wd-pill--amber" style="font-size: 10px;">High</span>
+            </div>
+        </div>
+        <div class="wd-dash-grid__span-6">
+            <div class="wd-panel wd-panel--inner">
+                <div class="wd-card-head">
+                    <div class="wd-card-head__title">
+                        <i class="fa-solid fa-chart-pie wd-icon--amber"></i>
+                        Stock Alerts
+                    </div>
                 </div>
-                <div class="wd-nm-row">
-                    <span class="wd-nm-name">Union SS 1"</span>
-                    <span class="wd-nm-days" style="color: var(--webiz-mid, #6b7080);">61 days</span>
-                    <span class="wd-pill wd-pill--gray" style="font-size: 10px;">Medium</span>
+                <ul class="nav nav-tabs wd-party-tab-nav" id="dashStockTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="dashSaleLossTab" data-bs-toggle="tab" data-bs-target="#dashSaleLoss" type="button" role="tab" aria-controls="dashSaleLoss" aria-selected="true">
+                            <span class="wd-party-tab-copy">
+                                <span class="wd-party-tab-title">Sale Loss Order</span>
+                            </span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="dashReorderLevelTab" data-bs-toggle="tab" data-bs-target="#dashReorderLevel" type="button" role="tab" aria-controls="dashReorderLevel" aria-selected="false">
+                            <span class="wd-party-tab-copy">
+                                <span class="wd-party-tab-title">Reorder Level</span>
+                            </span>
+                            <span class="wd-party-tab-badge" id="dashReorderLevelCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+                <div class="wd-party-tab-content" id="dashStockTabContent">
+                    <div class="tab-pane fade show active" id="dashSaleLoss" role="tabpanel" aria-labelledby="dashSaleLossTab">
+                        <div class="wd-stat-grid">
+                            <div class="wd-stat-tile">
+                                <div class="wd-stat-tile-label">Total Line of Product</div>
+                                <div class="wd-stat-tile-val" id="sloTotalLines">—</div>
+                            </div>
+                            <div class="wd-stat-tile">
+                                <div class="wd-stat-tile-label">Total Product Qty</div>
+                                <div class="wd-stat-tile-val" id="sloTotalQty">—</div>
+                            </div>
+                            <div class="wd-stat-tile" style="grid-column: span 2;">
+                                <div class="wd-stat-tile-label">Total Value</div>
+                                <div class="wd-stat-tile-val wd-stat-tile-val--danger" id="sloTotalValue">—</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="dashReorderLevel" role="tabpanel" aria-labelledby="dashReorderLevelTab">
+                        <div class="wd-top-parties-scroll">
+                            <div class="wd-table-wrap wd-party-table-wrap">
+                                <table class="wd-data-table wd-party-detail-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item Code</th>
+                                            <th>Item Name</th>
+                                            <th class="text-end">Reorder Level</th>
+                                            <th class="text-end">Balance Qty</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashReorderLevelList">
+                                        <tr><td colspan="4" class="text-center text-muted py-3">Loading…</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team & returns -->
+    <div class="wd-dash-grid">
+        <div class="wd-dash-grid__span-6">
+            <div class="wd-panel wd-panel--team wd-panel--inner">
+                <div class="wd-panel__title" style="margin-bottom: 0.75rem; padding-bottom: 0.5rem;">
+                    <div class="wd-panel__title-left">
+                        <span class="wd-dot" aria-hidden="true"></span>
+                        <span>Employee Productivity</span>
+                    </div>
+                </div>
+                <div class="wd-table-wrap">
+                    <table class="wd-data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th class="text-end">Unloaded</th>
+                                <th class="text-end">Packed</th>
+                                <th class="text-end">Dispatched</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashEmployee">
+                            <tr><td colspan="4" class="text-center text-muted py-3">Loading…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="wd-dash-grid__span-6">
+            <div class="wd-panel wd-panel--inner">
+                <div class="wd-panel__title" style="margin-bottom: 0.75rem; padding-bottom: 0.5rem;">
+                    <div class="wd-panel__title-left">
+                        <span class="wd-dot" aria-hidden="true"></span>
+                        <span>Sale Returns</span>
+                    </div>
+                </div>
+                <div class="wd-table-wrap">
+                    <table class="wd-data-table">
+                        <thead>
+                            <tr>
+                                <th>Party</th>
+                                <th>Order No</th>
+                                <th>Reason</th>
+                                <th class="text-end">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashSaleReturn">
+                            <tr><td colspan="4" class="text-center text-muted py-3">Loading…</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    var UserMaster_Code = '@ViewBag.UserMaster_Code';
+    var DefaultPage = '@ViewBag.DefaultPage';
+    var RedirectFormUrl = "@Html.Raw(ViewBag.AppBaseURLMenu)/@ViewBag.FormToOpen";
+    var AppBaseURL = '@Html.Raw(ViewBag.AppBaseURL)';
+</script>
+<script src="~/assets/Script/Dashbord.js"></script>
 
 <script>
     var authKeyData = null;
@@ -209,100 +408,60 @@
     } catch (e) {
         console.warn("Could not parse authKey from sessionStorage");
     }
-    let UserMaster_Code = '@ViewBag.UserMaster_Code';
 
     $(document).ready(function () {
         fetch('https://api.ipify.org')
             .then(response => response.text())
             .then(ip => {
                 var ipAddress = ip.trim();
-
-                $.ajax({
-                    url: `@ViewBag.AppBaseURL/api/Master/UpdateIsActiveUser?UserMaster_Code=${UserMaster_Code}&IsActive=Y&IPAddress=${ipAddress}`,
-                    type: 'GET',
-                    beforeSend: function (xhr) {
-                        if (authKeyData) {
-                            xhr.setRequestHeader('Auth-Key', authKeyData);
-                        }
-                    },
-                    success: function (response) {
-                        console.log("User IsActive updated to Y via API");
-                    },
-                    error: function (xhr, status, error) {
-                        if (xhr.status !== 0) {
-                            console.warn("API endpoint not available, user status already set during login");
-                        }
-                    }
-                });
-
-                $.ajax({
-                    url: `@ViewBag.AppBaseURL/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${UserMaster_Code}`,
-                    type: 'GET',
-                    beforeSend: function (xhr) {
-                        if (authKeyData) {
-                            xhr.setRequestHeader('Auth-Key', authKeyData);
-                        }
-                    },
-                    success: function (value) {
-                        if (value && value.length > 0) {
-                            let matchedItems = value.filter(item => item.Code == '@ViewBag.DefaultPage');
-                            if (matchedItems.length > 0) {
-                                location.href = "@ViewBag.AppBaseURLMenu/@ViewBag.FormToOpen";
-                            }
-                        } else {
-                            console.warn("No data returned.");
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error:", error);
-                        toastr.error("Failed to fetch item data. Please try again.");
-                    }
-                });
+                UpdateUserActiveAndRedirect(ipAddress);
             })
             .catch(error => {
                 console.error("Error fetching IP address:", error);
-                var ipAddress = '';
-
-                $.ajax({
-                    url: `@ViewBag.AppBaseURL/api/Master/UpdateIsActiveUser?UserMaster_Code=${UserMaster_Code}&IsActive=Y&IPAddress=${ipAddress}`,
-                    type: 'GET',
-                    beforeSend: function (xhr) {
-                        if (authKeyData) {
-                            xhr.setRequestHeader('Auth-Key', authKeyData);
-                        }
-                    },
-                    success: function (response) {
-                        console.log("User IsActive updated to Y via API");
-                    },
-                    error: function (xhr, status, error) {
-                        if (xhr.status !== 0) {
-                            console.warn("API endpoint not available, user status already set during login");
-                        }
-                    }
-                });
-
-                $.ajax({
-                    url: `@ViewBag.AppBaseURL/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${UserMaster_Code}`,
-                    type: 'GET',
-                    beforeSend: function (xhr) {
-                        if (authKeyData) {
-                            xhr.setRequestHeader('Auth-Key', authKeyData);
-                        }
-                    },
-                    success: function (value) {
-                        if (value && value.length > 0) {
-                            let matchedItems = value.filter(item => item.Code == '@ViewBag.DefaultPage');
-                            if (matchedItems.length > 0) {
-                                location.href = "@ViewBag.AppBaseURLMenu/@ViewBag.FormToOpen";
-                            }
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error:", error);
-                        toastr.error("Failed to fetch item data. Please try again.");
-                    }
-                });
+                UpdateUserActiveAndRedirect('');
             });
     });
 
+    function UpdateUserActiveAndRedirect(ipAddress) {
+        $.ajax({
+            url: `@ViewBag.AppBaseURL/api/Master/UpdateIsActiveUser?UserMaster_Code=${UserMaster_Code}&IsActive=Y&IPAddress=${ipAddress}`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                if (authKeyData) {
+                    xhr.setRequestHeader('Auth-Key', authKeyData);
+                }
+            },
+            success: function (response) {
+                console.log("User IsActive updated to Y via API");
+            },
+            error: function (xhr, status, error) {
+                if (xhr.status !== 0) {
+                    console.warn("API endpoint not available, user status already set during login");
+                }
+            }
+        });
+
+        $.ajax({
+            url: `@ViewBag.AppBaseURL/api/UserMaster/GetUserModuleRightsList?CompanyCode=0&UserCode=${UserMaster_Code}`,
+            type: 'GET',
+            beforeSend: function (xhr) {
+                if (authKeyData) {
+                    xhr.setRequestHeader('Auth-Key', authKeyData);
+                }
+            },
+            success: function (value) {
+                if (value && value.length > 0) {
+                    let matchedItems = value.filter(item => item.Code == DefaultPage);
+                    if (matchedItems.length > 0) {
+                        location.href = RedirectFormUrl;
+                    }
+                } else {
+                    console.warn("No data returned.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+    }
 </script>

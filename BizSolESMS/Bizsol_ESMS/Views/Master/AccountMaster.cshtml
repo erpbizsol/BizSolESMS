@@ -142,10 +142,11 @@
                                 <label for="txtClientType" class="col-form-label-sm fw-bold">Client Type </label><span class="text-danger">*</span>
                                 <select id="txtClientType" class="box_border form-control form-control-sm" disabled>
                                     <option value="">Select Client Type</option>
-                                    <option value="ANC">ANC</option>
-                                    <option value="AFM">AFM</option>
-                                    <option value="HGPD">HGPD</option>
                                 </select>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="txtCreditDays" class="col-form-label-sm fw-bold">Credit Days</label>
+                                <input type="text" id="txtCreditDays" onkeypress="return OnChangeNumericTextBox(this);" class="box_border form-control form-control-sm Number" autocomplete="off" maxlength="3" placeholder="Credit Days">
                             </div>
                             <div class="col-md-3  col-sm-6 dropdown-container" style="display:none">
                                 <label for="dropdownButton" class="col-form-label-sm">

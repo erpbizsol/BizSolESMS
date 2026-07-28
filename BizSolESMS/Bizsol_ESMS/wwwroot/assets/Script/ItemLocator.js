@@ -1,10 +1,96 @@
 ﻿var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
+var G_Fixparameter;
+try { G_Fixparameter = JSON.parse(sessionStorage.getItem('Fixparameter')); } catch (e) { G_Fixparameter = null; }
+let G_LocationModalWarehouseList = [];
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let Data = [];
+function getFixParamValue(key) {
+    if (!G_Fixparameter || !G_Fixparameter[0]) return '';
+    const row = G_Fixparameter[0];
+    const camelKey = key.charAt(0).toLowerCase() + key.slice(1);
+    const v = row[key] != null ? row[key] : row[camelKey];
+    return (v != null && String(v).trim() !== '') ? String(v).trim() : '';
+}
+
+function isWarehouseEnabled() {
+    return getFixParamValue('IsWarehouseEnabled') === 'Y';
+}
+
+function clearLocationModalWarehouse() {
+    const $wh = $('#ddlLocationModalWarehouse');
+    if ($wh.data('select2')) {
+        $wh.val('').trigger('change');
+    } else {
+        $wh.val('');
+    }
+}
+
+function autoSelectSingleLocationModalWarehouse() {
+    const $wh = $('#ddlLocationModalWarehouse');
+    const options = $wh.find('option').filter(function () {
+        return ($(this).val() || '').trim() !== '';
+    });
+    if (options.length === 1) {
+        $wh.val(options.first().val()).trigger('change');
+    }
+}
+
+function populateLocationModalWarehouseDropdown(list) {
+    const $select = $('#ddlLocationModalWarehouse');
+    if ($select.data('select2')) {
+        $select.select2('destroy');
+    }
+    $select.empty().append('<option value="">Select Warehouse</option>');
+    if (list && list.length) {
+        list.forEach(function (item) {
+            const code = item.Code != null ? item.Code : item.code;
+            const name = item.Name != null ? item.Name
+                : (item['Warehouse Name'] != null ? item['Warehouse Name'] : (item.WarehouseName || ''));
+            $select.append(new Option(name, code));
+        });
+    }
+    $select.select2({
+        width: '100%',
+        placeholder: 'Select Warehouse',
+        allowClear: true,
+        dropdownParent: $('#LocationModal')
+    });
+    autoSelectSingleLocationModalWarehouse();
+}
+
+function loadLocationModalWarehouseDropdown() {
+    if (G_LocationModalWarehouseList.length) {
+        populateLocationModalWarehouseDropdown(G_LocationModalWarehouseList);
+        return $.Deferred().resolve().promise();
+    }
+    return $.ajax({
+        url: `${appBaseURL}/api/Master/GetWareHouseDropDown`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        }
+    }).done(function (response) {
+        G_LocationModalWarehouseList = response || [];
+        populateLocationModalWarehouseDropdown(G_LocationModalWarehouseList);
+    }).fail(function () {
+        $('#ddlLocationModalWarehouse').empty();
+    });
+}
+
+function applyLocationModalWarehouseMode() {
+    if (isWarehouseEnabled()) {
+        $('#divLocationModalWarehouse').removeClass('d-none').show();
+        loadLocationModalWarehouseDropdown();
+    } else {
+        $('#divLocationModalWarehouse').addClass('d-none').hide();
+        clearLocationModalWarehouse();
+    }
+}
+
 function getItemLocatorMode() {
     var el = document.querySelector('input[name="txtScan"]:checked');
     return el ? String(el.value) : '1';
@@ -37,7 +123,7 @@ function esmsApplyItemLocatorScanFocus() {
 }
 
 $(document).ready(function () {
-    $("#ERPHeading").text("Locate product rack");
+    $("#ERPHeading").text("Product Rack Information");
     esmsApplyItemLocatorScanFocus();
     $(window).on('hashchange', esmsApplyItemLocatorScanFocus);
     $('input[name="txtScan"]').on('change', function () {
@@ -247,6 +333,7 @@ async function CreateLocation(Code) {
         return;
     }
     LocationList();
+    applyLocationModalWarehouseMode();
     $("#hfItemCode").val(Code);
     $("#LocationModal").modal({
         backdrop: 'static',
@@ -257,6 +344,7 @@ function ClearLocationData() {
     G_IsCheckExists = 'N';
     $("#hfItemCode").val('0'),
         $("#txtLocationName").val('')
+    clearLocationModalWarehouse();
     $('#LocationModal').modal('hide');
     LocationList();
 }
@@ -381,6 +469,7 @@ async function EditLocation(Code) {
         return;
     }
     await LocationList();
+    applyLocationModalWarehouseMode();
     $("#hfItemCode").val(Code);
     $("#LocationModal").modal({
         backdrop: 'static',
@@ -389,7 +478,7 @@ async function EditLocation(Code) {
     GetLocationCodes();
 }
 async function CreateNewlocation() {
-    const LocationName = $("#txtLocationName").val();
+    const LocationName = $("#txtLocationName").val().trim();
 
     if (LocationName === '') {
         toastr.error('Please enter location name !');
@@ -397,11 +486,24 @@ async function CreateNewlocation() {
         return;
     }
 
+    let warehouseCode = '';
+    if (isWarehouseEnabled()) {
+        warehouseCode = ($("#ddlLocationModalWarehouse").val() || '').trim();
+        if (!warehouseCode) {
+            toastr.error('Please select Warehouse.');
+            $("#ddlLocationModalWarehouse").focus();
+            return;
+        }
+    }
+
     const payload = {
         Code: $("#hfItemCode").val(),
         LocationName: LocationName,
         Mode: "NEW"
     };
+    if (isWarehouseEnabled()) {
+        payload.WarehouseMaster_Code = warehouseCode;
+    }
 
     try {
         const response = await $.ajax({

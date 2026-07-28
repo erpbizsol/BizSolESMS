@@ -414,22 +414,12 @@ async function Edit(code, Status) {
                     }
                     
                     CreateVendorlist();
+                    bindMRNEditItemDropdowns(MRNMaster.AccountName, MRNMaster.BrandName, function () {
+                        bindMRNDetailRows(response.MRNDetails);
+                    });
                 } else {
                     toastr.warning("Account master data is missing.");
-                }
-                $("#Orderdata").empty();
-                if (response.MRNDetails && response.MRNDetails.length > 0) {
-                    response.MRNDetails.forEach(function (Data, index) {
-                        addNewRowEdit(index, Data);
-                    });
-                    updateTotalBillQty();
-                    updateTotalRate();
-                    updateTotalAmount();
-                    updateTotalBillQtyBox();
-                    updateTotalReceivedQtyBox();
-                    updateTotalReceivedQty();
-                } else {
-                    toastr.info("No addresses available for this account.");
+                    bindMRNDetailRows(response.MRNDetails);
                 }
             } else {
                 toastr.error("Record not found...!");
@@ -574,7 +564,7 @@ function VendorWiseBrandListImport(Code) {
         }
     });
 }
-function GetItemDetails(BrandMaster) {
+function GetItemDetails(BrandMaster, callback) {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetItemDetailss?BrandMaster_Code=${BrandMaster}`,
         type: 'GET',
@@ -593,7 +583,7 @@ function GetItemDetails(BrandMaster) {
                 response.forEach(item => {
                     options1 += '<option value="' + item.ItemBarCode + '" text="' + item.Code + '"></option>';
                     options2 += '<option value="' + item.ItemCode + '" text="' + item.Code + '"></option>';
-                    options3 += '<option value="' + item.ItemName + '" text="' + item.Code + '"></option>';
+                    options3 += '<option value="' + item.ItemName + ' (' + item.ItemCode + ')" text="' + item.Code + '"></option>';
                 });
                 $('#txtItemBarCode').html(options1);
                 $('#txtItemCode').html(options2);
@@ -603,12 +593,79 @@ function GetItemDetails(BrandMaster) {
                 $('#txtItemCode').empty();
                 $('#txtItemName').empty();
             }
+            if (typeof callback === 'function') {
+                callback();
+            }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
             $('#txtCountryNameList').empty();
+            if (typeof callback === 'function') {
+                callback();
+            }
         }
     });
+}
+function bindMRNEditItemDropdowns(vendorName, brandName, callback) {
+    const loadItemDetails = function () {
+        const selectedBrand = BrandList.find(r => r.BrandName === brandName);
+        if (selectedBrand) {
+            GetItemDetails(selectedBrand.Code, callback);
+        } else if (typeof callback === 'function') {
+            callback();
+        }
+    };
+
+    const selectedVendor = AccountList.find(v => v.AccountName === vendorName);
+    if (!selectedVendor || !selectedVendor.Code) {
+        loadItemDetails();
+        return;
+    }
+
+    $.ajax({
+        url: `${appBaseURL}/api/Master/VendorWiseBrandList?VendorMaster_Code=${selectedVendor.Code}`,
+        type: 'POST',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#txtBrandList').empty();
+                let options = '';
+                BrandList = response;
+                BrandList.forEach(item => {
+                    options += '<option value="' + item.BrandName + '" text="' + item.Code + '"></option>';
+                });
+                $('#txtBrandList').html(options);
+            } else {
+                $('#txtBrandList').empty();
+                BrandList = [];
+            }
+            loadItemDetails();
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }
+    });
+}
+function bindMRNDetailRows(mrnDetails) {
+    $("#Orderdata").empty();
+    if (mrnDetails && mrnDetails.length > 0) {
+        mrnDetails.forEach(function (Data, index) {
+            addNewRowEdit(index, Data);
+        });
+        updateTotalBillQty();
+        updateTotalRate();
+        updateTotalAmount();
+        updateTotalBillQtyBox();
+        updateTotalReceivedQtyBox();
+        updateTotalReceivedQty();
+    } else {
+        toastr.info("No addresses available for this account.");
+    }
 }
 function GetItemDetail() {
     $.ajax({
@@ -760,6 +817,11 @@ function Save() {
                 row.find(".txtReceivedQty").focus();
                 validationFailed = true;
                 return;
+            } else if ((parseFloat(row.find(".txtReceivedQty").val()) || 0) > (parseFloat(row.find(".txtBillQty").val()) || 0)) {
+                toastr.error("Received Qty cannot be greater than Bill Qty !");
+                row.find(".txtReceivedQty").focus();
+                validationFailed = true;
+                return;
             } else if (row.find(".txtRate").val() == '') {
                 toastr.error("Please enter rate !");
                 row.find(".txtRate").focus();
@@ -854,7 +916,7 @@ function addNewRowEdit(index, Data) {
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" oninput="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" oninput="updateTotalReceivedQty();" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" oninput="ValidateReceivedQtyInput(this);" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
@@ -866,7 +928,7 @@ function addNewRowEdit(index, Data) {
 
     if (Data !== undefined) {
         const item = ItemDetail.find(entry => entry.ItemName == Data.ItemName);
-        const isDisabled = item.QtyInBox === 0;
+        const isDisabled = !item || item.QtyInBox === 0;
         $("#txtItemBarCode_" + rowCount).val(Data.ItemBarCode || "");
         $("#txtItemCode_" + rowCount).val(Data.ItemCode || "");
         $("#txtItemName_" + rowCount).val(Data.ItemName || "");
@@ -919,6 +981,22 @@ function OnKeyDownPressFloatTextBox(event, element) {
         return false;
     }
 }
+function ValidateReceivedQtyInput(element) {
+    const currentRow = element.closest('tr');
+    if (!currentRow) return;
+
+    const billQtyEl = currentRow.querySelector('.txtBillQty');
+    const receivedQtyEl = currentRow.querySelector('.txtReceivedQty');
+    const billQty = parseFloat(billQtyEl?.value) || 0;
+    const receivedQty = parseFloat(receivedQtyEl?.value) || 0;
+
+    if (receivedQty > billQty) {
+        toastr.error("Received Qty cannot be greater than Bill Qty !");
+        receivedQtyEl.value = billQty > 0 ? billQty : '';
+        receivedQtyEl.focus();
+    }
+    updateTotalReceivedQty();
+}
 function SetvalueReceivedQty(event, element) {
     const currentRow = element.closest('tr');
     const ReceivedQty = currentRow.querySelector('.txtReceivedQty');
@@ -926,7 +1004,7 @@ function SetvalueReceivedQty(event, element) {
             const value = element.value;
             ReceivedQty.value = value;
         CalculateAmount(element);
-        updateTotalReceivedQty();
+        ValidateReceivedQtyInput(ReceivedQty);
     }
     else {
            
@@ -977,7 +1055,7 @@ function addNewRow() {
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" oninput="CalculateAmount(this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" oninput="updateTotalReceivedQty();" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" oninput="ValidateReceivedQtyInput(this);" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
@@ -997,7 +1075,7 @@ function addNewRow() {
             <td><input type="text" disabled class="txtBillQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueBillQtyBox(this);" id="txtBillQtyBox_${rowCount}"autocomplete="off"  /></td>
             <td><input type="text" disabled class="txtReceivedQtyBox box_border form-control form-control-sm text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQtyBox(this);" id="txtReceivedQtyBox_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtBillQty box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="SetvalueReceivedQty(event, this);" id="txtBillQty_${rowCount}"autocomplete="off" maxlength="15" /></td>
-            <td><input type="text" oninput="updateTotalReceivedQty();" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
+            <td><input type="text" oninput="ValidateReceivedQtyInput(this);" class="txtReceivedQty box_border form-control form-control-sm mandatory text-right"onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtReceivedQty_${rowCount}" autocomplete="off" maxlength="15" /></td>
             <td><input type="text" class="txtRate box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" oninput="CalculateAmount(this);" id="txtRate_${rowCount}" autocomplete="off"maxlength="15" /></td>
             <td><input type="text" disabled class="txtAmount box_border form-control form-control-sm mandatory text-right" onkeypress="return OnKeyDownPressFloatTextBox(event, this);" id="txtAmount_${rowCount}"autocomplete="off" maxlength="15" /></td>
             <td><input type="text" list="txtWarehouse" onfocus="focusblank(this);" class="txtWarehouse box_border form-control form-control-sm mandatory" onfocusout="CheckWarehouse(this);" id="txtWarehouse_${rowCount}" autocomplete="off" maxlength="100" /></td>
@@ -1252,7 +1330,8 @@ function FillallItemfield(inputElement, value) {
         if (value == 'ItemName') {
             $("#txtItemName option").each(function () {
                 if ($(this).val() === inputValue) {
-                    const item = ItemDetail.find(entry => entry.ItemName == inputValue);
+                    const item = ItemDetail.find(entry => (entry.ItemName + ' (' + entry.ItemCode + ')') === inputValue)
+                        || ItemDetail.find(entry => entry.ItemName == inputValue);
                     itemBarCode.value = item.ItemBarCode;
                     itemCode.value = item.ItemCode;
                     itemName.value = item.ItemName;
@@ -1384,8 +1463,8 @@ function SetvalueBillQtyBox(inputElement) {
         BillQty.disabled = isDisabled;
         const item = ItemDetail.find(entry => entry.ItemName == itemName.value);
         BillQty.value = item.QtyInBox * BillQtyBox.value;
+        ValidateReceivedQtyInput(ReceivedQty);
         CalculateAmount(inputElement);
-        updateTotalReceivedQty();
         updateTotalBillQtyBox();
     }
 }
@@ -1402,8 +1481,8 @@ function SetvalueReceivedQtyBox(inputElement) {
         ReceivedQty.disabled = isDisabled;
         const item = ItemDetail.find(entry => entry.ItemName == itemName.value);
         ReceivedQty.value = item.QtyInBox * ReceivedQtyBox.value;
+        ValidateReceivedQtyInput(ReceivedQty);
         CalculateAmount(inputElement);
-        updateTotalReceivedQty();
         updateTotalReceivedQtyBox();
     }
 }
@@ -1707,6 +1786,10 @@ function CheckItemName(inputElement) {
             }
         });
         if (!isValid) {
+            isValid = ItemDetail.some(entry => entry.ItemName === value
+                || (entry.ItemName + ' (' + entry.ItemCode + ')') === value);
+        }
+        if (!isValid) {
             const inputs = currentRow.querySelectorAll('input');
             inputs.forEach(input => {
                 input.value = '';
@@ -1968,23 +2051,12 @@ async function View(code) {
                         AccountList.push(newData);
                     }
                     CreateVendorlist();
+                    bindMRNEditItemDropdowns(MRNMaster.AccountName, MRNMaster.BrandName, function () {
+                        bindMRNDetailRows(response.MRNDetails);
+                    });
                 } else {
                     toastr.warning("Account master data is missing.");
-                }
-                $("#Orderdata").empty();
-                if (response.MRNDetails && response.MRNDetails.length > 0) {
-                    response.MRNDetails.forEach(function (Data, index) {
-                     
-                        addNewRowEdit(index, Data);
-                    });
-                    updateTotalBillQty();
-                    updateTotalRate();
-                    updateTotalAmount();
-                    updateTotalBillQtyBox();
-                    updateTotalReceivedQtyBox();
-                    updateTotalReceivedQty();
-                } else {
-                    toastr.info("No addresses available for this account.");
+                    bindMRNDetailRows(response.MRNDetails);
                 }
                 $("#txtsave").prop("disabled", true);
                 disableFields(true);

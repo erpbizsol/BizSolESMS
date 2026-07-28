@@ -6,33 +6,244 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="~/assets/script/clientmaster.js"></script>
 <style>
-    .dropdown-container {
+    /* Brand multi-select */
+    .brand-ms-wrap {
         position: relative;
-        display: inline-block;
-        font-family: Arial, sans-serif;
     }
 
+    .brand-ms {
+        position: relative;
+        width: 100%;
+    }
 
-    .dropdown-button {
-        padding: 8px;
-        border: 2px solid black;
+    .brand-ms-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        min-height: 1.72rem;
+        padding: 0.2rem 1.75rem 0.2rem 0.45rem;
+        border: 1px solid #64748b;
+        border-radius: 8px;
+        background: #fff;
         cursor: pointer;
-        background-color: white;
-        width: 300px;
-        margin-top: 10px;
-        overflow: auto;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        position: relative;
+        text-align: left;
     }
 
-    .dropdown-list {
+    .brand-ms-trigger:hover:not(.is-disabled) {
+        border-color: #475569;
+    }
+
+    .brand-ms-trigger.is-open,
+    .brand-ms-trigger:focus-visible {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        outline: none;
+    }
+
+    .brand-ms-trigger.is-disabled {
+        background: #f1f5f9;
+        cursor: not-allowed;
+        opacity: 0.85;
+    }
+
+    .brand-ms-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .brand-ms-chips:empty {
         display: none;
-        background-color: white;
-        border: 1px solid #ccc;
-        z-index: 1000 !important;
-        padding: 5px;
-        max-height: 191px;
-        margin-top: -8px;
-        overflow:  auto;
-        /* min-height: 200px; */
+    }
+
+    .brand-ms-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        max-width: 100%;
+        padding: 0.1rem 0.35rem;
+        border-radius: 999px;
+        background: #e8eef6;
+        color: #1d4b7d;
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .brand-ms-chip-readonly {
+        padding-right: 0.45rem;
+    }
+
+    .brand-ms-chip-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .brand-ms-chip-remove {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1rem;
+        height: 1rem;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        color: #64748b;
+        font-size: 0.85rem;
+        line-height: 1;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .brand-ms-chip-remove:hover {
+        background: rgba(29, 75, 125, 0.12);
+        color: #1d4b7d;
+    }
+
+    .brand-ms-placeholder {
+        color: #64748b;
+        font-size: 0.8125rem;
+        font-weight: 400;
+        line-height: 1.35;
+        user-select: none;
+        text-align: left;
+        flex: 1;
+    }
+
+    .brand-ms-chevron {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 0.65rem;
+        pointer-events: none;
+        transition: transform 0.2s ease, color 0.15s ease;
+    }
+
+    .brand-ms-trigger.is-open .brand-ms-chevron {
+        transform: translateY(-50%) rotate(180deg);
+        color: #1d4b7d;
+    }
+
+    .brand-ms-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        z-index: 1050;
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+        overflow: hidden;
+    }
+
+    .brand-ms-dropdown.is-open {
+        display: block;
+    }
+
+    .brand-ms-search-wrap {
+        position: relative;
+        padding: 0.45rem 0.5rem 0.35rem;
+        border-bottom: 1px solid #e2e8f0;
+        background: #f8fafc;
+    }
+
+    .brand-ms-search-icon {
+        position: absolute;
+        left: 0.95rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.72rem;
+        pointer-events: none;
+    }
+
+    .brand-ms-search {
+        width: 100%;
+        padding: 0.28rem 0.5rem 0.28rem 1.65rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 0.78rem;
+        color: #1e293b;
+        background: #fff;
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .brand-ms-search:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+    }
+
+    .brand-ms-select-all {
+        padding: 0.2rem 0.35rem;
+        border-bottom: 1px solid #e2e8f0;
+        background: #fff;
+    }
+
+    .brand-ms-options {
+        max-height: 180px;
+        overflow-y: auto;
+        padding: 0.25rem 0.35rem 0.35rem;
+    }
+
+    .brand-ms-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0.38rem 0.45rem;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: background 0.12s ease;
+        user-select: none;
+    }
+
+    .brand-ms-option:hover {
+        background: #f1f5f9;
+    }
+
+    .brand-ms-option:has(.option:checked) {
+        background: #eef2ff;
+    }
+
+    .brand-ms-select-all-item {
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .brand-ms-checkbox {
+        width: 0.95rem;
+        height: 0.95rem;
+        margin: 0;
+        accent-color: #1d4b7d;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .brand-ms-option-text {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: #334155;
+        line-height: 1.3;
+    }
+
+    .brand-ms-empty {
+        padding: 0.75rem 0.5rem;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.78rem;
     }
 
     th, .filter-table-heading {
@@ -320,16 +531,30 @@
                                     <option value="HGPD">HGPD</option>
                                 </select>
                             </div>
-                            <div class="col-md-3  col-sm-6 dropdown-container">
-                                <label for="dropdownButton" class="col-form-label-sm">
+                            <div class="col-md-3 col-sm-6 brand-ms-wrap dropdown-container">
+                                <label for="brandMultiTrigger" class="col-form-label-sm fw-bold">
                                     Brand <span class="text-danger">*</span>
                                 </label>
-                                <div style="position: relative;">
-                                    <input type="text" id="dropdownButton" readonly class="form-control form-control-sm box_border select-checkbox-multi" placeholder="Select Users">
-                                </div>
-                                <div class="dropdown-list" id="dropdownList">
-                                    <label><input type="checkbox" id="selectAll"> Select All</label><br>
-                                    <div id="checkboxOptions"></div>
+                                <div class="brand-ms" id="brandMultiSelect">
+                                    <input type="hidden" id="dropdownButton" value="" />
+                                    <div class="brand-ms-trigger select-checkbox-multi" id="brandMultiTrigger" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Select brands">
+                                        <div class="brand-ms-chips" id="brandSelectedChips"></div>
+                                        <span class="brand-ms-placeholder" id="brandPlaceholder">Select brand(s)</span>
+                                        <span class="brand-ms-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+                                    </div>
+                                    <div class="brand-ms-dropdown dropdown-list" id="dropdownList">
+                                        <div class="brand-ms-search-wrap">
+                                            <i class="fa-solid fa-magnifying-glass brand-ms-search-icon"></i>
+                                            <input type="text" class="brand-ms-search" id="brandSearchInput" placeholder="Search brands..." autocomplete="off" />
+                                        </div>
+                                        <div class="brand-ms-select-all">
+                                            <label class="brand-ms-option brand-ms-select-all-item">
+                                                <input type="checkbox" id="selectAll" class="brand-ms-checkbox" />
+                                                <span class="brand-ms-option-text">Select All</span>
+                                            </label>
+                                        </div>
+                                        <div class="brand-ms-options" id="checkboxOptions" role="listbox"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

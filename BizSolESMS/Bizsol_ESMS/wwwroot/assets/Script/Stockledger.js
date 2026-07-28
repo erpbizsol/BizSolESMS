@@ -4,6 +4,60 @@ let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let G_GroupList = [];
 let G_SubGroupList = [];
+let stockLedgerApiPending = 0;
+
+function beginStockLedgerApi() {
+    stockLedgerApiPending++;
+    if (typeof blockUI === 'function') {
+        blockUI();
+    }
+}
+
+function endStockLedgerApi() {
+    stockLedgerApiPending = Math.max(0, stockLedgerApiPending - 1);
+    if (stockLedgerApiPending === 0 && typeof unblockUI === 'function') {
+        unblockUI();
+    }
+}
+
+function isSummaryReportType(reportType) {
+    var type = String(reportType || $("#ddlReportType").val() || '').trim().toLowerCase();
+    return type === 'summary' || type === 'summery';
+}
+
+function getItemDropdownHeaderOption() {
+    if (isSummaryReportType()) {
+        return '<option value="0">All</option>';
+    }
+    return '<option value="">Select Item</option>';
+}
+
+function bindItemNameSelect2() {
+    if ($('#ddlItemName').hasClass('select2-hidden-accessible')) {
+        $('#ddlItemName').select2('destroy');
+    }
+    $('#ddlItemName').select2({
+        width: '-webkit-fill-available'
+    });
+}
+
+function refreshItemDropdownByFilters() {
+    var subGroupCode = $("#ddlSubGroup").val();
+    var groupCode = $("#ddlGroup").val();
+    const subGroupItem = G_SubGroupList.find(entry => entry["Code"] == subGroupCode);
+    const groupItem = G_GroupList.find(entry => entry["Code"] == groupCode);
+
+    if (subGroupItem !== undefined && groupItem === undefined) {
+        ShowItemMasterlist(0, subGroupItem["Sub Group Name"]);
+    } else if (subGroupItem === undefined && groupItem !== undefined) {
+        ShowItemMasterlist(groupItem["Name"], 0);
+    } else if (subGroupItem !== undefined && groupItem !== undefined) {
+        ShowItemMasterlist(groupItem["Name"], subGroupItem["Sub Group Name"]);
+    } else {
+        GetItemMasterList();
+    }
+}
+
 $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("Stock Ledger");
@@ -23,20 +77,10 @@ $(document).ready(function () {
         }
     });
     $("#ddlSubGroup").on("change", function (e) {
-        var Code = $(this).val();
-        var GroupCode = $("#ddlGroup").val();
-        const item = G_SubGroupList.find(entry => entry["Code"] == Code);
-        const GroupItem = G_GroupList.find(entry => entry["Code"] == GroupCode);
-        if (item !== undefined && GroupItem == undefined) {
-            ShowItemMasterlist(0,item["Sub Group Name"]);
-        } if (item == undefined && GroupItem !== undefined) {
-            ShowItemMasterlist(GroupItem["Name"],0 );
-        } if (item !== undefined && GroupItem !== undefined) {
-            ShowItemMasterlist(GroupItem["Name"], item["Sub Group Name"]);
-        } else {
-            $("#ddlItemName").empty();
-            GetItemMasterList();
-        }
+        refreshItemDropdownByFilters();
+    });
+    $("#ddlReportType").on("change", function () {
+        refreshItemDropdownByFilters();
     });
     $("#txtShow").on("click", function () {
         GetStockLedger();
@@ -136,6 +180,7 @@ function DatePicker() {
         url: `${appBaseURL}/api/Master/GetCurrentDate`,
         method: 'GET',
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
@@ -181,6 +226,9 @@ function DatePicker() {
         },
         error: function () {
             console.error('Failed to fetch the date from the API.');
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 }
@@ -189,6 +237,7 @@ function GetGroupMasterList() {
         url: `${appBaseURL}/api/Master/GetDropDown`,
         type: 'GET',
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
@@ -212,6 +261,9 @@ function GetGroupMasterList() {
         error: function (xhr, status, error) {
             console.error("Error:", error);
             $('#ddlGroup').empty();
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 }
@@ -220,6 +272,7 @@ function GetSubGroupMasterList(GroupName) {
         url: `${appBaseURL}/api/Master/ShowSubGroupByGroupName?GroupName=${GroupName}`,
         type: 'GET',
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
@@ -242,6 +295,9 @@ function GetSubGroupMasterList(GroupName) {
         error: function (xhr, status, error) {
             console.error("Error:", error);
             $('#ddlSubGroup').empty();
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 }
@@ -250,6 +306,7 @@ function GetSubGroupMasterBlank() {
         url: `${appBaseURL}/api/Master/ShowSubGroupMaster`,
         type: 'GET',
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
@@ -273,6 +330,9 @@ function GetSubGroupMasterBlank() {
         error: function (xhr, status, error) {
             console.error("Error:", error);
             $('#ddlSubGroup').empty();
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 }
@@ -281,11 +341,12 @@ function GetItemMasterList() {
         url: `${appBaseURL}/api/Master/GetItemDetails`,
         type: 'GET',
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
-                let option = '';
+                let option = getItemDropdownHeaderOption();
                 $.each(response, function (key, val) {
 
                     option += '<option value="' + val["Code"] + '">' + val["ItemName"] + '(' + val["ItemCode"]+')' + '</option>';
@@ -293,9 +354,7 @@ function GetItemMasterList() {
 
                 $('#ddlItemName')[0].innerHTML = option;
 
-                $('#ddlItemName').select2({
-                    width: '-webkit-fill-available'
-                });
+                bindItemNameSelect2();
             } else {
                 $('#ddlItemName').empty();
             }
@@ -303,6 +362,9 @@ function GetItemMasterList() {
         error: function (xhr, status, error) {
             console.error("Error:", error);
             $('#ddlItemName').empty();
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 } 
@@ -311,6 +373,7 @@ function GetReportType() {
         url: `${appBaseURL}/api/Report/GetReportType?ModuleDesp=Stock Ledger`,
         type: 'GET',
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
@@ -322,8 +385,7 @@ function GetReportType() {
                 });
 
                 $('#ddlReportType')[0].innerHTML = option;
-
-               
+                refreshItemDropdownByFilters();
             } else {
                 $('#ddlReportType').empty();
             }
@@ -331,6 +393,9 @@ function GetReportType() {
         error: function (xhr, status, error) {
             console.error("Error:", error);
             $('#ddlReportType').empty();
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 }
@@ -345,6 +410,7 @@ function DataExport() {
         url: `${appBaseURL}/api/OrderMaster/GetTATReportList?TATDate=${TATDate}&Type=EXPORT`,
         type: 'GET',
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
@@ -356,6 +422,9 @@ function DataExport() {
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 }
@@ -381,9 +450,9 @@ function GetStockLedger() {
         toastr.error("Please select subgroup!");
         $("#ddlSubGroupMaster").focus();
         return;
-    } else if (ItemMaster_Code == '' || ItemMaster_Code == null) {
+    } else if (!isSummaryReportType(ReportType) && (ItemMaster_Code == '' || ItemMaster_Code == null || ItemMaster_Code == '0')) {
         toastr.error("Please select item!");
-        $("#ddlItemMaster").focus();
+        $("#ddlItemName").focus();
         return;
     } else if (FromDate == '' || FromDate == null) {
         toastr.error("Please select from date !");
@@ -413,12 +482,13 @@ function GetStockLedger() {
         dataType: "json",
         data: JSON.stringify(payload),
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
                     $("#tblStockLedger").show();
-                    const StringFilterColumn = [];
+                const StringFilterColumn = ["Part No","Description","Location(Bin)"];
                     const NumericFilterColumn = ["Qty"];
                     const DateFilterColumn = [];
                     const Button = false;
@@ -426,7 +496,18 @@ function GetStockLedger() {
                     const StringdoubleFilterColumn = ["Item Name", "Item Code", "Item Bar Code"];
                     let hiddenColumns = [];
                     const ColumnAlignment = {
-                        Qty: "right"
+                        Qty: "right",
+                        "Opening": "right",
+                        "Inward": "right",
+                        "Outward": "right",
+                        "Balance": "right",
+                        "Opening Qty": "right",
+                        "Purchase Qty": "right",
+                        "Sales Return Qty": "right",
+                        "Bill Qty": "right",
+                        "Not Bill Qty": "right",
+                        "MRP": "right",
+                        "Stock Qty": "right"
                     };
                     BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", response, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
                 } else {
@@ -436,6 +517,9 @@ function GetStockLedger() {
         },
         error: function (xhr, status, error) {
             $("#tblStockLedger").hide();
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 
@@ -445,11 +529,12 @@ function ShowItemMasterlist(Group, SubGroup) {
         url: `${appBaseURL}/api/Master/ShowItemMaster`,
         type: 'GET',
         beforeSend: function (xhr) {
+            beginStockLedgerApi();
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (response) {
             if (response.length > 0) {
-                let option = '<option value="">Select Item</option>';
+                let option = getItemDropdownHeaderOption();
                 let filteredItems = [];
 
                 if (Group === '0' && SubGroup !== '0') {
@@ -469,15 +554,16 @@ function ShowItemMasterlist(Group, SubGroup) {
 
                 $('#ddlItemName').html(option).trigger('change');
 
-                $('#ddlItemName').select2({
-                    width: '100%'
-                });
+                bindItemNameSelect2();
             } else {
                 $('#ddlItemName').empty().trigger('change');
             }
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
+        },
+        complete: function () {
+            endStockLedgerApi();
         }
     });
 }

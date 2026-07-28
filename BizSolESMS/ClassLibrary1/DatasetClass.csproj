@@ -45,6 +45,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>MonthWiseSale.xsd</DependentUpon>
     </Compile>
+    <Compile Update="Dataset\PrintGatePass.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PrintGatePass.xsd</DependentUpon>
+    </Compile>
     <Compile Update="Dataset\PsrDetailData.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -89,6 +94,7 @@
     </None>
     <None Update="Dataset\PrintGatePass.xsd">
       <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PrintGatePass.Designer.cs</LastGenOutput>
     </None>
     <None Update="Dataset\PrintQR.xsd">
       <Generator>MSDataSetGenerator</Generator>

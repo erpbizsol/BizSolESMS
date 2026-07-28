@@ -133,6 +133,27 @@ namespace Bizsol_ESMS.Controllers
         }
         #endregion  AccountMaster 
 
+        #region  CompanyMaster 
+        public IActionResult CompanyMaster()
+        {
+            return View();
+        }
+        #endregion  CompanyMaster 
+
+        #region ClientTypeMaster
+        public IActionResult ClientTypeMaster()
+        {
+            return View();
+        }
+        #endregion ClientTypeMaster 
+
+        #region BankMaster
+        public IActionResult BankMaster()
+        {
+            return View();
+        }
+        #endregion BankMaster 
+
         #region  MRNMaster 
         public IActionResult MRNMaster()
         {

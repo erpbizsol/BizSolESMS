@@ -97,10 +97,10 @@
 
 #layout-wrapper.esms-profenna .btn-icon {
     font-size: 14px;
-    border-radius: 20px;
+    border-radius: 6px;
     background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-    color: #fff;
-    padding: 6px;
+    color: #fff !important;
+    padding: 5px;
     border: none;
     box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
 }

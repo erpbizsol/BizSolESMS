@@ -1,0 +1,100 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="~/assets/script/companymaster.js"></script>
+<section class="breadcrumbs1" id="txtheaderdiv">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <form class="BizSolFormControl" autocomplete="off">
+        <div id="txtCreatepage">
+            <div class="card shadow-sm" style="background-color:#e9e9ef">
+                <div class="tabs">
+                    <div class="row p-1">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <input type="hidden" value="0" id="hftextCode" />
+                                <datalist id="txtCityList"></datalist>
+                                <datalist id="txtCountryList"></datalist>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtCompanyCode" class="col-form-label-sm fw-bold">Company Code</label><span class="text-danger">*</span>
+                                    <input type="text" id="txtCompanyCode" autocomplete="off" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Company Code" maxlength="50">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtCompanyName" class="col-form-label-sm fw-bold">Company Name</label><span class="text-danger">*</span>
+                                    <input type="text" id="txtCompanyName" autocomplete="off" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Company Name" maxlength="100">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtAliasName" class="col-form-label-sm fw-bold">Alias Name</label>
+                                    <input type="text" id="txtAliasName" autocomplete="off" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Alias Name" maxlength="100">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtAddressLine1" class="col-form-label-sm fw-bold">Address Line 1</label><span class="text-danger">*</span>
+                                    <input type="text" id="txtAddressLine1" autocomplete="off" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Address Line 1" maxlength="250">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtAddressLine2" class="col-form-label-sm fw-bold">Address Line 2</label>
+                                    <input type="text" id="txtAddressLine2" autocomplete="off" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Address Line 2" maxlength="250">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtCity" class="col-form-label-sm fw-bold">City</label>
+                                    <input type="text" list="txtCityList" id="txtCity" onchange="FillCityFields(this);" onkeydown="BizSolhandleEnterKey(event);" autocomplete="new-password" class="form-control form-control-sm box_border BizSolFormControl" placeholder="City">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtNation" class="col-form-label-sm fw-bold">Nation</label>
+                                    <input type="text" list="txtCountryList" id="txtNation" autocomplete="new-password" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Nation">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtPinCode" class="col-form-label-sm fw-bold">Pin Code</label>
+                                    <input type="text" id="txtPinCode" autocomplete="new-password" onkeypress="return OnChangeNumericTextBox(event, this);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Pin Code" maxlength="6">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtPANNo" class="col-form-label-sm fw-bold">PAN No</label>
+                                    <input type="text" id="txtPANNo" autocomplete="off" oninput="convertToUppercase(this);" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="PAN No" maxlength="10">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtGSTNo" class="col-form-label-sm fw-bold">GST No</label>
+                                    <input type="text" id="txtGSTNo" autocomplete="off" oninput="convertToUppercase(this);" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="GST No" maxlength="20">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtPhone" class="col-form-label-sm fw-bold">Phone</label>
+                                    <input type="text" id="txtPhone" autocomplete="new-password" onkeypress="return OnChangeNumericTextBox(event, this);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Phone" maxlength="15">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtMobile" class="col-form-label-sm fw-bold">Mobile</label>
+                                    <input type="text" id="txtMobile" autocomplete="new-password" onkeypress="return OnChangeNumericTextBox(event, this);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Mobile" maxlength="10">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtEmail" class="col-form-label-sm fw-bold">Email</label>
+                                    <input type="text" id="txtEmail" autocomplete="new-password" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="Email" maxlength="100">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtMSMENo" class="col-form-label-sm fw-bold">MSME No</label>
+                                    <input type="text" id="txtMSMENo" autocomplete="off" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="MSME No" maxlength="50">
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="txtUPIId" class="col-form-label-sm fw-bold">UPI Id</label>
+                                    <input type="text" id="txtUPIId" autocomplete="off" onkeydown="BizSolhandleEnterKey(event);" class="form-control form-control-sm box_border BizSolFormControl" placeholder="UPI Id" maxlength="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

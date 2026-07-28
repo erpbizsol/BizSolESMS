@@ -1,0 +1,69 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="~/assets/script/clienttypemaster.js"></script>
+
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid" style="">
+        <div class="form-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="Save()" id="txtbtnSave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="sm-table mt-3" id="txtListpage">
+        <div class="row">
+            <div class="col-sm-12 text-end">
+                <label></label>
+                <button type="button" class="btn btn-primary btn-height" title="DOWNLOAD" onclick="DataExport()">DOWNLOAD</button>
+                <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="CreateClientTypeMaster()">CREATE NEW</button>
+            </div>
+        </div>
+        <div class="card-body mt-2" id="txtclienttypetable">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginator -->
+            <div class="paginator" id="paginator-table">
+            </div>
+        </div>
+    </div>
+    <div id="txtCreatepage" style="display:none;">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="txtClientType" class="col-form-label-sm fw-bold">
+                                    Client Type <span class="text-danger">*</span>
+                                </label>
+                                <input type="hidden" value="0" id="hftxtCode" />
+                                <input type="text" id="txtClientType" name="txtClientType" autocomplete="off" class="form-control form-control-sm box_border" placeholder="Client Type" maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/filter.js"></script>

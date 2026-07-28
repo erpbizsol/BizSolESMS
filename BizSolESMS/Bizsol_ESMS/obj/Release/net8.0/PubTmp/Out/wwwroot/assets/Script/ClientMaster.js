@@ -156,36 +156,131 @@ $(document).ready(function () {
         toggleClientType();
     });
     BrandList();
-    $('.select-checkbox-multi').click(function () {
-        let inputWidth = $(this).outerWidth();
-        $('#dropdownList').css({
-            'position': 'absolute',
-            'width': inputWidth + 'px',
-            'height': '200px',
-            'overflow': 'auto',
-        }).toggle();
+    initBrandMultiSelect();
+});
+function initBrandMultiSelect() {
+    const $trigger = $('#brandMultiTrigger');
+    const $dropdown = $('#dropdownList');
+
+    $trigger.on('click', function (e) {
+        if ($trigger.hasClass('is-disabled')) return;
+        e.stopPropagation();
+        toggleBrandDropdown();
     });
 
-    $(document).on('click', function (e) {
-        if (!$(e.target).closest('.dropdown-container').length) {
-            $('#dropdownList').hide();
+    $trigger.on('keydown', function (e) {
+        if ($trigger.hasClass('is-disabled')) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleBrandDropdown();
+        } else if (e.key === 'Escape') {
+            closeBrandDropdown();
         }
     });
 
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.brand-ms').length) {
+            closeBrandDropdown();
+        }
+    });
+
+    $('#brandSearchInput').on('click', function (e) {
+        e.stopPropagation();
+    });
+
+    $('#brandSearchInput').on('input', filterBrandOptions);
+
     $('#selectAll').on('change', function () {
-        $('.option').prop('checked', this.checked);
+        $('.brand-ms-options .option:visible').prop('checked', this.checked);
         updateSelected();
     });
 
     $(document).on('change', '.option', function () {
-        if ($('.option:checked').length === $('.option').length) {
-            $('#selectAll').prop('checked', true);
-        } else {
-            $('#selectAll').prop('checked', false);
-        }
+        syncSelectAllState();
         updateSelected();
     });
-});
+
+    $(document).on('click', '.brand-ms-chip-remove', function (e) {
+        e.stopPropagation();
+        if ($trigger.hasClass('is-disabled')) return;
+        const code = $(this).data('code');
+        $(`.option[value="${code}"]`).prop('checked', false);
+        syncSelectAllState();
+        updateSelected();
+    });
+}
+function toggleBrandDropdown() {
+    const $dropdown = $('#dropdownList');
+    const $trigger = $('#brandMultiTrigger');
+    if ($dropdown.hasClass('is-open')) {
+        closeBrandDropdown();
+        return;
+    }
+    $dropdown.addClass('is-open');
+    $trigger.addClass('is-open').attr('aria-expanded', 'true');
+    $('#brandSearchInput').val('');
+    filterBrandOptions();
+    setTimeout(function () {
+        $('#brandSearchInput').focus();
+    }, 0);
+}
+function closeBrandDropdown() {
+    $('#dropdownList').removeClass('is-open');
+    $('#brandMultiTrigger').removeClass('is-open').attr('aria-expanded', 'false');
+}
+function filterBrandOptions() {
+    const term = ($('#brandSearchInput').val() || '').toLowerCase().trim();
+    let visibleCount = 0;
+    $('.brand-ms-options .brand-ms-option').each(function () {
+        const text = $(this).find('.brand-ms-option-text').text().toLowerCase();
+        const isVisible = !term || text.indexOf(term) !== -1;
+        $(this).toggle(isVisible);
+        if (isVisible) visibleCount++;
+    });
+    $('.brand-ms-empty').remove();
+    if (visibleCount === 0) {
+        $('#checkboxOptions').append('<div class="brand-ms-empty">No brands found</div>');
+    }
+    syncSelectAllState();
+}
+function syncSelectAllState() {
+    const $visible = $('.brand-ms-options .option:visible');
+    const $checked = $visible.filter(':checked');
+    const $selectAll = $('#selectAll');
+    $selectAll.prop('checked', $visible.length > 0 && $checked.length === $visible.length);
+    $selectAll.prop('indeterminate', $checked.length > 0 && $checked.length < $visible.length);
+}
+function setBrandMultiDisabled(disabled) {
+    $('#brandMultiTrigger').toggleClass('is-disabled', disabled);
+    if (disabled) closeBrandDropdown();
+}
+function resetBrandSelection() {
+    $('.option, #selectAll').prop('checked', false);
+    $('#selectAll').prop('indeterminate', false);
+    $('#brandSearchInput').val('');
+    filterBrandOptions();
+    updateSelected();
+}
+function setBrandDisplayFromNames(brandNameStr) {
+    const names = brandNameStr
+        ? brandNameStr.split(',').map(function (x) { return x.trim(); }).filter(function (x) { return x.length > 0; })
+        : [];
+    $('#dropdownButton').val(names.join(', '));
+    const $chips = $('#brandSelectedChips');
+    const $placeholder = $('#brandPlaceholder');
+    $chips.empty();
+    if (!names.length) {
+        $placeholder.show();
+        return;
+    }
+    $placeholder.hide();
+    names.forEach(function (name) {
+        $chips.append(
+            '<span class="brand-ms-chip brand-ms-chip-readonly" title="' + name + '">' +
+            '<span class="brand-ms-chip-text">' + name + '</span></span>'
+        );
+    });
+}
 function ShowAccountMasterlistV(Type) {
     $.ajax({
         url: `${appBaseURL}/api/Master/ShowAccountMasterV`,
@@ -262,6 +357,7 @@ async function CreateItemMaster() {
     $("#txtPANNo").prop("disabled", false);
     $("#txtIsClient").prop("disabled", false);
     $("#txtIsVendor").prop("disabled", false);
+    setBrandMultiDisabled(false);
     disableFields(false);
     $("#txtheaderdiv").show();
 
@@ -359,6 +455,7 @@ async function Edit(code) {
                         updateSelected();
                     }, 200);
                     disableFields(false);
+                    setBrandMultiDisabled(false);
                     $("#tdsAddressCode1").prop("disabled", false);
                     $("#tdsAddressLine1").prop("disabled", false);
                     $("#tdsAddressLine2").prop("disabled", false);
@@ -539,6 +636,8 @@ function ClearData() {
     $("#txtIsMSME").val("");
     $("#Orderdata").empty();
     $("#txtClientType").val("");
+    resetBrandSelection();
+    setBrandMultiDisabled(false);
 }
 function Save() {
     var codes = GetEmpCodes();
@@ -1273,7 +1372,9 @@ async function View(code) {
                     $("#txtDisplayName").val(accountMaster.DisplayName || "").prop("disabled", true);
                     $("#txtPANNo").val(accountMaster.PANNo || "").prop("disabled", true);
                     $("#txtIsMSME").val(accountMaster.IsMSME || "").prop("disabled", true);
-                    $("#dropdownButton").val(accountMaster.BrandName || "").prop("disabled", true);
+                    $("#dropdownButton").val(accountMaster.BrandName || "");
+                    setBrandDisplayFromNames(accountMaster.BrandName || "");
+                    setBrandMultiDisabled(true);
                     $("#txtIsClient").prop("disabled", true);
                     $("#txtIsVendor").prop("disabled", true);
                     $("#txtClientType").prop("disabled", true);
@@ -1380,9 +1481,10 @@ function BrandList() {
             if (response.length > 0) {
                 let html = '';
                 response.forEach(item => {
-                    html += `<label>
-                    <input type="checkbox" class="option" value="${item.Code}" data-name="${item.BrandName.trim()}"> ${item.BrandName.trim()}
-                    </label><br>`;
+                    html += `<label class="brand-ms-option">
+                    <input type="checkbox" class="option brand-ms-checkbox" value="${item.Code}" data-name="${item.BrandName.trim()}">
+                    <span class="brand-ms-option-text">${item.BrandName.trim()}</span>
+                    </label>`;
                 });
                 $('#checkboxOptions').html(html);
             }
@@ -1393,10 +1495,30 @@ function BrandList() {
     });
 }
 function updateSelected() {
-    let selectedNames = $('.option:checked').map(function () {
-        return $(this).data('name');
-    }).get().join(', ');
+    const selected = $('.option:checked').map(function () {
+        return { code: $(this).val(), name: $(this).data('name') };
+    }).get();
+    const selectedNames = selected.map(function (item) { return item.name; }).join(', ');
     $('#dropdownButton').val(selectedNames);
+
+    const $chips = $('#brandSelectedChips');
+    const $placeholder = $('#brandPlaceholder');
+    $chips.empty();
+
+    if (!selected.length) {
+        $placeholder.show();
+        return;
+    }
+
+    $placeholder.hide();
+    selected.forEach(function (item) {
+        $chips.append(
+            '<span class="brand-ms-chip" title="' + item.name + '">' +
+            '<span class="brand-ms-chip-text">' + item.name + '</span>' +
+            '<button type="button" class="brand-ms-chip-remove" data-code="' + item.code + '" aria-label="Remove ' + item.name + '">&times;</button>' +
+            '</span>'
+        );
+    });
 }
 
 function GetEmpCodes() {
