@@ -56,7 +56,7 @@ namespace Bizsol_ESMS.Controllers
                             if (dr.Read())
                             {
                                 connectionMYSqlString = connectionMYSqlString.Replace("IPMySql", dr["sqladdress"].ToString());
-                                connectionMYSqlString = connectionMYSqlString.Replace("MySqlPort", "65448");
+                                connectionMYSqlString = connectionMYSqlString.Replace("MySqlPort", dr["MySqlPort"].ToString());
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlDatabase", dr["LoginDatabase"].ToString());
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlUser", dr["userid"].ToString());
                                 connectionMYSqlString = connectionMYSqlString.Replace("MySqlPassword", dr["pwd"].ToString());

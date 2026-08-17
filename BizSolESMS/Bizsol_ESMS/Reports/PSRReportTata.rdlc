@@ -16,6 +16,13 @@
       </ConnectionProperties>
       <rd:DataSourceID>882fadb6-0dcf-4179-b4de-7855e0248e59</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="PsrBankData">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>c4e8b7a1-2d9f-4a6e-9b11-7f3a1c8e5d02</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="PsrTabledata">
@@ -128,6 +135,14 @@
           <DataField>QRCode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="IsShowBankDetailInPSR">
+          <DataField>IsShowBankDetailInPSR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UpiQRCode">
+          <DataField>UpiQRCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PsrDetailData</rd:DataSetName>
@@ -137,6 +152,42 @@
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
       </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="PsrBankData">
+      <Query>
+        <DataSourceName>PsrBankData</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Bank1Text">
+          <DataField>Bank1Text</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Bank2Text">
+          <DataField>Bank2Text</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Bank3Text">
+          <DataField>Bank3Text</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Bank4Text">
+          <DataField>Bank4Text</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Bank5Text">
+          <DataField>Bank5Text</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Bank6Text">
+          <DataField>Bank6Text</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BankCount">
+          <DataField>BankCount</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
     </DataSet>
   </DataSets>
   <ReportSections>
@@ -202,128 +253,6 @@
               <PaddingBottom>4pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox26">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value />
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox26</rd:DefaultName>
-            <Top>2.41653cm</Top>
-            <Left>10.06004cm</Left>
-            <Height>4.48026cm</Height>
-            <Width>9.7689cm</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Color>#333333</Color>
-                <Style>Solid</Style>
-              </Border>
-              <BackgroundColor>White</BackgroundColor>
-              <PaddingLeft>4pt</PaddingLeft>
-              <PaddingRight>4pt</PaddingRight>
-              <PaddingTop>4pt</PaddingTop>
-              <PaddingBottom>4pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox24">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value />
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox24</rd:DefaultName>
-            <Top>2.41653cm</Top>
-            <Left>0.29104cm</Left>
-            <Height>4.48026cm</Height>
-            <Width>9.769cm</Width>
-            <ZIndex>2</ZIndex>
-            <Style>
-              <Border>
-                <Color>#333333</Color>
-                <Style>None</Style>
-              </Border>
-              <TopBorder>
-                <Color>#333333</Color>
-                <Style>Solid</Style>
-                <Width>1pt</Width>
-              </TopBorder>
-              <BottomBorder>
-                <Color>#333333</Color>
-                <Style>Solid</Style>
-                <Width>1pt</Width>
-              </BottomBorder>
-              <LeftBorder>
-                <Color>#333333</Color>
-                <Style>Solid</Style>
-                <Width>1pt</Width>
-              </LeftBorder>
-              <RightBorder>
-                <Color>#333333</Color>
-                <Style>Solid</Style>
-                <Width>1pt</Width>
-              </RightBorder>
-              <BackgroundColor>White</BackgroundColor>
-              <PaddingLeft>4pt</PaddingLeft>
-              <PaddingRight>4pt</PaddingRight>
-              <PaddingTop>4pt</PaddingTop>
-              <PaddingBottom>4pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox14">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Product Details</Value>
-                    <Style>
-                      <FontFamily>Segoe UI</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                      <Color>#1a1a1a</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Center</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <Top>4.22098in</Top>
-            <Left>0.29104cm</Left>
-            <Height>0.25347in</Height>
-            <Width>19.5379cm</Width>
-            <ZIndex>3</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Tablix Name="Tablix2">
             <TablixBody>
               <TablixColumns>
@@ -346,7 +275,7 @@
                   <Width>2.5cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.63607cm</Width>
+                  <Width>2.54985cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -836,6 +765,7 @@
                     </TablixCell>
                   </TablixCells>
                 </TablixRow>
+
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
@@ -866,13 +796,135 @@
             <Left>0.29104cm</Left>
             <Height>1.2cm</Height>
             <Width>19.5379cm</Width>
-            <ZIndex>4</ZIndex>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
+          <Textbox Name="Textbox26">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style />
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox26</rd:DefaultName>
+            <Top>2.41653cm</Top>
+            <Left>10.06004cm</Left>
+            <Height>4.48026cm</Height>
+            <Width>9.7689cm</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Color>#333333</Color>
+                <Style>Solid</Style>
+              </Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>4pt</PaddingLeft>
+              <PaddingRight>4pt</PaddingRight>
+              <PaddingTop>4pt</PaddingTop>
+              <PaddingBottom>4pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox24">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style />
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox24</rd:DefaultName>
+            <Top>2.41653cm</Top>
+            <Left>0.29104cm</Left>
+            <Height>4.48026cm</Height>
+            <Width>9.769cm</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <Border>
+                <Color>#333333</Color>
+                <Style>None</Style>
+              </Border>
+              <TopBorder>
+                <Color>#333333</Color>
+                <Style>Solid</Style>
+                <Width>1pt</Width>
+              </TopBorder>
+              <BottomBorder>
+                <Color>#333333</Color>
+                <Style>Solid</Style>
+                <Width>1pt</Width>
+              </BottomBorder>
+              <LeftBorder>
+                <Color>#333333</Color>
+                <Style>Solid</Style>
+                <Width>1pt</Width>
+              </LeftBorder>
+              <RightBorder>
+                <Color>#333333</Color>
+                <Style>Solid</Style>
+                <Width>1pt</Width>
+              </RightBorder>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>4pt</PaddingLeft>
+              <PaddingRight>4pt</PaddingRight>
+              <PaddingTop>4pt</PaddingTop>
+              <PaddingBottom>4pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox14">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Product Details</Value>
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#1a1a1a</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>4.22098in</Top>
+            <Left>0.29104cm</Left>
+            <Height>0.25347in</Height>
+            <Width>19.5379cm</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
           <Textbox Name="Textbox18">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -928,138 +980,6 @@
               <PaddingBottom>4pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox27">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Stamp -</Value>
-                    <Style>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>15.48516cm</Top>
-            <Left>0.29104cm</Left>
-            <Height>0.6cm</Height>
-            <Width>6.70812cm</Width>
-            <ZIndex>6</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox23">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Received Date -</Value>
-                    <Style>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>14.77933cm</Top>
-            <Left>0.29104cm</Left>
-            <Height>0.6cm</Height>
-            <Width>6.70812cm</Width>
-            <ZIndex>7</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox22">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Receiver No -</Value>
-                    <Style>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>14.07349cm</Top>
-            <Left>0.29104cm</Left>
-            <Height>0.6cm</Height>
-            <Width>6.70812cm</Width>
-            <ZIndex>8</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox8">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Receiver Name -</Value>
-                    <Style>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>13.36766cm</Top>
-            <Left>0.29104cm</Left>
-            <Height>0.6cm</Height>
-            <Width>6.70812cm</Width>
-            <ZIndex>9</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox12">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -1086,7 +1006,7 @@
             <Left>0.29104cm</Left>
             <Height>0.28in</Height>
             <Width>19.5379cm</Width>
-            <ZIndex>10</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Color>#333333</Color>
@@ -1378,8 +1298,8 @@
             <Top>3.30084in</Top>
             <Left>0.29104cm</Left>
             <Height>0.5in</Height>
-            <Width>19.53791cm</Width>
-            <ZIndex>11</ZIndex>
+            <Width>19.53792cm</Width>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Color>#333333</Color>
@@ -1410,7 +1330,7 @@
             <Left>0.27083in</Left>
             <Height>0.25347in</Height>
             <Width>3.54042in</Width>
-            <ZIndex>12</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1451,7 +1371,7 @@
             <Left>4.075in</Left>
             <Height>0.2257in</Height>
             <Width>3.62375in</Width>
-            <ZIndex>13</ZIndex>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1492,7 +1412,7 @@
             <Left>4.075in</Left>
             <Height>0.25347in</Height>
             <Width>3.62375in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1533,7 +1453,7 @@
             <Left>4.075in</Left>
             <Height>0.28126in</Height>
             <Width>3.62375in</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1574,7 +1494,7 @@
             <Left>0.27083in</Left>
             <Height>0.25347in</Height>
             <Width>3.54042in</Width>
-            <ZIndex>16</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1615,7 +1535,7 @@
             <Left>0.27083in</Left>
             <Height>0.2257in</Height>
             <Width>3.54042in</Width>
-            <ZIndex>17</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1656,7 +1576,7 @@
             <Left>0.27083in</Left>
             <Height>0.25347in</Height>
             <Width>3.54042in</Width>
-            <ZIndex>18</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1697,7 +1617,7 @@
             <Left>0.27083in</Left>
             <Height>0.28126in</Height>
             <Width>3.54042in</Width>
-            <ZIndex>19</ZIndex>
+            <ZIndex>15</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1708,40 +1628,847 @@
               <PaddingBottom>3pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Image Name="Image3">
-            <Source>Database</Source>
-            <Value>=First(Fields!QRCode.Value, "PsrDetailData")</Value>
-            <MIMEType>image/png</MIMEType>
-            <Sizing>FitProportional</Sizing>
-            <Top>13.05cm</Top>
-            <Left>16.63cm</Left>
-            <Height>3.2cm</Height>
-            <Width>3.2cm</Width>
-            <ZIndex>20</ZIndex>
-            <Visibility>
-              <Hidden>=IsNothing(First(Fields!QRCode.Value, "PsrDetailData"))</Hidden>
-            </Visibility>
-            <Style>
-              <Border>
-                <Color>#333333</Color>
-                <Style>Solid</Style>
-              </Border>
-              <BackgroundColor>White</BackgroundColor>
-              <PaddingLeft>3pt</PaddingLeft>
-              <PaddingRight>3pt</PaddingRight>
-              <PaddingTop>3pt</PaddingTop>
-              <PaddingBottom>3pt</PaddingBottom>
-            </Style>
-          </Image>
+            <Rectangle Name="rectReportFooter">
+                          <ReportItems>
+                            <Rectangle Name="rectBankDetails">
+                              <ReportItems>
+                                <Textbox Name="txtBankDetailsHeader">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>BANK DETAILS</Value>
+                                          <Style>
+                                            <FontFamily>Segoe UI</FontFamily>
+                                            <FontSize>12pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <TextAlign>Center</TextAlign>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <rd:DefaultName>txtBankDetailsHeader</rd:DefaultName>
+                                  <Top>0cm</Top>
+                                  <Left>0cm</Left>
+                                  <Height>0.75cm</Height>
+                                  <Width>19.45168cm</Width>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>Gainsboro</BackgroundColor>
+                                    <FontWeight>Bold</FontWeight>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtBank1">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=First(Fields!Bank1Text.Value, "PsrBankData")</Value>
+                                          <MarkupType>HTML</MarkupType>
+                                          <Style>
+                                            <FontFamily>Segoe UI</FontFamily>
+                                            <FontSize>8.5pt</FontSize>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.75cm</Top>
+                                  <Left>0cm</Left>
+                                  <Height>2.25cm</Height>
+                                  <Width>8.4078cm</Width>
+                                  <ZIndex>1</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &lt; 1</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>#fafafa</BackgroundColor>
+                                    <VerticalAlign>Top</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>3pt</PaddingTop>
+                                    <PaddingBottom>3pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtBank2">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=First(Fields!Bank2Text.Value, "PsrBankData")</Value>
+                                          <MarkupType>HTML</MarkupType>
+                                          <Style>
+                                            <FontFamily>Segoe UI</FontFamily>
+                                            <FontSize>8.5pt</FontSize>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.75cm</Top>
+                                  <Left>8.4078cm</Left>
+                                  <Height>2.25cm</Height>
+                                  <Width>8.4078cm</Width>
+                                  <ZIndex>2</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &lt; 2</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>#fafafa</BackgroundColor>
+                                    <VerticalAlign>Top</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>3pt</PaddingTop>
+                                    <PaddingBottom>3pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtBank3">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=First(Fields!Bank3Text.Value, "PsrBankData")</Value>
+                                          <MarkupType>HTML</MarkupType>
+                                          <Style>
+                                            <FontFamily>Segoe UI</FontFamily>
+                                            <FontSize>8.5pt</FontSize>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>3.05cm</Top>
+                                  <Left>0cm</Left>
+                                  <Height>2.25cm</Height>
+                                  <Width>8.4078cm</Width>
+                                  <ZIndex>3</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &lt; 3</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>#fafafa</BackgroundColor>
+                                    <VerticalAlign>Top</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>3pt</PaddingTop>
+                                    <PaddingBottom>3pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtBank4">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=First(Fields!Bank4Text.Value, "PsrBankData")</Value>
+                                          <MarkupType>HTML</MarkupType>
+                                          <Style>
+                                            <FontFamily>Segoe UI</FontFamily>
+                                            <FontSize>8.5pt</FontSize>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>3.05cm</Top>
+                                  <Left>8.4078cm</Left>
+                                  <Height>2.25cm</Height>
+                                  <Width>8.4078cm</Width>
+                                  <ZIndex>4</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &lt; 3</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>#fafafa</BackgroundColor>
+                                    <VerticalAlign>Top</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>3pt</PaddingTop>
+                                    <PaddingBottom>3pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtBank5">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=First(Fields!Bank5Text.Value, "PsrBankData")</Value>
+                                          <MarkupType>HTML</MarkupType>
+                                          <Style>
+                                            <FontFamily>Segoe UI</FontFamily>
+                                            <FontSize>8.5pt</FontSize>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>5.35cm</Top>
+                                  <Left>0cm</Left>
+                                  <Height>2.25cm</Height>
+                                  <Width>8.4078cm</Width>
+                                  <ZIndex>5</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &lt; 5</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>#fafafa</BackgroundColor>
+                                    <VerticalAlign>Top</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>3pt</PaddingTop>
+                                    <PaddingBottom>3pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="txtBank6">
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=First(Fields!Bank6Text.Value, "PsrBankData")</Value>
+                                          <MarkupType>HTML</MarkupType>
+                                          <Style>
+                                            <FontFamily>Segoe UI</FontFamily>
+                                            <FontSize>8.5pt</FontSize>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>5.35cm</Top>
+                                  <Left>8.4078cm</Left>
+                                  <Height>2.25cm</Height>
+                                  <Width>8.4078cm</Width>
+                                  <ZIndex>6</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &lt; 5</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>#fafafa</BackgroundColor>
+                                    <VerticalAlign>Top</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>3pt</PaddingTop>
+                                    <PaddingBottom>3pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Image Name="imgUpiQr">
+                                  <Source>Database</Source>
+                                  <Value>=First(Fields!UpiQRCode.Value, "PsrDetailData")</Value>
+                                  <MIMEType>image/png</MIMEType>
+                                  <Sizing>FitProportional</Sizing>
+                                  <Top>0.75cm</Top>
+                                  <Left>16.81561cm</Left>
+                                  <Height>2.25cm</Height>
+                                  <Width>2.63607cm</Width>
+                                  <ZIndex>7</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=IsNothing(First(Fields!UpiQRCode.Value, "PsrDetailData")) Or First(Fields!UpiQRCode.Value, "PsrDetailData") = "" Or First(Fields!BankCount.Value, "PsrBankData") &gt; 2</Hidden>
+                                  </Visibility>
+                                  <ToolTip>="Scan MRP: " &amp; First(Fields!ScanMRP.Value, "PsrDetailData")</ToolTip>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>White</BackgroundColor>
+                                    <PaddingLeft>2pt</PaddingLeft>
+                                    <PaddingRight>2pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Image>
+                                <Image Name="imgUpiQrTall">
+                                  <Source>Database</Source>
+                                  <Value>=First(Fields!UpiQRCode.Value, "PsrDetailData")</Value>
+                                  <MIMEType>image/png</MIMEType>
+                                  <Sizing>FitProportional</Sizing>
+                                  <Top>0.75cm</Top>
+                                  <Left>16.81561cm</Left>
+                                  <Height>4.55cm</Height>
+                                  <Width>2.63607cm</Width>
+                                  <ZIndex>8</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=IsNothing(First(Fields!UpiQRCode.Value, "PsrDetailData")) Or First(Fields!UpiQRCode.Value, "PsrDetailData") = "" Or First(Fields!BankCount.Value, "PsrBankData") &lt;= 2 Or First(Fields!BankCount.Value, "PsrBankData") &gt; 4</Hidden>
+                                  </Visibility>
+                                  <ToolTip>="Scan MRP: " &amp; First(Fields!ScanMRP.Value, "PsrDetailData")</ToolTip>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>White</BackgroundColor>
+                                    <PaddingLeft>2pt</PaddingLeft>
+                                    <PaddingRight>2pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Image>
+                              </ReportItems>
+                              <KeepTogether>true</KeepTogether>
+                              <Top>0cm</Top>
+                              <Left>0cm</Left>
+                              <Height>7.6cm</Height>
+                              <Width>19.45168cm</Width>
+                              <Visibility>
+                                <Hidden>=UCase(Trim(CStr(First(Fields!IsShowBankDetailInPSR.Value, "PsrDetailData")))) &lt;&gt; "Y" Or First(Fields!BankCount.Value, "PsrBankData") = 0</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Color>#333333</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                              </Style>
+                            </Rectangle>
+                            <Rectangle Name="rectReceiverNoBank">
+                              <ReportItems>
+                                <Textbox Name="Textbox8NoBank">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Receiver Name -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.15cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <Style>
+                                    <Border><Style>None</Style></Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox22NoBank">
+                                  <CanGrow>true</CanGrow>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Receiver No -</Value>
+                                          <Style><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.9cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <Style>
+                                    <Border><Style>None</Style></Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox23NoBank">
+                                  <CanGrow>true</CanGrow>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Received Date -</Value>
+                                          <Style><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>1.65cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <Style>
+                                    <Border><Style>None</Style></Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox27NoBank">
+                                  <CanGrow>true</CanGrow>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Stamp -</Value>
+                                          <Style><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>2.4cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.85cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <Style>
+                                    <Border><Style>None</Style></Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                  </Style>
+                                </Textbox>
+                                <Image Name="Image3NoBank">
+                                  <Source>Database</Source>
+                                  <Value>=First(Fields!QRCode.Value, "PsrDetailData")</Value>
+                                  <MIMEType>image/png</MIMEType>
+                                  <Sizing>FitProportional</Sizing>
+                                  <Top>0.1cm</Top>
+                                  <Left>16.06378cm</Left>
+                                  <Height>3.2cm</Height>
+                                  <Width>3.2cm</Width>
+                                  <Visibility>
+                                    <Hidden>=IsNothing(First(Fields!QRCode.Value, "PsrDetailData"))</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border><Color>#333333</Color><Style>Solid</Style></Border>
+                                    <BackgroundColor>White</BackgroundColor>
+                                  </Style>
+                                </Image>
+                              </ReportItems>
+                              <KeepTogether>true</KeepTogether>
+                              <Top>0cm</Top>
+                              <Left>0cm</Left>
+                              <Height>3.4cm</Height>
+                              <Width>19.45168cm</Width>
+                              <Visibility>
+                                <Hidden>=UCase(Trim(CStr(First(Fields!IsShowBankDetailInPSR.Value, "PsrDetailData")))) = "Y" And First(Fields!BankCount.Value, "PsrBankData") &gt; 0</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border><Color>#333333</Color><Style>Solid</Style></Border>
+                                <BackgroundColor>White</BackgroundColor>
+                              </Style>
+                            </Rectangle>
+                            <Rectangle Name="rectReceiver">
+                              <ReportItems>
+                                <Textbox Name="Textbox8">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Receiver Name -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <rd:DefaultName>Textbox8</rd:DefaultName>
+                                  <Top>0.15cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox22">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Receiver No -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <rd:DefaultName>Textbox8</rd:DefaultName>
+                                  <Top>0.9cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <ZIndex>1</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox23">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Received Date -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <rd:DefaultName>Textbox8</rd:DefaultName>
+                                  <Top>1.65cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <ZIndex>2</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox27">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Stamp -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <rd:DefaultName>Textbox8</rd:DefaultName>
+                                  <Top>2.4cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.85cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <ZIndex>3</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Image Name="Image3">
+                                  <Source>Database</Source>
+                                  <Value>=First(Fields!QRCode.Value, "PsrDetailData")</Value>
+                                  <MIMEType>image/png</MIMEType>
+                                  <Sizing>FitProportional</Sizing>
+                                  <Top>0.1cm</Top>
+                                  <Left>16.06378cm</Left>
+                                  <Height>3.2cm</Height>
+                                  <Width>3.2cm</Width>
+                                  <ZIndex>4</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=IsNothing(First(Fields!QRCode.Value, "PsrDetailData"))</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>White</BackgroundColor>
+                                    <PaddingLeft>3pt</PaddingLeft>
+                                    <PaddingRight>3pt</PaddingRight>
+                                    <PaddingTop>3pt</PaddingTop>
+                                    <PaddingBottom>3pt</PaddingBottom>
+                                  </Style>
+                                </Image>
+                              </ReportItems>
+                              <KeepTogether>true</KeepTogether>
+                              <Top>7.7cm</Top>
+                              <Left>0cm</Left>
+                              <Height>3.4cm</Height>
+                              <Width>19.45168cm</Width>
+                              <ZIndex>1</ZIndex>
+                              <Visibility>
+                                <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &gt; 2 Or UCase(Trim(CStr(First(Fields!IsShowBankDetailInPSR.Value, "PsrDetailData")))) &lt;&gt; "Y" Or First(Fields!BankCount.Value, "PsrBankData") = 0</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Color>#333333</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>White</BackgroundColor>
+                              </Style>
+                            </Rectangle>
+                            <Rectangle Name="rectReceiverLong">
+                              <ReportItems>
+                                <Textbox Name="Textbox8Long">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Receiver Name -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.15cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox22Long">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Receiver No -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>0.9cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <ZIndex>1</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox23Long">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Received Date -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>1.65cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.7cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <ZIndex>2</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="Textbox27Long">
+                                  <CanGrow>true</CanGrow>
+                                  <KeepTogether>true</KeepTogether>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Stamp -</Value>
+                                          <Style>
+                                            <FontSize>11pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style />
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>2.4cm</Top>
+                                  <Left>0.06378cm</Left>
+                                  <Height>0.85cm</Height>
+                                  <Width>12.5cm</Width>
+                                  <ZIndex>3</ZIndex>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                    <PaddingLeft>4pt</PaddingLeft>
+                                    <PaddingRight>4pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Image Name="Image3Long">
+                                  <Source>Database</Source>
+                                  <Value>=First(Fields!QRCode.Value, "PsrDetailData")</Value>
+                                  <MIMEType>image/png</MIMEType>
+                                  <Sizing>FitProportional</Sizing>
+                                  <Top>0.1cm</Top>
+                                  <Left>16.06378cm</Left>
+                                  <Height>3.2cm</Height>
+                                  <Width>3.2cm</Width>
+                                  <ZIndex>4</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=IsNothing(First(Fields!QRCode.Value, "PsrDetailData"))</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Color>#333333</Color>
+                                      <Style>Solid</Style>
+                                    </Border>
+                                    <BackgroundColor>White</BackgroundColor>
+                                    <PaddingLeft>3pt</PaddingLeft>
+                                    <PaddingRight>3pt</PaddingRight>
+                                    <PaddingTop>3pt</PaddingTop>
+                                    <PaddingBottom>3pt</PaddingBottom>
+                                  </Style>
+                                </Image>
+                              </ReportItems>
+                              <KeepTogether>true</KeepTogether>
+                              <Top>7.7cm</Top>
+                              <Left>0cm</Left>
+                              <Height>3.4cm</Height>
+                              <Width>19.45168cm</Width>
+                              <ZIndex>2</ZIndex>
+                              <Visibility>
+                                <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &lt;= 2</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Color>#333333</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>White</BackgroundColor>
+                              </Style>
+                            </Rectangle>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <Top>12.9062cm</Top>
+                          <Left>0.37726cm</Left>
+                          <Height>11.2cm</Height>
+                          <Width>19.45168cm</Width>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Rectangle>
         </ReportItems>
-        <Height>26cm</Height>
+        <Height>25.5cm</Height>
         <Style />
       </Body>
       <Width>20.02cm</Width>
       <Page>
         <PageFooter>
-          <Height>0.77639cm</Height>
-          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <Height>0.6cm</Height>
+          <PrintOnFirstPage>false</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
             <Textbox Name="Textbox20">
@@ -1760,11 +2487,81 @@
                   </Style>
                 </Paragraph>
               </Paragraphs>
-              <rd:DefaultName>Textbox20</rd:DefaultName>
-              <Top>0.17639cm</Top>
-              <Left>0.29103cm</Left>
-              <Height>0.6cm</Height>
-              <Width>19.53791cm</Width>
+              <Top>0.05cm</Top>
+              <Left>0.37726cm</Left>
+              <Height>0.55cm</Height>
+              <Width>19.45168cm</Width>
+              <Visibility>
+                <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &gt; 2 Or UCase(Trim(CStr(First(Fields!IsShowBankDetailInPSR.Value, "PsrDetailData")))) &lt;&gt; "Y" Or First(Fields!BankCount.Value, "PsrBankData") = 0</Hidden>
+              </Visibility>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox20Long">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Printed By: " &amp; Parameters!PrintedBy.Value &amp; " on " &amp; Parameters!PrintedOn.Value</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.05cm</Top>
+              <Left>0.37726cm</Left>
+              <Height>0.55cm</Height>
+              <Width>19.45168cm</Width>
+              <Visibility>
+                <Hidden>=First(Fields!BankCount.Value, "PsrBankData") &lt;= 2 Or UCase(Trim(CStr(First(Fields!IsShowBankDetailInPSR.Value, "PsrDetailData")))) &lt;&gt; "Y" Or First(Fields!BankCount.Value, "PsrBankData") = 0</Hidden>
+              </Visibility>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox20NoBank">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Printed By: " &amp; Parameters!PrintedBy.Value &amp; " on " &amp; Parameters!PrintedOn.Value</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.05cm</Top>
+              <Left>0.37726cm</Left>
+              <Height>0.55cm</Height>
+              <Width>19.45168cm</Width>
+              <Visibility>
+                <Hidden>=UCase(Trim(CStr(First(Fields!IsShowBankDetailInPSR.Value, "PsrDetailData")))) = "Y" And First(Fields!BankCount.Value, "PsrBankData") &gt; 0</Hidden>
+              </Visibility>
               <Style>
                 <Border>
                   <Style>None</Style>

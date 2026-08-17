@@ -11,7 +11,7 @@ namespace Bizsol_ESMS.Models
 {
     public class ReportCode
     {
-        private readonly string connectionString = "Server=220.158.165.98;Port=65448;Database=bizsolesms_test;User=sa;Password=biz1981;";
+        private readonly string connectionString = "Server=202.140.137.117;Port=65448;Database=bizsolesms_test;User=sa;Password=biz1981;";
         public static void Load(LocalReport Report, ReportRequest request)
         {
 
