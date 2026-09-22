@@ -105,6 +105,70 @@ function iprFormatRupee(v) {
     });
 }
 
+/** Compact rupee for KPI tiles: ₹84.2L / ₹9.2Cr / ₹4,500 */
+function iprCompactRupee(v) {
+    var n = iprParseAmount(v);
+    var sign = n < 0 ? '-' : '';
+    n = Math.abs(n);
+    if (n >= 1e7) return sign + '\u20B9' + (n / 1e7).toFixed(2).replace(/\.00$/, '') + 'Cr';
+    if (n >= 1e5) return sign + '\u20B9' + (n / 1e5).toFixed(2).replace(/\.00$/, '') + 'L';
+    return sign + '\u20B9' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+}
+
+function iprSetText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text == null ? '' : String(text);
+}
+
+function iprResetKpis() {
+    iprSetText('iprKpiCount', '—');
+    iprSetText('iprKpiInvoice', '—');
+    iprSetText('iprKpiPayment', '—');
+    iprSetText('iprKpiBalance', '—');
+    iprSetText('iprKpiCountSub', '');
+    iprSetText('iprKpiInvoiceSub', '');
+    iprSetText('iprKpiPaymentSub', '');
+    iprSetText('iprKpiBalanceSub', '');
+}
+
+function iprUpdateKpis(rows) {
+    if (!rows || !rows.length) {
+        iprResetKpis();
+        return;
+    }
+
+    var invoiceTotal = 0;
+    var paymentTotal = 0;
+    var balanceTotal = 0;
+    var pending = 0;
+    var partial = 0;
+    var completed = 0;
+
+    rows.forEach(function (r, idx) {
+        var n = iprNormalizeGridRow(r, idx);
+        invoiceTotal += iprParseAmount(n['Invoice Amount']);
+        paymentTotal += iprParseAmount(n['Payment Amount']);
+        balanceTotal += iprParseAmount(n['Balance Amount']);
+
+        var status = String(n.Status || '').trim().toLowerCase();
+        if (status === 'completed') completed++;
+        else if (status === 'partial') partial++;
+        else pending++;
+    });
+
+    var collectionPct = invoiceTotal > 0 ? Math.round((paymentTotal / invoiceTotal) * 100) : 0;
+
+    iprSetText('iprKpiCount', rows.length.toLocaleString('en-IN'));
+    iprSetText('iprKpiCountSub',
+        pending + ' Pending · ' + partial + ' Partial · ' + completed + ' Completed');
+    iprSetText('iprKpiInvoice', iprCompactRupee(invoiceTotal));
+    iprSetText('iprKpiInvoiceSub', iprFormatRupee(invoiceTotal));
+    iprSetText('iprKpiPayment', iprCompactRupee(paymentTotal));
+    iprSetText('iprKpiPaymentSub', collectionPct + '% collected');
+    iprSetText('iprKpiBalance', iprCompactRupee(balanceTotal));
+    iprSetText('iprKpiBalanceSub', 'Outstanding to collect');
+}
+
 function iprFormatUiDate(dateStr) {
     if (!dateStr) return '';
     var s = String(dateStr).trim();
@@ -220,6 +284,7 @@ function invReportValidateFilters() {
 }
 
 function iprShowPlaceholder() {
+    iprResetKpis();
     $('#iprReportContent').hide();
     $('#iprReportPlaceholder').show();
     $('#btnIprDownload').prop('disabled', true);
@@ -307,6 +372,7 @@ function invReportRenderGrid(rows) {
     }
 
     iprShowContent();
+    iprUpdateKpis(rows);
 
     var StringFilterColumn = ['Invoice No', 'Client Name', 'Status'];
     var NumericFilterColumn = ['S.No', 'Invoice Amount', 'Payment Amount', 'Balance Amount'];

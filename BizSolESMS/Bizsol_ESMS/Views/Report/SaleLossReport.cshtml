@@ -187,8 +187,29 @@
         box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8);
     }
 
+    .slr-report-page .slr-panel--summary { border-left: 4px solid #e11d48; }
+    .slr-report-page .slr-panel--summary .slr-dot { background: linear-gradient(135deg, #e11d48, #f97316); }
     .slr-report-page .slr-panel--detail { border-left: 4px solid #e11d48; }
     .slr-report-page .slr-panel--detail .slr-dot { background: linear-gradient(135deg, #e11d48, #f97316); }
+
+    .slr-report-page .slr-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .slr-report-page #slrKpiLinesSub {
+        line-height: 1.45;
+        white-space: normal;
+    }
+
+    @@media (max-width: 1199px) {
+        .slr-report-page .slr-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @@media (max-width: 575px) {
+        .slr-report-page .slr-kpi-grid { grid-template-columns: 1fr; }
+    }
 
     .slr-report-page .slr-panel__title span {
         font-size: 0.9rem;
@@ -346,6 +367,47 @@
     </div>
 
     <div id="slrReportContent">
+        <div class="slr-panel slr-panel--summary">
+            <div class="slr-panel__title">
+                <span class="slr-dot"></span>
+                <span>Sale Loss Summary</span>
+            </div>
+            <div class="slr-kpi-grid wd-kpi-grid">
+                <div class="wd-kpi-premium wd-kpi-premium--rose">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-ban"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Cancelled Lines</div>
+                        <div class="wd-kpi-val" id="slrKpiLines">—</div>
+                        <div class="wd-kpi-delta" id="slrKpiLinesSub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--amber">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Cancel Qty</div>
+                        <div class="wd-kpi-val" id="slrKpiQty">—</div>
+                        <div class="wd-kpi-delta" id="slrKpiQtySub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--purple">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Sale Loss Value</div>
+                        <div class="wd-kpi-val" id="slrKpiValue">—</div>
+                        <div class="wd-kpi-delta" id="slrKpiValueSub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--blue">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-users"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Clients</div>
+                        <div class="wd-kpi-val" id="slrKpiClients">—</div>
+                        <div class="wd-kpi-delta" id="slrKpiClientsSub"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="slr-panel slr-panel--detail mb-0">
             <div class="slr-panel__title">
                 <span class="slr-dot"></span>

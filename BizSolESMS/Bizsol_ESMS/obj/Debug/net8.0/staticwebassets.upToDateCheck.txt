@@ -24,7 +24,6 @@ wwwroot\assets\css\app.min.css
 wwwroot\assets\css\bootstrap-datepicker.min.css
 wwwroot\assets\css\bootstrap.min.css
 wwwroot\assets\css\esms-common-utilities.css
-wwwroot\assets\css\esms-dashboard.css
 wwwroot\assets\css\esms-forms-ui.css
 wwwroot\assets\css\esms-layout-theme.css
 wwwroot\assets\css\esms-login.css
@@ -286,7 +285,6 @@ wwwroot\assets\Script\ClientTypeMaster.js
 wwwroot\assets\Script\common.js
 wwwroot\assets\Script\CompanyMaster.js
 wwwroot\assets\Script\DailyReport.js
-wwwroot\assets\Script\Dashbord.js
 wwwroot\assets\Script\Dispatch.js
 wwwroot\assets\Script\DispatchBoxValidation.js
 wwwroot\assets\Script\DispatchReport.js
@@ -329,8 +327,6 @@ wwwroot\assets\Script\StockAuditConfiguration.js
 wwwroot\assets\Script\StockAuditReport.js
 wwwroot\assets\Script\Stockledger.js
 wwwroot\assets\Script\SubGroupMaster.js
-wwwroot\assets\Script\TATConfiguration.js
-wwwroot\assets\Script\TATReport.js
 wwwroot\assets\Script\Test.js
 wwwroot\assets\Script\UomMaster.js
 wwwroot\assets\Script\UserGroupMaster.js
@@ -395,3 +391,7 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\assets\css\esms-dashboard.css
+wwwroot\assets\Script\Dashbord.js
+wwwroot\assets\Script\TATConfiguration.js
+wwwroot\assets\Script\TATReport.js

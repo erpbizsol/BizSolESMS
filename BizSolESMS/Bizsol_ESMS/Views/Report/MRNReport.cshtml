@@ -1,0 +1,446 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+<link href="~/assets/css/esms-dashboard.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="~/assets/js/blockui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+
+<style>
+    .mrc-report-page {
+        --mrc-primary: #033764;
+        --mrc-primary-rgb: 3, 55, 100;
+        --mrc-teal: #0d9488;
+        --mrc-cyan: #0891b2;
+        --mrc-surface: #ffffff;
+        --mrc-muted: #64748b;
+        --mrc-border: #e2e8f0;
+        max-width: 1440px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 4px 2rem;
+    }
+
+    #layout-wrapper.esms-webiz .main-content:has(.mrc-report-page) {
+        background: linear-gradient(160deg, #ecfeff 0%, #f0fdfa 35%, #eef2ff 70%, #f5f6fa 100%) !important;
+        background-image: none !important;
+    }
+
+    .mrc-report-page .mrc-filter-panel {
+        position: relative;
+        background: var(--mrc-surface);
+        border: 1px solid rgba(var(--mrc-primary-rgb), 0.12);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(var(--mrc-primary-rgb), 0.07);
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+    }
+
+    .mrc-report-page .mrc-filter-panel::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #0891b2, #0d9488, #6366f1);
+    }
+
+    .mrc-report-page .mrc-filter-panel__head {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 1rem 0.35rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #0f766e;
+    }
+
+    .mrc-report-page .mrc-filter-panel__head i {
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0891b2, #0d9488);
+        color: #fff;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+    }
+
+    .mrc-report-page .mrc-filter-panel__body {
+        padding: 0 1rem 0.65rem;
+    }
+
+    .mrc-report-page .mrc-field-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.2rem;
+    }
+
+    .mrc-report-page .mrc-filter-panel .form-control {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        min-height: 30px;
+        height: 30px;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8125rem;
+    }
+
+    .mrc-report-page .mrc-filter-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .mrc-report-page .mrc-btn-spacer {
+        visibility: hidden;
+        display: block;
+        margin-bottom: 0.2rem;
+        line-height: 1.7;
+        font-size: 0.72rem;
+    }
+
+    .mrc-report-page .mrc-btn-show,
+    .mrc-report-page .mrc-btn-dl {
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 0.2rem 0.75rem;
+        min-height: 30px;
+        height: 30px;
+        line-height: 1.2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .mrc-report-page .mrc-btn-show {
+        background: linear-gradient(135deg, #0891b2 0%, #0d9488 50%, #6366f1 100%);
+        border: none;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .mrc-report-page .mrc-filter-panel .form-control:focus {
+        border-color: var(--mrc-primary);
+        box-shadow: 0 0 0 2px rgba(var(--mrc-primary-rgb), 0.1);
+    }
+
+    .mrc-report-page .mrc-btn-show:hover {
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4);
+    }
+
+    .mrc-report-page .mrc-btn-dl {
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+        border: none;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .mrc-report-page .mrc-btn-dl:hover:not(:disabled) {
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+    }
+
+    .mrc-report-page .mrc-btn-dl:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .mrc-report-page .mrc-panel {
+        background: var(--mrc-surface);
+        border: 1px solid var(--mrc-border);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .mrc-report-page .mrc-panel__title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.65rem;
+        padding-bottom: 0.45rem;
+        border-bottom: 1px solid var(--mrc-border);
+    }
+
+    .mrc-report-page .mrc-panel__title .mrc-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8);
+    }
+
+    .mrc-report-page .mrc-panel--summary { border-left: 4px solid #0d9488; }
+    .mrc-report-page .mrc-panel--summary .mrc-dot { background: linear-gradient(135deg, #0891b2, #0d9488); }
+    .mrc-report-page .mrc-panel--detail { border-left: 4px solid #0d9488; }
+    .mrc-report-page .mrc-panel--detail .mrc-dot { background: linear-gradient(135deg, #0891b2, #0d9488); }
+
+    .mrc-report-page .mrc-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .mrc-report-page #mrcKpiLinesSub {
+        line-height: 1.45;
+        white-space: normal;
+    }
+
+    @@media (max-width: 1199px) {
+        .mrc-report-page .mrc-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @@media (max-width: 575px) {
+        .mrc-report-page .mrc-kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    .mrc-report-page .mrc-panel__title span {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .mrc-report-page .mrc-grid-wrap {
+        border: 2px solid rgba(13, 148, 136, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(13, 148, 136, 0.08);
+    }
+
+    .mrc-report-page .mrc-grid-wrap .fixed-height-table {
+        max-height: 460px;
+    }
+
+    .mrc-report-page .mrc-grid-wrap .paginator {
+        background: linear-gradient(90deg, #ecfeff 0%, #f0fdfa 50%, #eef2ff 100%);
+        border-top: 1px solid var(--mrc-border);
+    }
+
+    .mrc-report-page .mrc-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
+    .mrc-report-page .mrc-status-badge--validated {
+        background: #d1fae5;
+        color: #047857;
+        border: 1px solid #6ee7b7;
+    }
+
+    .mrc-report-page .mrc-status-badge--partial {
+        background: #fef3c7;
+        color: #b45309;
+        border: 1px solid #fcd34d;
+    }
+
+    .mrc-report-page .mrc-status-badge--pending {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
+    }
+
+    .mrc-report-page #table-footer .mrc-grid-total-row td {
+        background: linear-gradient(90deg, #ecfeff 0%, #f0fdfa 50%, #eef2ff 100%);
+        border-top: 2px solid #0d9488;
+        font-weight: 800;
+        font-size: 0.8125rem;
+        color: #1e293b;
+        padding: 0.65rem 0.75rem;
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+    }
+
+    .mrc-report-page .mrc-placeholder {
+        background: linear-gradient(145deg, #fff 0%, #ecfeff 40%, #f0fdfa 100%);
+        border: 2px dashed rgba(13, 148, 136, 0.35);
+        border-radius: 16px;
+        padding: 3.5rem 1.5rem;
+        text-align: center;
+    }
+
+    .mrc-report-page .mrc-placeholder__icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0891b2, #0d9488, #6366f1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4);
+    }
+
+    .mrc-report-page .mrc-placeholder h6 {
+        font-weight: 800;
+        background: linear-gradient(120deg, #0f766e, #0369a1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.35rem;
+    }
+
+    .mrc-report-page .mrc-placeholder p {
+        color: var(--mrc-muted);
+        font-size: 0.85rem;
+        max-width: 460px;
+        margin: 0 auto;
+    }
+
+    .mrc-report-page #mrcReportContent {
+        display: none;
+        animation: mrcFadeIn 0.35s ease;
+    }
+
+    @@keyframes mrcFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="container-fluid mrc-report-page esms-dash-webiz mt-1 pb-3">
+    <div class="mrc-filter-panel">
+        <div class="mrc-filter-panel__head">
+            <i class="fa-solid fa-sliders"></i>
+            Report filters
+        </div>
+        <div class="mrc-filter-panel__body">
+            <div class="row g-2">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label class="mrc-field-label" for="txtFromDate">
+                        From Date <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="txtFromDate" class="form-control form-control-sm box_border"
+                           autocomplete="off" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label class="mrc-field-label" for="txtToDate">
+                        To Date <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="txtToDate" class="form-control form-control-sm box_border"
+                           autocomplete="off" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label class="mrc-field-label" for="ddlValidationStatus">
+                        Validation Status
+                    </label>
+                    <select id="ddlValidationStatus" class="form-control form-control-sm box_border">
+                        <option value="All">All</option>
+                        <option value="VALIDATED">VALIDATED</option>
+                        <option value="PARTIAL VALIDATE">PARTIAL VALIDATE</option>
+                        <option value="VALIDATE PENDING">VALIDATE PENDING</option>
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-auto">
+                    <label class="mrc-field-label mrc-btn-spacer" aria-hidden="true">&nbsp;</label>
+                    <div class="mrc-filter-actions">
+                        <button type="button" class="btn mrc-btn-show" id="btnMrcShow">
+                            <i class="fa-solid fa-chart-column me-1"></i>Show
+                        </button>
+                        <button type="button" class="btn mrc-btn-dl" id="btnMrcDownload" disabled>
+                            <i class="fa-solid fa-file-excel me-1"></i>Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mrcReportContent">
+        <div class="mrc-panel mrc-panel--summary">
+            <div class="mrc-panel__title">
+                <span class="mrc-dot"></span>
+                <span>MRN Rate Summary</span>
+            </div>
+            <div class="mrc-kpi-grid wd-kpi-grid">
+                <div class="wd-kpi-premium wd-kpi-premium--green">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Lines</div>
+                        <div class="wd-kpi-val" id="mrcKpiLines">—</div>
+                        <div class="wd-kpi-delta" id="mrcKpiLinesSub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--blue">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Bill / Received Qty</div>
+                        <div class="wd-kpi-val" id="mrcKpiQty">—</div>
+                        <div class="wd-kpi-delta" id="mrcKpiQtySub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--amber">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-scale-unbalanced"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">MRP Diff</div>
+                        <div class="wd-kpi-val" id="mrcKpiDiff">—</div>
+                        <div class="wd-kpi-delta" id="mrcKpiDiffSub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--purple">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-truck"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Vendors</div>
+                        <div class="wd-kpi-val" id="mrcKpiVendors">—</div>
+                        <div class="wd-kpi-delta" id="mrcKpiVendorsSub"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mrc-panel mrc-panel--detail mb-0">
+            <div class="mrc-panel__title">
+                <span class="mrc-dot"></span>
+                <span>MRN Rate Comparison Detail</span>
+            </div>
+            <div class="mrc-grid-wrap" id="DataTable">
+                <div class="table-wrapper fixed-height-table">
+                    <table id="table" class="fixed-width-table table mb-0">
+                        <thead id="table-header"></thead>
+                        <tbody id="table-body"></tbody>
+                        <tfoot id="table-footer"></tfoot>
+                    </table>
+                </div>
+                <div class="paginator px-2 py-2" id="paginator-table"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mrcReportPlaceholder" class="mrc-placeholder">
+        <div class="mrc-placeholder__icon">
+            <i class="fa-solid fa-barcode"></i>
+        </div>
+        <h6>Ready to view MRN rate comparison</h6>
+        <p>Choose <strong>From Date</strong>, <strong>To Date</strong>, and optional <strong>Validation Status</strong>, then click <strong>Show</strong> to load Bill MRP vs Receive MRP detail.</p>
+    </div>
+</div>
+
+<script src="~/assets/js/filter.js"></script>
+<script src="~/assets/Script/MRNReport.js"></script>

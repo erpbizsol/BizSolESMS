@@ -1,4 +1,5 @@
-let AppBaseURLMenu=window.location.href.toLowerCase().includes('local') == true ? 'https://localhost:7072' : 'https://web.bizsol.in/esms'
+const currentUrl = window.location.href.toLowerCase();
+let AppBaseURLMenu = currentUrl.includes('local') ? 'https://localhost:7072' : currentUrl.includes('test') ? 'https://web.bizsol.in/esmsTest' : 'https://web.bizsol.in/esms';
 $(document).ready(function () {
 
     $('#txtProofOfDelivery').attr('href', `${AppBaseURLMenu}/Login/ProofOfDelivery`);

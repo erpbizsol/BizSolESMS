@@ -17,6 +17,7 @@
  *   "Top10MaximumOrderParty": [{ AccountMaster_Code, AccountName, Ocount, order_count, ... }],
  *   "Top10MinimumOrderParty": [{ AccountMaster_Code, AccountName, Ocount, order_count, ... }],
  *   "Employee":          [{ Name, Unloaded, NoOfOrderPacked, NoOfOrderDispatch }],
+ *   "UserWeeklyReport":  [{ Name, 2026_Aug_Week1_Unloaded, 2026_Aug_Week1_Packed, ... }],
  *   "SaleLossOrder":     [{ TotalLineOfProduct, TotalProductQty, TotalValue }],
  *   "ReorderLevelData":  [{ Item Code, Item Name, Reorder Level, Balance Qty, ... }],
  *   "SaleReturn":        [{ PartyName, OrderNo, Reason, Value }],
@@ -358,6 +359,7 @@ function RenderDashboard(data) {
     RenderMonthWiseSale(dashArr(data, ['MonthWiseSale', 'monthWiseSale']));
     RenderDeadStock(dashArr(data, ['DeadStock', 'deadStock']));
     RenderEmployee(dashArr(data, ['Employee', 'employee']));
+    RenderUserWeeklyReport(dashArr(data, ['UserWeeklyReport', 'userWeeklyReport']));
     RenderSaleReturn(saleReturns);
     RenderSaleLossOrder(saleLoss);
     RenderReorderLevel(dashArr(data, ['ReorderLevelData', 'reorderLevelData']));
@@ -646,22 +648,235 @@ function RenderDeadStock(rows) {
     $c.html(html);
 }
 
+function dashEmployeeNameCellHtml(name) {
+    return '<td class="wd-emp-name-col">' +
+        '<div class="wd-weekly-emp">' +
+        '<span class="wd-weekly-emp__avatar" aria-hidden="true">' + dashEscape(dashWeeklyEmpInitial(name)) + '</span>' +
+        '<span class="wd-weekly-emp__name">' + dashEscape(name) + '</span>' +
+        '</div></td>';
+}
+
+function dashEmployeeMetricCellHtml(val, metricKey) {
+    var n = dashInt(val);
+    if (n === 0) {
+        return '<td class="wd-emp-val wd-emp-val--zero"><span class="wd-weekly-val__dash">—</span></td>';
+    }
+    return '<td class="wd-emp-val wd-emp-val--' + metricKey + '">' +
+        '<span class="wd-weekly-val__num">' + dashIndian(n) + '</span></td>';
+}
+
+function dashEmployeeTotal(row) {
+    return dashInt(dashGet(row, ['Unloaded'], 0)) +
+        dashInt(dashGet(row, ['NoOfOrderPacked'], 0)) +
+        dashInt(dashGet(row, ['NoOfOrderDispatch'], 0));
+}
+
 function RenderEmployee(rows) {
     var $tb = $('#dashEmployee');
     if (!rows || !rows.length) {
         $tb.html('<tr><td colspan="4" class="text-center text-muted py-3">No employee activity</td></tr>');
         return;
     }
+
+    var sorted = rows.slice().sort(function (a, b) {
+        return dashEmployeeTotal(b) - dashEmployeeTotal(a);
+    });
+
     var html = '';
-    rows.forEach(function (r) {
-        html += '<tr>' +
-            '<td>' + dashEscape(dashGet(r, ['Name'], '—')) + '</td>' +
-            '<td class="text-end">' + dashIndian(dashInt(dashGet(r, ['Unloaded'], 0))) + '</td>' +
-            '<td class="text-end">' + dashIndian(dashInt(dashGet(r, ['NoOfOrderPacked'], 0))) + '</td>' +
-            '<td class="text-end">' + dashIndian(dashInt(dashGet(r, ['NoOfOrderDispatch'], 0))) + '</td>' +
-            '</tr>';
+    sorted.forEach(function (r, rowIdx) {
+        var name = dashGet(r, ['Name'], '—');
+        html += '<tr class="' + (rowIdx % 2 === 1 ? 'wd-emp-row--alt' : '') + '">';
+        html += dashEmployeeNameCellHtml(name);
+        html += dashEmployeeMetricCellHtml(dashGet(r, ['Unloaded'], 0), 'unload');
+        html += dashEmployeeMetricCellHtml(dashGet(r, ['NoOfOrderPacked'], 0), 'pack');
+        html += dashEmployeeMetricCellHtml(dashGet(r, ['NoOfOrderDispatch'], 0), 'dispatch');
+        html += '</tr>';
     });
     $tb.html(html);
+}
+
+var DASH_WEEKLY_METRICS = ['Unloaded', 'Packed', 'Dispatched'];
+var DASH_MONTH_ORDER = {
+    Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
+    Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12
+};
+
+function dashMonthIndex(month) {
+    var m = String(month || '').trim().slice(0, 3);
+    if (!m) return 0;
+    var key = m.charAt(0).toUpperCase() + m.slice(1).toLowerCase();
+    return DASH_MONTH_ORDER[key] || 0;
+}
+
+function dashParseUserWeeklyColumns(rows) {
+    var weekMap = {};
+    var fallbackKeys = [];
+
+    (rows || []).forEach(function (row) {
+        Object.keys(row || {}).forEach(function (key) {
+            if (/^name$/i.test(key)) return;
+            var match = String(key).match(/^(\d{4})_([A-Za-z]+)_Week(\d+)_(Unloaded|Packed|Dispatched)$/i);
+            if (match) {
+                var weekKey = match[1] + '_' + match[2] + '_Week' + match[3];
+                if (!weekMap[weekKey]) {
+                    weekMap[weekKey] = {
+                        year: match[1],
+                        month: match[2],
+                        weekNum: parseInt(match[3], 10),
+                        fields: {}
+                    };
+                }
+                weekMap[weekKey].fields[match[4].charAt(0).toUpperCase() + match[4].slice(1).toLowerCase()] = key;
+            } else if (fallbackKeys.indexOf(key) < 0) {
+                fallbackKeys.push(key);
+            }
+        });
+    });
+
+    var weeks = Object.keys(weekMap).map(function (k) { return weekMap[k]; });
+    weeks.sort(function (a, b) {
+        var yearA = parseInt(a.year, 10);
+        var yearB = parseInt(b.year, 10);
+        if (yearA !== yearB) return yearB - yearA;
+        var monthDiff = dashMonthIndex(b.month) - dashMonthIndex(a.month);
+        if (monthDiff !== 0) return monthDiff;
+        return a.weekNum - b.weekNum;
+    });
+
+    return { weeks: weeks, fallbackKeys: fallbackKeys };
+}
+
+function dashWeeklyWeekLabel(week) {
+    return week.month + ' ' + week.year + ' — Week ' + week.weekNum;
+}
+
+function dashWeeklyMetricKey(metric) {
+    return String(metric || '').toLowerCase();
+}
+
+function dashWeeklyMetricShort(metric) {
+    if (metric === 'Unloaded') return 'Unload';
+    if (metric === 'Packed') return 'Pack';
+    if (metric === 'Dispatched') return 'Dispatch';
+    return metric;
+}
+
+function dashWeeklyMetricDotClass(metric) {
+    if (metric === 'Unloaded') return 'unload';
+    if (metric === 'Packed') return 'pack';
+    if (metric === 'Dispatched') return 'dispatch';
+    return 'unload';
+}
+
+function dashWeeklyEmpInitial(name) {
+    var s = String(name || '').trim();
+    return s ? s.charAt(0).toUpperCase() : '?';
+}
+
+function dashWeeklyGroupHeaderHtml(week, groupIdx) {
+    var alt = groupIdx % 2 === 1 ? ' wd-weekly-group-col--alt' : '';
+    return '<th class="wd-weekly-group-col' + alt + '" colspan="' + DASH_WEEKLY_METRICS.length + '">' +
+        '<div class="wd-weekly-week-badge">' +
+        '<span class="wd-weekly-week-badge__month">' + dashEscape(week.month + ' ' + week.year) + '</span>' +
+        '<span class="wd-weekly-week-badge__num">W' + week.weekNum + '</span>' +
+        '</div></th>';
+}
+
+function dashWeeklyMetricHeaderHtml(metric, groupIdx, metricIdx) {
+    var alt = groupIdx % 2 === 1 ? ' wd-weekly-metric-col--alt' : '';
+    var sep = metricIdx === 0 ? ' wd-weekly-metric-col--group-start' : '';
+    var key = dashWeeklyMetricKey(metric);
+    return '<th class="wd-weekly-metric-col wd-weekly-metric-col--' + key + alt + sep + '">' +
+        '<span class="wd-weekly-metric-label">' +
+        '<span class="wd-weekly-dot wd-weekly-dot--' + dashWeeklyMetricDotClass(metric) + '"></span>' +
+        dashEscape(dashWeeklyMetricShort(metric)) +
+        '</span></th>';
+}
+
+function dashWeeklyValueCellHtml(val, metric, groupIdx, metricIdx) {
+    var n = dashInt(val);
+    var alt = groupIdx % 2 === 1 ? ' wd-weekly-val--alt' : '';
+    var sep = metricIdx === 0 ? ' wd-weekly-val--group-start' : '';
+    var key = dashWeeklyMetricKey(metric);
+    if (n === 0) {
+        return '<td class="wd-weekly-val wd-weekly-val--zero' + alt + sep + '"><span class="wd-weekly-val__dash">—</span></td>';
+    }
+    return '<td class="wd-weekly-val wd-weekly-val--' + key + alt + sep + '">' +
+        '<span class="wd-weekly-val__num">' + dashIndian(n) + '</span></td>';
+}
+
+function dashWeeklyNameCellHtml(name) {
+    return '<td class="wd-weekly-name-col">' +
+        '<div class="wd-weekly-emp">' +
+        '<span class="wd-weekly-emp__avatar" aria-hidden="true">' + dashEscape(dashWeeklyEmpInitial(name)) + '</span>' +
+        '<span class="wd-weekly-emp__name">' + dashEscape(name) + '</span>' +
+        '</div></td>';
+}
+
+function RenderUserWeeklyReport(rows) {
+    var $head = $('#dashUserWeeklyHead');
+    var $body = $('#dashUserWeeklyBody');
+
+    if (!rows || !rows.length) {
+        $head.html('<tr><th>Employee</th></tr>');
+        $body.html('<tr><td class="text-center text-muted py-3">No weekly report data for this period</td></tr>');
+        return;
+    }
+
+    var parsed = dashParseUserWeeklyColumns(rows);
+    var weeks = parsed.weeks;
+    var fallbackKeys = parsed.fallbackKeys;
+    var headHtml = '';
+    var bodyHtml = '';
+
+    if (weeks.length) {
+        headHtml += '<tr><th class="wd-weekly-name-col wd-weekly-name-col--head" rowspan="2">Employee</th>';
+        weeks.forEach(function (week, groupIdx) {
+            headHtml += dashWeeklyGroupHeaderHtml(week, groupIdx);
+        });
+        headHtml += '</tr><tr>';
+        weeks.forEach(function (week, groupIdx) {
+            DASH_WEEKLY_METRICS.forEach(function (metric, metricIdx) {
+                headHtml += dashWeeklyMetricHeaderHtml(metric, groupIdx, metricIdx);
+            });
+        });
+        headHtml += '</tr>';
+
+        rows.forEach(function (row, rowIdx) {
+            var name = dashGet(row, ['Name'], '—');
+            bodyHtml += '<tr class="' + (rowIdx % 2 === 1 ? 'wd-weekly-row--alt' : '') + '">';
+            bodyHtml += dashWeeklyNameCellHtml(name);
+            weeks.forEach(function (week, groupIdx) {
+                DASH_WEEKLY_METRICS.forEach(function (metric, metricIdx) {
+                    var fieldKey = week.fields[metric];
+                    var val = fieldKey ? row[fieldKey] : 0;
+                    bodyHtml += dashWeeklyValueCellHtml(val, metric, groupIdx, metricIdx);
+                });
+            });
+            bodyHtml += '</tr>';
+        });
+    } else if (fallbackKeys.length) {
+        headHtml += '<tr><th class="wd-weekly-name-col">Employee</th>';
+        fallbackKeys.forEach(function (key) {
+            headHtml += '<th class="text-end">' + dashEscape(key.replace(/_/g, ' ')) + '</th>';
+        });
+        headHtml += '</tr>';
+
+        rows.forEach(function (row) {
+            bodyHtml += '<tr><td class="wd-weekly-name-col">' + dashEscape(dashGet(row, ['Name'], '—')) + '</td>';
+            fallbackKeys.forEach(function (key) {
+                bodyHtml += '<td class="text-end">' + dashIndian(dashInt(row[key])) + '</td>';
+            });
+            bodyHtml += '</tr>';
+        });
+    } else {
+        $head.html('<tr><th>Employee</th></tr>');
+        $body.html('<tr><td class="text-center text-muted py-3">No weekly report columns found</td></tr>');
+        return;
+    }
+
+    $head.html(headHtml);
+    $body.html(bodyHtml);
 }
 
 function RenderSaleReturn(rows) {

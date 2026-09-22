@@ -5,6 +5,63 @@ let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let G_selectedCodes = [];
+var TAT_CITY_DROPDOWN_MAX_H = 260;
+
+function positionCityDropdown() {
+    var $list = $('#dropdownList');
+    var $trigger = $('#dropdownButton');
+    if (!$list.length || !$trigger.length || !$list.hasClass('is-open')) return;
+
+    var rect = $trigger[0].getBoundingClientRect();
+    var gap = 4;
+    var maxH = TAT_CITY_DROPDOWN_MAX_H;
+    var spaceBelow = window.innerHeight - rect.bottom - gap - 8;
+    var spaceAbove = rect.top - gap - 8;
+    var openUp = spaceBelow < 160 && spaceAbove > spaceBelow;
+    var avail = openUp ? spaceAbove : spaceBelow;
+    var height = Math.max(120, Math.min(maxH, avail));
+
+    $list.css({
+        position: 'fixed',
+        left: rect.left + 'px',
+        width: rect.width + 'px',
+        top: openUp ? (rect.top - height - gap) + 'px' : (rect.bottom + gap) + 'px',
+        maxHeight: height + 'px',
+        right: 'auto'
+    });
+}
+
+function restoreCityDropdown() {
+    var $list = $('#dropdownList');
+    var $parent = $list.data('tat-portal-parent');
+    if ($parent && $parent.length && $list.parent()[0] !== $parent[0]) {
+        $parent.append($list);
+    }
+    $list.css({ position: '', left: '', top: '', width: '', maxHeight: '', right: '' });
+}
+
+function toggleCityDropdown(forceOpen) {
+    var $list = $('#dropdownList');
+    var $trigger = $('#dropdownButton');
+    if (!$list.data('tat-portal-parent')) {
+        $list.data('tat-portal-parent', $list.parent());
+    }
+
+    var open = forceOpen === true ? true : (forceOpen === false ? false : !$list.hasClass('is-open'));
+    if (open) {
+        if ($list.parent()[0] !== document.body) {
+            $('body').append($list);
+        }
+        $list.addClass('is-open').show();
+        $trigger.addClass('is-open');
+        positionCityDropdown();
+    } else {
+        $list.removeClass('is-open').hide();
+        $trigger.removeClass('is-open');
+        restoreCityDropdown();
+    }
+}
+
 $(document).ready(function () {
     GetModuleMasterCode();
 
@@ -51,20 +108,23 @@ $(document).ready(function () {
 
     GetCityMasterList();
 
-    $('.select-checkbox-multi').click(function () {
-        let inputWidth = $(this).outerWidth();
-        $('#dropdownList').css({
-            'position': 'absolute',
-            'width': inputWidth + 'px',
-            'height': '200px',
-            'overflow': 'auto',
-        }).toggle();
+    $('.select-checkbox-multi').on('click', function (e) {
+        e.stopPropagation();
+        toggleCityDropdown();
+    });
+
+    $('#dropdownList').on('click', function (e) {
+        e.stopPropagation();
     });
 
     $(document).on('click', function (e) {
-        if (!$(e.target).closest('.dropdown-container').length) {
-            $('#dropdownList').hide();
+        if (!$(e.target).closest('.dropdown-container, #dropdownList').length) {
+            toggleCityDropdown(false);
         }
+    });
+
+    $(window).on('resize scroll', function () {
+        positionCityDropdown();
     });
 
     $('#selectAll').on('change', function () {
@@ -189,7 +249,8 @@ function Save() {
         $("#txtDelivered").focus();
     }else if (City === "") {
         toastr.error('Please select City.');
-        $("#txtCity").focus();
+        $("#dropdownButton").focus();
+        toggleCityDropdown(true);
     }
     else {
         const payload = {
@@ -339,7 +400,9 @@ function ClearData() {
     $("#txtMaxKM").val("");
     $("#txtInvoice").val("");
     $("#txtDivision").val("A");
-    $('#dropdownButton').val(null).trigger('change');
+    $('#dropdownButton').val('');
+    $('#selectAll').prop('checked', false);
+    toggleCityDropdown(false);
     G_selectedCodes = [];
     $('.option').prop('checked', false);
 }
@@ -423,8 +486,9 @@ function GetCityMasterList() {
                 let html = '';
                 response.forEach(item => {
                     html += `<label>
-                    <input type="checkbox" class="option" value="${item.Code}" data-name="${item.Name.trim()}"> ${item.Name.trim()}
-                    </label><br>`;
+                    <input type="checkbox" class="option" value="${item.Code}" data-name="${item.Name.trim()}">
+                    <span>${item.Name.trim()}</span>
+                    </label>`;
                 });
                 $('#checkboxOptions').html(html);
             }

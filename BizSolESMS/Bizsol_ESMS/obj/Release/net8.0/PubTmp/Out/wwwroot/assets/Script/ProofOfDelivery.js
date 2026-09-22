@@ -1,7 +1,12 @@
 (function () {
     'use strict';
 
-    var AppBaseURLMenu = window.location.href.toLowerCase().indexOf('local') >= 0 ? 'https://localhost:7072' : 'https://web.bizsol.in/esms';
+    var currentUrl = window.location.href.toLowerCase();
+    var AppBaseURLMenu = currentUrl.includes('local')
+        ? 'https://localhost:7072'
+        : currentUrl.includes('test')
+            ? 'https://web.bizsol.in/esmsTest'
+            : 'https://web.bizsol.in/esms';
     var podCode = '';
     var podCompanyCode = '';
 

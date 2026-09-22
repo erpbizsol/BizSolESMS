@@ -372,6 +372,25 @@ function GetModuleMasterCode() {
 //    });
 //}
 
+function getDispatchCompanyName() {
+    try {
+        var fp = JSON.parse(sessionStorage.getItem('Fixparameter') || '[]');
+        if (fp && fp[0]) {
+            return fp[0].CompanyName || fp[0].CompanyNameForShow || fp[0].CompanyShortName || '';
+        }
+    } catch (e) { /* ignore */ }
+    return (sessionStorage.getItem('EsmsCompanyName') || '').trim();
+}
+
+function applyDispatchCompanyName(rows) {
+    if (!rows || !rows.length) return rows;
+    var companyName = getDispatchCompanyName();
+    rows.forEach(function (item) {
+        item.CompanyName = companyName;
+    });
+    return rows;
+}
+
 async function DownloadDispatchQR(Code) {
     $.ajax({
         url: `${appBaseURL}/api/OrderMaster/GetDispatchQRDetail?Code=${Code}`,
@@ -403,6 +422,7 @@ async function DownloadDispatchQR(Code) {
                         response[i].QRCode = base64Image;
                     }
                 }
+                applyDispatchCompanyName(response);
                 DownloadReportPdf(response);
             } else {
                 toastr.error("Record not found...!");

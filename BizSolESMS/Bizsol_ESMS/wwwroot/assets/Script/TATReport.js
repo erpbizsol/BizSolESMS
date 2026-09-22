@@ -6,9 +6,53 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let JsonData = [];
 let G_IsCheck = 'N';
 let G_originalData = [];
+
+const TAT_IMPORT_TEMPLATE_HEADERS = [
+    'INVOICE NO', 'ORDER DATE', 'RETAILER CODE', 'SALES ORDER NO', 'PARTY NAME',
+    'INVOICE VALUE', 'ORDER TYPE', 'INVOICE DATE'
+];
+
+const TAT_IMPORT_HEADER_MAP = {
+    INVOICE: 'invoice',
+    INVOICENO: 'invoice',
+    ORDERDATE: 'orderDate',
+    CODE: 'code',
+    RETAILERCODE: 'code',
+    ORDER: 'order',
+    ORDERNO: 'order',
+    SALESORDERNO: 'order',
+    ACCOUNTNAME: 'accountName',
+    PARTYNAME: 'accountName',
+    INVOICEVALUE: 'invoiceRoundOffAmount',
+    INVOICEROUNDOFFAMOUNT: 'invoiceRoundOffAmount',
+    B2BORDERTYPE: 'b2BOrderType',
+    ORDERTYPE: 'b2BOrderType',
+    INVOICEDATE: 'invoiceDate',
+    INVOCEDATE: 'invoiceDate'
+};
+
+const TAT_IMPORT_REQUIRED_JSON_KEYS = [
+    'invoice', 'orderDate', 'code', 'order', 'accountName',
+    'invoiceRoundOffAmount', 'b2BOrderType', 'invoiceDate'
+];
+
+const TAT_IMPORT_JSON_KEY_LABELS = {
+    invoice: 'INVOICE NO',
+    orderDate: 'ORDER DATE',
+    code: 'RETAILER CODE',
+    order: 'SALES ORDER NO',
+    accountName: 'PARTY NAME',
+    invoiceRoundOffAmount: 'INVOICE VALUE',
+    b2BOrderType: 'ORDER TYPE',
+    invoiceDate: 'INVOICE DATE'
+};
+
+function getTATImportColumnLabel(jsonKey) {
+    return TAT_IMPORT_JSON_KEY_LABELS[jsonKey] || jsonKey;
+}
 $(document).ready(function () {
     GetCurrentDate();
-    $("#ERPHeading").text("TAT Report");Zxsadx
+    $("#ERPHeading").text("TAT Report");
     GetModuleMasterCode();
     $("#txtExcelFile").on("change", function (e) {
         Import(e);
@@ -85,6 +129,12 @@ function GetTATReportList(Type, Month,Year) {
                 const hiddenColumns = ["Code"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
+                    "INVOICE VALUE": 'right',
+                    "TAT ORDER TO INVOICE (DAY)": 'right',
+                    "TAT ORDER TO PACKED (DAY)": 'right',
+                    "TAT INVOICE TO DISPATCH": 'right',
+                    "TOTAL BOXES": 'right',
+                    "TAT ORDER RECEIVED TO DISPATCH": 'right',
                     "Reorder Qty": 'right',
                     "REMARK": 'left;width:100px;',
                 };
@@ -301,16 +351,27 @@ function Import(event) {
     reader.onload = function (e) {
         try {
             if (fileExtension === 'csv') {
-                validateCSV(event, function (isValidCSV) {
-                    if (!isValidCSV) {
-                        event.target.value = '';
-                        $("#ImportTable").hide();
-                        JsonData = [];
-                        return false;
-                    }
-                    GetImportFile();
-                });
-                JsonData = parseCSV(e.target.result);
+                const csvText = e.target.result;
+                const csvRows = csvText.split(/\r?\n/).filter(row => row.trim() !== '');
+                if (csvRows.length === 0) {
+                    alert('Empty file.');
+                    event.target.value = '';
+                    $("#ImportTable").hide();
+                    JsonData = [];
+                    return;
+                }
+                const delimiter = csvRows[0].indexOf('\t') >= 0 ? '\t' : ',';
+                const matrix = csvRows.map(row => row.split(delimiter));
+                const validationResult = validateExcelFormat(matrix);
+                if (!validationResult.isValid) {
+                    alert(`Invalid file format: ${validationResult.message}`);
+                    event.target.value = '';
+                    $("#ImportTable").hide();
+                    JsonData = [];
+                    return;
+                }
+                JsonData = mapTATImportRows(matrix);
+                GetImportFile();
             } else {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { type: 'array' });
@@ -324,7 +385,7 @@ function Import(event) {
                 const sheet = workbook.Sheets[workbook.SheetNames[0]];
                 jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, cellDates: true });
 
-                JsonData = convertToKeyValuePairs(jsonData);
+                JsonData = mapTATImportRows(jsonData);
                 const validationResult = validateExcelFormat(jsonData);
                 if (!validationResult.isValid) {
                     alert(`Invalid Excel format: ${validationResult.message}`);
@@ -351,51 +412,87 @@ function Import(event) {
         reader.readAsArrayBuffer(file);
     }
 }
-function parseCSV(csvData) {
-    const rows = csvData.split(/\r?\n/).filter(row => row.trim() !== ""); // Ignore empty rows
-    if (rows.length === 0) return [];
-
-    const headers = rows[0].split(/\t/).map(header => cleanHeader(header)); // Clean headers
-
-    const data = rows.slice(1).map(row => {
-        const values = row.split(/\t/).map(val => cleanValue(val));
-
-        return headers.reduce((obj, header, index) => {
-            let value = values[index] || "";
-            if (header.toLowerCase().includes("date") && value) {
-                value = value.split(/\s+/)[0];
-                value = convertDateFormat1(value);
-            }
-
-            obj[header] = value;
-            return obj;
-        }, {});
-    });
-
-    return data;
+function normalizeTATImportHeader(header) {
+    return String(header || '')
+        .replace(/\u00A0/g, ' ')
+        .trim()
+        .replace(/[\s.#_\-]+/g, '')
+        .toUpperCase();
 }
-function convertToKeyValuePairs(data) {
-    if (!Array.isArray(data) || data.length === 0) return [];
 
-    const headers = data[0].map(header => cleanHeader(header));
+function formatTATImportDate(value) {
+    if (value === undefined || value === null || value === '') return '';
+    if (value instanceof Date && !isNaN(value.getTime())) {
+        const day = String(value.getDate()).padStart(2, '0');
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${day}-${monthNames[value.getMonth()]}-${value.getFullYear()}`;
+    }
 
-    return data.slice(1).map(row => {
-        return headers.reduce((obj, header, index) => {
-            let value = row[index] ? cleanValue(row[index].toString()) : "";
-
-            if (header.toLowerCase().includes("date") && value) {
-                value = convertDateFormat2(value.split(/\s+/)[0]);
-            }
-            obj[header] = value;
-            return obj;
-        }, {});
-    });
+    let s = String(value).trim();
+    if (/^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(s)) {
+        const p = s.split('-');
+        return `${p[0].padStart(2, '0')}-${p[1].charAt(0).toUpperCase()}${p[1].slice(1).toLowerCase()}-${p[2]}`;
+    }
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+        return convertDateFormat3(s.slice(0, 10));
+    }
+    if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s)) {
+        const parts = s.split('/');
+        if (parts[2] && parts[2].length === 2) {
+            return convertDateFormat2(s);
+        }
+        return convertDateFormat1(s);
+    }
+    return s;
 }
-function cleanHeader(header) {
-    return header.replace(/[^a-zA-Z0-9]/g, '');
-}
+
 function cleanValue(value) {
-    return value.replace(/^"|"$/g, '').trim();
+    return String(value == null ? '' : value).replace(/^"|"$/g, '').trim();
+}
+
+function mapTATImportRows(data) {
+    if (!Array.isArray(data) || data.length < 2) return [];
+
+    const headers = data[0];
+    return data.slice(1)
+        .filter(row => row && row.some(cell => cell !== undefined && cell !== null && String(cell).trim() !== ''))
+        .map(row => {
+            const item = {};
+            headers.forEach((header, index) => {
+                const jsonKey = TAT_IMPORT_HEADER_MAP[normalizeTATImportHeader(header)];
+                if (!jsonKey) return;
+
+                let value = row[index] !== undefined && row[index] !== null ? cleanValue(row[index]) : '';
+                if (jsonKey.toLowerCase().includes('date') && value) {
+                    value = formatTATImportDate(value);
+                }
+                item[jsonKey] = value;
+            });
+            return item;
+        })
+        .filter(row => TAT_IMPORT_REQUIRED_JSON_KEYS.some(key => row[key]));
+}
+
+function validateExcelFormat(data) {
+    if (!data || data.length < 1) {
+        return { isValid: false, message: 'The Excel file is empty.' };
+    }
+
+    const normalized = (data[0] || []).map(header => normalizeTATImportHeader(header));
+    const foundKeys = {};
+    normalized.forEach(header => {
+        if (TAT_IMPORT_HEADER_MAP[header]) {
+            foundKeys[TAT_IMPORT_HEADER_MAP[header]] = true;
+        }
+    });
+
+    const missing = TAT_IMPORT_REQUIRED_JSON_KEYS.filter(key => !foundKeys[key]);
+    if (missing.length > 0) {
+        const missingLabels = missing.map(key => getTATImportColumnLabel(key));
+        return { isValid: false, message: `Missing required columns: ${missingLabels.join(', ')}` };
+    }
+
+    return { isValid: true, message: 'Excel format is valid.' };
 }
 function createTable(response) {
     if (response.length > 0) {
@@ -427,67 +524,6 @@ function createTable(response) {
         $("#ImportTable").hide();
         toastr.error("Record not found...!");
     }
-}
-function validateExcelFormat(data) {
-    if (data.length < 1) {
-        return { isValid: false, message: "The Excel file is empty." };
-    }
-    const headers = data[0].map(header => header.replace(/[\s.]+/g, '').toUpperCase());
-    console.log(headers);
-    if ("S" === 'S') {
-        const requiredColumns = ['INVOICE#', 'ORDERDATE', 'CODE', 'ORDER#','INVOICEROUNDOFFAMOUNT'];
-        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-
-        if (missingColumns.length > 0) {
-            return { isValid: false, message: `Missing required columns: ${missingColumns.join(', ')}` };
-        }
-    }
-    return { isValid: true, message: "Excel format is valid." };
-}
-function cleanHeader(header) {
-    return header.replace(/[^a-zA-Z0-9]/g, "").trim();
-}
-function validateCSV(event, callback) {
-    const file = event.target.files[0];
-    if (!file) {
-        alert("Please select a file.");
-        callback(false);
-        return;
-    }
-
-    let expectedHeaders = [];
-    if ('S' === 'S') {
-        expectedHeaders = ['INVOICE#', 'ORDERDATE', 'CODE', 'ORDER#', 'INVOICEROUNDOFFAMOUNT'];
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const csvData = e.target.result;
-        const rows = csvData.split(/\r?\n/);
-        if (rows.length === 0) {
-            alert("Empty file.");
-            callback(false);
-            return;
-        }
-
-        const headers = rows[0].split(/\t|,/).map(h => cleanHeader(h.trim()));
-
-        const missingHeaders = expectedHeaders.filter(expected =>
-            !headers.includes(expected)
-        );
-
-        if (missingHeaders.length === 0) {
-            console.log("CSV Headers Matched ✅");
-            callback(true);
-        } else {
-            alert("Invalid file. Missing required headers: " + missingHeaders.join(", "));
-            console.log("Expected:", expectedHeaders);
-            console.log("Found:", headers);
-            callback(false);
-        }
-    };
-
-    reader.readAsText(file);
 }
 async function SaveData(element) {
     const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
@@ -579,6 +615,50 @@ function DataExport() {
         }
     });
 }
+
+async function DownloadImportTemplate() {
+    if (typeof ExcelJS === 'undefined') {
+        toastr.error('Excel library not loaded.');
+        return;
+    }
+
+    const headers = TAT_IMPORT_TEMPLATE_HEADERS.slice();
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Import Template');
+    const headerRow = worksheet.addRow(headers);
+
+    headerRow.eachCell(cell => {
+        cell.font = { bold: true, color: { argb: 'FF000000' } };
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFC6EFCE' }
+        };
+        cell.border = {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+    });
+
+    worksheet.addRow([
+        'INV001', '21-Aug-2026', 'RET001', 'SO001', 'Sample Party',
+        '1000.00', 'B2B', '21-Aug-2026'
+    ]);
+
+    worksheet.columns = headers.map(() => ({ width: 24 }));
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'TATReport_Import_Template.xlsx';
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
 function MonthAndYearDropDown() {
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -586,6 +666,10 @@ function MonthAndYearDropDown() {
     let qntYears = 5;
     let selectMonth = $("#ddlMonth");
     let selectYear = $("#ddlYear");
+
+    selectMonth.empty();
+    selectYear.empty();
+
     let currentYear = new Date().getFullYear();
     for (let y = 0; y < qntYears; y++) {
         let yearValue = currentYear - y;

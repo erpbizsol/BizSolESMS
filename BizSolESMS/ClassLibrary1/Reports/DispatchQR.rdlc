@@ -18,15 +18,16 @@
                     <Rectangle Name="Rectangle8">
                       <ReportItems>
                         <Textbox Name="Textbox32">
-                          <CanGrow>true</CanGrow>
+                          <CanGrow>false</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>MG Corporation</Value>
+                                  <Value>=Replace(First(Fields!CompanyName.Value), " ", Chr(160))</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -41,7 +42,7 @@
                           <rd:DefaultName>Textbox32</rd:DefaultName>
                           <Top>0.03194in</Top>
                           <Height>0.41162cm</Height>
-                          <Width>3.38667cm</Width>
+                          <Width>3.52cm</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -54,7 +55,7 @@
                           </Style>
                         </Textbox>
                         <Textbox Name="OrderNo">
-                          <CanGrow>true</CanGrow>
+                          <CanGrow>false</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -62,7 +63,8 @@
                                 <TextRun>
                                   <Value>=First(Fields!OrderNo.Value)</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>5.5pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -72,15 +74,15 @@
                           <rd:DefaultName>OrderNo</rd:DefaultName>
                           <Top>0.52801cm</Top>
                           <Height>0.48838cm</Height>
-                          <Width>3.38667cm</Width>
+                          <Width>3.55cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingLeft>0pt</PaddingLeft>
+                            <PaddingRight>0pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
@@ -335,6 +337,10 @@
         </Field>
         <Field Name="Address">
           <DataField>Address</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CompanyName">
+          <DataField>CompanyName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

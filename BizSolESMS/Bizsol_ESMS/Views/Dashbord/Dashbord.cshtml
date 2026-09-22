@@ -339,26 +339,39 @@
     <div class="wd-dash-grid">
         <div class="wd-dash-grid__span-6">
             <div class="wd-panel wd-panel--team wd-panel--inner">
-                <div class="wd-panel__title" style="margin-bottom: 0.75rem; padding-bottom: 0.5rem;">
-                    <div class="wd-panel__title-left">
-                        <span class="wd-dot" aria-hidden="true"></span>
-                        <span>Employee Productivity</span>
+                <div class="wd-card-head wd-emp-head">
+                    <div class="wd-card-head__title">
+                        <i class="fa-solid fa-user-check wd-icon--teal"></i>
+                        Employee Productivity
+                    </div>
+                    <div class="wd-weekly-legend" aria-hidden="true">
+                        <span class="wd-weekly-legend__item wd-weekly-legend__item--unload"><span class="wd-weekly-dot wd-weekly-dot--unload"></span> Unload</span>
+                        <span class="wd-weekly-legend__item wd-weekly-legend__item--pack"><span class="wd-weekly-dot wd-weekly-dot--pack"></span> Pack</span>
+                        <span class="wd-weekly-legend__item wd-weekly-legend__item--dispatch"><span class="wd-weekly-dot wd-weekly-dot--dispatch"></span> Dispatch</span>
                     </div>
                 </div>
-                <div class="wd-table-wrap">
-                    <table class="wd-data-table">
-                        <thead>
-                            <tr>
-                                <th>Employee</th>
-                                <th class="text-end">Unloaded</th>
-                                <th class="text-end">Packed</th>
-                                <th class="text-end">Dispatched</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashEmployee">
-                            <tr><td colspan="4" class="text-center text-muted py-3">Loading…</td></tr>
-                        </tbody>
-                    </table>
+                <div class="wd-emp-table-scroll">
+                    <div class="wd-table-wrap wd-emp-table-wrap">
+                        <table class="wd-data-table wd-emp-table">
+                            <thead>
+                                <tr>
+                                    <th class="wd-emp-name-col">Employee</th>
+                                    <th class="wd-emp-metric-col wd-emp-metric-col--unload">
+                                        <span class="wd-weekly-metric-label"><span class="wd-weekly-dot wd-weekly-dot--unload"></span> Unload</span>
+                                    </th>
+                                    <th class="wd-emp-metric-col wd-emp-metric-col--pack">
+                                        <span class="wd-weekly-metric-label"><span class="wd-weekly-dot wd-weekly-dot--pack"></span> Pack</span>
+                                    </th>
+                                    <th class="wd-emp-metric-col wd-emp-metric-col--dispatch">
+                                        <span class="wd-weekly-metric-label"><span class="wd-weekly-dot wd-weekly-dot--dispatch"></span> Dispatch</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashEmployee">
+                                <tr><td colspan="4" class="text-center text-muted py-3">Loading…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -384,6 +397,37 @@
                             <tr><td colspan="4" class="text-center text-muted py-3">Loading…</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User weekly report -->
+    <div class="wd-dash-grid">
+        <div class="wd-dash-grid__span-12">
+            <div class="wd-panel wd-panel--weekly wd-panel--inner">
+                <div class="wd-card-head wd-weekly-head">
+                    <div class="wd-card-head__title">
+                        <i class="fa-solid fa-calendar-week wd-icon--violet"></i>
+                        User Weekly Report
+                    </div>
+                    <div class="wd-weekly-legend" id="dashUserWeeklyLegend" aria-hidden="true">
+                        <span class="wd-weekly-legend__item wd-weekly-legend__item--unload"><span class="wd-weekly-dot wd-weekly-dot--unload"></span> Unload</span>
+                        <span class="wd-weekly-legend__item wd-weekly-legend__item--pack"><span class="wd-weekly-dot wd-weekly-dot--pack"></span> Pack</span>
+                        <span class="wd-weekly-legend__item wd-weekly-legend__item--dispatch"><span class="wd-weekly-dot wd-weekly-dot--dispatch"></span> Dispatch</span>
+                    </div>
+                </div>
+                <div class="wd-weekly-report-scroll">
+                    <div class="wd-table-wrap wd-weekly-report-wrap">
+                        <table class="wd-data-table wd-weekly-report-table">
+                            <thead id="dashUserWeeklyHead">
+                                <tr><th>Employee</th></tr>
+                            </thead>
+                            <tbody id="dashUserWeeklyBody">
+                                <tr><td class="text-center text-muted py-3">Loading…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

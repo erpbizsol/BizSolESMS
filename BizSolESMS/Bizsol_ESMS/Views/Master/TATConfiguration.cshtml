@@ -4,6 +4,103 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link href="~/assets/css/filter.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+    #layout-wrapper.esms-profenna #txtCreatepage .card.shadow-sm,
+    #layout-wrapper.esms-profenna #txtCreatepage .tabs,
+    #layout-wrapper.esms-profenna #txtCreatepage .tabs .row,
+    #layout-wrapper.esms-profenna #txtCreatepage .col-md-12 {
+        overflow: visible !important;
+    }
+
+    .tat-city-ms-wrap {
+        position: relative;
+        z-index: 2;
+    }
+
+    .tat-city-ms {
+        position: relative;
+        width: 100%;
+    }
+
+    .tat-city-ms-trigger {
+        cursor: pointer;
+        background-color: #fff;
+        padding-right: 1.75rem;
+    }
+
+    .tat-city-ms-trigger.is-open {
+        border-color: #0d9488;
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18);
+    }
+
+    .tat-city-ms-chevron {
+        position: absolute;
+        right: 0.55rem;
+        top: 0.42rem;
+        color: #000;
+        font-size: 0.65rem;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .tat-city-ms-chevron i {
+        color: #000;
+    }
+
+    .tat-city-ms-trigger.is-open ~ .tat-city-ms-chevron,
+    .tat-city-ms-trigger.is-open ~ .tat-city-ms-chevron i {
+        color: #000;
+    }
+
+    .tat-city-ms-trigger.is-open ~ .tat-city-ms-chevron i {
+        transform: rotate(180deg);
+        transition: transform 0.2s ease;
+    }
+
+    .tat-city-ms-dropdown {
+        display: none;
+        position: fixed;
+        z-index: 10080;
+        max-height: 260px;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+        padding: 0.5rem 0.65rem;
+    }
+
+    .tat-city-ms-dropdown.is-open {
+        display: block;
+    }
+
+    .tat-city-ms-dropdown label {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin: 0;
+        padding: 0.35rem 0.25rem;
+        font-size: 0.8125rem;
+        color: #334155;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+
+    .tat-city-ms-dropdown label:hover {
+        background: #f0fdfa;
+    }
+
+    .tat-city-ms-dropdown #selectAll {
+        margin: 0;
+    }
+
+    .tat-city-ms-select-all {
+        padding-bottom: 0.35rem;
+        margin-bottom: 0.35rem;
+        border-bottom: 1px solid #e2e8f0;
+        font-weight: 600;
+    }
+</style>
 <section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
     <div class="container-fluid" style="">
         <div class="fix-header">
@@ -98,24 +195,21 @@
                                 </label>
                                 <input type="text" id="txtDelivered" name="txtDelivered" autocomplete="off" class="Number form-control form-control-sm box_border" placeholder="Delivered" value="0" maxlength="2">
                             </div>
-                            @* <div class="col-md-3  col-sm-6">
-                                <label for="txtCity" class="col-form-label-sm fw-bold">
-                                    <input type="hidden" id="hftxtCode" value="0" />
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4 col-sm-6 tat-city-ms-wrap dropdown-container">
+                                <label for="dropdownButton" class="col-form-label-sm fw-bold">
                                     City <span class="text-danger">*</span>
                                 </label>
-                                <datalist id="txtCitylist"></datalist>
-                                <input list="txtCitylist" id="txtCity" name="txtCity" autocomplete="off" class="form-control form-control-sm box_border" placeholder="City">
-                            </div> *@
-                            <div class="col-md-3  col-sm-6 dropdown-container">
-                                <label for="dropdownButton" class="col-form-label-sm">
-                                    City <span class="text-danger">*</span>
-                                </label>
-                                <div style="position: relative;">
-                                    <input type="text" id="dropdownButton" readonly class="form-control form-control-sm box_border select-checkbox-multi" placeholder="Select Users">
-                                </div>
-                                <div class="dropdown-list" id="dropdownList">
-                                    <label><input type="checkbox" id="selectAll"> Select All</label><br>
-                                    <div id="checkboxOptions"></div>
+                                <div class="tat-city-ms">
+                                    <input type="text" id="dropdownButton" readonly class="form-control form-control-sm box_border select-checkbox-multi tat-city-ms-trigger" placeholder="Select City">
+                                    <span class="tat-city-ms-chevron"><i class="fa-solid fa-chevron-down"></i></span>
+                                    <div class="dropdown-list tat-city-ms-dropdown" id="dropdownList">
+                                        <div class="tat-city-ms-select-all">
+                                            <label><input type="checkbox" id="selectAll"> Select All</label>
+                                        </div>
+                                        <div id="checkboxOptions"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -126,4 +220,4 @@
     </div>
 </div>
 <script src="~/assets/js/filter.js"></script>
-<script src="~/assets/script/tatconfiguration.js"></script>
+<script src="~/assets/Script/TATConfiguration.js"></script>

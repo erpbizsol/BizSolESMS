@@ -431,6 +431,20 @@ function GetItemDetails() {
         }
     });
 }
+function isBuyerPONoMandatory() {
+    if (typeof window.esmsIsBuyerPONoMandatory === 'function') {
+        return window.esmsIsBuyerPONoMandatory();
+    }
+    try {
+        var fp = JSON.parse(sessionStorage.getItem('Fixparameter'));
+        var row = Array.isArray(fp) ? fp[0] : fp;
+        if (!row) return true;
+        var v = row.IsShowOrderNo != null ? row.IsShowOrderNo : row.isShowOrderNo;
+        return String(v || '').trim().toUpperCase() !== 'Y';
+    } catch (e) {
+        return true;
+    }
+}
 function ClearData() {
     $("#hfCode").val("0");
     $("#txtOrderNo").val("");
@@ -463,7 +477,7 @@ function Save() {
         $("#txtWarehouse").focus();
         return;
     }
-    else if (!BuyerPONo) {
+    else if (isBuyerPONoMandatory() && !BuyerPONo) {
         toastr.error(typeof window.esmsPleaseEnterBuyerPONoMsg === 'function' ? window.esmsPleaseEnterBuyerPONoMsg() : "Please enter a Buyer PO No!");
         $("#txtBuyerPONo").focus();
         return;
