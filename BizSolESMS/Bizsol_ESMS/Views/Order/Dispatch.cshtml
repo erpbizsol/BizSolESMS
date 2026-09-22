@@ -235,6 +235,16 @@
                             <label for="txtManualProductMRP" class="col-form-label-sm fw-bold">Manual Product MRP <span class="text-danger">*</span></label>
                             <input type="text" id="txtManualProductMRP" class="box_border form-control form-control-sm Amount" autocomplete="off" maxlength="10" placeholder="Manual Product MRP..">
                         </div>
+                        <div class="col-md-12 col-sm-12" id="dvManualUpiGrid" style="display:none;">
+                            <label class="col-form-label-sm fw-bold">Scanned UPI Details</label>
+                            <input type="text" id="txtManualUpiSearch" class="box_border form-control form-control-sm mb-2" autocomplete="off" placeholder="Search UPI details..">
+                            <div class="table-wrapper fixed-height-table" style="max-height:180px;overflow:auto;">
+                                <table id="tblManualUpiTable" class="fixed-width-table table">
+                                    <thead id="ManualUpiTable-header"></thead>
+                                    <tbody id="ManualUpiTable-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-height" onclick="SaveManual()">Save</button>
@@ -249,11 +259,12 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="modal-header tab-header" style="background-color:#033764">
-                        <level style="color:white">Download</level>
+                        <level id="downloadModalTitle" style="color:white">Download</level>
                         <button type="button" class="close modal-close btn-sm" aria-label="Close" onclick="CloseDownloadModal()"><span aria-hidden="true">x</span></button>
                         <input type="hidden" id="hfDownloadCode" value="0"/>
+                        <input type="hidden" id="hfPdfDispatchMaster_Code" value="0" />
                     </div>
-                    <div class="row" style="margin-top:10px;">
+                    <div id="dispatchDownloadChooser" class="row" style="margin-top:10px;">
                         <div class="col-sm-4 text-center mb-2">
                             <div style="width:80px; height:80px; margin: 0 auto;">
                                 <img src="~/assets/images/microsoft_office_excel.png" style="width:90%; height:90%;" />
@@ -265,13 +276,72 @@
                             <div style="width:80px; height:80px; margin: 0 auto;">
                                 <img src="~/assets/images/pdf icon.jpg" style="width:90%; height:90%;" />
                             </div>
-                            <button type="button" class="btn btn-danger w-100 mt-2 text-nowrap px-2" onclick="DownloadReportPdf()">Download Pdf</button>
+                            <button type="button" class="btn btn-danger w-100 mt-2 text-nowrap px-2" onclick="OpenDispatchPdfAmountModal()">Download Pdf</button>
                         </div>
                         <div class="col-sm-4 text-center ">
                             <div style="width:80px; height:80px; margin: 0 auto;">
                                 <img src="~/assets/images/qr-code.webp" style="width:90%; height:90%;" />
                             </div>
                             <button type="button" class="btn btn-dark w-100 mt-2 text-nowrap px-2" onclick="DownloadDispatchQR()">Dispatch QR</button>
+                        </div>
+                    </div>
+                    <div id="dispatchPdfAmountPanel" class="d-none">
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-12">
+                                <table class="dispatch-pdf-amt-table">
+                                    <tr>
+                                        <td class="dispatch-pdf-amt-label">Total</td>
+                                        <td colspan="2">
+                                            <input type="text" id="txtPdfTotal" class="box_border form-control form-control-sm Amount" autocomplete="off" maxlength="18" readonly>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="dispatch-pdf-amt-label">Add<br />Value</td>
+                                        <td>
+                                            <select id="ddlPdfAddType" class="form-control form-control-sm box_border" onchange="CalculateDispatchPdfNetAmount()">
+                                                <option value="%">%</option>
+                                                <option value="LumSum">LumSum</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" id="txtPdfAddValue" class="box_border form-control form-control-sm Amount" autocomplete="off" maxlength="18" oninput="CalculateDispatchPdfNetAmount()" onblur="CalculateDispatchPdfNetAmount()">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="dispatch-pdf-amt-label">Less<br />Value</td>
+                                        <td>
+                                            <select id="ddlPdfLessType" class="form-control form-control-sm box_border" onchange="CalculateDispatchPdfNetAmount()">
+                                                <option value="%">%</option>
+                                                <option value="LumSum">LumSum</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" id="txtPdfLessValue" class="box_border form-control form-control-sm Amount" autocomplete="off" maxlength="18" oninput="CalculateDispatchPdfNetAmount()" onblur="CalculateDispatchPdfNetAmount()">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="dispatch-pdf-amt-label">Is Manual</td>
+                                        <td colspan="2">
+                                            <label class="dispatch-pdf-manual-check mb-0">
+                                                <input type="checkbox" id="chkPdfIsManual" onchange="OnDispatchPdfIsManualChange()">
+                                                <span>Enter Net Amount manually</span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="dispatch-pdf-amt-label">Net Amount</td>
+                                        <td>
+                                            <input type="text" id="txtPdfNetAmount" class="box_border form-control form-control-sm Amount" autocomplete="off" maxlength="18" readonly>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-success btn-height w-100 text-nowrap px-1" onclick="SaveDispatchPdfAmount(true)">Allow to Continue</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="text-right mt-2">
+                            <button type="button" class="btn btn-danger btn-height" onclick="CloseDispatchPdfAmountModal()">Close</button>
                         </div>
                     </div>
                 </div>
@@ -290,6 +360,111 @@
 
     #toast.toast-container {
         z-index: 10205 !important;
+    }
+
+    /* Dispatch list: Action column fits button content in one row */
+    .webiz-dispatch-page .webiz-dispatch-table-wrap {
+        overflow-x: auto;
+    }
+
+    .webiz-dispatch-page #table.table thead th:last-child,
+    .webiz-dispatch-page #table.table tbody td:last-child {
+        white-space: nowrap !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        max-width: none !important;
+        min-width: 240px;
+        width: 1%;
+        vertical-align: middle !important;
+    }
+
+    .webiz-dispatch-page #table.table tbody td:last-child .webiz-dispatch-action-group {
+        display: inline-flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 4px;
+        max-width: 100%;
+        overflow-x: auto;
+        padding: 2px 0;
+    }
+
+    .webiz-dispatch-page #table.table tbody td:last-child .btn.icon-height {
+        margin: 0 !important;
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+    }
+
+    .webiz-dispatch-page #table.table tbody td:not(:last-child) {
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+        max-width: 320px;
+        vertical-align: top;
+    }
+
+    @@media (max-width: 767px) {
+        .webiz-dispatch-page #table.table thead th:last-child,
+        .webiz-dispatch-page #table.table tbody td:last-child {
+            min-width: 220px;
+        }
+
+        .webiz-dispatch-page #table.table tbody td:not(:last-child) {
+            max-width: 60vw;
+            min-width: 88px;
+        }
+    }
+
+    #downloadModalTitle {
+        cursor: default;
+    }
+
+    #dispatchPdfAmountPanel .dispatch-pdf-amt-table {
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background: #fff;
+    }
+
+    #dispatchPdfAmountPanel .dispatch-pdf-amt-table td {
+        border: 1px solid #333;
+        padding: 4px 6px;
+        vertical-align: middle;
+    }
+
+    #dispatchPdfAmountPanel .dispatch-pdf-amt-label {
+        font-weight: 600;
+        white-space: nowrap;
+        background: #fff;
+        width: 88px;
+    }
+
+    #dispatchPdfAmountPanel .dispatch-pdf-amt-table input,
+    #dispatchPdfAmountPanel .dispatch-pdf-amt-table select {
+        min-width: 78px;
+    }
+
+    #dispatchPdfAmountPanel .dispatch-pdf-manual-check {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    #dispatchPdfAmountPanel .dispatch-pdf-manual-check input[type="checkbox"] {
+        min-width: auto;
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        cursor: pointer;
     }
 </style>
 <div style="display:none;">

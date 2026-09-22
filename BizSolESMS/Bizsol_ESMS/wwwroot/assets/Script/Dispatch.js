@@ -9,9 +9,17 @@ function getFixParamValue(key) {
     var v = row[key] != null ? row[key] : row[camelKey];
     return (v != null && String(v).trim() !== '') ? String(v).trim() : '';
 }
+function wrapDispatchAction(html) {
+    return `<div class="webiz-dispatch-action-group">${(html || '').trim()}</div>`;
+}
 let G_CompanyCode = getFixParamValue('CompanyCode');
+let G_CompanyName = getFixParamValue('CompanyName')
+    || getFixParamValue('CompanyNameForShow')
+    || getFixParamValue('CompanyShortName')
+    || (sessionStorage.getItem('EsmsCompanyName') || '').trim();
 let G_IsPickingEnable = getFixParamValue('IsPickingEnable') === 'Y';
-let G_WorkflowTab = 'picking'; // 'picking' | 'packing' (used only when IsPickingEnable = Y)
+let G_IsPSRMailOnOrderPacked = getFixParamValue('IsPSRMailOnOrderPacked') === 'Y';
+let G_WorkflowTab = 'picking'; 
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
@@ -26,13 +34,15 @@ let G_DispatchMaster_Code = 0;
 let G_Tab = 1;
 let All = 0;
 let G_IDFORTRCOLOR = '';
-let G_UPDATEBOX = 'N'; // Old mode (IsPickingEnable=N): N = SaveScanQty; Y only on Edit Box No screen
+let G_UPDATEBOX = 'N'; 
 let originalDispatchData = [];
 let originalTransitData = [];
 let originalCompletedData = [];
 let originalOrderPackingData = [];
 
 let G_OrderMaster = [];
+let G_ManualUpiDetails = [];
+let G_ManualUpiItemCode = '';
 
 $(document).ready(function () {
     DatePicker();
@@ -194,7 +204,7 @@ $(document).ready(function () {
 
             updatedResponse = filteredData.map(item => ({
                 ...item
-                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Create Dispatch" onclick="StartDispatchPanding('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`
+                , Action: wrapDispatchAction(`<button class="btn btn-primary icon-height mb-1"  title="Create Dispatch" onclick="StartDispatchPanding('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`)
             }));
 
         } else if (G_Tab === 2) {
@@ -211,14 +221,14 @@ $(document).ready(function () {
 
             updatedResponse = filteredData.map(item => ({
                 ...item
-                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                , Action: wrapDispatchAction(`<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         ${G_IsPickingEnable
                             ? `<button class="btn btn-primary icon-height mb-1"  title="Picking Complete" onclick="MarkasPickingCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`
                             : `<button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`}
                         ${G_IsPickingEnable ? '' : `<button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>`}
-                    `
+                    `)
             }));
 
         } else if (G_Tab === 4) {
@@ -235,14 +245,14 @@ $(document).ready(function () {
 
             updatedResponse = filteredData.map(item => ({
                 ...item
-                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Order Packing" onclick="StartOrderPackingFromList('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                , Action: wrapDispatchAction(`<button class="btn btn-primary icon-height mb-1"  title="Order Packing" onclick="StartOrderPackingFromList('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         ${G_IsPickingEnable
                             ? `<button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`
                             : ''}
                         <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
-                    `
+                    `)
             }));
 
         } else if (G_Tab === 3) {
@@ -260,12 +270,13 @@ $(document).ready(function () {
 
             updatedResponse = filteredData.map(item => ({
                 ...item
-                , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                , Action: wrapDispatchAction(`<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="Report('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        ${G_IsPSRMailOnOrderPacked ? `<button class="btn btn-success icon-height mb-1"  title="Send Mail" onclick="CheckMailSendBeforeSend('${item.D_Code}','Send')"><i class="fa-solid fa-envelope"></i></button>` : ''}
                         <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
-                    `
+                    `)
             }));
 
         }
@@ -285,6 +296,9 @@ $(document).ready(function () {
         if (e.key === "Enter") {
             SaveManual();
         }
+    });
+    $('#txtManualUpiSearch').on('input', function () {
+        FilterManualUpiGrid();
     });
 });
 function BackMaster() {
@@ -312,14 +326,6 @@ function BackMaster() {
         GetDispatchOrderLists('GETCLIENT');
     }
 }
-
-/**
- * Sync picking/packing from list tab — only when FixParameter IsPickingEnable = Y.
- * IsPickingEnable = N → normal mode, Box No always shown (no tab hide/show).
- * IsPickingEnable = Y:
- *   Tab 1 Pending / Tab 2 Partial Packed → picking (Box No hidden)
- *   Tab 4 Order Packing / Tab 3 Order Packed → packing (Box No shown)
- */
 function syncWorkflowFromListTab() {
     if (!G_IsPickingEnable) {
         G_WorkflowTab = 'picking';
@@ -331,8 +337,6 @@ function syncWorkflowFromListTab() {
         G_WorkflowTab = 'picking';
     }
 }
-
-/** Apply Box No chrome from IsPickingEnable parameter + list tab. */
 function applyPickingWorkflowChrome(syncFromTab) {
     if (syncFromTab !== false) {
         syncWorkflowFromListTab();
@@ -363,12 +367,6 @@ function applyPickingWorkflowChrome(syncFromTab) {
         ensureOrderPackingBoxNoDefault();
     }
 }
-
-/**
- * Switch picking/packing mode (IsPickingEnable=Y). Used from list tabs, not create-page UI tabs.
- * Picking: scan/save qty with BoxNo=0.
- * Packing: update BoxNo only for already-picked rows.
- */
 function SwitchDispatchWorkflowTab(tab, skipReload) {
     if (!G_IsPickingEnable) return;
     G_WorkflowTab = (tab === 'packing') ? 'packing' : 'picking';
@@ -390,7 +388,6 @@ function SwitchDispatchWorkflowTab(tab, skipReload) {
     }
     $("#txtScanProduct").focus();
 }
-
 function reloadDispatchDetailGrid() {
     var code = $("#hfCode").val();
     if (!code || code === '0') return;
@@ -402,8 +399,6 @@ function reloadDispatchDetailGrid() {
         StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
     }
 }
-
-/** List tab: Order Packing (between Partial Packed and Order Packed). Shown only when IsPickingEnable=Y. */
 function GetOrderPackingList(Mode) {
     $("#txtSearch").val("");
     G_Tab = 4;
@@ -436,14 +431,14 @@ function GetOrderPackingList(Mode) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Order Packing" onclick="StartOrderPackingFromList('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                    , Action: wrapDispatchAction(`<button class="btn btn-primary icon-height mb-1"  title="Order Packing" onclick="StartOrderPackingFromList('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         ${G_IsPickingEnable
                             ? `<button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`
                             : ''}
                         <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
-                    `
+                    `)
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
@@ -460,7 +455,6 @@ function GetOrderPackingList(Mode) {
     });
 }
 
-/** Open dispatch from Order Packing list tab — same DDETAILS grid as View (not BOXDETAILS). */
 async function StartOrderPackingFromList(Code, DispatchMaster_Code, Mode) {
     G_Tab = 4;
     G_WorkflowTab = 'packing';
@@ -474,21 +468,16 @@ async function StartOrderPackingFromList(Code, DispatchMaster_Code, Mode) {
     await StartDispatchTransit(Code, DispatchMaster_Code, Mode, true);
     ensureOrderPackingBoxNoDefault();
 }
-
 function isPickingMode() {
     return G_IsPickingEnable && G_WorkflowTab === 'picking';
 }
-
 function isPackingMode() {
     return G_IsPickingEnable && G_WorkflowTab === 'packing';
 }
-
 function getWorkflowBoxNo() {
     if (isPickingMode()) return 0;
     return $("#txtBoxNo").val();
 }
-
-/** Order Packing: Box No must be at least 1 (0 / empty / null → 1). */
 function ensureOrderPackingBoxNoDefault() {
     if (G_Tab != 4 && !isPackingMode()) return;
     var n = parseInt($("#txtBoxNo").val(), 10);
@@ -629,28 +618,6 @@ function validateDate(value) {
 
     }
 }
-//function DatePicker() {
-//    $.ajax({
-//        url: `${appBaseURL}/api/Master/GetCurrentDate`,
-//        method: 'GET',
-//        beforeSend: function (xhr) {
-//            xhr.setRequestHeader('Auth-Key', authKeyData);
-//        },
-//        success: function (response) {
-//            let apiDate = response[0].Date;
-//            $('#txtChallanDate').val(apiDate);
-
-//            $('#txtChallanDate').datepicker({
-//                format: 'dd/mm/yyyy',
-//                autoclose: true,
-//            });
-//            DatePickerForDownloadDate(apiDate);
-//        },
-//        error: function () {
-//            console.error('Failed to fetch the date from the API.');
-//        }
-//    });
-//}
 function convertToUppercase(element) {
     element.value = element.value.toUpperCase();
 }
@@ -789,7 +756,7 @@ function GetDispatchOrderLists(Mode) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Create Dispatch" onclick="StartDispatchPanding('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`
+                    , Action: wrapDispatchAction(`<button class="btn btn-primary icon-height mb-1"  title="Create Dispatch" onclick="StartDispatchPanding('${item.Code}','ORDERDETAILS')"><i class="fa-solid fa-pencil"></i></button>`)
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
@@ -853,16 +820,19 @@ function DatePicker() {
         }
     });
 }
-async function StartDispatchPanding(Code, Mode) {
+
+async function StartDispatchPanding(Code, Mode, skipPermissionCheck) {
     if (G_DispatchMaster_Code === 0) {
         //GetUserNameList();
     }
     G_Tab = 1;
     $("#btnShowAll").hide();
-    const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
-    if (hasPermission == false) {
-        toastr.error(msg);
-        return;
+    if (!skipPermissionCheck) {
+        const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
+        if (hasPermission == false) {
+            toastr.error(msg);
+            return;
+        }
     }
     $("#tab1").text("NEW");
     $("#txtListpage").hide();
@@ -1186,6 +1156,9 @@ function SaveScanQty() {
                 $("#txtScanProduct").val("");
                 $("#txtScanProduct").focus();
                 unblockUI();
+                if (G_IsPSRMailOnOrderPacked) {
+                    SendPSRReportMail(G_DispatchMaster_Code);
+                }
             } else if (response[0].Status == 'N') {
                 G_IDFORTRCOLOR = '';
                 showToast(response[0].Msg);
@@ -1209,6 +1182,7 @@ function SaveScanQty() {
     });
 
 }
+
 async function StartDispatchTransit(Code, DispatchMaster_Code, Mode, skipPermissionCheck) {
     G_DispatchMaster_Code = DispatchMaster_Code;
     // Preserve Order Packing list tab (G_Tab=4); otherwise treat as Partial Packed
@@ -1424,14 +1398,14 @@ function GetDespatchTransitOrderList(Mode) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                    , Action: wrapDispatchAction(`<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchTransit('${item.Code}','${item.D_Code}','DDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','DDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         ${G_IsPickingEnable
                             ? `<button class="btn btn-primary icon-height mb-1"  title="Picking Complete" onclick="MarkasPickingCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`
                             : `<button class="btn btn-primary icon-height mb-1"  title="Mark As Compete" onclick="MarkasCompete('${item.D_Code}')"><i class="fa fa-check"></i></button>`}
                         ${G_IsPickingEnable ? '' : `<button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>`}
-                    `
+                    `)
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
@@ -1480,12 +1454,13 @@ function GetCompletedDespatchOrderList(Mode) {
                 };
                 const updatedResponse = response.map(item => ({
                     ...item
-                    , Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
+                    , Action: wrapDispatchAction(`<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="StartDispatchCompleteTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa-pencil"></i></button>
                         <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="DeleteItem('${item.D_Code}','${item[`Order No`]}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="View" onclick="ViewDespatchTransit('${item.D_Code}','CDETAILS')"><i class="fa-solid fa fa-eye"></i></button>
                         <button class="btn btn-primary icon-height mb-1"  title="Download" onclick="Report('${item.D_Code}')"><i class="fa-solid fa fa-download"></i></button>
+                        ${G_IsPSRMailOnOrderPacked ? `<button class="btn btn-success icon-height mb-1"  title="Send Mail" onclick="CheckMailSendBeforeSend('${item.D_Code}','Send')"><i class="fa-solid fa-envelope"></i></button>` : ''}
                         <button class="btn btn-info icon-height mb-1"  title="Update Box No" onclick="ShowUpdateBoxNo('${item.D_Code}','BOXDETAILS')"><i class="fa-solid fa fa-box"></i></button>
-                    `
+                    `)
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
             } else {
@@ -1502,14 +1477,17 @@ function GetCompletedDespatchOrderList(Mode) {
     });
 
 }
-async function StartDispatchCompleteTransit(Code, Mode) {
+
+async function StartDispatchCompleteTransit(Code, Mode, skipPermissionCheck) {
     G_DispatchMaster_Code = Code;
     G_Tab = 3;
     $("#btnShowAll").hide();
-    const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
-    if (hasPermission == false) {
-        toastr.error(msg);
-        return;
+    if (!skipPermissionCheck) {
+        const { hasPermission, msg } = await CheckOptionPermission('Edit', UserMaster_Code, UserModuleMaster_Code);
+        if (hasPermission == false) {
+            toastr.error(msg);
+            return;
+        }
     }
     $("#tab1").text("Edit");
     $("#txtListpage").hide();
@@ -1650,6 +1628,7 @@ function checkValidateqtyCompleteTransit1(element, Code) {
         }
     }
 }
+
 async function StartDispatchOrderNo() {
     const { hasPermission, msg } = await CheckOptionPermission('New', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -1938,7 +1917,6 @@ function getDispatchGridColumnIndex(headerText) {
     });
     return idx;
 }
-
 function getRowBoxNoValue(row, boxNoIdx) {
     if (boxNoIdx >= 0) {
         const cell = row.querySelectorAll('td')[boxNoIdx];
@@ -1960,7 +1938,6 @@ function getRowBoxNoValue(row, boxNoIdx) {
     }
     return 0;
 }
-
 function ChangecolorTr() {
     const rows = document.querySelectorAll('#DispatchTable-Body tr');
     if (!rows.length) return;
@@ -2013,6 +1990,7 @@ function DispatchReport() {
         }
     });
 }
+
 async function ShowUpdateBoxNo(Code, Mode) {
     G_DispatchMaster_Code = Code;
     G_Tab = 3;
@@ -2197,8 +2175,6 @@ function ScanUpdateBoxNo() {
         }
     });
 }
-
-/** Keep current screen grid: Order Packing/edit use DDETAILS; dedicated Update Box No keeps BOXDETAILS. */
 function refreshGridAfterBoxNoUpdate() {
     if ($("#tab1").text() === "Edit BoxNo") {
         ShowUpdateBoxNo(G_DispatchMaster_Code, "BOXDETAILS");
@@ -2206,8 +2182,6 @@ function refreshGridAfterBoxNoUpdate() {
     }
     reloadDispatchDetailGrid();
 }
-
-/** Packing tab: show already-picked rows so only BoxNo can be assigned (no EDITBOXNO permission gate). */
 function LoadPickedItemsForPacking(Code) {
     if (!Code || Code <= 0) {
         toastr.info("Pick items first, then open Packing to assign Box No.");
@@ -2293,6 +2267,7 @@ function LoadPickedItemsForPacking(Code) {
         }
     });
 }
+
 async function Export(jsonData) {
     const columnsToRemove = ["Code"];
     const renameMap = {
@@ -2379,6 +2354,7 @@ async function Export(jsonData) {
     link.download = "Dispatch_" + (jsonData[0]["Order No"] || "Export") + ".xlsx";
     link.click();
 }
+
 async function DeleteItemQty(code) {
     const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
@@ -2419,12 +2395,205 @@ async function DeleteItemQty(code) {
         });
     }
 }
+
+function GetUpiDetailsByItemCode(DispatchMaster_Code, ItemCode) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            url: `${appBaseURL}/api/OrderMaster/GetUpiDetailsByItemCode?DispatchMaster_Code=${DispatchMaster_Code}&ItemCode=${encodeURIComponent(ItemCode || '')}`,
+            type: 'POST',
+            contentType: "application/json",
+            dataType: "json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Auth-Key', authKeyData);
+            },
+            success: function (response) {
+                resolve(response);
+            },
+            error: function (xhr, status, error) {
+                reject(error);
+            }
+        });
+    });
+}
+
+function BindManualUpiDetailsGrid(upiDetails, itemCode, isFilteredView) {
+    if (itemCode !== undefined) {
+        G_ManualUpiItemCode = itemCode || '';
+    }
+    if (!isFilteredView) {
+        G_ManualUpiDetails = Array.isArray(upiDetails) ? upiDetails : (upiDetails ? [upiDetails] : []);
+        $("#txtManualUpiSearch").val("");
+    }
+
+    const rows = isFilteredView
+        ? (Array.isArray(upiDetails) ? upiDetails : [])
+        : G_ManualUpiDetails;
+    const $section = $("#dvManualUpiGrid");
+
+    if (!G_ManualUpiDetails.length) {
+        $section.hide();
+        $("#ManualUpiTable-header").empty();
+        $("#ManualUpiTable-body").empty();
+        return;
+    }
+
+    $section.show();
+    if (!rows.length) {
+        $("#ManualUpiTable-header").empty();
+        $("#ManualUpiTable-body").html("<tr><td colspan='10' style='text-align:center;'>No matching records found</td></tr>");
+        return;
+    }
+
+    const StringFilterColumn = [];
+    const NumericFilterColumn = [];
+    const DateFilterColumn = [];
+    const Button = false;
+    const showButtons = [];
+    const StringdoubleFilterColumn = [];
+    const hiddenColumns = ["Code"];
+    const ColumnAlignment = {
+        "Qty": "right;width:70px;",
+        "MRP": "right;width:70px;",
+        "Box No": "right;width:70px;",
+        "Action": "center;width:70px;"
+    };
+    const safeItemCode = (G_ManualUpiItemCode || '').replace(/'/g, "\\'");
+    const updatedResponse = rows.map(item => {
+        const renamedItem = { ...item };
+        if (!renamedItem["UPI ID"] && renamedItem.UPI_ID) {
+            renamedItem["UPI ID"] = renamedItem.UPI_ID;
+        }
+        if (!renamedItem["Box No"] && renamedItem.BoxNo != null) {
+            renamedItem["Box No"] = renamedItem.BoxNo;
+        }
+        if ((renamedItem.MRP == null || renamedItem.MRP === "" || renamedItem.MRP === "NULL") && renamedItem.Rate != null) {
+            renamedItem.MRP = renamedItem.Rate;
+        }
+        renamedItem["Action"] = `<button class="btn btn-danger icon-height mb-1" title="Delete UPI" onclick="DeleteManualUpiDetail('${item.Code}')"><i class="fa-solid fa-trash"></i></button>`;
+        return renamedItem;
+    });
+
+    BizsolCustomFilterGrid.CreateDataTable(
+        "ManualUpiTable-header",
+        "ManualUpiTable-body",
+        updatedResponse,
+        Button,
+        showButtons,
+        StringFilterColumn,
+        NumericFilterColumn,
+        DateFilterColumn,
+        StringdoubleFilterColumn,
+        hiddenColumns,
+        ColumnAlignment,
+        false
+    );
+}
+
+function FilterManualUpiGrid() {
+    const searchValue = ($("#txtManualUpiSearch").val() || "").toLowerCase().trim();
+    if (!searchValue) {
+        BindManualUpiDetailsGrid(G_ManualUpiDetails, G_ManualUpiItemCode, true);
+        return;
+    }
+    const filteredRows = G_ManualUpiDetails.filter(item =>
+        Object.values(item).some(val => String(val).toLowerCase().includes(searchValue))
+    );
+    BindManualUpiDetailsGrid(filteredRows, G_ManualUpiItemCode, true);
+}
+
+function RefreshManualUpiGrid(itemCode) {
+    const productCode = itemCode || G_ManualUpiItemCode || $("#hfManualProductCode").val() || '';
+    if (!G_DispatchMaster_Code || parseInt(G_DispatchMaster_Code, 10) <= 0 || !productCode) {
+        BindManualUpiDetailsGrid([], productCode);
+        return Promise.resolve([]);
+    }
+    return GetUpiDetailsByItemCode(G_DispatchMaster_Code, productCode).then(function (upiDetails) {
+        upiDetails = Array.isArray(upiDetails) ? upiDetails : (upiDetails ? [upiDetails] : []);
+        BindManualUpiDetailsGrid(upiDetails, productCode);
+        return upiDetails;
+    }).catch(function () {
+        showToast("Error in api/OrderMaster/GetUpiDetailsByItemCode");
+        return [];
+    });
+}
+
+function RefreshDispatchAfterManualChange() {
+    if (G_Tab == 1) {
+        StartDispatchPanding($("#hfCode").val(), "ORDERDETAILS", true);
+    } else if (G_Tab == 2 || G_Tab == 4) {
+        if (All == 0) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "DDETAILS", true);
+        } else if (All == 1) {
+            StartDispatchTransit($("#hfCode").val(), G_DispatchMaster_Code, "AllDDETAILS", true);
+        }
+    } else if (G_Tab == 3) {
+        StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS", true);
+    }
+}
+
+function getDeleteApiResult(response) {
+    const result = Array.isArray(response) && response.length ? response[0] : response;
+    const status = result && (result.Status || result.status || result.STATUS);
+    return {
+        result: result,
+        isSuccess: status === 'Y' || status === 'y'
+    };
+}
+
+async function DeleteManualUpiDetail(code) {
+    const { hasPermission, msg } = await CheckOptionPermission('Delete', UserMaster_Code, UserModuleMaster_Code);
+    if (hasPermission == false) {
+        toastr.error(msg);
+        return;
+    }
+    if (!confirm("Are you sure you want to delete this UPI detail?")) {
+        return;
+    }
+
+    const itemCode = G_ManualUpiItemCode || $("#hfManualProductCode").val() || '';
+
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/DeleteDispatchUpiDetail?Code=${code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            const { result, isSuccess } = getDeleteApiResult(response);
+            if (isSuccess) {
+                toastr.success((result && result.Msg) || "Deleted successfully.");
+                RefreshManualUpiGrid(itemCode).finally(function () {
+                    RefreshDispatchAfterManualChange();
+                });
+            } else {
+                toastr.error((result && result.Msg) || "Unable to delete UPI detail.");
+            }
+        },
+        error: function () {
+            showToast("Error in api/OrderMaster/DeleteDispatchUpiDetail");
+        }
+    });
+}
+
 async function ManualUpdateQtyAndMRP(ItemCode, BalanceQty, MRP) {
     const { hasPermission, msg } = await CheckOptionPermission('Manual', UserMaster_Code, UserModuleMaster_Code);
     if (hasPermission == false) {
         toastr.error(msg);
         return;
     }
+
+    let upiDetails = [];
+    if (G_DispatchMaster_Code && parseInt(G_DispatchMaster_Code, 10) > 0) {
+        try {
+            upiDetails = await GetUpiDetailsByItemCode(G_DispatchMaster_Code, ItemCode);
+            upiDetails = Array.isArray(upiDetails) ? upiDetails : (upiDetails ? [upiDetails] : []);
+        } catch (error) {
+            showToast("Error in api/OrderMaster/GetUpiDetailsByItemCode");
+        }
+    }
+
+    BindManualUpiDetailsGrid(upiDetails, ItemCode);
+
     $("#txtManualItemCode").text("PRODUCT NAME : " + ItemCode);
     $("#hfManualProductCode").val(ItemCode);
     $("#hfManualProductQuantity").val(BalanceQty);
@@ -2503,6 +2672,9 @@ function SaveManual() {
                     StartDispatchCompleteTransit(G_DispatchMaster_Code, "CDETAILS");
                 }
                 CloseManualModal();
+                if (G_IsPSRMailOnOrderPacked) {
+                    SendPSRReportMail(G_DispatchMaster_Code);
+                }
             } else if (response[0].Status == 'N') {
                 CloseManualModal();
                 showToast(response[0].Msg);
@@ -2529,6 +2701,10 @@ function SaveManual() {
 function CloseManualModal() {
     $('#txtManualProductQuantity').val("");
     $('#txtManualProductMRP').val("");
+    $('#txtManualUpiSearch').val("");
+    G_ManualUpiDetails = [];
+    G_ManualUpiItemCode = '';
+    BindManualUpiDetailsGrid([], '');
     var modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
     if (modal) {
         modal.hide();
@@ -2584,14 +2760,14 @@ function GetDispatchReport() {
 }
 function Report(Code) {
     $("#hfDownloadCode").val(Code);
-    var saveModal = new bootstrap.Modal(document.getElementById("DownloadModal"));
-    saveModal.show();
+    showDispatchDownloadChooser();
+    showDispatchModal('DownloadModal');
 }
 function CloseDownloadModal() {
-    var modal = bootstrap.Modal.getInstance(document.getElementById('DownloadModal'));
-    if (modal) {
-        modal.hide();
-    }
+    hideDispatchModalThen(document.getElementById('DownloadModal'), function () {
+        showDispatchDownloadChooser();
+        resetDispatchPdfAmountModal();
+    });
 }
 function DownloadReportPdf() {
     var Code = $("#hfDownloadCode").val();
@@ -2616,6 +2792,13 @@ function DownloadReportPdf() {
             console.error('Error downloading report:', xhr.responseText);
         }
     });
+}
+function applyDispatchCompanyName(rows) {
+    if (!rows || !rows.length) return rows;
+    rows.forEach(function (item) {
+        item.CompanyName = G_CompanyName;
+    });
+    return rows;
 }
 
 async function DownloadDispatchQR() {
@@ -2650,6 +2833,7 @@ async function DownloadDispatchQR() {
                         response[i].QRCode = base64Image;
                     }
                 }
+                applyDispatchCompanyName(response);
                 DownloadQRPdf(response);
             } else {
                 toastr.error("Record not found...!");
@@ -2729,6 +2913,7 @@ function getDataWithAjax(FromDate, ToDate, OrderStatus) {
         });
     });
 }
+
 async function DownloadExport(Data) {
     const Picklist = $("#txtDownloadDate").val();
     const OrderStatus = $("#ddlOrderStatus").val();
@@ -2983,5 +3168,346 @@ function OpenManualForMRP(element, itemCode) {
 		return;
 	}
 	SaveMRPByItemInput(element, itemCode);
+}
+function SendPSRReportMail(DispatchMaster_Code) {
+    if (!G_IsPSRMailOnOrderPacked) {
+        return;
+    }
+    blockUI();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/CheckOrderPacked?DispatchMaster_Code=${DispatchMaster_Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response && response.length > 0 && response[0].Completed === 'Y') {
+                CheckMailSendBeforeSend(DispatchMaster_Code, 'Hide');
+            } else {
+                unblockUI();
+            }
+        },
+        error: function () {
+            unblockUI();
+        }
+    });
+}
+function CheckMailSendBeforeSend(DispatchMaster_Code, Mode) {
+    var isHideMode = Mode === 'Hide';
+    if (!isHideMode) {
+        blockUI();
+    }
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/CheckMailSend?DispatchMaster_Code=${DispatchMaster_Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response && response.length > 0 && response[0].IsMailSend === 'Y') {
+                if (isHideMode) {
+                    unblockUI();
+                } else if (confirm("Mail has already been sent. Do you want to send it again?")) {
+                    SendPSRReportMailRequest(DispatchMaster_Code, Mode);
+                } else {
+                    unblockUI();
+                }
+            } else {
+                SendPSRReportMailRequest(DispatchMaster_Code, Mode);
+            }
+        },
+        error: function () {
+            unblockUI();
+            if (!isHideMode) {
+                toastr.error("Error checking mail send status.");
+            }
+        }
+    });
+}
+function SendPSRReportMailRequest(DispatchMaster_Code, Mode) {
+    var isHideMode = Mode === 'Hide';
+    $.ajax({
+        url: `${AppBaseURLMenu}/Mail/SendPSRReportMail?Code=${DispatchMaster_Code}&UserName=${G_UserName}&AuthKey=${authKeyData}&CompanyCode=${G_CompanyCode}`,
+        type: 'GET',
+        success: function (response) {
+            UpdateMailSendStatus(DispatchMaster_Code, response, Mode);
+        },
+        error: function (xhr) {
+            unblockUI();
+            if (!isHideMode) {
+                var msg = "Failed to send PSR Report.";
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                } else if (xhr.responseText) {
+                    msg = xhr.responseText;
+                }
+                toastr.error(msg);
+            }
+        }
+    });
+}
+function UpdateMailSendStatus(DispatchMaster_Code, mailResponse, Mode) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/UpdateMailSend?DispatchMaster_Code=${DispatchMaster_Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            unblockUI();
+            if (response.Status === 'Y') {
+                if (Mode !== 'Hide') {
+                    toastr.success((mailResponse && mailResponse.message) ? mailResponse.message : "PSR Report sent successfully.");
+                }
+            } else if (Mode !== 'Hide') {
+                toastr.warning(response.Msg || "PSR Report sent but mail status update failed.");
+            }
+        },
+        error: function () {
+            unblockUI();
+            if (Mode !== 'Hide') {
+                toastr.warning("PSR Report sent but failed to update mail status.");
+            }
+        }
+    });
+}
+
+function pickDispatchPdfAmtVal(row, keys, defVal) {
+    if (!row) return defVal;
+    for (var i = 0; i < keys.length; i++) {
+        var v = row[keys[i]];
+        if (v != null && String(v).trim() !== '') {
+            return v;
+        }
+    }
+    return defVal;
+}
+function parseDispatchPdfAmt(val) {
+    var n = parseFloat(String(val == null ? '' : val).replace(/,/g, '').trim());
+    return isNaN(n) ? 0 : n;
+}
+function formatDispatchPdfAmt(val) {
+    return parseDispatchPdfAmt(val).toFixed(2);
+}
+function calcDispatchPdfAdjAmount(total, type, value) {
+    var amt = parseDispatchPdfAmt(value);
+    if (String(type || '') === '%') {
+        return total * amt / 100;
+    }
+    return amt;
+}
+function isDispatchPdfManual() {
+    return $('#chkPdfIsManual').is(':checked');
+}
+function applyDispatchPdfManualMode(isManual) {
+    $('#chkPdfIsManual').prop('checked', !!isManual);
+    $('#ddlPdfAddType, #txtPdfAddValue, #ddlPdfLessType, #txtPdfLessValue').prop('disabled', !!isManual);
+    $('#txtPdfNetAmount').prop('readonly', !isManual);
+    if (isManual) {
+        $('#txtPdfAddValue').val(formatDispatchPdfAmt(0));
+        $('#txtPdfLessValue').val(formatDispatchPdfAmt(0));
+    }
+}
+function OnDispatchPdfIsManualChange() {
+    var isManual = isDispatchPdfManual();
+    var currentNet = $('#txtPdfNetAmount').val();
+    applyDispatchPdfManualMode(isManual);
+    if (isManual) {
+        if (String(currentNet || '').trim() === '') {
+            $('#txtPdfNetAmount').val(formatDispatchPdfAmt($('#txtPdfTotal').val()));
+        } else {
+            $('#txtPdfNetAmount').val(formatDispatchPdfAmt(currentNet));
+        }
+    } else {
+        CalculateDispatchPdfNetAmount();
+    }
+}
+function CalculateDispatchPdfNetAmount() {
+    if (isDispatchPdfManual()) {
+        return;
+    }
+    var total = parseDispatchPdfAmt($('#txtPdfTotal').val());
+    var addAmt = calcDispatchPdfAdjAmount(total, $('#ddlPdfAddType').val(), $('#txtPdfAddValue').val());
+    var lessAmt = calcDispatchPdfAdjAmount(total, $('#ddlPdfLessType').val(), $('#txtPdfLessValue').val());
+    $('#txtPdfNetAmount').val(formatDispatchPdfAmt(total + addAmt - lessAmt));
+}
+function resetDispatchPdfAmountModal() {
+    $('#hfPdfDispatchMaster_Code').val('0');
+    $('#txtPdfTotal').val('');
+    $('#txtPdfAddValue').val('');
+    $('#txtPdfLessValue').val('');
+    $('#txtPdfNetAmount').val('');
+    $('#ddlPdfAddType').val('%');
+    $('#ddlPdfLessType').val('%');
+    applyDispatchPdfManualMode(false);
+}
+function cleanupDispatchModalBackdrops() {
+    var openModals = document.querySelectorAll('.modal.show').length;
+    var backdrops = Array.prototype.slice.call(document.querySelectorAll('.modal-backdrop'));
+    if (openModals === 0) {
+        backdrops.forEach(function (b) { b.remove(); });
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('padding-right');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('pointer-events');
+    }
+}
+function showDispatchModal(id) {
+    var el = document.getElementById(id);
+    if (!el) {
+        return;
+    }
+    bootstrap.Modal.getOrCreateInstance(el).show();
+}
+function hideDispatchModalThen(el, callback) {
+    var done = typeof callback === 'function' ? callback : function () { };
+    if (!el) {
+        cleanupDispatchModalBackdrops();
+        done();
+        return;
+    }
+    var isOpen = el.classList.contains('show');
+    var inst = bootstrap.Modal.getInstance(el);
+    if (!inst || !isOpen) {
+        cleanupDispatchModalBackdrops();
+        done();
+        return;
+    }
+    $(el).off('hidden.bs.modal.dispatchSeq').one('hidden.bs.modal.dispatchSeq', function () {
+        cleanupDispatchModalBackdrops();
+        done();
+    });
+    inst.hide();
+}
+function showDispatchDownloadChooser() {
+    $('#downloadModalTitle').text('Download');
+    $('#dispatchDownloadChooser').removeClass('d-none');
+    $('#dispatchPdfAmountPanel').addClass('d-none');
+}
+function OpenDispatchPdfAmountModal() {
+    var code = parseInt($('#hfDownloadCode').val(), 10) || 0;
+    if (code <= 0) {
+        toastr.error('Dispatch code not found.');
+        return;
+    }
+    resetDispatchPdfAmountModal();
+    $('#hfPdfDispatchMaster_Code').val(code);
+    $('#hfDownloadCode').val(code);
+    $('#downloadModalTitle').text('Amount');
+    $('#dispatchDownloadChooser').addClass('d-none');
+    $('#dispatchPdfAmountPanel').removeClass('d-none');
+    GetDispatchPdfAmountDetail(code);
+}
+function CloseDispatchPdfAmountModal() {
+    var code = parseInt($('#hfPdfDispatchMaster_Code').val(), 10) || parseInt($('#hfDownloadCode').val(), 10) || 0;
+    resetDispatchPdfAmountModal();
+    if (code > 0) {
+        $('#hfDownloadCode').val(code);
+    }
+    showDispatchDownloadChooser();
+}
+function fillDispatchPdfAmountModal(row) {
+    var addType = String(pickDispatchPdfAmtVal(row, ['AddType', 'addType', 'AddValueType'], '%'));
+    var lessType = String(pickDispatchPdfAmtVal(row, ['LessType', 'lessType', 'LessValueType'], '%'));
+    if (addType.toLowerCase() === 'lumsum' || addType.toLowerCase() === 'lumpsum') {
+        addType = 'LumSum';
+    } else if (addType !== '%') {
+        addType = '%';
+    }
+    if (lessType.toLowerCase() === 'lumsum' || lessType.toLowerCase() === 'lumpsum') {
+        lessType = 'LumSum';
+    } else if (lessType !== '%') {
+        lessType = '%';
+    }
+    var isManualRaw = String(pickDispatchPdfAmtVal(row, ['IsManual', 'isManual', 'Ismanual'], 'N')).toUpperCase();
+    var isManual = isManualRaw === 'Y' || isManualRaw === '1' || isManualRaw === 'TRUE';
+    $('#ddlPdfAddType').val(addType);
+    $('#ddlPdfLessType').val(lessType);
+    $('#txtPdfTotal').val(formatDispatchPdfAmt(pickDispatchPdfAmtVal(row, ['Total', 'total', 'TotalAmount', 'totalAmount'], 0)));
+    $('#txtPdfAddValue').val(formatDispatchPdfAmt(pickDispatchPdfAmtVal(row, ['AddValue', 'addValue', 'AddAmount', 'addAmount'], 0)));
+    $('#txtPdfLessValue').val(formatDispatchPdfAmt(pickDispatchPdfAmtVal(row, ['LessValue', 'lessValue', 'LessAmount', 'lessAmount'], 0)));
+    var netVal = pickDispatchPdfAmtVal(row, ['NetAmount', 'netAmount'], '');
+    if (isManual) {
+        if (netVal === '') {
+            $('#txtPdfNetAmount').val(formatDispatchPdfAmt($('#txtPdfTotal').val()));
+        } else {
+            $('#txtPdfNetAmount').val(formatDispatchPdfAmt(netVal));
+        }
+        applyDispatchPdfManualMode(true);
+    } else {
+        applyDispatchPdfManualMode(false);
+        CalculateDispatchPdfNetAmount();
+    }
+}
+function GetDispatchPdfAmountDetail(DispatchMaster_Code) {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetDispatchPdfAmountDetail?DispatchMaster_Code=${DispatchMaster_Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            var row = Array.isArray(response) ? response[0] : response;
+            if (row) {
+                fillDispatchPdfAmountModal(row);
+            } else {
+                CalculateDispatchPdfNetAmount();
+            }
+        },
+        error: function () {
+            toastr.error('Error in api/OrderMaster/GetDispatchPdfAmountDetail');
+            CalculateDispatchPdfNetAmount();
+        }
+    });
+}
+function SaveDispatchPdfAmount(downloadAfterSave) {
+    var DispatchMaster_Code = parseInt($('#hfPdfDispatchMaster_Code').val(), 10) || parseInt($('#hfDownloadCode').val(), 10) || 0;
+    if (DispatchMaster_Code <= 0) {
+        toastr.error('DispatchMaster_Code not found.');
+        return;
+    }
+    var isManual = isDispatchPdfManual();
+    if (isManual) {
+        $('#txtPdfAddValue').val(formatDispatchPdfAmt(0));
+        $('#txtPdfLessValue').val(formatDispatchPdfAmt(0));
+        $('#txtPdfNetAmount').val(formatDispatchPdfAmt($('#txtPdfNetAmount').val()));
+    } else {
+        CalculateDispatchPdfNetAmount();
+    }
+    var payload = {
+        DispatchMaster_Code: DispatchMaster_Code,
+        Total: parseDispatchPdfAmt($('#txtPdfTotal').val()),
+        AddType: $('#ddlPdfAddType').val(),
+        AddValue: isManual ? 0 : parseDispatchPdfAmt($('#txtPdfAddValue').val()),
+        LessType: $('#ddlPdfLessType').val(),
+        LessValue: isManual ? 0 : parseDispatchPdfAmt($('#txtPdfLessValue').val()),
+        NetAmount: parseDispatchPdfAmt($('#txtPdfNetAmount').val()),
+        IsManual: isManual ? 'Y' : 'N'
+    };
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/SaveDispatchPdfAmountDetail`,
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            var row = Array.isArray(response) ? response[0] : response;
+            if (row && (row.Status === 'Y' || row.status === 'Y')) {
+                toastr.success((row.Msg || row.msg || 'Data Saved Successfully') + '');
+                CloseDispatchPdfAmountModal();
+                if (downloadAfterSave) {
+                    DownloadReportPdf();
+                }
+            } else {
+                toastr.error((row && (row.Msg || row.msg)) ? (row.Msg || row.msg) : 'Save failed.');
+            }
+        },
+        error: function () {
+            toastr.error('Error in api/OrderMaster/SaveDispatchPdfAmountDetail');
+        }
+    });
 }
 

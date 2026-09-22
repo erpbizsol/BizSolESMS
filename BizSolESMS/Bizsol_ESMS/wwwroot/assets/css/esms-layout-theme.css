@@ -864,3 +864,9 @@
                 max-width: 100%;
             }
         }
+
+/* Readonly / disabled inputs — white background (overrides app.min.css #dedee1) */
+:is(.form-control:disabled, input.form-control[readonly]) {
+    background-color: #fff !important;
+    color: #000;
+}

@@ -291,13 +291,9 @@ namespace Bizsol_ESMS.Controllers
                 upiId = GetDataRowString(d0, "UPI Id");
 
             string payeeName = GetDataRowString(d0, "From");
-            string scanMrpRaw = GetDataRowString(d0, "ScanMRP");
             string challanNo = GetDataRowString(d0, "ChallanNo");
             string orderNo = GetDataRowString(d0, "OrderNo");
-
-            decimal amount = 0;
-            if (!string.IsNullOrWhiteSpace(scanMrpRaw))
-                decimal.TryParse(scanMrpRaw.Replace(",", ""), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out amount);
+            decimal amount = GetPsrQrAmount(d0);
 
             string uri = BuildUpiPayUri(upiId, payeeName, amount, string.IsNullOrEmpty(challanNo) ? ("PSR " + (string.IsNullOrEmpty(orderNo) ? code.ToString() : orderNo)) : ("PSR " + challanNo));
             if (string.IsNullOrEmpty(uri)) return;
@@ -407,8 +403,9 @@ namespace Bizsol_ESMS.Controllers
                 string clientName = GetDataRowString(d0, "To");
                 if (string.IsNullOrEmpty(clientName))
                     clientName = GetDataRowString(d0, "TO");
+                string netAmount = GetPsrQrAmount(d0).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
 
-                payload = $"Code={code}&OrderNo={orderNo}&ChallanNo={challanNo}&NoOfBoxes={noOfBoxes}&TotalScannedProducts={totalScannedProducts}&ClientName={clientName}&CompanyCode={companyCode ?? ""}";
+                payload = $"Code={code}&OrderNo={orderNo}&ChallanNo={challanNo}&NoOfBoxes={noOfBoxes}&TotalScannedProducts={totalScannedProducts}&ClientName={clientName}&NetAmount={netAmount}&CompanyCode={companyCode ?? ""}";
             }
 
             if (string.IsNullOrEmpty(payload))
@@ -422,6 +419,27 @@ namespace Bizsol_ESMS.Controllers
 
             foreach (DataRow row in detail.Rows)
                 row["QRCode"] = b64;
+        }
+
+        private static decimal GetPsrQrAmount(DataRow row)
+        {
+            decimal amount = GetDataRowDecimal(row, "NetAmount");
+            if (amount > 0)
+                return amount;
+            return GetDataRowDecimal(row, "ScanMRP");
+        }
+
+        private static decimal GetDataRowDecimal(DataRow row, string columnName)
+        {
+            string raw = GetDataRowString(row, columnName);
+            if (string.IsNullOrWhiteSpace(raw))
+                return 0;
+            decimal.TryParse(
+                raw.Replace(",", ""),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out decimal amount);
+            return amount;
         }
 
         private static string GetDataRowString(DataRow row, string columnName)
@@ -440,22 +458,16 @@ namespace Bizsol_ESMS.Controllers
             dt.Columns.Add("BoxNo");
             dt.Columns.Add("AccountName");
             dt.Columns.Add("Address");
-            dt.Columns.Add("CompanyCode");
+            dt.Columns.Add("CompanyName");
 
             foreach (var item in model)
             {
                 var img = Convert.FromBase64String(item.QRCode.Replace("data:image/png;base64,", ""));
-                dt.Rows.Add(img, item.OrderNo, item.BoxNo,item.AccountName,item.Address,item.CompanyCode);
+                dt.Rows.Add(img, item.OrderNo, item.BoxNo, item.AccountName, item.Address, item.CompanyName);
             }
 
-            string qrCompanyName = dt.Rows.Count > 0
-                ? dt.Rows[0]["CompanyCode"]?.ToString() ?? ""
-                : "";
-
             LocalReport report = new LocalReport();
-            string reportPath = qrCompanyName.IndexOf("DadaSales", StringComparison.OrdinalIgnoreCase) >= 0
-                ? Path.Combine(Directory.GetCurrentDirectory(), "Reports", "DispatchQRTata.rdlc")
-                : Path.Combine(Directory.GetCurrentDirectory(), "Reports", "DispatchQR.rdlc");
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "DispatchQR.rdlc");
             report.ReportPath = reportPath;
 
             report.DataSources.Add(new ReportDataSource("DispatchQRData", dt));

@@ -87,5 +87,12 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion SaleLossReport
+
+        #region MRNReport
+        public IActionResult MRNReport()
+        {
+            return View();
+        }
+        #endregion MRNReport
     }
 }

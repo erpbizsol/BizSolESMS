@@ -274,7 +274,7 @@ wwwroot\assets\libs\twitter-bootstrap-wizard\prettify.css
 wwwroot\assets\libs\twitter-bootstrap-wizard\prettify.js
 wwwroot\assets\libs\wnumb\wNumb.min.js
 wwwroot\assets\Script\AccountMaster.js
-wwwroot\assets\Script\InvoiceReport.js
+wwwroot\assets\Script\BankMaster.js
 wwwroot\assets\Script\BoxUnloading.js
 wwwroot\assets\Script\BoxValidation.js
 wwwroot\assets\Script\BoxValidationWithoutBox.js
@@ -297,7 +297,7 @@ wwwroot\assets\Script\HolidayMaster.js
 wwwroot\assets\Script\HsnMaster.js
 wwwroot\assets\Script\InvoiceMaster.js
 wwwroot\assets\Script\InvoicePrint.js
-wwwroot\assets\Script\BankMaster.js
+wwwroot\assets\Script\SaleLossReport.js
 wwwroot\assets\Script\ItemConfig.js
 wwwroot\assets\Script\ItemLocator.js
 wwwroot\assets\Script\ItemMaster.js
@@ -320,7 +320,7 @@ wwwroot\assets\Script\PaymentEntryAdjestment.js
 wwwroot\assets\Script\PrefixConfiguration.js
 wwwroot\assets\Script\ProductEnquiry.js
 wwwroot\assets\Script\ProofOfDelivery.js
-wwwroot\assets\Script\SaleLossReport.js
+wwwroot\assets\Script\InvoiceReport.js
 wwwroot\assets\Script\SalesReturnManual.js
 wwwroot\assets\Script\SalesReturnMaster.js
 wwwroot\assets\Script\StateMaster.js
@@ -395,3 +395,4 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\assets\Script\MRNReport.js

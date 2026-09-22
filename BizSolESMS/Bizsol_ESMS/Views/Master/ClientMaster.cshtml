@@ -6,9 +6,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="~/assets/script/clientmaster.js"></script>
 <style>
+    /* Let Brand dropdown escape the form card (theme .tabs { overflow:hidden } clips it) */
+    #layout-wrapper.esms-profenna #txtCreatepage .card.shadow-sm,
+    #layout-wrapper.esms-profenna #txtCreatepage .tabs,
+    #layout-wrapper.esms-profenna #txtCreatepage .tabs .row,
+    #layout-wrapper.esms-profenna #txtCreatepage .col-md-12 {
+        overflow: visible !important;
+    }
+
+    #txtCreatepage #divOrderBooking {
+        position: relative;
+        z-index: 1;
+    }
+
     /* Brand multi-select */
     .brand-ms-wrap {
         position: relative;
+        z-index: 20;
     }
 
     .brand-ms {
@@ -136,11 +150,8 @@
 
     .brand-ms-dropdown {
         display: none;
-        position: absolute;
-        top: calc(100% + 4px);
-        left: 0;
-        right: 0;
-        z-index: 1050;
+        position: fixed;
+        z-index: 10080;
         background: #fff;
         border: 1px solid #cbd5e1;
         border-radius: 10px;
@@ -270,7 +281,7 @@
         max-width: 2000px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         border-radius: 8px;
-        overflow: hidden;
+        overflow: visible;
         padding: 0.7rem;
     }
 

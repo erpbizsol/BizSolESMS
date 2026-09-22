@@ -142,6 +142,9 @@ async function ShowProductlist() {
                     } else {
                         $("#tblSalesTable").hide();
                     }
+                    if (response.SalesReturn.length === 0 && response.MRNMaster.length === 0 && response.DispatchMaster.length === 0) {
+                        toastr.error("Record not found...!");
+                    }
                 } else {
                     toastr.error("Record not found...!");
                     $("#dvTable2").hide();
@@ -162,7 +165,7 @@ async function ShowProductlist() {
                 if (response.length > 0) {
                     $("#dvTable").show();
                     G_Value = response;
-                    const StringFilterColumn = ["Part Code", "Location"];
+                    const StringFilterColumn = ["Part Code", "Location", "Warehouse"];
                     const NumericFilterColumn = ["QTY"];
                     const DateFilterColumn = [];
                     const Button = false;

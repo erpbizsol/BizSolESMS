@@ -76,6 +76,76 @@ function slrFormatRupee(v) {
     });
 }
 
+/** Compact rupee for KPI tiles: ₹84.2L / ₹9.2Cr / ₹4,500 */
+function slrCompactRupee(v) {
+    var n = slrParseAmount(v);
+    var sign = n < 0 ? '-' : '';
+    n = Math.abs(n);
+    if (n >= 1e7) return sign + '\u20B9' + (n / 1e7).toFixed(2).replace(/\.00$/, '') + 'Cr';
+    if (n >= 1e5) return sign + '\u20B9' + (n / 1e5).toFixed(2).replace(/\.00$/, '') + 'L';
+    return sign + '\u20B9' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+}
+
+function slrSetText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text == null ? '' : String(text);
+}
+
+function slrResetKpis() {
+    slrSetText('slrKpiLines', '—');
+    slrSetText('slrKpiQty', '—');
+    slrSetText('slrKpiValue', '—');
+    slrSetText('slrKpiClients', '—');
+    slrSetText('slrKpiLinesSub', '');
+    slrSetText('slrKpiQtySub', '');
+    slrSetText('slrKpiValueSub', '');
+    slrSetText('slrKpiClientsSub', '');
+}
+
+function slrUpdateKpis(rows) {
+    if (!rows || !rows.length) {
+        slrResetKpis();
+        return;
+    }
+
+    var cancelQty = 0;
+    var cancelValue = 0;
+    var orderQty = 0;
+    var fully = 0;
+    var partial = 0;
+    var clients = {};
+    var pos = {};
+
+    rows.forEach(function (r, idx) {
+        var n = slrNormalizeGridRow(r, idx);
+        cancelQty += slrParseAmount(n['Cancel Qty']);
+        cancelValue += slrParseAmount(n['Cancel Value']);
+        orderQty += slrParseAmount(n['Order Qty']);
+
+        var status = String(n['Cancel Status'] || '').trim().toLowerCase();
+        if (status.indexOf('fully') >= 0) fully++;
+        else if (status.indexOf('partial') >= 0) partial++;
+
+        var client = String(n['Client Name'] || '').trim();
+        if (client) clients[client] = true;
+        var po = String(n['Buyer PO No'] || '').trim();
+        if (po) pos[po] = true;
+    });
+
+    var clientCount = Object.keys(clients).length;
+    var poCount = Object.keys(pos).length;
+    var cancelPct = orderQty > 0 ? Math.round((cancelQty / orderQty) * 100) : 0;
+
+    slrSetText('slrKpiLines', rows.length.toLocaleString('en-IN'));
+    slrSetText('slrKpiLinesSub', fully + ' Fully · ' + partial + ' Partial');
+    slrSetText('slrKpiQty', cancelQty.toLocaleString('en-IN', { maximumFractionDigits: 2 }));
+    slrSetText('slrKpiQtySub', cancelPct + '% of order qty');
+    slrSetText('slrKpiValue', slrCompactRupee(cancelValue));
+    slrSetText('slrKpiValueSub', slrFormatRupee(cancelValue));
+    slrSetText('slrKpiClients', clientCount.toLocaleString('en-IN'));
+    slrSetText('slrKpiClientsSub', poCount + ' buyer PO' + (poCount === 1 ? '' : 's'));
+}
+
 function slrStatusBadge(status) {
     var s = String(status || '').trim().toLowerCase();
     var cls = 'slr-status-badge--partial';
@@ -168,6 +238,7 @@ function slrValidateFilters() {
 }
 
 function slrShowPlaceholder() {
+    slrResetKpis();
     $('#slrReportContent').hide();
     $('#slrReportPlaceholder').show();
     $('#btnSlrDownload').prop('disabled', true);
@@ -260,6 +331,7 @@ function slrRenderGrid(rows) {
     }
 
     slrShowContent();
+    slrUpdateKpis(rows);
 
     var StringFilterColumn = [
         'Client Name', 'Buyer PO No', 'Item Code', 'Item Name', 'Cancel Status'

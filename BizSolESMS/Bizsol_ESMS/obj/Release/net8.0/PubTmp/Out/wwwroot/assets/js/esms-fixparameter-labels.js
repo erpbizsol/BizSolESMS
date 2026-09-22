@@ -4,6 +4,7 @@
  * - LevelOfOrderDate → Order Date captions / placeholders
  * - LevelOfBuyerPONo → Buyer PO No captions / placeholders
  * - LevelOfBuyerPODate → Buyer PO Date captions / placeholders
+ * - IsShowOrderNo = Y → Buyer PO No is optional on OrderMaster (hide required *)
  *
  * Hooks used by Filter.js (unchanged): window.esmsGridHeaderHtmlText(columnKey)
  */
@@ -79,6 +80,19 @@
         var row = Array.isArray(parsed) ? parsed[0] : parsed;
         var v = fixParameterString(row, 'LevelOfBuyerPODate');
         return v || DEFAULT_BUYER_PO_DATE_LABEL;
+    };
+
+    window.esmsIsShowOrderNo = function esmsIsShowOrderNo() {
+        var parsed = parseFixparameter();
+        if (!parsed) return false;
+        var row = Array.isArray(parsed) ? parsed[0] : parsed;
+        var v = fixParameterString(row, 'IsShowOrderNo');
+        return v.toUpperCase() === 'Y';
+    };
+
+    /** Buyer PO No is mandatory unless Fixparameter IsShowOrderNo = Y. */
+    window.esmsIsBuyerPONoMandatory = function esmsIsBuyerPONoMandatory() {
+        return !window.esmsIsShowOrderNo();
     };
 
     window.esmsPleaseEnterBuyerPONoMsg = function esmsPleaseEnterBuyerPONoMsg() {
@@ -211,6 +225,8 @@
         $('.esms-buyer-po-no-placeholder').each(function () {
             $(this).attr('placeholder', buyerPoNoLabel + '..');
         });
+
+        $('.esms-buyer-po-no-required').toggle(window.esmsIsBuyerPONoMandatory());
 
         $('.esms-buyer-po-date-field-label').each(function () {
             replaceBuyerPODateTextInLabelElement(this, buyerPoDateLabel);

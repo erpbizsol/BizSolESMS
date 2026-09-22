@@ -190,8 +190,29 @@
         box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8);
     }
 
+    .ipr-report-page .ipr-panel--summary { border-left: 4px solid #0284c7; }
+    .ipr-report-page .ipr-panel--summary .ipr-dot { background: linear-gradient(135deg, #0284c7, #6366f1); }
     .ipr-report-page .ipr-panel--detail { border-left: 4px solid #7c3aed; }
     .ipr-report-page .ipr-panel--detail .ipr-dot { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+
+    .ipr-report-page .ipr-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .ipr-report-page #iprKpiCountSub {
+        line-height: 1.45;
+        white-space: normal;
+    }
+
+    @@media (max-width: 1199px) {
+        .ipr-report-page .ipr-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @@media (max-width: 575px) {
+        .ipr-report-page .ipr-kpi-grid { grid-template-columns: 1fr; }
+    }
 
     .ipr-report-page .ipr-panel__title span {
         font-size: 0.9rem;
@@ -364,6 +385,47 @@
     </div>
 
     <div id="iprReportContent">
+        <div class="ipr-panel ipr-panel--summary">
+            <div class="ipr-panel__title">
+                <span class="ipr-dot"></span>
+                <span>Payment Summary</span>
+            </div>
+            <div class="ipr-kpi-grid wd-kpi-grid">
+                <div class="wd-kpi-premium wd-kpi-premium--green">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-file-invoice"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Total Invoices</div>
+                        <div class="wd-kpi-val" id="iprKpiCount">—</div>
+                        <div class="wd-kpi-delta" id="iprKpiCountSub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--purple">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Invoice Amount</div>
+                        <div class="wd-kpi-val" id="iprKpiInvoice">—</div>
+                        <div class="wd-kpi-delta" id="iprKpiInvoiceSub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--blue">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Payment Received</div>
+                        <div class="wd-kpi-val" id="iprKpiPayment">—</div>
+                        <div class="wd-kpi-delta" id="iprKpiPaymentSub"></div>
+                    </div>
+                </div>
+                <div class="wd-kpi-premium wd-kpi-premium--rose">
+                    <div class="wd-kpi-premium__icon"><i class="fa-solid fa-scale-unbalanced"></i></div>
+                    <div>
+                        <div class="wd-kpi-label">Balance Amount</div>
+                        <div class="wd-kpi-val" id="iprKpiBalance">—</div>
+                        <div class="wd-kpi-delta" id="iprKpiBalanceSub"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="ipr-panel ipr-panel--detail mb-0">
             <div class="ipr-panel__title">
                 <span class="ipr-dot"></span>

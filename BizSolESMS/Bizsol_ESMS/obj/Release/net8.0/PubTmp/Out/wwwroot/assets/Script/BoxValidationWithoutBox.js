@@ -1,4 +1,15 @@
 var G_ItemConfig = JSON.parse(sessionStorage.getItem('ItemConfig'));
+var G_Fixparameter;
+try { G_Fixparameter = JSON.parse(sessionStorage.getItem('Fixparameter')); } catch (e) { G_Fixparameter = null; }
+function getFixParamValue(key) {
+    if (!G_Fixparameter || !G_Fixparameter[0]) return '';
+    var row = G_Fixparameter[0];
+    var camelKey = key.charAt(0).toLowerCase() + key.slice(1);
+    var v = row[key] != null ? row[key] : row[camelKey];
+    return (v != null && String(v).trim() !== '') ? String(v).trim() : '';
+}
+let G_IsManualQtyInValidation = getFixParamValue('IsManualQtyInValidation') === 'Y';
+let G_IsShowMFDDate = getFixParamValue('IsShowMFDDate') === 'Y';
 var authKeyData = JSON.parse(sessionStorage.getItem('authKey'));
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -58,6 +69,12 @@ function BoxValidationDetail(Check) {
                     } else {
                         hiddenColumns = ["Msg", "Status", "Code", "BoxNo"];
                         $("#btnAutoUpdate").hide();
+                    }
+                    if (!G_IsManualQtyInValidation) {
+                        hiddenColumns.push("Manual Qty");
+                    }
+                    if (!G_IsShowMFDDate) {
+                        hiddenColumns.push("MFD Date");
                     }
                     const ColumnAlignment = {
                         Qty: "right"
@@ -138,10 +155,8 @@ function checkValidateqty(element, Code) {
     } else {
         $("#txtReceivedQty_" + Code).val(total);
         if (manualQty > 0) {
-            var mfdDate = $("#txtMFDDate_" + Code).val();
-            if (!mfdDate || mfdDate.length < 7) {
-                toastr.error("MFD Date is required! (MM/YYYY)");
-                $("#txtMFDDate_" + Code).focus();
+            var mfdDate = getMFDDateValue(Code);
+            if (!validateMFDDate(Code, mfdDate)) {
                 return;
             }
             SaveManualValidationDetail(Code, scanQty, manualQty, total, mfdDate);
@@ -171,15 +186,26 @@ function checkValidateqty1(element, Code) {
     } else {
         $("#txtReceivedQty_" + Code).val(total);
         if (manualQty > 0) {
-            var mfdDate = $("#txtMFDDate_" + Code).val();
-            if (!mfdDate || mfdDate.length < 7) {
-                toastr.error("MFD Date is required! (MM/YYYY)");
-                $("#txtMFDDate_" + Code).focus();
+            var mfdDate = getMFDDateValue(Code);
+            if (!validateMFDDate(Code, mfdDate)) {
                 return;
             }
             SaveManualValidationDetail(Code, scanQty, manualQty, total, mfdDate);
         }
     }
+}
+function getMFDDateValue(Code) {
+    if (!G_IsShowMFDDate) return '';
+    return ($("#txtMFDDate_" + Code).val() || '').trim();
+}
+function validateMFDDate(Code, mfdDate) {
+    if (!G_IsShowMFDDate) return true;
+    if (!mfdDate || mfdDate.length < 7) {
+        toastr.error("MFD Date is required! (MM/YYYY)");
+        $("#txtMFDDate_" + Code).focus();
+        return false;
+    }
+    return true;
 }
 function FormatMFDDate(element) {
     var val = element.value.replace(/[^0-9]/g, '');
@@ -189,20 +215,19 @@ function FormatMFDDate(element) {
     element.value = val;
 }
 function checkMFDDate(element, Code) {
+    if (!G_IsShowMFDDate) return;
+
     var mfdDate = $(element).val();
-    var manualQty = parseInt($("#txtManualQty_" + Code).val()) || 0;
+    var manualQty = G_IsManualQtyInValidation ? (parseInt($("#txtManualQty_" + Code).val()) || 0) : 0;
     var scanQty = parseInt($("#txtScanQty_" + Code).val()) || 0;
 
     if (manualQty <= 0 && scanQty <= 0) return;
 
-    if (!mfdDate || mfdDate.length < 7) {
-        toastr.error("MFD Date is required! (MM/YYYY)");
-        $(element).focus();
+    if (!validateMFDDate(Code, mfdDate)) {
         return;
     }
-    var scanQtyVal = parseInt($("#txtScanQty_" + Code).val()) || 0;
     var receivedQty = parseInt($("#txtReceivedQty_" + Code).val()) || 0;
-    SaveManualValidationDetail(Code, scanQtyVal, manualQty, receivedQty, mfdDate);
+    SaveManualValidationDetail(Code, scanQty, manualQty, receivedQty, mfdDate);
 }
 function OnChangeNumericTextBox(event, element) {
     if (event.charCode == 13 || event.charCode == 46 || event.charCode == 8 || (event.charCode >= 48 && event.charCode <= 57)) {
