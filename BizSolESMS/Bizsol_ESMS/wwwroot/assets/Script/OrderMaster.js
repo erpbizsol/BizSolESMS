@@ -108,6 +108,7 @@ $(document).ready(function () {
             ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Order Date`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    <button class="btn btn-info icon-height mb-1" title="Print" onclick="PrintOrderPicking('${item.Code}')"><i class="fa fa-print"></i></button>
                     `
         }));
         if (filteredData.length === 0) {
@@ -157,6 +158,7 @@ function ShowOrderMasterlist(Type) {
                     ...item, Action: `<button class="btn btn-primary icon-height mb-1"  title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${item[`Order Date`]}')"><i class="fa-regular fa-circle-xmark"></i></button>
                     <button class="btn btn-primary icon-height mb-1"  title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+                    <button class="btn btn-info icon-height mb-1" title="Print" onclick="PrintOrderPicking('${item.Code}')"><i class="fa fa-print"></i></button>
                     `
                 }));
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
@@ -1158,7 +1160,7 @@ function ClearDataImport() {
     $("#txtImportOrderNo").val("");
     $("#Orderdata").empty();
     $("#txtImportRemark").val("");
-    GetCurrentDate();
+    //GetCurrentDate();
     GetAccountMasterList();
 }
 function getRequiredOrderExcelColumns() {
@@ -1590,8 +1592,199 @@ function disableFields(disabled) {
         .css("pointer-events", disabled ? "none" : "auto");
 }
 
+/* Order Picking Print — client-side HTML → browser Print / Save as PDF */
+function PrintOrderPicking(orderMasterCode) {
+    function pick(row, keys) {
+        if (!row) return '';
+        for (var i = 0; i < keys.length; i++) {
+            var k = keys[i];
+            if (row[k] != null && String(row[k]).trim() !== '') return String(row[k]).trim();
+        }
+        return '';
+    }
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function displayDate(val) {
+        /* Keep API format as-is (e.g. 31-Jul-2026 / 01-Aug-2026) */
+        if (val == null || val === '') return '';
+        return String(val).trim();
+    }
+    function loginUserName() {
+        return (sessionStorage.getItem('UserName')
+            || (authKeyData && (authKeyData.UserName || authKeyData.userName))
+            || '').toString().trim();
+    }
+    function normalize(res) {
+        if (!res) return null;
+        var headers = res.OrderHeader || res.orderHeader || [];
+        var details = res.OrderDetails || res.orderDetails || [];
+        if (!headers.length) return null;
+        var h = headers[0];
+        var lines = (details || []).map(function (L, idx) {
+            return {
+                sr: pick(L, ['Sr No', 'SrNo', 'Sr', 'SNo']) || String(idx + 1),
+                productName: pick(L, ['Product Name', 'ProductName', 'ItemCode', 'Item Code', 'ItemBarCode']),
+                description: pick(L, ['Description', 'ItemName', 'Item Name', 'ProductDescription']),
+                mrp: pick(L, ['MRP', 'Mrp', 'Rate', 'ScanMRP']),
+                ordQty: pick(L, ['Ord Qty', 'OrdQty', 'OrderQty', 'Order Qty', 'Qty', 'Quantity']),
+                pickQty: pick(L, ['Pick Qty', 'PickQty']),
+                rackNo: pick(L, ['Rack No', 'RackNo', 'Rank No', 'RankNo']),
+                location: pick(L, ['Location(Bin)', 'Location (Bin)', 'LocationName', 'Location', 'Bin', 'BinNo', 'Item Address', 'ItemAddress']),
+                stock: pick(L, ['Stock', 'StockQty', 'ClosingStock', 'AvailableQty']),
+                brand: pick(L, ['Brand', 'BrandName'])
+            };
+        });
+        var qQty = pick(h, ['Q Qty', 'QQty', 'TotalQty', 'Total Order Qty', 'OrderQty']);
+        if (!qQty) {
+            var sum = 0;
+            lines.forEach(function (ln) { var q = parseFloat(ln.ordQty); if (!isNaN(q)) sum += q; });
+            if (sum) qQty = String(sum);
+        }
+        return {
+            companyName: pick(h, ['CompanyName', 'Company Name', 'CompanyShortName', 'CompanyNameForShow']),
+            orderNo: pick(h, ['Order No', 'OrderNo', 'orderNo']),
+            partyName: pick(h, ['Party Name', 'PartyName', 'AccountName', 'ClientName', 'Client Name', 'Account Name']),
+            address: pick(h, ['Address', 'ClientAddress', 'Client Address', 'PartyAddress']),
+            pickedBy: loginUserName(),
+            printDate: displayDate(pick(h, ['PrintDate', 'Print Date', 'PrintedOn'])),
+            orderDate: displayDate(pick(h, ['Order Date', 'OrderDate'])),
+            totalOrderQty: qQty,
+            lines: lines
+        };
+    }
+    function footerDateDdMmmYyyy() {
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var d = new Date();
+        return String(d.getDate()).padStart(2, '0') + '-' + months[d.getMonth()] + '-' + d.getFullYear();
+    }
+    function buildHtml(snap) {
+        if (typeof buildOrderPickingPrintHtml === 'function') {
+            return buildOrderPickingPrintHtml(snap);
+        }
+        var rows = '';
+        var footerDate = footerDateDdMmmYyyy();
+        (snap.lines || []).forEach(function (ln) {
+            rows += '<tr><td class="tc">' + esc(ln.sr) + '</td><td class="code">' + esc(ln.productName) + '</td><td>' + esc(ln.description)
+                + '</td><td class="tr">' + esc(ln.mrp) + '</td><td class="tc qty">' + esc(ln.ordQty) + '</td><td class="pick"></td>'
+                + '<td class="tc">' + esc(ln.rackNo) + '</td><td class="tc loc">' + esc(ln.location) + '</td>'
+                + '<td class="tr">' + esc(ln.stock) + '</td><td>' + esc(ln.brand) + '</td></tr>';
+        });
+        if (!rows) rows = '<tr><td colspan="10" class="tc muted">No items found</td></tr>';
+        var pdfName = String(snap.orderNo || 'Order').replace(/[\\\/:*?"<>|]+/g, '-').trim() || 'Order';
+        return '<!DOCTYPE html><html><head><meta charset="utf-8"/><title>' + esc(pdfName) + '</title>'
+            + '<style>'
+            + '*{box-sizing:border-box;margin:0;padding:0}'
+            + 'body{font-family:Segoe UI,Tahoma,Arial,sans-serif;font-size:12px;color:#111;background:#fff;padding:8px 10px 30px}'
+            + '.sheet{max-width:100%}'
+            + '.brand{text-align:center;border-bottom:2px solid #111;padding:0 0 8px;margin:0 0 12px}'
+            + '.brand h1{font-size:20px;font-weight:700;letter-spacing:.3px;line-height:1.2}'
+            + '.brand .doc{margin-top:3px;font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#333}'
+            + '.meta-block{margin:0 0 12px;max-width:520px}'
+            + '.row{display:flex;gap:8px;margin:0 0 4px;align-items:baseline}'
+            + '.lbl{min-width:110px;color:#333;font-size:12px;font-weight:600}'
+            + '.val{flex:1;font-size:12px}'
+            + '.val.strong{font-weight:700}'
+            + '.meta-gap{height:8px}'
+            + '.sec{display:flex;align-items:center;gap:8px;margin:4px 0 6px}'
+            + '.sec span{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}'
+            + '.sec:after{content:"";flex:1;height:1px;background:#999}'
+            + 'table.items{width:100%;border-collapse:collapse;table-layout:fixed}'
+            + 'table.items th,table.items td{border:1px solid #333;padding:5px 4px;vertical-align:middle;font-size:11px;word-wrap:break-word}'
+            + 'table.items th{background:#e8e8e8;font-weight:700;text-align:center;font-size:10px}'
+            + 'table.items tbody tr:nth-child(even){background:#fafafa}'
+            + '.tc{text-align:center}.tr{text-align:right}.code{font-weight:600}.loc{font-weight:700}.qty{font-weight:700}'
+            + '.pick{min-height:18px;background:#fff}.muted{color:#777}'
+            + '.signs{display:flex;gap:16px;margin-top:28px}'
+            + '.sign{flex:1;text-align:center}'
+            + '.sign .line{border-top:1px solid #111;margin:28px 8px 4px;height:0}'
+            + '.sign .cap{font-size:11px;font-weight:600}'
+            + '.page-date{position:fixed;left:0;right:0;bottom:3px;text-align:center;font-size:10px;color:#333}'
+            + '@page{margin:5mm;size:A4}'
+            + '@media print{body{padding:4px 6px 24px}table.items th,table.items tbody tr:nth-child(even){-webkit-print-color-adjust:exact;print-color-adjust:exact}}'
+            + '</style></head><body><div class="sheet">'
+            + '<div class="brand"><h1>' + esc(snap.companyName || '') + '</h1><div class="doc">Order Picking List</div></div>'
+            + '<div class="meta-block">'
+            + '<div class="row"><div class="lbl">Order No</div><div class="val strong">' + esc(snap.orderNo) + '</div></div>'
+            + '<div class="row"><div class="lbl">Party Name</div><div class="val strong">' + esc(snap.partyName) + '</div></div>'
+            + '<div class="row"><div class="lbl">Address</div><div class="val">' + esc(snap.address) + '</div></div>'
+            + '<div class="meta-gap"></div>'
+            + '<div class="row"><div class="lbl">Print By</div><div class="val">' + esc(snap.pickedBy) + '</div></div>'
+            + '<div class="row"><div class="lbl">Print Date</div><div class="val">' + esc(snap.printDate) + '</div></div>'
+            + '<div class="row"><div class="lbl">Order Date</div><div class="val">' + esc(snap.orderDate) + '</div></div>'
+            + '<div class="row"><div class="lbl">Total Order Qty</div><div class="val strong">' + esc(snap.totalOrderQty) + '</div></div>'
+            + '</div>'
+            + '<div class="sec"><span>Product Details</span></div>'
+            + '<table class="items"><thead><tr>'
+            + '<th style="width:5%">Sr</th><th style="width:12%">Product Name</th><th style="width:22%">Description</th>'
+            + '<th style="width:7%">MRP</th><th style="width:7%">Ord Qty</th><th style="width:7%">Pick Qty</th>'
+            + '<th style="width:8%">Rack No</th><th style="width:10%">Location (Bin)</th><th style="width:8%">Stock</th><th style="width:14%">Brand</th>'
+            + '</tr></thead><tbody>' + rows + '</tbody></table>'
+            + '<div class="signs">'
+            + '<div class="sign"><div class="line"></div><div class="cap">Picked By</div></div>'
+            + '<div class="sign"><div class="line"></div><div class="cap">Packed By</div></div>'
+            + '<div class="sign"><div class="line"></div><div class="cap">Checked By</div></div>'
+            + '</div></div>'
+            + '<div class="page-date">' + esc(footerDate) + '</div>'
+            + '</body></html>';
+    }
+    function printHtml(html, orderNo) {
+        var iframe = document.getElementById('oppPrintFrame');
+        if (iframe) iframe.remove();
+        iframe = document.createElement('iframe');
+        iframe.id = 'oppPrintFrame';
+        iframe.setAttribute('style', 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;');
+        document.body.appendChild(iframe);
+        var win = iframe.contentWindow;
+        var doc = win.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+        setTimeout(function () {
+            var prevTitle = document.title;
+            var name = String(orderNo || '').replace(/[\\\/:*?"<>|]+/g, '-').trim();
+            try {
+                if (name) {
+                    document.title = name;
+                    doc.title = name;
+                }
+                win.focus();
+                win.print();
+            } catch (e) { }
+            setTimeout(function () {
+                document.title = prevTitle;
+                if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            }, 1500);
+        }, 300);
+    }
 
-   
-
-
-
+    var code = parseInt(orderMasterCode, 10) || 0;
+    if (!code) {
+        toastr.error('Invalid order for print.');
+        return;
+    }
+    blockUI();
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetOrderPickingPrint?OrderMaster_Code=${encodeURIComponent(code)}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (res) {
+            unblockUI();
+            var snap = normalize(res);
+            if (!snap) {
+                toastr.warning('No picking data found for this order.');
+                return;
+            }
+            printHtml(buildHtml(snap), snap.orderNo);
+        },
+        error: function (xhr) {
+            unblockUI();
+            toastr.error((xhr && xhr.responseText) ? xhr.responseText : 'Unable to load order picking print data.');
+        }
+    });
+}
+window.PrintOrderPicking = PrintOrderPicking;

@@ -34,6 +34,11 @@ $(document).ready(function () {
     });
     $('#txtDefaultCheck').on('keydown', function (e) {
         if (e.key === 'Enter') {
+            $('#txtIsShowInPSR').focus();
+        }
+    });
+    $('#txtIsShowInPSR').on('keydown', function (e) {
+        if (e.key === 'Enter') {
             $('#txtbtnSave').focus();
         }
     });
@@ -56,6 +61,7 @@ function Save() {
     const Branch = $("#txtBranch").val().trim();
     const Type = $("#ddlType").val();
     const DefaultCheck = $("#txtDefaultCheck").is(":checked") ? "Y" : "N";
+    const IsShowInPSR = $("#txtIsShowInPSR").is(":checked") ? "Y" : "N";
 
     if (BankName === "") {
         toastr.error('Please enter a Bank Name.');
@@ -95,7 +101,8 @@ function Save() {
         ifscCode: IFSCCode,
         branch: Branch,
         type: Type,
-        defaultCheck: DefaultCheck
+        defaultCheck: DefaultCheck,
+        isShowInPSR: IsShowInPSR
     };
     $.ajax({
         url: `${appBaseURL}/api/Master/InsertBankMaster?UserMaster_Code=${UserMaster_Code}`,
@@ -133,7 +140,7 @@ function ShowBankMasterlist(Type) {
         success: function (response) {
             if (response.length > 0) {
                 $("#txtbanktable").show();
-                const StringFilterColumn = ["Bank Name", "Account No", "IFSC Code", "Branch", "Type"];
+                const StringFilterColumn = ["Bank Name", "Account No", "IFSC Code", "Branch", "Type", "Is Show In PSR"];
                 const NumericFilterColumn = [];
                 const DateFilterColumn = [];
                 const Button = false;
@@ -256,6 +263,7 @@ async function Edit(code) {
                     $("#txtBranch").val(item.Branch);
                     $("#ddlType").val(item.Type);
                     $("#txtDefaultCheck").prop("checked", item.DefaultCheck != 'N');
+                    $("#txtIsShowInPSR").prop("checked", item.IsShowInPSR != 'N');
                     $("#txtbtnSave").prop("disabled", false);
                     disableFields(false);
                 });
@@ -277,6 +285,7 @@ function ClearData() {
     $("#txtBranch").val("");
     $("#ddlType").val("");
     $("#txtDefaultCheck").prop("checked", false);
+    $("#txtIsShowInPSR").prop("checked", false);
 }
 
 function GetModuleMasterCode() {
@@ -314,6 +323,7 @@ async function View(code) {
                     $("#txtBranch").val(item.Branch);
                     $("#ddlType").val(item.Type);
                     $("#txtDefaultCheck").prop("checked", item.DefaultCheck != 'N');
+                    $("#txtIsShowInPSR").prop("checked", item.IsShowInPSR != 'N');
                     $("#txtbtnSave").prop("disabled", true);
                     disableFields(true);
                 });

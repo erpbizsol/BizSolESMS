@@ -3,6 +3,7 @@ try { authKeyData = JSON.parse(sessionStorage.getItem('authKey')); } catch (e) {
 const appBaseURL = sessionStorage.getItem('AppBaseURL') || '';
 /** API: GetInvoicePaymentReport — grid: S.No, Invoice No, Invoice Date, Client Name, Invoice Amount, Payment Amount, Balance Amount, Status */
 var API_INVOICE_PAYMENT_REPORT = '/api/Report/GetInvoicePaymentReport';
+var API_CLIENT_LIST = '/api/Master/GetAccountIsClientDropDown';
 var G_InvReportRows = [];
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
@@ -11,10 +12,38 @@ let UserModuleMaster_Code = 0;
 $(document).ready(function () {
     $("#ERPHeading").text("Invoice Payment Report");
     GetModuleMasterCode();
+    iprInitSelect2();
+    iprLoadClientDropdown();
     GetCurrentDate();
     $('#btnIprShow').on('click', Report);
     $('#btnIprDownload').on('click', Download);
 });
+
+function iprInitSelect2() {
+    $('#ddlIprClient').select2({ theme: 'default', width: '100%', allowClear: true });
+}
+
+function iprLoadClientDropdown() {
+    $.ajax({
+        url: appBaseURL + API_CLIENT_LIST,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (res) {
+            var opts = '<option value="0">All clients</option>';
+            if (res && res.length) {
+                $.each(res, function (i, item) {
+                    opts += '<option value="' + item.Code + '">' + (item.AccountName || '') + '</option>';
+                });
+            }
+            $('#ddlIprClient').html(opts).val('0').trigger('change');
+        },
+        error: function (xhr, status, error) {
+            console.error('GetAccountIsClientDropDown', xhr.status, xhr.responseText || error);
+        }
+    });
+}
 
 function GetModuleMasterCode() {
     try {
@@ -179,10 +208,14 @@ function invReportValidateFilters() {
         return null;
     }
 
+    var accountCode = parseInt($('#ddlIprClient').val(), 10);
+    if (isNaN(accountCode)) accountCode = 0;
+
     return {
         FromDate: convertDateFormat(fromUi),
         ToDate: convertDateFormat(toUi),
-        PaymentStatus: paymentStatus
+        PaymentStatus: paymentStatus,
+        AccountMaster_Code: accountCode
     };
 }
 
@@ -328,7 +361,8 @@ function GetInvoicePaymentReport() {
         data: {
             FromDate: filters.FromDate,
             ToDate: filters.ToDate,
-            PaymentStatus: filters.PaymentStatus
+            PaymentStatus: filters.PaymentStatus,
+            AccountMaster_Code: filters.AccountMaster_Code
         },
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -372,7 +406,8 @@ async function Download() {
         data: {
             FromDate: filters.FromDate,
             ToDate: filters.ToDate,
-            PaymentStatus: filters.PaymentStatus
+            PaymentStatus: filters.PaymentStatus,
+            AccountMaster_Code: filters.AccountMaster_Code
         },
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -444,7 +479,12 @@ async function invReportExportExcel(Data, filters) {
     var url = window.URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'InvoicePaymentReport_' + (filters.PaymentStatus || 'All') + '_' + filters.ToDate.replace(/-/g, '') + '.xlsx';
+    var clientSuffix = '';
+    if (filters.AccountMaster_Code) {
+        var clientText = ($('#ddlIprClient option:selected').text() || '').trim();
+        clientSuffix = '_' + (clientText.replace(/[^\w\-]+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || filters.AccountMaster_Code);
+    }
+    a.download = 'InvoicePaymentReport_' + (filters.PaymentStatus || 'All') + clientSuffix + '_' + filters.ToDate.replace(/-/g, '') + '.xlsx';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

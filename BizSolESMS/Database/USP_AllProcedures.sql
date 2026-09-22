@@ -994,6 +994,13 @@ BEGIN
         GROUP BY ItemMaster.AuditDate
         HAVING SUM(ScanQty) = 0
     ) AS T;
+
+    -- Section 13: Company Name (ds.Tables[12])
+    SELECT CompanyName
+    FROM CompanyMaster
+    WHERE IFNULL(IsActive, 'Y') = 'Y'
+    ORDER BY Code
+    LIMIT 1;
 END$$
 
 DELIMITER ;

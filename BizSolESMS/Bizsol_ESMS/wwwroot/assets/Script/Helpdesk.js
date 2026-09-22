@@ -124,7 +124,7 @@ function SaveHelpdesk(TicketNo) {
         },
         success: function (response) {
             if (response.Status === 'Y') {
-                toastr.success(response.Msg);
+                //toastr.success(response.Msg);
                 ShowHelpdesklist('GET');
                 BackMaster();
             } else {
@@ -465,14 +465,56 @@ function CreateTicketMaster() {
                 toastr.error("Unable to get current date.");
                 return;
             }
-            SubmitTicketMaster(ModuleName, Description, files, logDate);
+            GetLoggedInUserForTicket(function (user) {
+                SubmitTicketMaster(ModuleName, Description, files, logDate, user);
+            });
         },
         error: function () {
             toastr.error("Failed to fetch current date.");
         }
     });
 }
-function SubmitTicketMaster(ModuleName, Description, files, logDate) {
+function GetLoggedInUserForTicket(callback) {
+    $.ajax({
+        url: `${appBaseURL}/api/UserMaster/GetUserMasterListByCode?Code=${UserMaster_Code}`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (!response) {
+                toastr.error("Unable to get logged-in user details.");
+                return;
+            }
+            callback({
+                RaisedBy: response.UserName || sessionStorage.getItem('UserName') || "",
+                ContactNo: response.UserMobileNo || "",
+                ContactEMail: response.EmailID || ""
+            });
+        },
+        error: function () {
+            toastr.error("Failed to fetch logged-in user details.");
+        }
+    });
+}
+function SubmitTicketMaster(ModuleName, Description, files, logDate, user) {
+    var raisedBy = (user && user.RaisedBy) ? String(user.RaisedBy).trim() : (sessionStorage.getItem('UserName') || "").trim();
+    var contactNo = (user && user.ContactNo) ? String(user.ContactNo).trim() : "";
+    var contactEMail = (user && user.ContactEMail) ? String(user.ContactEMail).trim() : "";
+
+    if (!raisedBy) {
+        toastr.error("Please enter User Name in UserMaster.");
+        return;
+    }
+    if (!contactNo) {
+        toastr.error("Please enter Mobile No in UserMaster.");
+        return;
+    }
+    if (!contactEMail) {
+        toastr.error("Please enter Email in UserMaster.");
+        return;
+    }
+
     var formData = new FormData();
     formData.append("CompanyCode", "BIZSOLCRM");
     formData.append("TicketType", "1");
@@ -481,14 +523,22 @@ function SubmitTicketMaster(ModuleName, Description, files, logDate) {
     formData.append("ProjectClient", "Webiz");
     formData.append("LogDate", logDate);
     formData.append("Module", "5");
-    formData.append("RaisedBy", "Manu Goel");
-    formData.append("ContactNo", "7520242943");
-    formData.append("ContactEMail", "manu.goel@bizsol.in");
+    formData.append("RaisedBy", raisedBy);
+    formData.append("ContactNo", contactNo);
+    formData.append("ContactEMail", contactEMail);
     formData.append("Source", "6");
     formData.append("Description", ModuleName + ' - ' + Description);
     formData.append("CreateTicketBy", "92");
     formData.append("TestedBy", "92");
     formData.append("UserModuleMaster_Code", "0");
+    formData.append("Assigned", "92");
+    formData.append("AssignedText", "MANU GOEL");
+    formData.append("CommittedDate", logDate);
+    formData.append("EstimatedTime", "10");
+    formData.append("WorkType", "3");
+    formData.append("WorkTypeText", "Bug");
+    formData.append("Employee_Code", "92");
+    formData.append("EmployeeName", "MANU GOEL");
 
     if (files && files.length > 0) {
         for (var i = 0; i < files.length; i++) {

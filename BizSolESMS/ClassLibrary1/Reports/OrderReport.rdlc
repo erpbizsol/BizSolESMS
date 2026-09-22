@@ -4021,7 +4021,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>MG Corporation - Daily Operation Report(DOS)</Value>
+                    <Value>=Parameters!CompanyName.Value &amp; " - Daily Operation Report(DOS)"</Value>
                     <Style>
                       <FontSize>18pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -6135,10 +6135,25 @@
       </Page>
     </ReportSection>
   </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="CompanyName">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>CompanyName</Prompt>
+    </ReportParameter>
+  </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
       <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>CompanyName</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <EmbeddedImages>

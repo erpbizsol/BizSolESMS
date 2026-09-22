@@ -694,7 +694,7 @@ function OdItemLabel(key) {
 function OdRenderItemGrid(details, highlightLineCode) {
     if (!details.length) {
         $('#tblOdItems-header').html('');
-        $('#tblOdItems-body').html('<tr><td colspan="8" class="text-center text-muted py-3">No items found. Scan a product to start dispatch.</td></tr>');
+        $('#tblOdItems-body').html('<tr><td colspan="9" class="text-center text-muted py-3">No items found. Scan a product to start dispatch.</td></tr>');
         return;
     }
 
@@ -710,6 +710,7 @@ function OdRenderItemGrid(details, highlightLineCode) {
         + '<th class="text-end">Box No</th>'
         + '<th class="text-end">MRP</th>'
         + '<th>Location</th>'
+        + '<th class="text-end">Stock Qty</th>'
         + '<th></th>'
         + '</tr>';
     $('#tblOdItems-header').html(headerHtml);
@@ -722,6 +723,7 @@ function OdRenderItemGrid(details, highlightLineCode) {
         var mrp = item.MRP != null && item.MRP !== 'NULL' ? item.MRP : '';
         var mrpNum = mrp !== '' ? parseFloat(mrp) : 0;
         var location = item.Location || '';
+        var stockQty = item['Stock Qty'] != null ? item['Stock Qty'] : '';
         var itemCode = item[itemCodeKey] || '';
         var balQty = item['Bal Qty'] != null ? item['Bal Qty']
             : (item['Balance Quantity'] != null ? item['Balance Quantity']
@@ -758,6 +760,7 @@ function OdRenderItemGrid(details, highlightLineCode) {
             + 'class="box_border form-control form-control-sm text-right BizSolFormControl od-mrp-input" autocomplete="off" placeholder="MRP..">'
             + '</td>'
             + '<td>' + OdEscHtml(location) + '</td>'
+            + '<td class="text-end">' + OdEscHtml(stockQty) + '</td>'
             + '<td class="text-center">'
             + (G_OdViewMode || item.ROWSTATUS === 'RED' ? '' : '<button type="button" class="btn btn-sm btn-danger icon-height mb-1" title="Delete item qty" onclick="OdDeleteLineQty(' + item.Code + ')"><i class="fa-solid fa-trash"></i></button>')
             + '</td>'

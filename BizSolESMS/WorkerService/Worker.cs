@@ -28,8 +28,8 @@ namespace WorkerService
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
            
-            string folderPath = @"C:\Esms Email Service";
-            string ConnectionString = "Server=220.158.165.98;Port=65448;database=mg_corporation_main;user=sa;password=biz1981;";
+            string folderPath = @"C:\Esms_Email_Service";
+            string ConnectionString = "Server=202.140.137.117;Port=65448;database=mg_corporation_main;user=sa;password=biz1981;";
             Directory.CreateDirectory(folderPath);
 
             string filePath = Path.Combine(folderPath, "log.txt");
