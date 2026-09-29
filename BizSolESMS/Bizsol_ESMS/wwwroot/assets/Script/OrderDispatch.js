@@ -550,7 +550,12 @@ function OdRenderList(rows) {
                 + '<i class="fa-solid fa-eye"></i></button>';
             if (OdIsInvoiceGenerated(statusRaw)) {
                 actions += '<button type="button" class="btn btn-sm btn-success od-list-action-btn icon-height" title="Download Invoice" onclick="invoiceMasterOpenPrint(\'' + dispatchCode + '\')">'
-                    + '<i class="fa-solid fa fa-download"></i></button>';
+                    + '<i class="fa-solid fa fa-download"></i></button>'
+                    + '<button type="button" class="btn btn-sm btn-primary od-list-action-btn icon-height" title="Edit Invoice" onclick="OdOpenInvoiceEditor(' + dispatchCode + ',\'edit\')">'
+                    + '<i class="fa-solid fa-pencil"></i></button>';
+            } else {
+                actions += '<button type="button" class="btn btn-sm btn-primary od-list-action-btn icon-height" title="Generate Invoice" onclick="OdOpenInvoiceEditor(' + dispatchCode + ',\'add\')">'
+                    + '<i class="fa fa-plus" aria-hidden="true"></i></button>';
             }
         }
         actions += '</div>';
@@ -1396,7 +1401,7 @@ async function OdMarkComplete(dispatchCode) {
     var perm = await CheckOptionPermission('Complete', UserMaster_Code, UserModuleMaster_Code);
     if (!perm.hasPermission) { toastr.error(perm.msg); return; }
 
-    if (!confirm('Do you want to Complete and Save & Print Invoice?')) return;
+    if (!confirm('Do you want to Complete and Create Invoice?')) return;
 
     blockUI();
     $.ajax({
@@ -1407,11 +1412,11 @@ async function OdMarkComplete(dispatchCode) {
             unblockUI();
             if (response.Status === 'Y') {
                 toastr.success(response.Msg);
-                if (typeof saveInvoiceMasterThenPrint === 'function') {
-                    saveInvoiceMasterThenPrint(dispatchCode, function () {
-                        OdBackToList();
-                    });
+                G_OdInvoiceFromComplete = true;
+                if (typeof OdOpenInvoiceEditor === 'function') {
+                    OdOpenInvoiceEditor(dispatchCode, 'add');
                 } else {
+                    G_OdInvoiceFromComplete = false;
                     OdBackToList();
                 }
             } else {

@@ -189,6 +189,8 @@ function calcInvoiceSummaryFromLines(lines) {
         var qty = parseNum(ln.qty);
         if (!(qty > 0)) qty = 1;
         var scanMrp = parseNum(ln.scanMrp);
+        var basicRate = parseNum(ln.basicRate);
+        var rate = basicRate > 0 ? basicRate : scanMrp;
         var mrp = parseNum(ln.mrp);
         var discAmt = parseNum(ln.discAmt);
         var taxAmt = parseNum(ln.taxAmt);
@@ -196,11 +198,11 @@ function calcInvoiceSummaryFromLines(lines) {
         var discPct = parseNum(ln.discPct);
         var gstPct = parseNum(ln.gstPct);
 
-        totalMrp += scanMrp * qty;
+        totalMrp += rate * qty;
         if (discAmt > 0) {
             totalDiscount += discAmt;
         } else if (discPct > 0) {
-            var discBase = mrp > 0 ? mrp : scanMrp;
+            var discBase = mrp > 0 ? mrp : rate;
             totalDiscount += discBase * (discPct / 100) * qty;
         }
 
@@ -208,9 +210,9 @@ function calcInvoiceSummaryFromLines(lines) {
             taxableAmount += amount - taxAmt;
             totalTax += taxAmt;
         } else {
-            var discBase2 = mrp > 0 ? mrp : scanMrp;
+            var discBase2 = mrp > 0 ? mrp : rate;
             var discUnit = discBase2 * (discPct / 100);
-            var taxableUnit = scanMrp - discUnit;
+            var taxableUnit = rate - discUnit;
             taxableAmount += taxableUnit * qty;
             totalTax += taxableUnit * (gstPct / 100) * qty;
         }
@@ -585,6 +587,7 @@ function mapOrderDetailLineToInvoiceLine(row) {
         itemName: itemName,
         qty: qty,
         mrp: mrp,
+        basicRate: parseNum(pickLineField(row, ['Basic Rate', 'BasicRate', 'BASICRATE'])) || mrp,
         scanMrp: mrp,
         discPct: 0,
         hsn: hsn,
@@ -596,10 +599,12 @@ function mapInvoiceGenerateApiLineToInvoiceLine(row) {
     var itemName = String(pickLineField(row, ['Item Name', 'ItemName']) || '');
     var qty = parseNum(row['Qty']);
     var mrp = parseNum(row['MRP']);
+    var basicRate = parseNum(pickLineField(row, ['Basic Rate', 'BasicRate', 'BASICRATE']));
     var scanMrp = parseNum(pickLineField(row, ['Scan MRP', 'ScanMRP', 'SCANMRP']));
     if (!(scanMrp > 0) && mrp > 0) {
         scanMrp = mrp;
     }
+    if (!(basicRate > 0)) basicRate = scanMrp > 0 ? scanMrp : mrp;
     var discPct = parseNum(
         row['DiscountPercent'] != null ? row['DiscountPercent'] : row['Discount']
     );
@@ -622,6 +627,7 @@ function mapInvoiceGenerateApiLineToInvoiceLine(row) {
         itemName: itemName,
         qty: qty,
         mrp: mrp,
+        basicRate: basicRate,
         scanMrp: scanMrp,
         discPct: discPct,
         hsn: hsn,
@@ -706,12 +712,12 @@ function recalcRow($tr) {
     var qty = parseNum($tr.find('.inv-qty').text());
     if (!(qty > 0)) qty = 1;
     var mrp = parseNum($tr.find('.inv-mrp').text());
-    var scanMrp = parseNum($tr.find('.inv-scan-mrp').val());
+    var basicRate = parseNum($tr.find('.inv-basic-rate').val());
     var discPct = parseNum($tr.find('.inv-disc-pct').val());
-    /** Disc % is off list MRP when present; when MRP is 0 (e.g. dispatch-only data) use Scan MRP as base. */
-    var discBase = mrp > 0 ? mrp : scanMrp;
+    /** Disc % is off list MRP when present; when MRP is 0, discount and tax use Basic Rate. */
+    var discBase = mrp > 0 ? mrp : basicRate;
     var discAmtUnit = discBase * (discPct / 100);
-    var taxableUnit = scanMrp - discAmtUnit;
+    var taxableUnit = basicRate - discAmtUnit;
     var gstRaw = ($tr.find('.inv-gst').val() || '').trim();
     var gstPct = gstRaw === '' ? 0 : parseNum(gstRaw);
     if (!isFinite(gstPct) || isNaN(gstPct) || gstPct < 0) gstPct = 0;
@@ -765,8 +771,8 @@ function applyPendingInvoiceDiscBulkSync() {
     }
 }
 function bindInvoiceItemEvents() {
-    $('#tblInvoiceItemsBody').off('input change', '.inv-scan-mrp, .inv-disc-pct, .inv-gst');
-    $('#tblInvoiceItemsBody').on('input', '.inv-scan-mrp, .inv-gst', function () {
+    $('#tblInvoiceItemsBody').off('input change', '.inv-basic-rate, .inv-disc-pct, .inv-gst');
+    $('#tblInvoiceItemsBody').on('input', '.inv-basic-rate, .inv-gst', function () {
         recalcInvoiceTotal();
     });
     $('#tblInvoiceItemsBody').off('input change.invDiscBulk', '.inv-disc-pct');
@@ -944,9 +950,10 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
                 body += '<td class="inv-cell-readonly text-end inv-qty text-nowrap">' + it.qty + '</td>';
                 body += '<td class="inv-cell-readonly text-end inv-mrp text-nowrap">' + formatMoney(it.mrp) + '</td>';
                 body +=
-                    '<td class="text-end align-middle"><input type="number" step="0.01" class="form-control form-control-sm text-end inv-scan-mrp inv-line-input box_border" value="' +
-                    formatMoney(scanInit) +
+                    '<td class="text-end align-middle"><input type="number" step="0.01" class="form-control form-control-sm text-end inv-basic-rate inv-line-input box_border" value="' +
+                    formatMoney(it.basicRate) +
                     '" /></td>';
+                body += '<td class="inv-cell-readonly text-end inv-scan-mrp text-nowrap">' + formatMoney(scanInit) + '</td>';
                 body +=
                     '<td class="text-end align-middle"><input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm text-end inv-disc-pct inv-line-input box_border" value="' +
                     formatMoney(discInit) +
@@ -1015,8 +1022,8 @@ function validateBeforeSave() {
     var ok = true;
     $('#tblInvoiceItemsBody tr').each(function () {
         var $tr = $(this);
-        var scan = parseNum($tr.find('.inv-scan-mrp').val());
-        if (scan <= 0) ok = false;
+        var basic = parseNum($tr.find('.inv-basic-rate').val());
+        if (basic <= 0) ok = false;
         var d = parseNum($tr.find('.inv-disc-pct').val());
         if (d < 0 || d > 100) ok = false;
         var taxable = parseNum($tr.data('taxable'));
@@ -1029,7 +1036,7 @@ function validateBeforeSave() {
     });
     if (!ok) {
         toastr.error(
-            'Check lines: Scan MRP > 0, discount 0–100%, taxable not negative, each line needs HSN and GST %.'
+            'Check lines: Basic Rate > 0, discount 0–100%, taxable not negative, each line needs HSN and GST %.'
         );
         return false;
     }
@@ -1045,7 +1052,7 @@ function collectInvoiceJsonLinesForSave() {
             ItemCode: String($tr.find('.inv-item-code').text() || '').trim(),
             Qty: parseNum($tr.find('.inv-qty').text()),
             MRP: parseNum($tr.find('.inv-mrp').text()),
-            ScanMRP: parseNum($tr.find('.inv-scan-mrp').val()),
+            ScanMRP: parseNum($tr.find('.inv-scan-mrp').text()),
             DiscountPercent: parseNum($tr.find('.inv-disc-pct').val()),
             DiscountAmount: parseNum($tr.find('.inv-disc-amt').text()),
             GSTRate: parseNum($tr.find('.inv-gst').val()),
@@ -1066,7 +1073,8 @@ function buildClientSnapshotFromForm() {
             itemName: $tr.find('.inv-item-name').text(),
             qty: parseNum($tr.find('.inv-qty').text()),
             mrp: parseNum($tr.find('.inv-mrp').text()),
-            scanMrp: parseNum($tr.find('.inv-scan-mrp').val()),
+            basicRate: parseNum($tr.find('.inv-basic-rate').val()),
+            scanMrp: parseNum($tr.find('.inv-scan-mrp').text()),
             discPct: parseNum($tr.find('.inv-disc-pct').val()),
             discAmt: parseNum($tr.find('.inv-disc-amt').text()),
             hsn: $tr.find('.inv-hsn-select').val(),
@@ -1285,12 +1293,15 @@ function normalizeInvoiceGenerateShapeForPrint(res) {
         var itemName = String(L['Item Name'] || L.ItemName || '').trim();
         var qty = parseNum(L.Qty);
         var mrp = parseNum(L.MRP);
+        var basicRate = parseNum(L['Basic Rate'] != null ? L['Basic Rate'] : (L.BasicRate != null ? L.BasicRate : L.basicRate));
         var scanMrp = parseNum(L['Scan MRP'] != null ? L['Scan MRP'] : L.ScanMRP);
         if (!(scanMrp > 0) && mrp > 0) {
             scanMrp = mrp;
         }
+        if (!(basicRate > 0)) basicRate = scanMrp;
+        var rate = basicRate > 0 ? basicRate : scanMrp;
         var discPct = parseNum(L.DiscountPercent != null ? L.DiscountPercent : L.Discount);
-        var discBase = mrp > 0 ? mrp : scanMrp;
+        var discBase = mrp > 0 ? mrp : rate;
         var discAmtUnit = discBase * (discPct / 100);
         var discAmt = parseNum(L.DiscountAmount);
         if (!(qty > 0)) qty = 1;
@@ -1302,7 +1313,7 @@ function normalizeInvoiceGenerateShapeForPrint(res) {
         if (!(gstPct > 0)) {
             gstPct = 18;
         }
-        var taxableUnit = scanMrp - discAmtUnit;
+        var taxableUnit = rate - discAmtUnit;
         var taxAmt = parseNum(L.TaxAmount);
         var amount = parseNum(L.Amount);
         if (!(taxAmt > 0) && !(amount > 0) && taxableUnit >= 0) {
@@ -1320,6 +1331,7 @@ function normalizeInvoiceGenerateShapeForPrint(res) {
             itemName: itemName,
             qty: qty,
             mrp: mrp,
+            basicRate: basicRate,
             scanMrp: scanMrp,
             discPct: discPct,
             discAmt: discAmt,
@@ -1390,6 +1402,7 @@ function normalizeServerPrintPayload(res) {
                     itemName: String(L['Item Name'] || L.ItemName || L.itemName || '').trim(),
                     qty:      parseNum(L.Qty || L.qty),
                     mrp:      parseNum(L.MRP || L.mrp),
+                    basicRate: parseNum(L['Basic Rate'] != null ? L['Basic Rate'] : (L.BasicRate != null ? L.BasicRate : (L.basicRate || 0))),
                     scanMrp:  parseNum(L['Scan MRP'] != null ? L['Scan MRP'] : (L.ScanMRP || L.scanMrp)),
                     discPct:  parseNum(L.DiscountPercent || L.discPct),
                     discAmt:  parseNum(L.DiscountAmount || L.discAmt),
@@ -1457,13 +1470,14 @@ function buildPrintHtml(snap, upiQrDataUrl) {
     th += '<th>Description</th>';
     th += '<th>Products</th>';
     th += '<th class="tr">Quantity</th>';
+    th += '<th class="tr">Basic<br>Rate</th>';
     if (showMrp) th += '<th class="tr">MRP<br>Per Unit</th>';
     if (showDisc) th += '<th class="tr">Discount%</th>';
     if (showHsn)  th += '<th class="tc">HSN</th>';
     if (showTax)  th += '<th class="tr">GST<br>%</th><th class="tr">Tax<br>Amt</th>';
     th += '<th class="tr">Total<br>Amount</th>';
 
-    var prodColCount = 4;
+    var prodColCount = 5;
     if (showMrp) prodColCount++;
     if (showDisc) prodColCount++;
     if (showHsn) prodColCount++;
@@ -1481,6 +1495,7 @@ function buildPrintHtml(snap, upiQrDataUrl) {
         rows += '<td>' + (ln.itemName || '') + '</td>';
         rows += '<td class="tc">' + (ln.itemCode || '') + '</td>';
         rows += '<td class="tr">' + ln.qty + '</td>';
+        rows += '<td class="tr">' + formatMoney(ln.basicRate) + '</td>';
         if (showMrp) rows += '<td class="tr">' + formatMoney(ln.scanMrp) + '</td>';
         if (showDisc) rows += '<td class="tr">' + formatMoney(ln.discPct) + '</td>';
         if (showHsn)  rows += '<td class="tc">' + (ln.hsn || '') + '</td>';
@@ -1518,6 +1533,7 @@ function buildPrintHtml(snap, upiQrDataUrl) {
     var lineTotalRow = '<tr class="line-total-row">';
     lineTotalRow += '<td colspan="3" class="tl">Total</td>';
     lineTotalRow += '<td class="tr">' + sumQty + '</td>';
+    lineTotalRow += '<td></td>';
     if (showMrp) lineTotalRow += '<td></td>';
     if (showDisc) lineTotalRow += '<td></td>';
     if (showHsn) lineTotalRow += '<td></td>';
