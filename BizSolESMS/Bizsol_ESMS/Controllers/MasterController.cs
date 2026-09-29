@@ -170,6 +170,10 @@ namespace Bizsol_ESMS.Controllers
         {
             return View();
         }
+        public IActionResult FixParameterConfiguration()
+        {
+            return View();
+        }
         public IActionResult StockAuditConfiguration()
         {
             return View();

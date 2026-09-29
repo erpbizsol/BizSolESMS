@@ -1,0 +1,189 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<style>
+    #fixParameterPasswordModal .modal-dialog {
+        max-width: 420px;
+    }
+
+    #fixParameterPasswordModal .modal-content {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(43, 45, 58, 0.18);
+    }
+
+    #fixParameterPasswordModal .fp-access-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.65rem 1rem;
+        min-height: 0;
+        background: linear-gradient(135deg, #2b2d3a 0%, #383a4a 100%);
+        color: #fff;
+    }
+
+    #fixParameterPasswordModal .fp-access-header > div:last-child {
+        flex: 1;
+        min-width: 0;
+        line-height: 1.2;
+    }
+
+    #fixParameterPasswordModal .fp-access-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: rgba(62, 207, 163, 0.2);
+        color: #3ecfa3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    #fixParameterPasswordModal .fp-access-title,
+    #fixParameterPasswordModal #fixParameterPasswordTitle {
+        margin: 0;
+        padding: 0;
+        font-size: 0.9375rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #fff !important;
+    }
+
+    #fixParameterPasswordModal .fp-access-subtitle {
+        margin: 0.125rem 0 0;
+        padding: 0;
+        font-size: 0.75rem;
+        font-weight: 400;
+        line-height: 1.2;
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+    #fixParameterPasswordModal .modal-body {
+        padding: 1.35rem 1.25rem 0.75rem;
+        background: #fff;
+    }
+
+    #fixParameterPasswordModal .fp-access-label {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: #383a4a;
+        margin-bottom: 0.5rem;
+    }
+
+    #fixParameterPasswordModal .fp-access-input-wrap {
+        position: relative;
+    }
+
+    #fixParameterPasswordModal .fp-access-input-wrap .fa-key {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 0.85rem;
+        pointer-events: none;
+    }
+
+    #fixParameterPasswordModal #txtFixParameterAccessPassword {
+        padding-left: 2.25rem;
+        height: 40px;
+        border-radius: 8px;
+        border: 1px solid #e8eaf0;
+        font-size: 0.875rem;
+    }
+
+    #fixParameterPasswordModal #txtFixParameterAccessPassword:focus {
+        border-color: #3ecfa3;
+        box-shadow: 0 0 0 3px rgba(62, 207, 163, 0.2);
+    }
+
+    #fixParameterPasswordModal .modal-footer {
+        border-top: 1px solid #e8eaf0;
+        padding: 0.85rem 1.25rem 1.15rem;
+        background: #fafbfc;
+        justify-content: stretch;
+    }
+
+    #fixParameterPasswordModal #btnFixParameterAccessSubmit {
+        width: 100%;
+        height: 40px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        background: linear-gradient(135deg, #3ecfa3 0%, #1b9e75 100%);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(27, 158, 117, 0.35);
+    }
+
+    #fixParameterPasswordModal #btnFixParameterAccessSubmit:hover {
+        filter: brightness(1.05);
+        color: #fff;
+    }
+</style>
+
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="Save()" id="txtSave" title="Save"><i class='bx bx-save'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">EDIT</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="fixParameterPasswordModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="fixParameterPasswordTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="fp-access-header">
+                <div class="fp-access-icon" aria-hidden="true">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div>
+                    <h5 class="fp-access-title" id="fixParameterPasswordTitle">Password required</h5>
+                    <p class="fp-access-subtitle">Fix parameter Config · authorized access</p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <label for="txtFixParameterAccessPassword" class="fp-access-label d-block">Please Enter your password to access</label>
+                <div class="fp-access-input-wrap">
+                    <i class="fa-solid fa-key" aria-hidden="true"></i>
+                    <input type="password" id="txtFixParameterAccessPassword" class="form-control box_border" placeholder="Password" autocomplete="off" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" id="btnFixParameterAccessSubmit">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="txtCreatepage" style="display:none;">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row pt-0 pb-1 px-1">
+                    <div class="col-md-12">
+                        <input type="hidden" id="hfFixParameterId" value="0" />
+                        <div class="row g-2" id="fixParameterFieldsContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/filter.js"></script>
+<script src="~/assets/script/fixparameterconfiguration.js"></script>
