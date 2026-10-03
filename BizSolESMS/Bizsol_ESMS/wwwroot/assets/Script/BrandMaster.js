@@ -93,6 +93,7 @@ function Save() {
             ImportFormat: $("#txtImportFormat").val(),
             BarcodeType: BarcodeType,
             PicklistNo: $("#txtPicklistNo").is(":checked") ? "Y" : "N",
+            IsReplacement: $("#txtIsReplacement").is(":checked") ? "Y" : "N",
         };
         $.ajax({
             url: `${appBaseURL}/api/Master/InsertBrandMaster?UserMaster_Code=${UserMaster_Code}`,
@@ -151,6 +152,11 @@ async function Edit(code) {
                         $("#txtPicklistNo").prop("checked", false);
                     } else {
                         $("#txtPicklistNo").prop("checked", true);
+                    }
+                    if (item.IsReplacement == 'N') {
+                        $("#txtIsReplacement").prop("checked", false);
+                    } else {
+                        $("#txtIsReplacement").prop("checked", true);
                     }
                     $("#txtbtnSave").prop("disabled", false);
                     disableFields(false);
@@ -214,7 +220,8 @@ function ClearData() {
     $("#txtBrandName").val("");
     $("#txtImportFormat").val("");
     $("#ddlBarcodeType").val("");
-    //$("#txtPicklistNo").val('');
+    $("#txtPicklistNo").prop("checked", true);
+    $("#txtIsReplacement").prop("checked", false);
 }
 
 async function CreateBrandMaster() {
@@ -227,9 +234,6 @@ async function CreateBrandMaster() {
     ClearData();
     $("#txtListpage").hide();
     $("#txtCreatepage").show();
-    $("#hftextCode").prop("disabled", false);
-    $("#txtBrandName").prop("disabled", false);
-    $("#txtbtnSave").prop("disabled", false);
     $("#txtheaderdiv").show();
     disableFields(false);
 
@@ -238,9 +242,6 @@ function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
     ClearData();
-    $("#hftextCode").prop("disabled", false);
-    $("#txtBrandName").prop("disabled", false);
-    $("#txtbtnSave").prop("disabled", false);
     $("#txtheaderdiv").hide();
     disableFields(false);
 }
@@ -278,6 +279,13 @@ async function View(code) {
                         $("#ddlBarcodeType").val(item.BarcodeType).prop("disabled", true);
                         if(item.PicklistNo == 'N') {
                             $("#txtPicklistNo").prop("checked", false);
+                        } else {
+                            $("#txtPicklistNo").prop("checked", true);
+                        }
+                        if (item.IsReplacement == 'N') {
+                            $("#txtIsReplacement").prop("checked", false);
+                        } else {
+                            $("#txtIsReplacement").prop("checked", true);
                         }
                         $("#txtbtnSave").prop("disabled", true),
                         disableFields(true);
@@ -295,7 +303,11 @@ async function View(code) {
     
 }
 function disableFields(disable) {
-    $("#txtCreatepage,#txtbtnSave").not("#btnBack").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+    $("#txtBrandName, #txtImportFormat, #ddlBarcodeType, #txtPicklistNo, #txtIsReplacement")
+        .prop("disabled", disable);
+    $("#txtCreatepage").css("pointer-events", disable ? "none" : "auto");
+    $("#txtbtnSave").prop("disabled", disable).css("pointer-events", disable ? "none" : "auto");
+    $("#btnBack").css("pointer-events", "auto");
 }
 function DataExport() {
     $.ajax({

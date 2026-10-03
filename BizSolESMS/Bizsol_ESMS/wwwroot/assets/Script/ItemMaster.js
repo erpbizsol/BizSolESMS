@@ -9,6 +9,10 @@ const appBaseURL = sessionStorage.getItem('AppBaseURL');
 let G_WarehouseList = [];
 let G_LocationMasterList = [];
 let G_LocationsByWarehouseCode = {};
+let _itemMasterSearchTimer = null;
+let _itemMasterSearchRunId = 0;
+const ITEM_MASTER_SEARCH_DEBOUNCE_MS = 200;
+const ITEM_MASTER_SEARCH_CHUNK_SIZE = 10000;
 
 function getObjValue(obj, keys) {
     if (!obj || typeof obj !== "object") return "";
@@ -1067,6 +1071,91 @@ function UpdateLabelforItemMaster() {
         }
     });
 }
+function buildItemMasterSearchText(row) {
+    var parts = [];
+    for (var key in row) {
+        if (!Object.prototype.hasOwnProperty.call(row, key) || key === 'Action') continue;
+        var val = row[key];
+        if (val == null || val === '') continue;
+        parts.push(String(val));
+    }
+    return parts.join(' ').toLowerCase();
+}
+
+function ItemMasterListSearchInput(term) {
+    clearTimeout(_itemMasterSearchTimer);
+    if (!(term || '').trim()) {
+        ItemMasterListSearch('');
+        return;
+    }
+    _itemMasterSearchTimer = setTimeout(function () {
+        ItemMasterListSearch(term);
+    }, ITEM_MASTER_SEARCH_DEBOUNCE_MS);
+}
+
+function applyItemMasterSearchResult(tableId, bodyId, result) {
+    window['filteredData_' + tableId] = result;
+    window['currentPage_' + tableId] = 1;
+    if (typeof renderTableWithPagination === 'function') {
+        renderTableWithPagination(tableId, bodyId);
+    }
+}
+
+function itemMasterRowMatchesSearch(row, term) {
+    var haystack = row._itemMasterSearchText;
+    if (haystack == null) {
+        haystack = buildItemMasterSearchText(row);
+        row._itemMasterSearchText = haystack;
+    }
+    return haystack.indexOf(term) !== -1;
+}
+
+function ItemMasterListSearch(term) {
+    var tableId = 'table';
+    var bodyId = 'table-body';
+    var full = window['filteredDataTemp_' + tableId];
+    if (!full) return;
+
+    term = (term || '').toLowerCase().trim();
+    if (term === '') {
+        applyItemMasterSearchResult(tableId, bodyId, full);
+        return;
+    }
+
+    _itemMasterSearchRunId += 1;
+    var runId = _itemMasterSearchRunId;
+    var len = full.length;
+
+    if (len <= ITEM_MASTER_SEARCH_CHUNK_SIZE) {
+        var smallResult = [];
+        for (var i = 0; i < len; i++) {
+            if (itemMasterRowMatchesSearch(full[i], term)) {
+                smallResult.push(full[i]);
+            }
+        }
+        applyItemMasterSearchResult(tableId, bodyId, smallResult);
+        return;
+    }
+
+    var chunkedResult = [];
+    var idx = 0;
+    function filterChunk() {
+        if (runId !== _itemMasterSearchRunId) return;
+        var end = Math.min(idx + ITEM_MASTER_SEARCH_CHUNK_SIZE, len);
+        for (; idx < end; idx++) {
+            if (itemMasterRowMatchesSearch(full[idx], term)) {
+                chunkedResult.push(full[idx]);
+            }
+        }
+        if (idx < len) {
+            setTimeout(filterChunk, 0);
+            return;
+        }
+        applyItemMasterSearchResult(tableId, bodyId, chunkedResult);
+    }
+    filterChunk();
+}
+
 function ShowItemMasterlist(Type) {
     blockUI();
     $.ajax({
@@ -1086,7 +1175,7 @@ function ShowItemMasterlist(Type) {
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [G_ItemConfig[0].ItemNameHeader ? G_ItemConfig[0].ItemNameHeader : 'Item Name'];
-                const hiddenColumns = ["Group Name","Sub Group Name","Display Name","Code", "DataImported", "Reorder Level", "Reorder Qty","Box Packing","Batch Applicable","Maintain Expiry","Qty In Box"];
+                const hiddenColumns = ["Group Name","Sub Group Name","Display Name","Code", "DataImported", "Reorder Level", "Reorder Qty","Box Packing","Batch Applicable","Maintain Expiry","Qty In Box", "_itemMasterSearchText"];
                 const ColumnAlignment = {
                     "Reorder Level": 'right',
                     "Reorder Qty": 'right',
@@ -1110,6 +1199,8 @@ function ShowItemMasterlist(Type) {
                         }
                     }
 
+                    renamedItem._itemMasterSearchText = buildItemMasterSearchText(renamedItem);
+
                     renamedItem["Location Name"] = item["Location Name"] === ''
                         ? `<button class="btn btn-primary icon-height mb-1" title="Create location" onclick="CreateLocation('${item.Code}')"><i class="fa-solid fa-plus"></i></button>`
                         : `${item["Location Name"]}&nbsp;<button class="btn btn-primary icon-height mb-1" title="Edit location" onclick="EditLocation('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>`;
@@ -1123,6 +1214,7 @@ function ShowItemMasterlist(Type) {
                 });
 
                 BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
+                $('#txtItemMasterListSearch').val('');
                 ChangecolorTr();
             } else {
                 unblockUI();
@@ -1305,6 +1397,8 @@ async function CreateItemMaster() {
 function BackMaster() {
     $("#txtListpage").show();
     $("#txtCreatepage").hide();
+    $('#txtItemMasterListSearch').val('');
+    ItemMasterListSearch('');
     ClearData();
     applyItemLocationMode();
     if (isWarehouseEnabled()) {

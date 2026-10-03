@@ -103,19 +103,36 @@
     }
 
     #fixParameterPasswordModal .modal-footer {
+        display: flex;
+        gap: 0.65rem;
         border-top: 1px solid #e8eaf0;
         padding: 0.85rem 1.25rem 1.15rem;
         background: #fafbfc;
         justify-content: stretch;
     }
 
+    #fixParameterPasswordModal #btnFixParameterAccessClose,
     #fixParameterPasswordModal #btnFixParameterAccessSubmit {
-        width: 100%;
+        flex: 1;
         height: 40px;
-        border: none;
         border-radius: 8px;
         font-weight: 600;
         font-size: 0.875rem;
+    }
+
+    #fixParameterPasswordModal #btnFixParameterAccessClose {
+        background: #e31b1b;
+        color: #fff;
+        border: 1px solid #d5d8e0;
+    }
+
+    #fixParameterPasswordModal #btnFixParameterAccessClose:hover {
+            background: #e31b1b;
+            color: #fff;
+    }
+
+    #fixParameterPasswordModal #btnFixParameterAccessSubmit {
+        border: none;
         background: linear-gradient(135deg, #3ecfa3 0%, #1b9e75 100%);
         color: #fff;
         box-shadow: 0 4px 12px rgba(27, 158, 117, 0.35);
@@ -164,6 +181,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn" id="btnFixParameterAccessClose">Close</button>
                 <button type="button" class="btn" id="btnFixParameterAccessSubmit">Ok</button>
             </div>
         </div>

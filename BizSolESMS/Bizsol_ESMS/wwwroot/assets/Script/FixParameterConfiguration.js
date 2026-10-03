@@ -9,7 +9,7 @@ let fixParameterData = {};
 let fixParameterAccessPassword = '';
 
 $(document).ready(function () {
-    $("#ERPHeading").text("Fix parameter Config");
+    $("#ERPHeading").text("Fixed Parameter Configuration");
     GetModuleMasterCode();
     verifyFixParameterPageAccess();
 });
@@ -40,10 +40,48 @@ function showFixParameterPasswordPrompt() {
     var password = window.prompt('Enter password to access Fix parameter Config.');
     if (password === null) {
         hideFixParameterPage();
+        goBackToPreviousMenu();
         return;
     }
     validateFixParameterPassword(String(password || '').trim());
 }
+
+function closeFixParameterPasswordAndGoBack() {
+    var modalEl = document.getElementById('fixParameterPasswordModal');
+    if (modalEl && window.bootstrap && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+    }
+    hideFixParameterPage();
+    goBackToPreviousMenu();
+}
+
+function goBackToPreviousMenu() {
+    var currentPath = window.location.pathname + window.location.search;
+    var previousUrl = sessionStorage.getItem('esmsPreviousMenuUrl') || '';
+    if (previousUrl) {
+        try {
+            var previousPath = new URL(previousUrl, window.location.origin).pathname + new URL(previousUrl, window.location.origin).search;
+            if (previousPath && previousPath !== currentPath) {
+                window.location.href = previousUrl;
+                return;
+            }
+        } catch (e) { }
+    }
+
+    if (document.referrer && document.referrer !== window.location.href && window.history.length > 1) {
+        window.history.back();
+        return;
+    }
+
+    var menuUrl = (typeof AppBaseURLMenu === 'string' && AppBaseURLMenu)
+        ? AppBaseURLMenu
+        : (sessionStorage.getItem('AppBaseURLMenu') || '');
+    window.location.href = String(menuUrl).replace(/\/$/, '') + '/Dashbord/Dashbord';
+}
+
+$(document).on('click', '#btnFixParameterAccessClose', function () {
+    closeFixParameterPasswordAndGoBack();
+});
 
 $(document).on('click', '#btnFixParameterAccessSubmit', function () {
     validateFixParameterPassword(String($('#txtFixParameterAccessPassword').val() || '').trim());
@@ -305,7 +343,7 @@ async function Edit() {
 
 function GetModuleMasterCode() {
     var Data = JSON.parse(sessionStorage.getItem('UserModuleMaster'));
-    const result = Data.find(item => item.ModuleDesp === "Fix parameter Config");
+    const result = Data.find(item => item.ModuleDesp === "Fixed Parameter Configuration");
     if (result) {
         UserModuleMaster_Code = result.Code;
     }

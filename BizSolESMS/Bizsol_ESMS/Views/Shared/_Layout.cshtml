@@ -481,6 +481,17 @@
         $("#ERPUserName").text(sessionStorage.getItem('UserName'));
         $("#ERPCompanyCode").text('('+sessionStorage.getItem('EsmsCompanyName')+')');
 
+        (function rememberPreviousMenu() {
+            try {
+                var current = window.location.pathname + window.location.search;
+                var stored = sessionStorage.getItem('esmsCurrentMenuPath') || '';
+                if (stored && stored !== current) {
+                    sessionStorage.setItem('esmsPreviousMenuUrl', window.location.origin + stored);
+                }
+                sessionStorage.setItem('esmsCurrentMenuPath', current);
+            } catch (e) { }
+        })();
+
         (function () {
             var sub = document.getElementById('esms-webiz-page-sub');
             if (!sub) return;

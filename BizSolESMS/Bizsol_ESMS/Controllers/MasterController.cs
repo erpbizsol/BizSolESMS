@@ -221,5 +221,33 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion ManualSalesReturn
+
+        #region VendorReplacementOut
+        public IActionResult VendorReplacementOut()
+        {
+            return View();
+        }
+        #endregion VendorReplacementOut
+
+        #region VendorReplacementIn
+        public IActionResult VendorReplacementIn()
+        {
+            return View();
+        }
+        #endregion VendorReplacementIn
+
+        #region RetailerReplacementIn
+        public IActionResult RetailerReplacementIn()
+        {
+            return View();
+        }
+        #endregion RetailerReplacementIn
+
+        #region RetailerReplacementOut
+        public IActionResult RetailerReplacementOut()
+        {
+            return View();
+        }
+        #endregion RetailerReplacementOut
     }
 }
