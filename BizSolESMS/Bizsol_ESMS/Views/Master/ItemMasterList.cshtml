@@ -36,6 +36,14 @@
             </div>
         </div>
         <div class="card-body mt-3" id="txtitemtable">
+            <div class="mb-2">
+                <div class="esms-oc-search-wrap">
+                    <i class="fa-solid fa-magnifying-glass esms-oc-search-icon"></i>
+                    <input type="text" id="txtItemMasterListSearch" class="esms-oc-search-input"
+                           placeholder="Search items…" autocomplete="off"
+                           oninput="ItemMasterListSearchInput(this.value)">
+                </div>
+            </div>
             <div class="table-wrapper fixed-height-table">
                 <table id="table" class="fixed-width-table table">
                     <thead id="table-header">
