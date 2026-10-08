@@ -1,0 +1,206 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="~/assets/js/blockui.js"></script>
+<link href="~/assets/css/loader.css" rel="stylesheet" />
+<style>
+    .datepicker table tr td.disabled,
+    .datepicker table tr td.disabled:hover {
+        color: #bbb !important;
+        background: #f5f5f5 !important;
+        cursor: not-allowed !important;
+        pointer-events: none;
+    }
+
+    .price-list-detail-wrap {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        scroll-padding-inline-end: 0.75rem;
+        max-height: min(420px, 55vh);
+    }
+
+    #tblPriceListDetail {
+        width: max-content;
+        min-width: 100%;
+        table-layout: auto;
+        margin-bottom: 0;
+    }
+
+    #tblPriceListDetail th,
+    #tblPriceListDetail td {
+        vertical-align: middle;
+    }
+
+    #tblPriceListDetail th:nth-child(1),
+    #tblPriceListDetail td:nth-child(1) {
+        min-width: 7.5rem;
+    }
+
+    #tblPriceListDetail th:nth-child(2),
+    #tblPriceListDetail td:nth-child(2) {
+        min-width: 9rem;
+    }
+
+    #tblPriceListDetail th:nth-child(3),
+    #tblPriceListDetail td:nth-child(3) {
+        min-width: 7rem;
+    }
+
+    #tblPriceListDetail th:nth-child(4),
+    #tblPriceListDetail td:nth-child(4) {
+        min-width: 4.75rem;
+        width: 4.75rem;
+    }
+
+    #tblPriceListDetail th:nth-child(5),
+    #tblPriceListDetail td:nth-child(5) {
+        min-width: 3.25rem;
+        width: 3.25rem;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    #tblPriceListDetail .form-control {
+        width: 100%;
+        min-width: 0;
+    }
+
+    @@media (max-width: 767.98px) {
+        .price-list-page.container {
+            max-width: 100%;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        #txtCreatepage .price-list-form-card {
+            border-radius: 0.5rem;
+        }
+
+        #txtCreatepage .price-list-detail-wrap {
+            max-height: min(340px, 48dvh);
+            padding-bottom: 0.25rem;
+        }
+
+        #txtheaderdiv .tabSec {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.65rem;
+        }
+
+        #tblPriceListDetail .form-control {
+            font-size: 0.8125rem;
+            padding: 0.25rem 0.35rem;
+        }
+
+        #tblPriceListDetail .btn.icon-height {
+            margin-bottom: 0 !important;
+        }
+    }
+</style>
+<section class="breadcrumbs1" id="txtheaderdiv" style="display:none">
+    <div class="container-fluid">
+        <div class="form-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                        <a class="btn-icon btn-danger" id="btnBack" onclick="BackMaster()" title="Back"><i class='bx bx-arrow-back'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container price-list-page">
+    <div class="sm-table mt-3" id="txtListpage">
+        <div class="row">
+            <div class="col-sm-12 text-end">
+                <button type="button" class="btn btn-success btn-height" title="CREATE NEW" onclick="Create()">CREATE NEW</button>
+            </div>
+        </div>
+        <div class="card-body mt-2" id="txtListTable">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table">
+                    <thead id="table-header"></thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-table"></div>
+        </div>
+    </div>
+    <div id="txtCreatepage" style="display:none;">
+        <div class="card shadow-sm price-list-form-card" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-2">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-12 col-md-4 col-lg-3 mb-2 mb-md-0">
+                                <label for="txtEntryNo" class="col-form-label-sm fw-bold">Entry No</label>
+                                <input type="hidden" id="hfCode" value="0">
+                                <input type="text" id="txtEntryNo" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Entry No.." disabled>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3 mb-2 mb-md-0">
+                                <label for="txtEntryDate" class="col-form-label-sm fw-bold">Entry Date</label><span class="text-danger">*</span>
+                                <input type="text" id="txtEntryDate" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Entry Date..">
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3 mb-2 mb-md-0">
+                                <label for="txtEffectiveDate" class="col-form-label-sm fw-bold">Effective Date</label><span class="text-danger">*</span>
+                                <input type="text" id="txtEffectiveDate" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Effective Date..">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="divPriceListDetail">
+                    <div class="accordion accordion-flush" id="accordionFlushPriceList">
+                        <div class="accordion-item">
+                            <div id="flush-collapsePriceList" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushPriceList">
+                                <div class="accordion-body-sec">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-wrapper price-list-detail-wrap">
+                                                <table id="tblPriceListDetail" class="table">
+                                                    <thead class="text-sm-center">
+                                                        <tr>
+                                                            <th>Item Code<span class="text-danger">*</span></th>
+                                                            <th>Item Name<span class="text-danger">*</span></th>
+                                                            <th>Item Bar code<span class="text-danger">*</span></th>
+                                                            <th>Rate<span class="text-danger">*</span></th>
+                                                            <th>Del</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="PriceListData"></tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td style="text-align: left;">
+                                                                <input id="btnAddNewRow" type="button" class="submit-btn btn btn-primary btn-sm waves-effect waves-light" value="Add New Row" />
+                                                            </td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <datalist id="txtItemBarCode"></datalist>
+                <datalist id="txtItemCode"></datalist>
+                <datalist id="txtItemName"></datalist>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/filter.js"></script>
+<script src="~/assets/js/CheckOptionPermission.js"></script>
+<script src="~/assets/Script/PriceListMaster.js"></script>
