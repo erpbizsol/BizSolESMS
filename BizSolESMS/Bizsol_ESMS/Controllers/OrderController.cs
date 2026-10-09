@@ -12,6 +12,11 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
 
+        public IActionResult OrderMasterNew()
+        {
+            return View();
+        }
+
         #endregion  OrderMaster 
 
         #region  Dispatch 
