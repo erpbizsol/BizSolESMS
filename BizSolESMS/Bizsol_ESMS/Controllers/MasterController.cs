@@ -249,5 +249,12 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion RetailerReplacementOut
+
+        #region PriceListMaster
+        public IActionResult PriceListMaster()
+        {
+            return View();
+        }
+        #endregion PriceListMaster
     }
 }
