@@ -1,10 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Bizsol_ESMS.Controllers
 {
     public class MasterController : Controller
     {
+        private readonly IConfiguration _configuration;
+
+        public MasterController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         #region UOM
         public IActionResult UOMMasterList()
         {
@@ -254,6 +262,70 @@ namespace Bizsol_ESMS.Controllers
         public IActionResult PriceListMaster()
         {
             return View();
+        }
+
+        /// <summary>
+        /// Same-origin proxy for PDF extract (avoids browser CORS to AppBaseURL API).
+        /// </summary>
+        [HttpPost]
+        [RequestSizeLimit(104_857_600)]
+        public async Task<IActionResult> PriceListPdfExtract(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { success = false, errors = new[] { "PDF file is required." } });
+            }
+
+            var apiBase = (_configuration["PdfExtractApiBaseUrl"]
+                ?? _configuration["AppBaseURL"]
+                ?? string.Empty).TrimEnd('/');
+            if (string.IsNullOrEmpty(apiBase))
+            {
+                return StatusCode(500, new { success = false, errors = new[] { "PdfExtractApiBaseUrl or AppBaseURL must be set in appsettings." } });
+            }
+
+            var authKey = Request.Headers["Auth-Key"].FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(authKey))
+            {
+                return Unauthorized(new { success = false, errors = new[] { "Auth-Key header is required." } });
+            }
+
+            using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
+            using var multipart = new MultipartFormDataContent();
+            await using var stream = file.OpenReadStream();
+            var fileContent = new StreamContent(stream);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(
+                string.IsNullOrWhiteSpace(file.ContentType) ? "application/pdf" : file.ContentType);
+            multipart.Add(fileContent, "file", file.FileName);
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, $"{apiBase}/api/Pdf/extract")
+            {
+                Content = multipart
+            };
+            request.Headers.TryAddWithoutValidation("Auth-Key", authKey);
+
+            HttpResponseMessage response;
+            try
+            {
+                response = await client.SendAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(502, new { success = false, errors = new[] { "Could not reach PDF extract API: " + ex.Message } });
+            }
+
+            var body = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                body = "{}";
+            }
+
+            return new ContentResult
+            {
+                StatusCode = (int)response.StatusCode,
+                Content = body,
+                ContentType = "application/json"
+            };
         }
         #endregion PriceListMaster
     }
