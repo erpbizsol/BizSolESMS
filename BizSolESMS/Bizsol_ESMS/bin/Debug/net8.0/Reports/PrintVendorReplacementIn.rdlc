@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <ConsumeContainerWhitespace>false</ConsumeContainerWhitespace>
+  <DataSources>
+    <DataSource Name="PrintVendorReplacementIn">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>c3d4e5f6-a7b8-9012-cdef-345678901234</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="PrintVendorReplacementIn">
+      <Query>
+        <DataSourceName>PrintVendorReplacementIn</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="CompanyName"><DataField>CompanyName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyAddressLine1"><DataField>CompanyAddressLine1</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyAddressLine2"><DataField>CompanyAddressLine2</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyPhone"><DataField>CompanyPhone</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyEmail"><DataField>CompanyEmail</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyGSTNo"><DataField>CompanyGSTNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorName"><DataField>VendorName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorAddressLine1"><DataField>VendorAddressLine1</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorAddressLine2"><DataField>VendorAddressLine2</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorCity"><DataField>VendorCity</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorState"><DataField>VendorState</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorPin"><DataField>VendorPin</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorGSTNo"><DataField>VendorGSTNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorPANNo"><DataField>VendorPANNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorEmail"><DataField>VendorEmail</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorMobile"><DataField>VendorMobile</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorAddressDisplay"><DataField>VendorAddressDisplay</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="VendorCityStatePin"><DataField>VendorCityStatePin</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="EntryNo"><DataField>EntryNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="EntryDate"><DataField>EntryDate</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="Head"><DataField>Head</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="ItemCode"><DataField>ItemCode</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="ItemName"><DataField>ItemName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="Qty"><DataField>Qty</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="TotalOutQty"><DataField>TotalOutQty</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="BalanceQty"><DataField>BalanceQty</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="Remark"><DataField>Remark</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+    <ReportParameters>
+    <ReportParameter Name="PrintBy">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PrintBy</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="PrintDate">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PrintDate</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+<Body>
+    <ReportItems>
+      <Rectangle Name="rectPageFrame">
+        <ReportItems>
+      <Textbox Name="tbTitleCenter">
+        <CanGrow>false</CanGrow>
+        <Paragraphs><Paragraph><TextRuns><TextRun><Value>Gate Pass In - Vendor Battery Replacement</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+        <Top>0.78in</Top><Left>0in</Left><Height>0.24in</Height><Width>7.57in</Width>
+        <Style>
+          <TopBorder><Style>None</Style></TopBorder>
+          <LeftBorder><Style>None</Style></LeftBorder>
+          <RightBorder><Style>None</Style></RightBorder>
+          <BottomBorder><Style>Solid</Style></BottomBorder>
+          <VerticalAlign>Middle</VerticalAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="tbCompanyBlock">
+        <CanGrow>true</CanGrow>
+        <Paragraphs>
+          <Paragraph><TextRuns><TextRun><Value>=UCase(First(Fields!CompanyName.Value, "PrintVendorReplacementIn"))</Value><Style><FontWeight>Bold</FontWeight><FontSize>12pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>12pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=First(Fields!CompanyAddressLine1.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=First(Fields!CompanyAddressLine2.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=IIF(Trim(First(Fields!CompanyPhone.Value, "PrintVendorReplacementIn"))&lt;&gt;"", "Ph. : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!CompanyPhone.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!CompanyPhone.Value, "PrintVendorReplacementIn"))&lt;&gt;"", IIF(Trim(First(Fields!CompanyEmail.Value, "PrintVendorReplacementIn"))&lt;&gt;"", " , ", ""), "")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!CompanyEmail.Value, "PrintVendorReplacementIn"))&lt;&gt;"", "E-mail: ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!CompanyEmail.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=IIF(Trim(First(Fields!CompanyGSTNo.Value, "PrintVendorReplacementIn"))&lt;&gt;"", "GSTIN : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!CompanyGSTNo.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+        </Paragraphs>
+        <Top>0in</Top><Left>0in</Left><Height>0.78in</Height><Width>7.57in</Width>
+        <Style>
+          <TopBorder><Style>None</Style></TopBorder>
+          <LeftBorder><Style>None</Style></LeftBorder>
+          <RightBorder><Style>None</Style></RightBorder>
+          <BottomBorder><Style>Solid</Style></BottomBorder>
+          <VerticalAlign>Top</VerticalAlign><PaddingLeft>4pt</PaddingLeft><PaddingRight>4pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="tbVendorLeft">
+        <CanGrow>false</CanGrow>
+        <Paragraphs>
+          <Paragraph><TextRuns><TextRun><Value>Vendor Details :</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=UCase(First(Fields!VendorName.Value, "PrintVendorReplacementIn"))</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>12pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=First(Fields!VendorAddressDisplay.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=First(Fields!VendorCityStatePin.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=IIF(Trim(First(Fields!VendorEmail.Value, "PrintVendorReplacementIn"))&lt;&gt;"", "Email: ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!VendorEmail.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!VendorEmail.Value, "PrintVendorReplacementIn"))&lt;&gt;"", IIF(Trim(First(Fields!VendorMobile.Value, "PrintVendorReplacementIn"))&lt;&gt;"", " , ", ""), "")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!VendorMobile.Value, "PrintVendorReplacementIn"))&lt;&gt;"", "Mobile No. : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!VendorMobile.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>=IIF(Trim(First(Fields!VendorGSTNo.Value, "PrintVendorReplacementIn"))&lt;&gt;"", "GST No.: ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!VendorGSTNo.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!VendorGSTNo.Value, "PrintVendorReplacementIn"))&lt;&gt;"", IIF(Trim(First(Fields!VendorPANNo.Value, "PrintVendorReplacementIn"))&lt;&gt;"", " , ", ""), "")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!VendorPANNo.Value, "PrintVendorReplacementIn"))&lt;&gt;"", "PAN No. : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!VendorPANNo.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+        </Paragraphs>
+        <Top>1.02in</Top><Left>0in</Left><Height>1.3in</Height><Width>3.785in</Width>
+        <Style>
+          <TopBorder><Style>None</Style></TopBorder>
+          <LeftBorder><Style>None</Style></LeftBorder>
+          <RightBorder><Style>Solid</Style></RightBorder>
+          <BottomBorder><Style>Solid</Style></BottomBorder>
+          <PaddingLeft>4pt</PaddingLeft><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="tbEntryRight">
+        <CanGrow>false</CanGrow>
+        <Paragraphs>
+          <Paragraph><TextRuns><TextRun><Value>Entry No. : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!EntryNo.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>Entry Date : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!EntryDate.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+          <Paragraph><TextRuns><TextRun><Value>Head : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!Head.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+        </Paragraphs>
+        <Top>1.02in</Top><Left>3.785in</Left><Height>1.3in</Height><Width>3.785in</Width>
+        <Style>
+          <TopBorder><Style>None</Style></TopBorder>
+          <LeftBorder><Style>None</Style></LeftBorder>
+          <RightBorder><Style>None</Style></RightBorder>
+          <BottomBorder><Style>Solid</Style></BottomBorder>
+          <PaddingLeft>4pt</PaddingLeft><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Tablix Name="ItemTablix">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn><Width>0.45in</Width></TablixColumn>
+            <TablixColumn><Width>1.25in</Width></TablixColumn>
+            <TablixColumn><Width>2.55in</Width></TablixColumn>
+            <TablixColumn><Width>0.75in</Width></TablixColumn>
+            <TablixColumn><Width>1.05in</Width></TablixColumn>
+            <TablixColumn><Width>1.52in</Width></TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow><Height>0.22in</Height><TablixCells>
+              <TablixCell><CellContents><Textbox Name="hSNo"><Paragraphs><Paragraph><TextRuns><TextRun><Value>S.No.</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="hItemCode"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Item Code</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="hItemName"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Item Name</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="hQty"><Paragraphs><Paragraph><TextRuns><TextRun><Value>In Qty</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="hTotalOutQty"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Total Out Qty</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="hBalanceQty"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Balance Qty</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+            </TablixCells></TablixRow>
+            <TablixRow><Height>0.2in</Height><TablixCells>
+              <TablixCell><CellContents><Textbox Name="dSNo"><CanGrow>false</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=RowNumber("Details")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="dItemCode"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!ItemCode.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><PaddingLeft>3pt</PaddingLeft><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="dItemName"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!ItemName.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><PaddingLeft>3pt</PaddingLeft><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="dQty"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!Qty.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><PaddingRight>4pt</PaddingRight><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="dTotalOutQty"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!TotalOutQty.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>Solid</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><PaddingRight>4pt</PaddingRight><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+              <TablixCell><CellContents><Textbox Name="dBalanceQty"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!BalanceQty.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>Solid</Style></BottomBorder><PaddingRight>4pt</PaddingRight><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+            </TablixCells></TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy><TablixMembers><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /></TablixMembers></TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember><KeepWithGroup>After</KeepWithGroup></TablixMember>
+            <TablixMember><Group Name="Details"><DataElementName>Detail</DataElementName></Group><TablixMembers><TablixMember /></TablixMembers></TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>PrintVendorReplacementIn</DataSetName>
+        <Top>2.32in</Top><Left>0in</Left><Height>0.42in</Height><Width>7.57in</Width>
+      </Tablix>
+      <Textbox Name="tbRemark">
+        <CanGrow>false</CanGrow>
+        <Paragraphs><Paragraph><TextRuns><TextRun><Value>Remark : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!Remark.Value, "PrintVendorReplacementIn")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+        <Top>9.50in</Top><Left>0in</Left><Height>0.34in</Height><Width>7.57in</Width>
+        <Style>
+          <TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder>
+          <LeftBorder><Style>None</Style></LeftBorder>
+          <RightBorder><Style>None</Style></RightBorder>
+          <BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder>
+          <PaddingLeft>4pt</PaddingLeft><PaddingTop>3pt</PaddingTop><PaddingRight>4pt</PaddingRight><PaddingBottom>3pt</PaddingBottom>
+          <VerticalAlign>Top</VerticalAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="tbFooterAuthLeft">
+        <CanGrow>false</CanGrow>
+        <Paragraphs><Paragraph><TextRuns><TextRun><Value>Authorized Signatory :</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+        <Top>9.84in</Top><Left>0in</Left><Height>0.9in</Height><Width>3.785in</Width>
+        <Style>
+          <TopBorder><Style>None</Style></TopBorder>
+          <LeftBorder><Style>None</Style></LeftBorder>
+          <RightBorder><Style>Solid</Style><Width>1.25pt</Width></RightBorder>
+          <BottomBorder><Style>None</Style></BottomBorder>
+          <PaddingLeft>4pt</PaddingLeft><PaddingTop>3pt</PaddingTop>
+          <VerticalAlign>Top</VerticalAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="tbFooterSignRight">
+        <CanGrow>false</CanGrow>
+        <Paragraphs><Paragraph><TextRuns><TextRun><Value>Receiver's Signature :</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+        <Top>9.84in</Top><Left>3.785in</Left><Height>0.9in</Height><Width>3.785in</Width>
+        <Style>
+          <TopBorder><Style>None</Style></TopBorder>
+          <LeftBorder><Style>None</Style></LeftBorder>
+          <RightBorder><Style>None</Style></RightBorder>
+          <BottomBorder><Style>None</Style></BottomBorder>
+          <PaddingLeft>4pt</PaddingLeft><PaddingRight>4pt</PaddingRight><PaddingTop>3pt</PaddingTop>
+          <VerticalAlign>Top</VerticalAlign>
+        </Style>
+      </Textbox>
+      </ReportItems>
+      <Top>0in</Top><Left>0.1in</Left><Height>10.74in</Height><Width>7.57in</Width>
+      <Style>
+        <TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder>
+        <LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder>
+        <RightBorder><Style>Solid</Style><Width>1.25pt</Width></RightBorder>
+        <BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder>
+      </Style>
+    </Rectangle>
+    </ReportItems>
+    <Height>10.74in</Height>
+    <Style />
+  </Body>
+  <Width>7.77in</Width>
+  <Page>
+        <PageFooter>
+      <Height>0.30in</Height>
+      <PrintOnFirstPage>true</PrintOnFirstPage>
+      <PrintOnLastPage>true</PrintOnLastPage>
+      <ReportItems>
+        <Textbox Name="tbPrintFooterLeft">
+          <CanGrow>false</CanGrow>
+          <Paragraphs><Paragraph><TextRuns><TextRun><Value>Print By : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun><TextRun><Value>=Parameters!PrintBy.Value</Value><Style><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun><TextRun><Value>      </Value><Style><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun><TextRun><Value>Print Date : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun><TextRun><Value>=Parameters!PrintDate.Value</Value><Style><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun></TextRuns><Style><TextAlign>Left</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+          <Top>0.04in</Top><Left>0.1in</Left><Height>0.24in</Height><Width>5.9in</Width>
+          <Style><Border><Style>None</Style></Border><VerticalAlign>Middle</VerticalAlign></Style>
+        </Textbox>
+        <Textbox Name="tbPrintFooterPageNo">
+          <CanGrow>false</CanGrow>
+          <Paragraphs><Paragraph><TextRuns><TextRun><Value>=Globals!PageNumber &amp; " / " &amp; Globals!TotalPages</Value><Style><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+          <Top>0.04in</Top><Left>0.1in</Left><Height>0.24in</Height><Width>7.57in</Width>
+          <Style><Border><Style>None</Style></Border><VerticalAlign>Middle</VerticalAlign></Style>
+        </Textbox>
+      </ReportItems>
+      <Style />
+    </PageFooter>
+<PageHeight>11.69in</PageHeight>
+    <PageWidth>8.27in</PageWidth>
+    <LeftMargin>0.25in</LeftMargin>
+    <RightMargin>0.25in</RightMargin>
+    <TopMargin>0.25in</TopMargin>
+    <BottomMargin>0.25in</BottomMargin>
+    <Style />
+  </Page>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>d4e5f6a7-b8c9-0123-def0-456789012345</rd:ReportID>
+</Report>
+

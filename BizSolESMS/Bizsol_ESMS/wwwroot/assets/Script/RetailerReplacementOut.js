@@ -3,6 +3,9 @@ let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
+const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
+const G_UserName = sessionStorage.getItem('UserName');
+const authKeyRaw = sessionStorage.getItem('authKey');
 let AccountList = [];
 let BrandList = [];
 let EntryNoList = [];
@@ -133,12 +136,36 @@ function bindListGrid(rows) {
         ...item,
         Action: `<button class="btn btn-primary icon-height mb-1" title="Edit" onclick="Edit('${item.Code}')"><i class="fa-solid fa-pencil"></i></button>
             <button class="btn btn-danger icon-height mb-1" title="Delete" onclick="deleteItem('${item.Code}','${escapeAttr(item["Entry No"])}',this)"><i class="fa-regular fa-circle-xmark"></i></button>
-            <button class="btn btn-primary icon-height mb-1" title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>`
+            <button class="btn btn-primary icon-height mb-1" title="View" onclick="View('${item.Code}')"><i class="fa-solid fa fa-eye"></i></button>
+            <button class="btn btn-info icon-height mb-1" title="Download PDF" onclick="DownloadRetailerReplacementOutPdf('${item.Code}')"><i class="fa-solid fa-download"></i></button>`
     }));
     BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment);
 }
 function escapeAttr(value) {
     return String(value ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
+function DownloadRetailerReplacementOutPdf(code) {
+    $.ajax({
+        url: `${AppBaseURLMenu}/RDLC/PrintRetailerReplacementOut?Code=${encodeURIComponent(code)}&UserName=${encodeURIComponent(G_UserName || '')}&AuthKey=${encodeURIComponent(authKeyRaw || '')}`,
+        type: 'GET',
+        xhrFields: { responseType: 'blob' },
+        success: function (data) {
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "RetailerReplacementOut.pdf";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr) {
+            toastr.error("Unable to download PDF.");
+            console.error('PrintRetailerReplacementOut', xhr.responseText || xhr.status);
+        }
+    });
 }
 
 async function CreateRetailerReplacementOut() {
