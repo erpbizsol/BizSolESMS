@@ -515,6 +515,132 @@ namespace Bizsol_ESMS.Controllers
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "PrintGatePass.pdf");
         }
+
+        private static void SetGatePassPrintParameters(LocalReport report, string userName)
+        {
+            report.SetParameters(new[]
+            {
+                new ReportParameter("PrintBy", userName ?? ""),
+                new ReportParameter("PrintDate", DateTime.Now.ToString("dd/MM/yyyy"))
+            });
+        }
+
+        [HttpGet]
+        public IActionResult PrintVendorReplacementOut(string Code, string UserName, string AuthKey)
+        {
+            JObject data = JObject.Parse(AuthKey);
+            string connectionString = data["DefultMysqlTemp"]?.ToString();
+
+            DataSet ds = new DataSet();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = new MySqlCommand("USP_PrintVendorReplacementOut", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_Code", Code);
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PrintVendorReplacementOut.rdlc");
+            LocalReport report = new LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PrintVendorReplacementOut", ds.Tables[0]));
+            SetGatePassPrintParameters(report, UserName);
+            byte[] pdf = report.Render("PDF");
+            return File(pdf, "application/pdf", "VendorReplacementOut.pdf");
+        }
+
+        [HttpGet]
+        public IActionResult PrintRetailerReplacementIn(string Code, string UserName, string AuthKey)
+        {
+            JObject data = JObject.Parse(AuthKey);
+            string connectionString = data["DefultMysqlTemp"]?.ToString();
+
+            DataSet ds = new DataSet();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = new MySqlCommand("USP_PrintRetailerReplacementIn", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_Code", Code);
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PrintRetailerReplacementIn.rdlc");
+            LocalReport report = new LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PrintRetailerReplacementIn", ds.Tables[0]));
+            SetGatePassPrintParameters(report, UserName);
+            byte[] pdf = report.Render("PDF");
+            return File(pdf, "application/pdf", "RetailerReplacementIn.pdf");
+        }
+
+        [HttpGet]
+        public IActionResult PrintVendorReplacementIn(string Code, string UserName, string AuthKey)
+        {
+            JObject data = JObject.Parse(AuthKey);
+            string connectionString = data["DefultMysqlTemp"]?.ToString();
+
+            DataSet ds = new DataSet();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = new MySqlCommand("USP_PrintVendorReplacementIn", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_Code", Code);
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PrintVendorReplacementIn.rdlc");
+            LocalReport report = new LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PrintVendorReplacementIn", ds.Tables[0]));
+            SetGatePassPrintParameters(report, UserName);
+            byte[] pdf = report.Render("PDF");
+            return File(pdf, "application/pdf", "VendorReplacementIn.pdf");
+        }
+
+        [HttpGet]
+        public IActionResult PrintRetailerReplacementOut(string Code, string UserName, string AuthKey)
+        {
+            JObject data = JObject.Parse(AuthKey);
+            string connectionString = data["DefultMysqlTemp"]?.ToString();
+
+            DataSet ds = new DataSet();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = new MySqlCommand("USP_PrintRetailerReplacementOut", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_Code", Code);
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PrintRetailerReplacementOut.rdlc");
+            LocalReport report = new LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PrintRetailerReplacementOut", ds.Tables[0]));
+            SetGatePassPrintParameters(report, UserName);
+            byte[] pdf = report.Render("PDF");
+            return File(pdf, "application/pdf", "RetailerReplacementOut.pdf");
+        }
+
         [HttpPost]
         public IActionResult GPrintQR([FromBody] List<MRNModel> model)
         {
