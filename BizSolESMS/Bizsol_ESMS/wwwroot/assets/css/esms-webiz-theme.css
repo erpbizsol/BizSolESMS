@@ -1191,6 +1191,42 @@ body.esms-webiz .modal-content .modal-body .modal-header.tab-header level {
     flex: 1 1 auto;
 }
 
+body.esms-webiz #staticBackdrop .modal-header.tab-header {
+    height: auto !important;
+    min-height: 56px;
+    padding: 0.85rem 1.15rem 0.8rem 1.25rem !important;
+    background: linear-gradient(180deg, #ffffff 0%, #f4fbf8 100%) !important;
+    border-bottom: 2px solid var(--webiz-green) !important;
+}
+
+body.esms-webiz #staticBackdrop .modal-header .tab {
+    color: #000 !important;
+    font-weight: 700 !important;
+    font-size: 17px !important;
+    font-family: var(--esms-font-ui, "DM Sans", system-ui, sans-serif) !important;
+    letter-spacing: -0.02em;
+    line-height: 1.2 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+body.esms-webiz #staticBackdrop .modal-header .tab::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--webiz-green-dark);
+    box-shadow: 0 0 0 4px rgba(62, 207, 163, 0.22);
+    flex: 0 0 auto;
+}
+
 body.esms-webiz .modal-body {
     padding: 1.25rem 1.5rem !important;
     font-family: var(--esms-font-ui, "DM Sans", system-ui, sans-serif);

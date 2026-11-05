@@ -452,7 +452,17 @@ function openSavePopup(button) {
         $('table tr').removeClass('highlight');
     });
     window.currentSaveButton = button;
-    var saveModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
+    var modalEl = document.getElementById("staticBackdrop");
+    if (modalEl) {
+        modalEl.classList.remove("position-absolute");
+        modalEl.classList.add("fade");
+        var dialog = modalEl.querySelector(".modal-dialog");
+        if (dialog) dialog.classList.add("modal-dialog-centered");
+        if (modalEl.parentElement !== document.body) {
+            document.body.appendChild(modalEl);
+        }
+    }
+    var saveModal = bootstrap.Modal.getOrCreateInstance(modalEl);
     saveModal.show();
     ClearData();
 }
