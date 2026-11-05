@@ -224,6 +224,23 @@
 <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
 <script src="~/assets/js/blockui.js"></script>
 <script src="~/assets/js/filter.js"></script>
+<script>
+    (function () {
+        var useStandardPrint = false;
+        try {
+            var raw = sessionStorage.getItem('Fixparameter');
+            var parsed = raw ? JSON.parse(raw) : null;
+            var row = Array.isArray(parsed) ? (parsed[0] || {}) : (parsed || {});
+            var flag = row.IsAlternateInvoiceTemplate;
+            if (flag == null) flag = row.isAlternateInvoiceTemplate;
+            useStandardPrint = String(flag == null ? '' : flag).trim().toUpperCase() === 'N';
+        } catch (e) {
+            useStandardPrint = false;
+        }
+        var printScript = useStandardPrint ? 'InvoicePrint.js' : 'InvoicePrint2.js';
+        document.write('<scr' + 'ipt src="@Url.Content("~/assets/Script/")' + printScript + '"></scr' + 'ipt>');
+    })();
+</script>
 <script src="~/assets/Script/InvoiceMaster.js"></script>
 
 @section ModalDialogs {

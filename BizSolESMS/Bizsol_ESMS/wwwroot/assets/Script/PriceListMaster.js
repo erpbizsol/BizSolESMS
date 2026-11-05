@@ -133,42 +133,28 @@ function getDefaultEffectiveDateForImport() {
     return formatDdMmYyyy(nextDay);
 }
 
+function hasExistingPriceListData() {
+    return !!getMinMaxEffectiveDates().max;
+}
+
 function isEffectiveDateAllowedForImport(selectedStr) {
     const selected = parseAppDate(selectedStr);
     if (!selected) {
         return false;
     }
+    const range = getMinMaxEffectiveDates();
+    if (!range.max) {
+        return isEffectiveDateAllowedForNew(selectedStr);
+    }
+
     const selStart = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate());
     const key = formatDdMmYyyy(selStart);
-    const today = getSystemCurrentDateForCompare();
-    const range = getMinMaxEffectiveDates();
-
     if (effectiveDateKeyExistsInMasterList(key)) {
         return false;
     }
 
-    if (!range.max) {
-        if (!today) {
-            return true;
-        }
-        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        return selStart.getTime() >= todayStart.getTime();
-    }
-
-    const minStart = new Date(range.min.getFullYear(), range.min.getMonth(), range.min.getDate());
     const maxStart = new Date(range.max.getFullYear(), range.max.getMonth(), range.max.getDate());
-
-    if (selStart.getTime() > maxStart.getTime()) {
-        if (!today) {
-            return true;
-        }
-        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        return selStart.getTime() >= todayStart.getTime();
-    }
-    if (selStart.getTime() > minStart.getTime() && selStart.getTime() < maxStart.getTime()) {
-        return false;
-    }
-    return false;
+    return selStart.getTime() > maxStart.getTime();
 }
 
 function isEffectiveDateAllowedForNew(selectedStr) {
@@ -797,7 +783,7 @@ function rejectImportEffectiveDateSelection(seq) {
 }
 
 function validateEffectiveDateViaApi(effectiveDate, seq, onSuccess) {
-    if (isPriceListImportMode() && !isEffectiveDateAllowedForImport(effectiveDate)) {
+    if (isPriceListImportMode() && hasExistingPriceListData() && !isEffectiveDateAllowedForImport(effectiveDate)) {
         rejectImportEffectiveDateSelection(seq);
         return;
     }
@@ -826,7 +812,7 @@ function validateEffectiveDateViaApi(effectiveDate, seq, onSuccess) {
                 }
                 return;
             }
-            if (isPriceListImportMode() && !isEffectiveDateAllowedForImport(effectiveDate)) {
+            if (isPriceListImportMode() && hasExistingPriceListData() && !isEffectiveDateAllowedForImport(effectiveDate)) {
                 rejectImportEffectiveDateSelection(seq);
                 return;
             }
