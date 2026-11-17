@@ -22,7 +22,8 @@
               <xs:element name="OrderedQty" msprop:Generator_ColumnPropNameInTable="OrderedQtyColumn" msprop:Generator_ColumnPropNameInRow="OrderedQty" msprop:Generator_UserColumnName="OrderedQty" msprop:Generator_ColumnVarNameInTable="columnOrderedQty" type="xs:string" minOccurs="0" />
               <xs:element name="MRP" msprop:Generator_ColumnPropNameInTable="MRPColumn" msprop:Generator_ColumnPropNameInRow="MRP" msprop:Generator_UserColumnName="MRP" msprop:Generator_ColumnVarNameInTable="columnMRP" type="xs:string" minOccurs="0" />
               <xs:element name="OrgMRP" msprop:Generator_ColumnPropNameInTable="OrgMRPColumn" msprop:Generator_ColumnPropNameInRow="OrgMRP" msprop:Generator_UserColumnName="OrgMRP" msprop:Generator_ColumnVarNameInTable="columnOrgMRP" type="xs:string" minOccurs="0" />
-              <xs:element name="QRCode" msprop:Generator_ColumnPropNameInRow="QRCode" msprop:Generator_ColumnPropNameInTable="QRCodeColumn" msprop:Generator_ColumnVarNameInTable="columnQRCode" msprop:Generator_UserColumnName="QRCode" type="xs:string" minOccurs="0" />
+              <xs:element name="QRCode" msprop:Generator_UserColumnName="QRCode" msprop:Generator_ColumnPropNameInTable="QRCodeColumn" msprop:Generator_ColumnPropNameInRow="QRCode" msprop:Generator_ColumnVarNameInTable="columnQRCode" type="xs:string" minOccurs="0" />
+              <xs:element name="PriceVariation" msprop:Generator_ColumnPropNameInRow="PriceVariation" msprop:Generator_ColumnPropNameInTable="PriceVariationColumn" msprop:Generator_ColumnVarNameInTable="columnPriceVariation" msprop:Generator_UserColumnName="PriceVariation" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
