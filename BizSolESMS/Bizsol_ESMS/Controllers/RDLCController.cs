@@ -193,6 +193,7 @@ namespace Bizsol_ESMS.Controllers
                     }
                 }
             }
+            string showPriceVariation = GetShowPriceVariationFlag(connectionString, ds);
             string companyName = ds.Tables[0].Rows.Count > 0
                 ? ds.Tables[0].Rows[0]["IsPSRQRShow"]?.ToString() ?? "N"
                 : "N";
@@ -204,7 +205,7 @@ namespace Bizsol_ESMS.Controllers
 
             LocalReport report = new LocalReport();
             report.ReportPath = reportPath;
-            BindPsrTataReport(report, ds, UserName, Code);
+            BindPsrTataReport(report, ds, UserName, Code, showPriceVariation);
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "OrderReport.pdf");
         }
@@ -233,6 +234,7 @@ namespace Bizsol_ESMS.Controllers
                 }
             }
 
+            string showPriceVariation = GetShowPriceVariationFlag(connectionString, ds);
             string? companyCode = CompanyCode ?? data["CompanyCode"]?.ToString();
             ApplyPsrReportQrPayload(ds, Code, companyCode);
 
@@ -247,7 +249,7 @@ namespace Bizsol_ESMS.Controllers
             LocalReport report = new LocalReport();
             report.ReportPath = reportPath;
             if (qrCompanyName == "Y")
-                BindPsrTataReport(report, ds, UserName, Code);
+                BindPsrTataReport(report, ds, UserName, Code, showPriceVariation);
             else
             {
                 report.DataSources.Add(new ReportDataSource("PsrDetailData", ds.Tables[0]));
@@ -262,16 +264,45 @@ namespace Bizsol_ESMS.Controllers
             return File(pdf, "application/pdf", "PSRReport.pdf");
         }
 
-        private static void BindPsrTataReport(LocalReport report, DataSet ds, string userName, int code)
+        private static string GetShowPriceVariationFlag(string? connectionString, DataSet ds)
+        {
+            string flag = "";
+            if (!string.IsNullOrWhiteSpace(connectionString))
+            {
+                try
+                {
+                    using var conn = new MySqlConnection(connectionString);
+                    conn.Open();
+                    using var cmd = new MySqlCommand("SELECT IsShowPriceVariationInPSR FROM FixParameter LIMIT 1", conn);
+                    object? value = cmd.ExecuteScalar();
+                    flag = value == null || value == DBNull.Value ? "" : value.ToString()?.Trim() ?? "";
+                }
+                catch
+                {
+                    flag = "";
+                }
+            }
+
+            if (flag.Length == 0 && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                flag = GetDataRowString(ds.Tables[0].Rows[0], "IsShowPriceVariationInPSR").Trim();
+
+            return string.Equals(flag, "Y", StringComparison.OrdinalIgnoreCase) ? "Y" : "N";
+        }
+
+        private static void BindPsrTataReport(LocalReport report, DataSet ds, string userName, int code, string showPriceVariation)
         {
             ApplyPsrUpiQrPayload(ds, code);
             report.DataSources.Add(new ReportDataSource("PsrDetailData", ds.Tables[0]));
             report.DataSources.Add(new ReportDataSource("PsrTabledata", ds.Tables[1]));
             report.DataSources.Add(new ReportDataSource("PsrBankData", GetPsrBankData(ds)));
+            if (!string.Equals(showPriceVariation, "Y", StringComparison.OrdinalIgnoreCase))
+                showPriceVariation = "N";
+
             report.SetParameters(new[]
             {
                 new ReportParameter("PrintedBy", userName ?? ""),
-                new ReportParameter("PrintedOn", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"))
+                new ReportParameter("PrintedOn", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")),
+                new ReportParameter("ShowPriceVariation", showPriceVariation)
             });
         }
 

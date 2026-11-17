@@ -328,5 +328,13 @@ namespace Bizsol_ESMS.Controllers
             };
         }
         #endregion PriceListMaster
+
+        #region AppConfig
+        public IActionResult AppConfig()
+        {
+            return View();
+        }
+        #endregion AppConfig
+
     }
 }

@@ -213,10 +213,10 @@
                         </select>
                     </div>
                     <div class="col-sm-6 col-lg-2">
-                        <label class="form-label form-label-sm mb-1 fw-semibold" for="txtPEAPayModeFilter">Credit Note</label>
-                        <input type="text" id="txtPEAPayModeFilter" class="form-control form-control box_border"
-                               autocomplete="off" maxlength="50" placeholder="All">
-                        <ul id="txtPEAPayModeFilterList" class="AutoSuggestion-list"></ul>
+                        <label class="form-label form-label-sm mb-1 fw-semibold" for="ddlPEAPayModeFilter">Credit Note</label>
+                        <select id="ddlPEAPayModeFilter" class="form-control form-control box_border" data-placeholder="All">
+                            <option value="">All</option>
+                        </select>
                     </div>
                     <div class="col-12 col-lg-auto">
                         <label class="form-label form-label-sm mb-1 invisible" aria-hidden="true">x</label>
@@ -280,10 +280,10 @@
                     </select>
                 </div>
                 <div class="col-md-3 col-6">
-                    <label class="pea-field-label" for="txtPEAPayMode">Credit Note <span class="req">*</span></label>
-                    <input type="text" id="txtPEAPayMode" class="pea-input" autocomplete="off" maxlength="50"
-                           placeholder="Payment Mode">
-                    <ul id="txtPEAPayModeList" class="AutoSuggestion-list"></ul>
+                    <label class="pea-field-label" for="ddlPEAPayMode">Credit Note <span class="req">*</span></label>
+                    <select id="ddlPEAPayMode" class="form-control" data-placeholder="-- Select --">
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="col-md-4 col-6">
                     <label class="pea-field-label" for="txtPEARefNo">Ref No <span class="req">*</span></label>

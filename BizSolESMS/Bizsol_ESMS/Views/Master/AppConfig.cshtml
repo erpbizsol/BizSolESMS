@@ -1,0 +1,63 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="~/assets/script/appconfig.js"></script>
+<section class="breadcrumbs1" id="txtheaderdiv">
+    <div class="container-fluid" style="">
+        <div class="fix-header">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <div class="icon-tab">
+                        <a class="btn-icon me-1" onclick="Save()" id="txtsave" title="Save"><i class='bx bx-save'></i></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-6">
+                    <div id="tab1" class="tabSec tab active">NEW</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div id="txtCreatepage">
+        <div class="card shadow-sm" style="background-color:#e9e9ef">
+            <div class="tabs">
+                <div class="row p-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtAppConfigId" class="col-form-label-sm fw-bold">App Config Id</label>
+                                <input type="text" id="txtAppConfigId" class="box_border form-control form-control-sm BizSolFormControl" autocomplete="off" maxlength="20" placeholder="App Config Id" value="0">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtCompanyName" class="col-form-label-sm fw-bold">Company Name</label><span class="text-danger">*</span>
+                                <input type="text" id="txtCompanyName" class="box_border form-control form-control-sm BizSolFormControl" autocomplete="off" maxlength="150" placeholder="Company Name">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtUnitName" class="col-form-label-sm fw-bold">Unit Name</label><span class="text-danger">*</span>
+                                <input type="text" id="txtUnitName" class="box_border form-control form-control-sm BizSolFormControl" autocomplete="off" maxlength="150" placeholder="Unit Name">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtTallyCompCode" class="col-form-label-sm fw-bold">Tally Comp Code</label><span class="text-danger">*</span>
+                                <input type="text" id="txtTallyCompCode" class="box_border form-control form-control-sm BizSolFormControl" autocomplete="off" maxlength="50" placeholder="Tally Comp Code">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtAppName" class="col-form-label-sm fw-bold">App Name</label><span class="text-danger">*</span>
+                                <input type="text" id="txtAppName" class="box_border form-control form-control-sm BizSolFormControl" autocomplete="off" maxlength="150" placeholder="App Name">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtAppType" class="col-form-label-sm fw-bold">App Type</label><span class="text-danger">*</span>
+                                <input type="text" id="txtAppType" class="box_border form-control form-control-sm BizSolFormControl" autocomplete="off" maxlength="50" placeholder="App Type">
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <label for="txtAppSoftwareSerialNo" class="col-form-label-sm fw-bold">App Software Serial No</label><span class="text-danger">*</span>
+                                <input type="text" id="txtAppSoftwareSerialNo" class="box_border form-control form-control-sm BizSolFormControl" autocomplete="off" maxlength="100" placeholder="App Software Serial No">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

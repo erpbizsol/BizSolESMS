@@ -20,6 +20,13 @@ var G_PEAListRows     = [];
 var G_PEAIsBindingEdit = false;
 var G_PEAEntryNoSave   = 0;
 var G_PEAAdvanceManual = false;
+var G_PEAPayModeOptions = [
+    'Sale Return',
+    'Post Sale Discount',
+    'Correction in Invoice',
+    'Purchase Return',
+    'Other'
+];
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 function parseAmountStr(s) {
@@ -145,7 +152,7 @@ function PEAGetModuleCode() {
 }
 
 $(document).ready(function () {
-    $("#ERPHeading").text("Payment Entry Adjustment");
+    $("#ERPHeading").text("Credit Note");
     PEAGetModuleCode();
     PEAInitDatepickers();
     PEAInitSelect2();
@@ -161,7 +168,7 @@ $(document).ready(function () {
         $('#txtPEAFromDate').datepicker('setDate', monthStart);
         $('#txtPEAToDate').datepicker('setDate', today);
         $('#ddlPEAPartyFilter').val('').trigger('change');
-        $('#txtPEAPayModeFilter').val('');
+        $('#ddlPEAPayModeFilter').val('').trigger('change');
         PEALoadList();
     });
 
@@ -185,6 +192,8 @@ function PEASetPartyFieldDisabled(disabled) {
 function PEAInitSelect2() {
     $('#ddlPEAPartyFilter').select2({ theme: 'default', width: '100%' });
     $('#ddlPEAPartyName').select2({ theme: 'default', width: '100%' });
+    $('#ddlPEAPayMode').select2({ theme: 'default', width: '100%', placeholder: '-- Select --', allowClear: true });
+    $('#ddlPEAPayModeFilter').select2({ theme: 'default', width: '100%' });
 
     $('#ddlPEAPartyName').on('change', function () {
         if (G_PEAIsBindingEdit) return;
@@ -257,35 +266,49 @@ function PEASetupPayModeAutoSuggestion(inputSelector, listSelector, data, focusN
         PEAPositionPayModeSuggestion($input, $list);
     });
 }
-function PEALoadPaymentModeList() {
-    $.ajax({
-        url: appBaseURL + API_GET_PAYMENT_MODE_LIST,
-        type: 'GET',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Auth-Key', authKeyData);
-        },
-        success: function (response) {
-            if (!response || !response.length) {
-                $('#txtPEAPayModeList, #txtPEAPayModeFilterList').empty().hide();
-                return;
-            }
-            var data = $.map(response, function (item) {
-                var desp = PEAMapPaymentModeDesp(item);
-                return desp ? { Desp: desp } : null;
-            }).filter(Boolean);
-
-            if (!data.length) {
-                $('#txtPEAPayModeList, #txtPEAPayModeFilterList').empty().hide();
-                return;
-            }
-
-            PEASetupPayModeAutoSuggestion('#txtPEAPayMode', '#txtPEAPayModeList', data, 'peaPayMode');
-            PEASetupPayModeAutoSuggestion('#txtPEAPayModeFilter', '#txtPEAPayModeFilterList', data, 'peaPayModeFilter');
-        },
-        error: function () {
-            $('#txtPEAPayModeList, #txtPEAPayModeFilterList').empty().hide();
-        }
+function PEABuildPayModeSelectOptions(names, emptyLabel) {
+    var html = '<option value="">' + (emptyLabel || '') + '</option>';
+    var seen = {};
+    (names || []).forEach(function (name) {
+        var desp = (name || '').toString().trim();
+        if (!desp || seen[desp]) return;
+        seen[desp] = true;
+        var safe = $('<div>').text(desp).html();
+        html += '<option value="' + safe + '">' + safe + '</option>';
     });
+    return html;
+}
+function PEABindPayModeDropdown(names) {
+    var selected = ($('#ddlPEAPayMode').val() || '').trim();
+    var list = (names || []).slice();
+    if (selected && list.indexOf(selected) < 0) list.push(selected);
+    $('#ddlPEAPayMode').html(PEABuildPayModeSelectOptions(list));
+    if (selected) $('#ddlPEAPayMode').val(selected);
+    $('#ddlPEAPayMode').trigger('change');
+}
+function PEASetPayModeValue(value) {
+    var v = (value || '').toString().trim();
+    if (v) {
+        var exists = false;
+        $('#ddlPEAPayMode option').each(function () {
+            if ($(this).val() === v) { exists = true; return false; }
+        });
+        if (!exists) {
+            var safe = $('<div>').text(v).html();
+            $('#ddlPEAPayMode').append('<option value="' + safe + '">' + safe + '</option>');
+        }
+    }
+    $('#ddlPEAPayMode').val(v).trigger('change');
+}
+function PEABindPayModeFilter(names) {
+    var selected = ($('#ddlPEAPayModeFilter').val() || '').trim();
+    $('#ddlPEAPayModeFilter').html(PEABuildPayModeSelectOptions(names, 'All'));
+    if (selected) $('#ddlPEAPayModeFilter').val(selected);
+    $('#ddlPEAPayModeFilter').trigger('change');
+}
+function PEALoadPaymentModeList() {
+    PEABindPayModeDropdown(G_PEAPayModeOptions);
+    PEABindPayModeFilter(G_PEAPayModeOptions);
 }
 function PEAFillGrid() {
     var accountCode = $('#ddlPEAPartyName').val();
@@ -468,7 +491,7 @@ function PEALoadList(type) {
     var fromDate      = ($('#txtPEAFromDate').val() || '').trim();
     var toDate        = ($('#txtPEAToDate').val() || '').trim();
     var accountCode   = $('#ddlPEAPartyFilter').val() || '';
-    var paymentMode   = ($('#txtPEAPayModeFilter').val() || '').trim();
+    var paymentMode   = ($('#ddlPEAPayModeFilter').val() || '').trim();
 
     if (!fromDate) {
         PEAToastError('Please select from date.');
@@ -575,7 +598,7 @@ function PEAResetForm() {
     $('#txtPEAEntryNo').val('');
     $('#txtPEADate').datepicker('setDate', new Date());
     $('#ddlPEAPartyName').val('').trigger('change');
-    $('#txtPEAPayMode').val('');
+    $('#ddlPEAPayMode').val('').trigger('change');
     $('#txtPEARefNo').val('');
     $('#txtPEAAmount').val('');
     $('#txtPEANarration').val('');
@@ -636,7 +659,7 @@ function PEAEditEntry(code) {
             $('#txtPEADate').datepicker('update', PEAFormatApiDate(pm.EntryDate || pm.entryDate || ''));
             $('#ddlPEAPartyName').val(pm.AccountMaster_Code || pm.accountMaster_Code || '').trigger('change.select2');
             PEASetPartyFieldDisabled(true);
-            $('#txtPEAPayMode').val(payMode);
+            PEASetPayModeValue(payMode);
             $('#txtPEARefNo').val(pm.RefNo || pm.refno || pm.Refno || '');
             $('#txtPEAAmount').val(formatAmt(pm.Amount || pm.amount || 0));
             $('#txtPEANarration').val(pm.Narration || pm.narration || '');
@@ -698,7 +721,7 @@ function PEASavePaymentEntry() {
     var amount    = parseAmountStr($('#txtPEAAmount').val());
     var partyCode = $('#ddlPEAPartyName').val();
 
-    var payMode   = ($('#txtPEAPayMode').val() || '').trim();
+    var payMode   = ($('#ddlPEAPayMode').val() || '').trim();
     var refNo     = $('#txtPEARefNo').val().trim();
     var narration = $('#txtPEANarration').val().trim();
 
@@ -712,7 +735,7 @@ function PEASavePaymentEntry() {
         return;
     }
     if (!payMode) {
-        PEAToastError('Please select payment mode.');
+        PEAToastError('Please select Credit Note.');
         return;
     }
     if (!refNo) {

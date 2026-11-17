@@ -5,6 +5,7 @@ $(document).ready(function () {
     GetPerPageSize();
     WarehouseNameForDefault();
     ItemMasterConfig();
+    AppConfigLoad();
     GetIsActiveDetails();
     GetFixparameter();
     if (typeof window.applyEsmsLevelOfOrderNoLabelsToDom === 'function') {
@@ -340,6 +341,24 @@ function ItemMasterConfig() {
         },
         error: function (xhr, status, error) {
             toastr.error('Error Api/ShowItemConfig');
+        }
+    });
+}
+
+function AppConfigLoad() {
+    $.ajax({
+        url: `${baseUrl1}/api/AppConfig/GetAppConfigList`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response && response.length > 0) {
+                sessionStorage.setItem('AppConfig', JSON.stringify(response));
+            }
+        },
+        error: function () {
+            console.error('Error Api/GetAppConfigList');
         }
     });
 }
