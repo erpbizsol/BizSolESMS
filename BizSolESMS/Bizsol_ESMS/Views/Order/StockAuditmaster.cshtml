@@ -1,0 +1,60 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link href="~/assets/css/filter.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="~/assets/script/StockAuditmaster.js"></script>
+<style>
+    .sm-table1 {
+    width: 70% !important;
+    min-width: 700px;
+    max-width: 100%;
+}
+    .sm-table1 .table-wrapper {
+        width: 100%;
+        overflow-x: hidden;
+    }
+    .sm-table1 .fixed-width-table {
+        width: 100% !important;
+        min-width: 0 !important;
+        table-layout: auto;
+    }
+    .sm-table1 .fixed-width-table th,
+    .sm-table1 .fixed-width-table td {
+        white-space: normal;
+        word-break: break-word;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+    .sm-table1 .fixed-width-table td input.form-control {
+        min-width: 50px;
+        width: 100%;
+    }
+</style>
+<div class="container-fluid" style="">
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <audio id="SuccessVoice" style="display: none;"><source src="~/assets/audio/voice.mp3" type="audio/mpeg" /></audio>
+            <label for="txtScanProduct" class="col-form-label-sm fw-bold">Scan Product</label><span class="text-danger">*</span>
+            <input type="text" id="txtScanProduct" class="box_border form-control form-control-sm" autocomplete="off" placeholder="Scan Product.." onfocus="this.select()">
+        </div>
+    </div>
+    <div class="sm-table1 mt-3" id="txtListpage">
+        <div class="card-body mt-2" id="txtordertable">
+            <div class="table-wrapper fixed-height-table">
+                <table id="table" class="fixed-width-table table">
+                    <thead id="table-header">
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginator" id="paginator-table">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="overlay" class="overlay"></div>
+<div id="toast" class="toast-container"></div>
+<script src="~/assets/js/filter.js"></script>
