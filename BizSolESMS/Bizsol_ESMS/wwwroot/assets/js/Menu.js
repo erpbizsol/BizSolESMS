@@ -70,10 +70,101 @@ function bindVerticalMenuScrollPersistence() {
     );
 }
 
-$(document).on('click', '#sidebar-menu a[href]', function () {
+function getFixParamTransferTallyValue() {
+    try {
+        var parsed = JSON.parse(sessionStorage.getItem('Fixparameter') || 'null');
+        if (!parsed) return '';
+        var row = Array.isArray(parsed) ? parsed[0] : parsed;
+        if (!row) return '';
+        var keys = ['IsTransferApplicableInTally', 'IsTransferAbplicableInTally'];
+        for (var i = 0; i < keys.length; i++) {
+            var camel = keys[i].charAt(0).toLowerCase() + keys[i].slice(1);
+            var value = row[keys[i]] != null ? row[keys[i]] : row[camel];
+            if (value != null && String(value).trim() !== '') return String(value).trim();
+        }
+        var matchedKey = Object.keys(row).find(function (key) {
+            return /transfer/i.test(key) && /tally/i.test(key);
+        });
+        if (matchedKey && row[matchedKey] != null && String(row[matchedKey]).trim() !== '') {
+            return String(row[matchedKey]).trim();
+        }
+    } catch (e) { }
+    return '';
+}
+
+function isAccountAppConfigBlocked() {
+    return getFixParamTransferTallyValue().toUpperCase() === 'N';
+}
+
+function isAccountAppConfigLink($link) {
+    var href = ($link.attr('href') || '').toLowerCase();
+    var label = ($link.find('.esms-menu-label').text() || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (label === 'account app config' || label === 'app config' || label === 'app config configuration') return true;
+    return href.indexOf('appconfig') >= 0;
+}
+
+function showAccountAppConfigBlockedMessage() {
+    var message = 'You cannot access this page because it is not available in the current Tally Integration.';
+    var existing = document.getElementById('esmsTallyAccessModal');
+    if (existing) {
+        var existingBtn = existing.querySelector('.esms-tally-access__ok');
+        if (existingBtn) existingBtn.focus();
+        return;
+    }
+
+    var wrap = document.createElement('div');
+    wrap.id = 'esmsTallyAccessModal';
+    wrap.className = 'esms-tally-access';
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+    wrap.setAttribute('aria-labelledby', 'esmsTallyAccessTitle');
+    wrap.innerHTML =
+        '<div class="esms-tally-access__backdrop" data-close="1"></div>' +
+        '<div class="esms-tally-access__card">' +
+            '<div class="esms-tally-access__icon" aria-hidden="true">' +
+                '<svg viewBox="0 0 24 24" fill="none">' +
+                    '<path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+                    '<rect x="5" y="11" width="14" height="9" rx="2.2" stroke="currentColor" stroke-width="1.8"/>' +
+                    '<path d="M12 15v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+                '</svg>' +
+            '</div>' +
+            '<p class="esms-tally-access__kicker">Tally Integration</p>' +
+            '<h3 id="esmsTallyAccessTitle">Access unavailable</h3>' +
+            '<p class="esms-tally-access__text"></p>' +
+            '<button type="button" class="esms-tally-access__ok">OK</button>' +
+        '</div>';
+
+    wrap.querySelector('.esms-tally-access__text').textContent = message;
+    document.body.appendChild(wrap);
+
+    function closeModal() {
+        wrap.classList.remove('is-open');
+        document.removeEventListener('keydown', onKey);
+        setTimeout(function () {
+            if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+        }, 180);
+    }
+    function onKey(e) {
+        if (e.key === 'Escape' || e.key === 'Enter') closeModal();
+    }
+
+    wrap.querySelector('.esms-tally-access__ok').addEventListener('click', closeModal);
+    wrap.querySelector('[data-close]').addEventListener('click', closeModal);
+    document.addEventListener('keydown', onKey);
+    requestAnimationFrame(function () {
+        wrap.classList.add('is-open');
+        wrap.querySelector('.esms-tally-access__ok').focus();
+    });
+}
+
+$(document).on('click', '#sidebar-menu a[href]', function (e) {
     var href = ($(this).attr('href') || '').trim();
     if (!href || href.indexOf('javascript:') === 0 || href === '#') return;
     saveVerticalMenuScroll();
+    if (isAccountAppConfigLink($(this)) && isAccountAppConfigBlocked()) {
+        e.preventDefault();
+        showAccountAppConfigBlockedMessage();
+    }
 });
 
 var authKeyData1 = JSON.parse(sessionStorage.getItem('authKey'));
@@ -347,7 +438,7 @@ function ItemMasterConfig() {
 
 function AppConfigLoad() {
     $.ajax({
-        url: `${baseUrl1}/api/AppConfig/GetAppConfigList`,
+        url: `${baseUrl1}/api/Configuration/GetAppConfigList`,
         type: 'GET',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
@@ -413,6 +504,10 @@ function GetFixparameter() {
             }
             if (typeof window.applyEsmsLevelOfOrderNoLabelsToDom === 'function') {
                 window.applyEsmsLevelOfOrderNoLabelsToDom();
+            }
+            if (isAccountAppConfigBlocked() && /appconfig/i.test(window.location.pathname || '')) {
+                $("#txtCreatepage").hide();
+                showAccountAppConfigBlockedMessage();
             }
         },
         error: function (xhr, status, error) {

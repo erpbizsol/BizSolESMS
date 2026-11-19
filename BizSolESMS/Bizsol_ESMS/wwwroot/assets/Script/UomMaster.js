@@ -19,7 +19,7 @@ $(document).ready(function () {
         });
         $('#txtDigitAfterDecimal').on('keydown', function (e) {
             if (e.key === "Enter") {
-                if (isTransferApplicableInTally()) {
+                if (isTallyAppType()) {
                     var $ddl = $("#txtUOMTallyConfiguration");
                     if ($ddl.data("select2")) {
                         $ddl.select2("open");
@@ -34,10 +34,12 @@ $(document).ready(function () {
         $('#txtUOMTallyConfiguration').on('change', function () {
             fillUomTallyDescription($(this).val());
         });
-    applyUomTallyVisibility();
-    if (isTransferApplicableInTally()) {
-        loadUomTallyConfiguration();
-    }
+    waitForFixparameter(function () {
+        applyUomTallyVisibility();
+        if (isTallyAppType()) {
+            loadUomTallyConfiguration();
+        }
+    });
     ShowUomMasterlist('Load');
     GetModuleMasterCode();
 });
@@ -50,27 +52,36 @@ function getFixParamRow() {
         return null;
     }
 }
-function getFixParamValue(key) {
+function getFixParamTransferTallyValue() {
     var row = getFixParamRow();
     if (!row) return '';
-    var camelKey = key.charAt(0).toLowerCase() + key.slice(1);
-    var value = row[key] != null ? row[key] : row[camelKey];
-    return (value != null && String(value).trim() !== '') ? String(value).trim() : '';
-}
-function isTransferApplicableInTally() {
-    var value = getFixParamValue('IsTransferApplicableInTally') || getFixParamValue('IsTransferAbplicableInTally');
-    if (!value) {
-        var row = getFixParamRow();
-        if (row) {
-            var matchedKey = Object.keys(row).find(function (key) {
-                return /transfer/i.test(key) && /tally/i.test(key);
-            });
-            if (matchedKey && row[matchedKey] != null) {
-                value = String(row[matchedKey]).trim();
-            }
-        }
+    var keys = ['IsTransferApplicableInTally', 'IsTransferAbplicableInTally'];
+    for (var i = 0; i < keys.length; i++) {
+        var camel = keys[i].charAt(0).toLowerCase() + keys[i].slice(1);
+        var value = row[keys[i]] != null ? row[keys[i]] : row[camel];
+        if (value != null && String(value).trim() !== '') return String(value).trim();
     }
-    return String(value || '').toUpperCase() === 'Y';
+    var matchedKey = Object.keys(row).find(function (key) {
+        return /transfer/i.test(key) && /tally/i.test(key);
+    });
+    if (matchedKey && row[matchedKey] != null) return String(row[matchedKey]).trim();
+    return '';
+}
+// Y => show Tally fields, N => hide
+function isTallyAppType() {
+    return getFixParamTransferTallyValue().toUpperCase() === 'Y';
+}
+// Fixparameter is loaded asynchronously by Menu.js; wait briefly for it.
+function waitForFixparameter(done) {
+    var tries = 0;
+    (function check() {
+        if (getFixParamRow() || tries >= 30) {
+            if (typeof done === 'function') done();
+            return;
+        }
+        tries++;
+        setTimeout(check, 100);
+    })();
 }
 function pickField(item, names) {
     if (!item) return '';
@@ -90,7 +101,7 @@ function escapeHtml(value) {
         .replace(/>/g, '&gt;');
 }
 function applyUomTallyVisibility() {
-    if (isTransferApplicableInTally()) {
+    if (isTallyAppType()) {
         $("#divUOMTallyConfiguration,#divUOMTallyDescription").show();
     } else {
         $("#divUOMTallyConfiguration,#divUOMTallyDescription").hide();
@@ -172,7 +183,7 @@ function setUomTallyFromRecord(item, disabled) {
     }
 }
 function loadUomTallyConfiguration(done) {
-    if (!isTransferApplicableInTally()) {
+    if (!isTallyAppType()) {
         applyUomTallyVisibility();
         if (typeof done === 'function') done();
         return;
@@ -258,7 +269,7 @@ function Save() {
     var uomName = $("#txtUOM").val();
     var digitAfterDecimal = $("#txtDigitAfterDecimal").val();
     var tallyCode = 0;
-    if (isTransferApplicableInTally()) {
+    if (isTallyAppType()) {
         tallyCode = parseInt($("#txtUOMTallyConfiguration").val(), 10) || 0;
     }
     if ($("#txtUOM").val() == "") {
@@ -267,7 +278,7 @@ function Save() {
     } else if ($("#txtDigitAfterDecimal").val() == "" || isNaN($("#txtDigitAfterDecimal").val()) || parseInt($("#txtDigitAfterDecimal").val()) < 0) {
         toastr.error('Please enter a valid digit after decimal is 0.');
         $("#txtDigitAfterDecimal").focus();
-    } else if (isTransferApplicableInTally() && tallyCode <= 0) {
+    } else if (isTallyAppType() && tallyCode <= 0) {
         toastr.error('Please select UOM Tally Configuration.');
         if ($("#txtUOMTallyConfiguration").data("select2")) {
             $("#txtUOMTallyConfiguration").select2("open");

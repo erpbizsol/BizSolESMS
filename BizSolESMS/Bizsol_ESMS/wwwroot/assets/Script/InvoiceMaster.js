@@ -587,6 +587,43 @@ function initInvoiceLineHsnSelect2() {
         });
     });
 }
+function invoiceExcludingGstOn() {
+    return $('#chkExcludingGst').is(':checked');
+}
+function excludingGstStorageKey(dispatchCode) {
+    return 'esmsInvExcludingGst:' + String(dispatchCode || '');
+}
+function readExcludingGstPref(dispatchCode) {
+    if (!dispatchCode) return false;
+    try {
+        return localStorage.getItem(excludingGstStorageKey(dispatchCode)) === 'Y';
+    } catch (e) {
+        return false;
+    }
+}
+function writeExcludingGstPref(dispatchCode, on) {
+    if (!dispatchCode) return;
+    try {
+        localStorage.setItem(excludingGstStorageKey(dispatchCode), on ? 'Y' : 'N');
+    } catch (e) { /* private mode */ }
+}
+/** Header flag wins when the API returns it; otherwise the last choice for this dispatch. */
+function applyExcludingGstCheckbox(hdr, dispatchCode) {
+    var raw = null;
+    if (hdr) {
+        if (hdr.ExcludingGST != null) raw = hdr.ExcludingGST;
+        else if (hdr.ExcludingGst != null) raw = hdr.ExcludingGst;
+        else if (hdr['Excluding GST'] != null) raw = hdr['Excluding GST'];
+    }
+    var on = false;
+    if (raw != null && String(raw).trim() !== '') {
+        var s = String(raw).trim().toUpperCase();
+        on = s === 'Y' || s === 'YES' || s === 'TRUE' || s === '1';
+    } else {
+        on = readExcludingGstPref(dispatchCode);
+    }
+    $('#chkExcludingGst').prop('checked', on);
+}
 function recalcRow($tr) {
     var qty = parseNum($tr.find('.inv-qty').text());
     if (!(qty > 0)) qty = 1;
@@ -600,10 +637,12 @@ function recalcRow($tr) {
     var gstRaw = ($tr.find('.inv-gst').val() || '').trim();
     var gstPct = gstRaw === '' ? 0 : parseNum(gstRaw);
     if (!isFinite(gstPct) || isNaN(gstPct) || gstPct < 0) gstPct = 0;
-    var taxAmtUnit = taxableUnit * (gstPct / 100);
+    var excludingGst = invoiceExcludingGstOn();
+    var taxAmtUnit = excludingGst ? 0 : (taxableUnit * (gstPct / 100));
     var lineDiscAmt = discAmtUnit * qty;
     var lineTaxAmt = taxAmtUnit * qty;
-    var amount = (taxableUnit + taxAmtUnit) * qty;
+    /** Exclude GST checked: Amount is Basic Rate × Qty and tax is 0. Unchecked: (Basic Rate − discount + GST) × Qty. */
+    var amount = excludingGst ? (basicRate * qty) : ((taxableUnit + taxAmtUnit) * qty);
     $tr.find('.inv-disc-amt').text(formatMoney(lineDiscAmt));
     $tr.find('.inv-tax-amt').text(formatMoney(lineTaxAmt));
     $tr.find('.inv-line-amt').text(formatMoney(amount));
@@ -731,6 +770,7 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
         clientName: rowModel.clientName,
         packingNo: rowModel.packingNo
     };
+    $('#chkExcludingGst').prop('checked', false);
 
     if (typeof blockUI === 'function') blockUI();
     $.ajax({
@@ -743,11 +783,13 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
         },
         success: function (response) {
             var lines = [];
+            var invoiceHdr = null;
             var invHeaders = response && (response.InvoiceHeader || response.invoiceHeader);
             var useInvoiceGenerateShape = Array.isArray(invHeaders) && invHeaders.length > 0;
 
             if (useInvoiceGenerateShape) {
                 var hdr = invHeaders[0];
+                invoiceHdr = hdr;
                 var invMc = parseNum(hdr.InvoiceMaster_Code);
                 if (invMc > 0) {
                     G_InvModalCtx.invoiceMasterCode = invMc;
@@ -809,6 +851,8 @@ async function invoiceMasterOpenGenerate(dispatchCode) {
                 toastr.error('No line items for this dispatch.');
                 return;
             }
+
+            applyExcludingGstCheckbox(invoiceHdr, dispatchCode);
 
             var body = '';
             lines.forEach(function (it, idx) {
@@ -993,8 +1037,12 @@ function saveGstInvoice() {
         InvoiceDate: invUiDateToApiYmd($('#txtInvInvoiceDate').val()),
         VehicleNo: $('#txtInvVehicleNo').val().trim(),
         TermsAndConditions: $('#txtInvTerms').val() || '',
-        BankDetails: $('#txtInvBank').val() || ''
+        BankDetails: $('#txtInvBank').val() || '',
+        ExcludingGST: invoiceExcludingGstOn() ? 'Y' : 'N'
     };
+    if (G_InvModalCtx && G_InvModalCtx.dispatchMasterCode) {
+        writeExcludingGstPref(G_InvModalCtx.dispatchMasterCode, invoiceExcludingGstOn());
+    }
 
     var invCodeParsed = G_InvModalCtx.invoiceMasterCode != null
         ? parseInt(String(G_InvModalCtx.invoiceMasterCode), 10)
@@ -1217,6 +1265,15 @@ $(document).ready(function () {
     });
 
     $('#btnInvSave').on('click', saveGstInvoice);
+
+    $('#chkExcludingGst').on('change', function () {
+        if (G_InvModalCtx && G_InvModalCtx.dispatchMasterCode) {
+            writeExcludingGstPref(G_InvModalCtx.dispatchMasterCode, $(this).is(':checked'));
+        }
+        if ($('#tblInvoiceItemsBody tr').length) {
+            recalcInvoiceTotal();
+        }
+    });
 
     if (typeof initInvoicePrintModal === 'function') {
         initInvoicePrintModal();

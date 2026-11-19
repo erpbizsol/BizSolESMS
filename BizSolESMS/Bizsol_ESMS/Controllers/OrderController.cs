@@ -117,5 +117,12 @@ namespace Bizsol_ESMS.Controllers
             return View();
         }
         #endregion  DispatchBoxValidation 
+
+        #region StockAuditmaster
+        public IActionResult StockAuditmaster()
+        {
+            return View();
+        }
+        #endregion StockAuditmaster
     }
 }
