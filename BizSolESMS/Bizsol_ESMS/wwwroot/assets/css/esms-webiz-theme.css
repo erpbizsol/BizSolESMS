@@ -2522,3 +2522,108 @@ body.esms-webiz .swal-icon--error {
 #layout-wrapper.esms-webiz.esms-profenna .esms-oc-reopen-btn:hover {
     background: #d97706;
 }
+
+.esms-tally-access {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: var(--esms-font-ui, "DM Sans", system-ui, sans-serif);
+}
+
+.esms-tally-access__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(43, 45, 58, 0.46);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.esms-tally-access.is-open .esms-tally-access__backdrop {
+    opacity: 1;
+}
+
+.esms-tally-access__card {
+    position: relative;
+    width: min(364px, 71%);
+    background: #fff;
+    border: 1px solid #e8eaf0;
+    border-radius: 38px;
+    box-shadow: 0 24px 60px rgb(210 212 225);
+    padding: 28px 28px 22px;
+    text-align: center;
+    transform: translateY(8px) scale(0.98);
+    opacity: 0;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.esms-tally-access.is-open .esms-tally-access__card {
+    transform: none;
+    opacity: 1;
+}
+
+.esms-tally-access__icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b45309;
+    background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
+    border: 1px solid #fed7aa;
+}
+
+.esms-tally-access__icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.esms-tally-access__kicker {
+    margin: 0 0 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1b9e75;
+}
+
+.esms-tally-access__card h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    font-weight: 650;
+    color: #2b2d3a;
+    letter-spacing: -0.02em;
+}
+
+.esms-tally-access__text {
+    margin: 0 0 22px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #6b7080;
+}
+
+.esms-tally-access__ok {
+    width: 100%;
+    height: 40px;
+    border: 0;
+    border-radius: 10px;
+    background: #3ecfa3;
+    color: #14382c;
+    font-size: 14px;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+}
+
+.esms-tally-access__ok:hover,
+.esms-tally-access__ok:focus {
+    background: #1b9e75;
+    color: #fff;
+    outline: none;
+}

@@ -7,14 +7,17 @@ const AppBaseURLMenu = sessionStorage.getItem('AppBaseURLMenu');
 
 $(document).ready(function () {
     $("#ERPHeading").text("App Config");
+    if (typeof isAccountAppConfigBlocked === 'function' && isAccountAppConfigBlocked()) {
+        $("#txtCreatepage").hide();
+        if (typeof showAccountAppConfigBlockedMessage === 'function') {
+            showAccountAppConfigBlockedMessage();
+        }
+        return;
+    }
     GetModuleMasterCode();
     Edit();
 
-    $('#txtAppConfigId').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtCompanyName").focus();
-        }
-    });
+
     $('#txtCompanyName').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtUnitName").focus();
@@ -22,7 +25,11 @@ $(document).ready(function () {
     });
     $('#txtUnitName').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtTallyCompCode").focus();
+            if (isTallyAppType()) {
+                $("#txtTallyCompCode").focus();
+            } else {
+                $("#txtAppName").focus();
+            }
         }
     });
     $('#txtTallyCompCode').on('keydown', function (e) {
@@ -35,17 +42,47 @@ $(document).ready(function () {
             $("#txtAppType").focus();
         }
     });
+    $('#txtAppType').on('change', function () {
+        toggleTallyFields();
+    });
     $('#txtAppType').on('keydown', function (e) {
         if (e.key === "Enter") {
-            $("#txtAppSoftwareSerialNo").focus();
+            if (isTallyAppType()) {
+                $("#txtAppSoftwareSerialNo").focus();
+            } else {
+                $("#txtsave").focus();
+            }
         }
     });
+    toggleTallyFields();
     $('#txtAppSoftwareSerialNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtsave").focus();
         }
     });
 });
+
+function getAppTypeCode(value) {
+    var appType = String(value == null ? "" : value).trim().toLowerCase();
+    if (appType === "1" || appType === "tally") {
+        return "1";
+    }
+    return String(value == null ? "" : value).trim();
+}
+
+function isTallyAppType() {
+    var value = String($("#txtAppType").val() || "").trim().toLowerCase();
+    var text = String($("#txtAppType option:selected").text() || "").trim().toLowerCase();
+    return value === "1" || value === "tally" || text === "tally";
+}
+
+function toggleTallyFields() {
+    if (isTallyAppType()) {
+        $("#divTallyCompCode, #divAppSoftwareSerialNo").show();
+    } else {
+        $("#divTallyCompCode, #divAppSoftwareSerialNo").hide();
+    }
+}
 
 function getAppConfigValue(item, names, fallback) {
     if (!item) {
@@ -89,7 +126,7 @@ async function Save() {
         $("#txtUnitName").focus();
         return;
     }
-    if ($("#txtTallyCompCode").val() === '') {
+    if (isTallyAppType() && $("#txtTallyCompCode").val() === '') {
         toastr.error('Please enter Tally Comp Code !');
         $("#txtTallyCompCode").focus();
         return;
@@ -100,11 +137,11 @@ async function Save() {
         return;
     }
     if ($("#txtAppType").val() === '') {
-        toastr.error('Please enter App Type !');
+        toastr.error('Please select App Type !');
         $("#txtAppType").focus();
         return;
     }
-    if ($("#txtAppSoftwareSerialNo").val() === '') {
+    if (isTallyAppType() && $("#txtAppSoftwareSerialNo").val() === '') {
         toastr.error('Please enter App Software Serial No !');
         $("#txtAppSoftwareSerialNo").focus();
         return;
@@ -164,10 +201,12 @@ async function Edit() {
                 $("#txtUnitName").val(getAppConfigValue(item, ["UnitName", "unitName"], ""));
                 $("#txtTallyCompCode").val(getAppConfigValue(item, ["TallyCompCode", "tallyCompCode"], ""));
                 $("#txtAppName").val(getAppConfigValue(item, ["AppName", "appName"], ""));
-                $("#txtAppType").val(getAppConfigValue(item, ["AppType", "appType"], ""));
+                $("#txtAppType").val(getAppTypeCode(getAppConfigValue(item, ["AppType", "appType"], "1")));
                 $("#txtAppSoftwareSerialNo").val(getAppConfigValue(item, ["AppSoftwareSerialNo", "appSoftwareSerialNo"], ""));
+                toggleTallyFields();
             } else {
                 $("#txtAppConfigId").val("0");
+                toggleTallyFields();
             }
         },
         error: function (xhr, status, error) {
