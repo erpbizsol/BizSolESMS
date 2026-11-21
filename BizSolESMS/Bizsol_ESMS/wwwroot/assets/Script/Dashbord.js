@@ -1,8 +1,8 @@
 /* ============================================================================
  * Dashboard — dynamic data loader with FromDate / ToDate filter.
  *
- * Backed by the stored procedure USP_DailyStockReport via the API:
- *   GET {appBaseURL}/api/Dashbord/GetDailyStockReport?FromDate=yyyy-MM-dd&ToDate=yyyy-MM-dd
+ *   GET {appBaseURL}/api/OrderMaster/GetDailyStockReport?FromDate=yyyy-MM-dd&ToDate=yyyy-MM-dd
+ *   (USP_ShowDashboardData + separate USP_FastMovingParts for FastMovingParts / flag update)
  *   Header: Auth-Key
  *   (If your API exposes this on a different controller, change API_DAILY_STOCK
  *    below — e.g. '/api/Report/GetDailyStockReport'.)
@@ -20,6 +20,8 @@
  *   "UserWeeklyReport":  [{ Name, 2026_Aug_Week1_Unloaded, 2026_Aug_Week1_Packed, ... }],
  *   "SaleLossOrder":     [{ TotalLineOfProduct, TotalProductQty, TotalValue }],
  *   "ReorderLevelData":  [{ Item Code, Item Name, Reorder Level, Balance Qty, ... }],
+ *   "FastMovingParts":   [{ ItemMaster_Code, Item Code, Item Name, Quantity, IsMovingFast }, ...],
+ *   "FastMovingReorderLevelData": [{ Item Code, Item Name, StockQty (vw_itemstockdata BalanceQty) }, ...],
  *   "SaleReturn":        [{ PartyName, OrderNo, Reason, Value }],
  *   "TatConfig":         [{ MinKM, MaxKM }],
  *   "TatMaster":         [{ Division, InvoiceA..D, ActualA..D }],
@@ -34,7 +36,11 @@ var appBaseURL = sessionStorage.getItem('AppBaseURL') || (typeof AppBaseURL !== 
 var API_DAILY_STOCK = '/api/OrderMaster/GetDailyStockReport';
 var API_CURRENT_DATE = '/api/Master/GetCurrentDate';
 var API_PENDING_INVOICE_REPORT = '/api/PaymentEntry/GetPendingInvoiceReport';
+var API_UPDATE_IS_MOVING_FAST = '/api/Master/UpdateItemIsMovingFast';
 var G_DashCharts = {};
+var G_DashFastMovingSaveInFlight = false;
+var G_DashViewMode = 'dashboard';
+var G_DashToday = null;
 
 $(document).ready(function () {
     $('#ERPHeading').text('Dashboard');
@@ -47,6 +53,17 @@ $(document).ready(function () {
 
     $('#btnDashApply').on('click', function () { LoadDashboard(); });
     $('#btnDashReset').on('click', function () { SetDefaultDates(true); });
+
+    $('.wd-view-switch__btn').on('click', function () {
+        var view = ($(this).data('dashView') || 'dashboard').toString().toLowerCase();
+        SetDashView(view === 'inventory' ? 'inventory' : 'dashboard');
+    });
+
+    SetDashView('dashboard', { applyDates: false });
+
+    $('#dashFastMovingParts').on('change', '.dash-fast-moving-flag', function () {
+        SaveFastMovingFlag($(this));
+    });
 
     InitDefaultDatesAndLoad();
 });
@@ -79,12 +96,39 @@ function dashParseApiDate(str) {
     return isNaN(d.getTime()) ? null : d;
 }
 
-function SetDefaultDates(reload) {
-    var today = new Date();
-    var firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    $('#txtDashFromDate').datepicker('setDate', firstOfMonth);
+function dashResolveToday() {
+    if (G_DashToday && !isNaN(G_DashToday.getTime())) {
+        return new Date(G_DashToday.getTime());
+    }
+    var toUi = ($('#txtDashToDate').val() || '').trim();
+    var parsed = dashParseApiDate(toUi);
+    if (parsed && !isNaN(parsed.getTime())) {
+        return parsed;
+    }
+    return new Date();
+}
+
+function SetDashDateRangeForView(mode, reload) {
+    var today = dashResolveToday();
+    G_DashToday = new Date(today.getTime());
+    var fromDate;
+    if (mode === 'inventory') {
+        fromDate = new Date(today.getTime());
+        fromDate.setDate(fromDate.getDate() - 90);
+    } else {
+        fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    }
+    $('#txtDashFromDate').datepicker('setDate', fromDate);
     $('#txtDashToDate').datepicker('setDate', today);
-    if (reload) { LoadDashboard(); }
+    if (reload) {
+        LoadDashboard();
+    }
+}
+
+function SetDefaultDates(reload) {
+    var today = dashResolveToday();
+    G_DashToday = new Date(today.getTime());
+    SetDashDateRangeForView(G_DashViewMode, reload);
 }
 
 function InitDefaultDatesAndLoad() {
@@ -100,13 +144,21 @@ function InitDefaultDatesAndLoad() {
             } else {
                 today = new Date();
             }
+            G_DashToday = new Date(today.getTime());
             var firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             $('#txtDashFromDate').datepicker('setDate', firstOfMonth);
             $('#txtDashToDate').datepicker('setDate', today);
+            if (G_DashViewMode === 'inventory') {
+                SetDashDateRangeForView('inventory', false);
+            }
             LoadDashboard();
         },
         error: function () {
+            G_DashToday = new Date();
             SetDefaultDates(false);
+            if (G_DashViewMode === 'inventory') {
+                SetDashDateRangeForView('inventory', false);
+            }
             LoadDashboard();
         }
     });
@@ -196,6 +248,28 @@ function dashFormatAxisAmount(v) {
     if (n >= 1e5) return (n / 1e5).toFixed(1) + 'L';
     if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
     return String(Math.round(n));
+}
+
+function SetDashView(mode, options) {
+    options = options || {};
+    var isInventory = mode === 'inventory';
+    var newMode = isInventory ? 'inventory' : 'dashboard';
+    var viewChanged = newMode !== G_DashViewMode;
+    G_DashViewMode = newMode;
+
+    var $root = $('.esms-dash-webiz');
+    $root.removeClass('wd-dash-mode-dashboard wd-dash-mode-inventory');
+    $root.addClass(isInventory ? 'wd-dash-mode-inventory' : 'wd-dash-mode-dashboard');
+
+    var $dashboardBtn = $('#btnDashViewDashboard');
+    var $inventoryBtn = $('#btnDashViewInventory');
+    $dashboardBtn.toggleClass('is-active', !isInventory).attr('aria-selected', !isInventory ? 'true' : 'false');
+    $inventoryBtn.toggleClass('is-active', isInventory).attr('aria-selected', isInventory ? 'true' : 'false');
+
+    var applyDates = options.applyDates !== false;
+    if (viewChanged && applyDates) {
+        SetDashDateRangeForView(newMode, true);
+    }
 }
 
 function dashShowChartEmpty(elId, msg) {
@@ -363,6 +437,11 @@ function RenderDashboard(data) {
     RenderSaleReturn(saleReturns);
     RenderSaleLossOrder(saleLoss);
     RenderReorderLevel(dashArr(data, ['ReorderLevelData', 'reorderLevelData']));
+    RenderFastMovingParts(dashArr(data, ['FastMovingParts', 'fastMovingParts']));
+    RenderFastMovingReorder(dashArr(data, [
+        'FastMovingReorderLevelData',
+        'fastMovingReorderLevelData'
+    ]));
 }
 
 /** Classify an OrderStatus string into a flow bucket. */
@@ -935,6 +1014,118 @@ function RenderReorderLevel(rows) {
             '<td>' + dashEscape(dashGet(r, ['Item Name', 'ItemName', 'itemName'], '—')) + '</td>' +
             '<td class="text-end">' + dashIndian(reorder) + '</td>' +
             '<td class="text-end' + (lowStock ? ' wd-stat-tile-val--danger' : '') + '">' + dashIndian(balance) + '</td>' +
+            '</tr>';
+    });
+    $tb.html(html);
+}
+
+function dashIsMovingFastY(row) {
+    var v = dashGet(row, ['IsMovingFast', 'isMovingFast', 'Flag', 'flag'], 'N');
+    return String(v).toUpperCase() === 'Y';
+}
+
+function RenderFastMovingParts(rows) {
+    var list = rows || [];
+    var $tb = $('#dashFastMovingParts');
+
+    if (!list.length) {
+        $tb.html('<tr><td colspan="4" class="text-center text-muted py-3">No fast moving parts</td></tr>');
+        return;
+    }
+
+    var html = '';
+    list.forEach(function (r) {
+        var itemMasterCode = dashGet(r, ['ItemMaster_Code', 'ItemMasterCode', 'itemMaster_Code', 'Code', 'code'], '');
+        var qty = dashGet(r, ['Quantity', 'quantity', 'Dispatch Qty', 'DispatchQty', 'dispatchQty'], 0);
+        var flagged = dashIsMovingFastY(r);
+        html += '<tr data-item-master-code="' + dashEscape(String(itemMasterCode)) + '">' +
+            '<td class="wd-mono">' + dashEscape(dashGet(r, ['Item Code', 'ItemCode', 'itemCode'], '—')) + '</td>' +
+            '<td>' + dashEscape(dashGet(r, ['Item Name', 'ItemName', 'itemName'], '—')) + '</td>' +
+            '<td class="text-end">' + dashIndian(qty) + '</td>' +
+            '<td class="text-center">' +
+            '<div class="wd-fast-flag-wrap">' +
+            '<input type="checkbox" class="form-check-input dash-fast-moving-flag" ' +
+            'data-item-master-code="' + dashEscape(String(itemMasterCode)) + '" ' +
+            'title="Fast moving flag" aria-label="Flag"' + (flagged ? ' checked' : '') + ' />' +
+            '<span class="wd-fast-flag-label">Flag</span>' +
+            '</div>' +
+            '</td>' +
+            '</tr>';
+    });
+    $tb.html(html);
+}
+
+function SaveFastMovingFlag($chk) {
+    if (G_DashFastMovingSaveInFlight) {
+        return;
+    }
+
+    var itemCode = parseInt($chk.data('itemMasterCode') || $chk.attr('data-item-master-code'), 10);
+    if (!itemCode || isNaN(itemCode)) {
+        dashToast('error', 'Invalid item for fast-moving flag.');
+        $chk.prop('checked', !$chk.prop('checked'));
+        return;
+    }
+
+    var userCode = 0;
+    if (typeof UserMaster_Code !== 'undefined' && UserMaster_Code) {
+        userCode = parseInt(String(UserMaster_Code).replace(/[^0-9]/g, ''), 10) || 0;
+    }
+
+    var isMovingFast = $chk.is(':checked') ? 'Y' : 'N';
+    var prevChecked = ! $chk.is(':checked');
+
+    G_DashFastMovingSaveInFlight = true;
+    $chk.prop('disabled', true);
+
+    $.ajax({
+        url: appBaseURL + API_UPDATE_IS_MOVING_FAST,
+        type: 'GET',
+        data: {
+            ItemMaster_Code: itemCode,
+            IsMovingFast: isMovingFast,
+            UserMaster_Code: userCode
+        },
+        beforeSend: function (xhr) { if (authKeyData) xhr.setRequestHeader('Auth-Key', authKeyData); },
+        success: function (res) {
+            var row = (res && res.length) ? res[0] : res;
+            var status = dashGet(row, ['Status', 'status'], 'Y');
+            if (String(status).toUpperCase() === 'N') {
+                $chk.prop('checked', prevChecked);
+                dashToast('error', dashGet(row, ['Msg', 'msg'], 'Could not update flag.'));
+                return;
+            }
+            dashToast('success', 'Fast moving flag saved.');
+            LoadDashboard();
+        },
+        error: function (xhr) {
+            console.error('UpdateItemIsMovingFast', xhr.status, xhr.responseText);
+            $chk.prop('checked', prevChecked);
+            dashToast('error', 'Unable to update fast moving flag.');
+        },
+        complete: function () {
+            G_DashFastMovingSaveInFlight = false;
+            $chk.prop('disabled', false);
+        }
+    });
+}
+
+function RenderFastMovingReorder(rows) {
+    var list = rows || [];
+    var $tb = $('#dashFastMovingReorder');
+
+    if (!list.length) {
+        $tb.html('<tr><td colspan="3" class="text-center text-muted py-3">No reorder alert for fast moving parts</td></tr>');
+        return;
+    }
+
+    var html = '';
+    list.forEach(function (r) {
+        var stockQty = dashGet(r, ['StockQty', 'stockQty', 'BalanceQty', 'balanceQty'], 0);
+        html += '<tr>' +
+            '<td class="wd-mono">' + dashEscape(dashGet(r, ['Item Code', 'ItemCode', 'itemCode'], '—')) + '</td>' +
+            '<td>' + dashEscape(dashGet(r, ['Item Name', 'ItemName', 'itemName'], '—')) + '</td>' +
+            '<td class="text-end wd-stat-tile-val--danger">' + dashIndian(stockQty) + '</td>' +
             '</tr>';
     });
     $tb.html(html);

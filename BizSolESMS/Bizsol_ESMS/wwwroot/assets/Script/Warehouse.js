@@ -2,6 +2,7 @@
 let UserMaster_Code = authKeyData.UserMaster_Code;
 let UserType = authKeyData.UserType;
 let UserModuleMaster_Code = 0;
+let CityList = [];
 const appBaseURL = sessionStorage.getItem('AppBaseURL');
 $(document).ready(function () {
     $("#ERPHeading").text("Warehouse  Master");
@@ -15,58 +16,61 @@ $(document).ready(function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
     $('#txtWarehouseName').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtCity").focus();
-        }
+        if (e.key === "Enter") { $("#txtDisplayName").focus(); }
     });
-    $('#txtWarehouseType').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtAddress").focus();
-        }
-    });
-    $('#txtAddress').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtPin").focus();
-        }
-    });
-    $('#txtPin').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtCity").focus();
-        }
+    $('#txtDisplayName').on('keydown', function (e) {
+        if (e.key === "Enter") { $("#txtCity").focus(); }
     });
     $('#txtCity').on('keydown', function (e) {
-        if (e.key === "Enter") {
-            $("#txtDefaultWarehouse").focus();
-        }
+        if (e.key === "Enter") { $("#txtState").focus(); }
+    });
+    $('#txtState').on('keydown', function (e) {
+        if (e.key === "Enter") { $("#txtPin").focus(); }
+    });
+    $('#txtPin').on('keydown', function (e) {
+        if (e.key === "Enter") { $("#txtAddressLine1").focus(); }
+    });
+    $('#txtAddressLine1').on('keydown', function (e) {
+        if (e.key === "Enter") { $("#txtAddressLine2").focus(); }
+    });
+    $('#txtAddressLine2').on('keydown', function (e) {
+        if (e.key === "Enter") { $("#txtDefaultWarehouse").focus(); }
     });
     $('#txtDefaultWarehouse').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtbtnSave").focus();
         }
     });
-    GetCityDropDownList();
-    ShowWarehouseMaster('Load');
-    $("#txtCity").on("change", function () {
-        let value = $(this).val();
+    $("#txtCity").on("change blur", function () {
+        OnWarehouseCityChanged(this);
+    });
+    $("#txtCity").on("input", function () {
+        const value = $(this).val().trim();
+        if (!value) return;
         let isValid = false;
         $("#txtCityList option").each(function () {
             if ($(this).val() === value) {
-
                 isValid = true;
                 return false;
             }
         });
-        if (!isValid) {
-            $(this).val("");
-            $("#txtCityList").val("")
+        if (isValid) {
+            OnWarehouseCityChanged(this);
         }
     });
+    ShowCityMasterlist(function () {
+        GetGroupMasterList();
+        GetCityDropDownList();
+    });
+    ShowWarehouseMaster('Load');
     GetModuleMasterCode();
 });
 function Save() {
     var WarehouseName = $("#txtWarehouseName").val();
     var WarehouseType = $("#txtWarehouseType").val();
-    var Address = $("#txtAddress").val();
+    var AddressLine1 = $("#txtAddressLine1").val();
+    var AddressLine2 = $("#txtAddressLine2").val();
+    var DisplayName = $("#txtDisplayName").val();
     var Pin = $("#txtPin").val();
     var City = $("#txtCity").val();
     var GSTIN = $("#txtGSTIN").val();
@@ -79,13 +83,19 @@ function Save() {
         toastr.error('Please enter the City.');
         $("#txtCity").focus();
         return;
+    } else if (!AddressLine1 || !String(AddressLine1).trim()) {
+        toastr.error('Please enter Address Line 1.');
+        $("#txtAddressLine1").focus();
+        return;
     }
     const payload = {
         code: $("#hftxtCode").val(),
         WarehouseName: WarehouseName,
         WarehouseType: WarehouseType,
-        Address: Address,
-        Pin: 0,
+        AddressLine1: AddressLine1,
+        AddressLine2: AddressLine2,
+        DisplayName: DisplayName,
+        Pin: Pin || '',
         City: City,
         GSTIN: GSTIN,
         DefaultWarehouse: DefaultWarehouse == true ? 'Y' : 'N',
@@ -142,7 +152,7 @@ function ShowWarehouseMaster(Type) {
                 const Button = false;
                 const showButtons = [];
                 const StringdoubleFilterColumn = [];
-                const hiddenColumns = ["Code", "Warehouse Type", "Address", "Pin","GST IN"];
+                const hiddenColumns = ["Code", "Warehouse Type", "GST IN", "State Name", "Pin"];
                 const ColumnAlignment = {
                     "CreatedOn": 'center',
                     "Digit After Decimal": 'right',
@@ -182,9 +192,12 @@ async function CreateWarehouseMaster() {
     $("#hftxtCode").prop("disabled", false);
     $("#txtWarehouseName").prop("disabled", false);
     $("#txtWarehouseType").prop("disabled", false);
-    $("#txtAddress").prop("disabled", false);
-    $("#txtPin").prop("disabled", false);
+    $("#txtDisplayName").prop("disabled", false);
+    $("#txtAddressLine1").prop("disabled", false);
+    $("#txtAddressLine2").prop("disabled", false);
+    $("#txtPin").prop("disabled", true);
     $("#txtCity").prop("disabled", false);
+    $("#txtState").prop("disabled", true);
     $("#txtGSTIN").prop("disabled", false);
     $("#txtDefaultWarehouse").prop("disabled", false);
     disableFields(false); 
@@ -199,9 +212,12 @@ function BackMaster() {
     $("#hftxtCode").prop("disabled", false);
     $("#txtWarehouseName").prop("disabled", false);
     $("#txtWarehouseType").prop("disabled", false);
-    $("#txtAddress").prop("disabled", false);
-    $("#txtPin").prop("disabled", false);
+    $("#txtDisplayName").prop("disabled", false);
+    $("#txtAddressLine1").prop("disabled", false);
+    $("#txtAddressLine2").prop("disabled", false);
+    $("#txtPin").prop("disabled", true);
     $("#txtCity").prop("disabled", false);
+    $("#txtState").prop("disabled", true);
     $("#txtGSTIN").prop("disabled", false);
     $("#txtDefaultWarehouse").prop("disabled", false);
     $("#txtbtnSave").prop("disabled", false);
@@ -271,9 +287,14 @@ async function Edit(code) {
                     $("#hftxtCode").val(item.Code);
                     $("#txtWarehouseName").val(item.warehouseName);
                     $("#txtWarehouseType").val(item.WarehouseType);
-                    $("#txtAddress").val(item.Address);
+                    $("#txtDisplayName").val(item.displayName || item.DisplayName || '');
+                    $("#txtAddressLine1").val(item.addressLine1 || item.AddressLine1 || '');
+                    $("#txtAddressLine2").val(item.addressLine2 || item.AddressLine2 || '');
                     $("#txtPin").val(item.Pin);
-                    $("#txtCity").val(item.CityName);
+                    $("#txtCity").val(item.CityName || item["City Name"] || '');
+                    $("#txtState").val(item.StateName || item["State Name"] || '');
+                    $("#txtPin").prop("disabled", true);
+                    $("#txtState").prop("disabled", true);
                     $("#txtGSTIN").val(item.GSTIN);
                     if (item.DefaultWarehouse == 'N') {
                         $('#txtDefaultWarehouse').prop("checked", false);
@@ -313,6 +334,116 @@ function exportTableToExcel() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "UOMMaster.xlsx");
 }
+function GetGroupMasterList() {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/GetStateDropDown`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response.length > 0) {
+                $('#txtStateNameList').empty();
+                let options = '';
+                response.forEach(item => {
+                    options += '<option value="' + item.Name + '" text="' + item.Code + '"></option>';
+                });
+                $('#txtStateNameList').html(options);
+            } else {
+                $('#txtStateNameList').empty();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $('#txtStateNameList').empty();
+        }
+    });
+}
+
+function ShowCityMasterlist(done) {
+    $.ajax({
+        url: `${appBaseURL}/api/Master/ShowCityMaster`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            if (response && response.length > 0) {
+                CityList = response;
+                const cityEl = document.getElementById("txtCity");
+                if (cityEl && cityEl.value.trim()) {
+                    FillWarehouseCityFields(cityEl);
+                }
+            }
+            if (typeof done === "function") done();
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            if (typeof done === "function") done();
+        }
+    });
+}
+
+function FindCityMasterRow(cityName) {
+    const trimmed = (cityName || "").trim();
+    if (!trimmed) return null;
+    const norm = trimmed.toLowerCase();
+    let row = CityList.find(function (entry) {
+        const name = entry["City Name"] || entry.CityName || entry.cityName || "";
+        return String(name).trim().toLowerCase() === norm;
+    });
+    if (row) return row;
+    let code = null;
+    $("#txtCityList option").each(function () {
+        if ($(this).val() === trimmed) {
+            code = $(this).attr("text");
+            return false;
+        }
+    });
+    if (code != null && code !== "") {
+        row = CityList.find(function (entry) {
+            return String(entry.Code) === String(code);
+        });
+    }
+    return row || null;
+}
+
+function OnWarehouseCityChanged(inputElement) {
+    const value = (inputElement.value || "").trim();
+    if (!value) {
+        $("#txtState").val("");
+        $("#txtPin").val("");
+        return;
+    }
+    let isValid = false;
+    $("#txtCityList option").each(function () {
+        if ($(this).val() === value) {
+            isValid = true;
+            return false;
+        }
+    });
+    if (!isValid) {
+        $(inputElement).val("");
+        $("#txtState").val("");
+        $("#txtPin").val("");
+        return;
+    }
+    FillWarehouseCityFields(inputElement);
+}
+
+function FillWarehouseCityFields(inputElement) {
+    const inputValue = (inputElement.value || '').trim();
+    const item = FindCityMasterRow(inputValue);
+    const stateName = item
+        ? (item["State Name"] || item.StateName || item.stateName || "")
+        : "";
+    const pinCode = item
+        ? (item["Pin Code"] || item.PinCode || item.pinCode || "")
+        : "";
+    $("#txtState").val(stateName);
+    $("#txtPin").val(pinCode);
+}
+
 function GetCityDropDownList() {
     $.ajax({
         url: `${appBaseURL}/api/Master/GetCityDropDown`,
@@ -342,9 +473,12 @@ function ClearData() {
     $("#hftxtCode").val("0");
     $("#txtWarehouseName").val("");
     $("#txtWarehouseType").val("");
-    $("#txtAddress").val("");
+    $("#txtDisplayName").val("");
+    $("#txtAddressLine1").val("");
+    $("#txtAddressLine2").val("");
     $("#txtPin").val("");
     $("#txtCity").val("");
+    $("#txtState").val("");
     $("#txtGSTIN").val("");
     $("#txtDefaultWarehouse").val("");
     $("#txtStoreWarehouse").val("");
@@ -380,9 +514,12 @@ async function View(code) {
                     $("#hftxtCode").val(item.Code).prop("disabled", true);
                     $("#txtWarehouseName").val(item.warehouseName).prop("disabled", true);
                     $("#txtWarehouseType").val(item.WarehouseType).prop("disabled", true);
-                    $("#txtAddress").val(item.Address).prop("disabled", true);
+                    $("#txtDisplayName").val(item.displayName || item.DisplayName || '').prop("disabled", true);
+                    $("#txtAddressLine1").val(item.addressLine1 || item.AddressLine1 || '').prop("disabled", true);
+                    $("#txtAddressLine2").val(item.addressLine2 || item.AddressLine2 || '').prop("disabled", true);
                     $("#txtPin").val(item.Pin).prop("disabled", true);
-                    $("#txtCity").val(item.CityName).prop("disabled", true);
+                    $("#txtCity").val(item.CityName || item["City Name"] || '').prop("disabled", true);
+                    $("#txtState").val(item.StateName || item["State Name"] || '').prop("disabled", true);
                     $("#txtGSTIN").val(item.GSTIN).prop("disabled", true);
                     if (item.DefaultWarehouse == 'N') {
                         $('#txtDefaultWarehouse').prop("checked", false);
