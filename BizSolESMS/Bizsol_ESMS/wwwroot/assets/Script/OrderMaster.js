@@ -14,6 +14,7 @@ $(document).ready(function () {
     DatePicker();
     $("#ERPHeading").text("Order Entry");
     ValidateOrderExcelFormat();
+    GetClientTypeList();
     $('#txtOrderNo').on('keydown', function (e) {
         if (e.key === "Enter") {
             $("#txtOrderDate").focus();
@@ -73,7 +74,8 @@ $(document).ready(function () {
     });
     $("#txtClientType").on("change", function () {
         var value = $(this).val();
-        if (value == 'S') {
+        // every type except Multiple ('M') needs Client Name + Order No (mandatory)
+        if (isClientRequired(value)) {
             $("#txtImportClientName").prop("disabled", false);
             $("#txtImportOrderNo").prop("disabled", false);
         } else {
@@ -82,6 +84,10 @@ $(document).ready(function () {
             $("#txtImportOrderNo").val("");
             $("#txtImportOrderNo").prop("disabled", true);
         }
+        // file format differs per client type, so force a fresh upload
+        $("#txtExcelFile").val('');
+        JsonData = [];
+        $("#ImportTable").hide();
     });
     $("#txtImportClientName").on("change", function () {
         $("#txtExcelFile").val('');
@@ -362,6 +368,69 @@ function GetAccountMasterList() {
             console.error("Error:", error);
             $('#txtImportClientName').empty();
             $('#txtClientName').empty();
+        }
+    });
+}
+function GetClientTypeList() {
+    $.ajax({
+        url: `${appBaseURL}/api/OrderMaster/GetClientType`,
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            console.log("GetClientType response:", response);
+            const $select = $('#txtClientType');
+            // response can be an array or wrapped in an object
+            let list = Array.isArray(response) ? response
+                : (response && (response.data || response.Data || response.result || response.Result)) || [];
+            if (typeof list === 'string') {
+                try { list = JSON.parse(list); } catch (e) { list = []; }
+            }
+            if (list.length > 0) {
+                // read keys case-insensitively: ShortDesp/Value (or Code/Name fallbacks)
+                const getVal = (item, keys) => {
+                    for (const k of Object.keys(item)) {
+                        if (keys.includes(k.toLowerCase())) return item[k];
+                    }
+                    return '';
+                };
+                // fixed options always come first: Single, Multiple, Other
+                const fixedTypes = [
+                    { code: 'S', text: 'Single Client' },
+                    { code: 'M', text: 'Multiple Client' },
+                    { code: 'O', text: 'Customised' }
+                ];
+                let option = '';
+                fixedTypes.forEach(t => {
+                    option += '<option value="' + t.code + '">' + t.text + '</option>';
+                });
+                // then the remaining types from the API (e.g. Customised)
+                list.forEach(item => {
+                    const code = getVal(item, ['shortdesp', 'short desp', 'code']);
+                    const text = getVal(item, ['value', 'name']);
+                    if (fixedTypes.some(t => t.code === String(code))) return;
+                    option += '<option value="' + code + '">' + text + '</option>';
+                });
+                $select.html(option);
+                $select.val('S').trigger('change');
+                // 'O' = Tally invoice excel format (add only if not already coming from the API)
+                // if ($select.find('option[value="O"]').length === 0) {
+                //     $select.append('<option value="O">Tally Invoice</option>');
+                // }
+                // $select.val('S');
+                // if (!$select.val()) {
+                //     $select.prop('selectedIndex', 0);
+                // }
+            } else {
+                $select.empty();
+                toastr.error("Client type list is empty.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("GetClientType failed:", xhr.status, error, xhr.responseText);
+            $('#txtClientType').empty();
+            toastr.error("Failed to load client type (" + xhr.status + ").");
         }
     });
 }
@@ -1167,6 +1236,10 @@ async function View(code) {
         }
     });
 }
+function isClientRequired(clientType) {
+    // Multiple ('M') takes client / order from the excel; every other type needs them
+    return clientType !== 'M';
+}
 function ClearDataImport() {
     SelectOptionByText('txtImportClientName','Select');
     $("#txtClientType").val("S");
@@ -1202,13 +1275,13 @@ function GetImportFile() {
         $("#txtExcelFile").val();
         JsonData = [];
         return;
-    } else if (OrderNo == '' && ClientType == 'S') {
+    } else if (OrderNo == '' && isClientRequired(ClientType)) {
         toastr.error(typeof window.esmsPleaseEnterLevelOfOrderMsg === 'function' ? window.esmsPleaseEnterLevelOfOrderMsg() : "Please enter order no !");
         $("#txtImportOrderNo").focus();
         $("#txtExcelFile").val();
         JsonData = [];
         return;
-    } else if (ClientName == '' && ClientType == 'S') {
+    } else if (ClientName == '' && isClientRequired(ClientType)) {
         toastr.error("Please select client name !");
         $("#txtImportClientName").focus();
         $("#txtExcelFile").val();
@@ -1271,7 +1344,11 @@ function SaveImportFile() {
         toastr.error("Please select client type !");
         $("#txtClientType").focus();
         return;
-    } else if (ClientName == '' && ClientType == 'S') {
+    } else if (OrderNo == '' && isClientRequired(ClientType)) {
+        toastr.error(typeof window.esmsPleaseEnterLevelOfOrderMsg === 'function' ? window.esmsPleaseEnterLevelOfOrderMsg() : "Please enter order no !");
+        $("#txtImportOrderNo").focus();
+        return;
+    } else if (ClientName == '' && isClientRequired(ClientType)) {
         toastr.error("Please select client name !");
         $("#txtImportClientName").focus();
         return;
@@ -1372,6 +1449,11 @@ function Import(event) {
         return;
     }
 
+    if ($("#txtClientType").val() === 'O') {
+        ImportTallyInvoice(event, file, fileExtension);
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = function (e) {
         try {
@@ -1425,6 +1507,184 @@ function Import(event) {
     } else {
         reader.readAsArrayBuffer(file);
     }
+}
+/* ---------------------------------------------------------------------------
+   ClientType 'O' : Tally invoice excel
+   Header block (above the table):
+       Customer Name | Tally Invoice No | Date | Address | Mobile# | GSTIN
+   Item table:
+       S.No. | Part Number | Description | Tax_% | Qty | MRP | Value | Discount_% | Net value
+   One JSON object is produced per item row (header values repeated on each row)
+   and sent to UDF_ImportOrder -> p_jsonData.
+--------------------------------------------------------------------------- */
+function ImportTallyInvoice(event, file, fileExtension) {
+    const fail = function (msg) {
+        alert(msg);
+        event.target.value = '';
+        $("#ImportTable").hide();
+        JsonData = [];
+    };
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            let workbook;
+            if (fileExtension === 'csv') {
+                workbook = XLSX.read(e.target.result, { type: 'string', raw: true });
+            } else {
+                workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+            }
+            if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+                fail("Invalid file: No sheets found.");
+                return;
+            }
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
+            const result = parseTallyInvoiceRows(rows);
+            if (!result.isValid) {
+                fail("Invalid Tally invoice format: " + result.message);
+                return;
+            }
+            JsonData = result.data;
+            GetImportFile();
+        } catch (error) {
+            console.error("ImportTallyInvoice:", error);
+            fail("Error reading the file. Ensure it is a valid format.");
+        }
+    };
+    if (fileExtension === 'csv') {
+        reader.readAsText(file);
+    } else {
+        reader.readAsArrayBuffer(file);
+    }
+}
+function parseTallyInvoiceRows(rows) {
+    const clean = v => String(v == null ? '' : v).trim();
+    const key = v => clean(v).replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    const num = v => clean(v).replace(/,/g, '');
+
+    // 1. locate the item table header row ("Part Number")
+    const partKeys = ['partnumber', 'partno', 'part'];
+    const headerIdx = rows.findIndex(r => r.some(c => partKeys.includes(key(c))));
+    if (headerIdx < 0) {
+        return { isValid: false, message: "'Part Number' column not found." };
+    }
+
+    // 2. read the header block above the table (label cell -> next non-empty cell on the right)
+    const labels = {
+        customername: 'customerName',
+        tallyinvoiceno: 'invoiceNo',
+        invoiceno: 'invoiceNo',
+        date: 'invoiceDate',
+        address: 'address',
+        mobile: 'mobile',
+        mobileno: 'mobile',
+        gstin: 'gstin'
+    };
+    const meta = {};
+    for (let i = 0; i < headerIdx; i++) {
+        const r = rows[i];
+        for (let j = 0; j < r.length; j++) {
+            const field = labels[key(r[j])];
+            if (!field || meta[field] !== undefined) continue;
+            meta[field] = '';
+            for (let k = j + 1; k < r.length; k++) {
+                if (clean(r[k]) === '') continue;
+                if (labels[key(r[k])]) break; // value is empty, next label reached
+                meta[field] = clean(r[k]);
+                j = k;
+                break;
+            }
+        }
+    }
+    ['address', 'mobile', 'gstin'].forEach(f => { if (meta[f] === '-') meta[f] = ''; });
+    if (!meta.customerName) {
+        return { isValid: false, message: "'Customer Name' not found." };
+    }
+    if (!meta.invoiceNo) {
+        return { isValid: false, message: "'Tally Invoice No' not found." };
+    }
+
+    // 3. map item table columns
+    const header = rows[headerIdx];
+    const colMap = {
+        part: partKeys,
+        description: ['description', 'partdescription', 'itemname'],
+        taxPercent: ['tax', 'taxpercent'],
+        qty: ['qty', 'quantity'],
+        mrp: ['mrp', 'rate'],
+        value: ['value'],
+        discountPercent: ['discount', 'discountpercent'],
+        netValue: ['netvalue']
+    };
+    const colIdx = {};
+    Object.keys(colMap).forEach(f => {
+        colIdx[f] = header.findIndex(c => colMap[f].includes(key(c)));
+    });
+    const missing = [];
+    if (colIdx.part < 0) missing.push('Part Number');
+    if (colIdx.qty < 0) missing.push('Qty');
+    if (colIdx.mrp < 0) missing.push('MRP');
+    if (missing.length > 0) {
+        return { isValid: false, message: "Missing required columns: " + missing.join(', ') };
+    }
+
+    // 4. item rows (rows without part number / qty are skipped, e.g. blank or total rows)
+    const invoiceDate = formatTallyDate(meta.invoiceDate);
+    const data = [];
+    for (let i = headerIdx + 1; i < rows.length; i++) {
+        const r = rows[i];
+        const get = f => (colIdx[f] >= 0 ? clean(r[colIdx[f]]) : '');
+        const part = get('part');
+        const qty = parseFloat(num(get('qty')));
+        if (!part || !(qty > 0)) continue;
+        data.push({
+            invoiceNo: meta.invoiceNo,
+            invoiceDate: invoiceDate,
+            customerName: meta.customerName,
+            address: meta.address || '',
+            mobile: meta.mobile || '',
+            gstin: meta.gstin || '',
+            part: part,
+            description: get('description'),
+            taxPercent: num(get('taxPercent')),
+            qty: String(qty),
+            mrp: num(get('mrp')),
+            value: num(get('value')),
+            discountPercent: num(get('discountPercent')),
+            netValue: num(get('netValue'))
+        });
+    }
+    if (data.length === 0) {
+        return { isValid: false, message: "No item rows found." };
+    }
+    return { isValid: true, data: data };
+}
+// returns dd-Mon-yyyy (what UDF_ImportOrder expects) or '' when it cannot be read
+function formatTallyDate(val) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const build = (d, m, y) => {
+        y = String(y).length === 2 ? "20" + y : String(y);
+        return String(d).padStart(2, '0') + '-' + months[m] + '-' + y;
+    };
+    if (val instanceof Date && !isNaN(val)) {
+        return build(val.getDate(), val.getMonth(), val.getFullYear());
+    }
+    const s = String(val == null ? '' : val).trim();
+    if (!s) return '';
+    let m = s.match(/^(\d{1,2})[-\/\s]([A-Za-z]{3})[A-Za-z]*[-\/\s,]+(\d{2}|\d{4})$/); // 16-Nov-26 / 16-Nov-2026
+    if (m) {
+        const mon = months.findIndex(x => x.toLowerCase() === m[2].toLowerCase());
+        if (mon >= 0) return build(m[1], mon, m[3]);
+    }
+    m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2}|\d{4})$/); // 16-11-2026 / 16/11/26 (dd-mm-yyyy)
+    if (m && parseInt(m[2], 10) >= 1 && parseInt(m[2], 10) <= 12) {
+        return build(m[1], parseInt(m[2], 10) - 1, m[3]);
+    }
+    m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); // 2026-11-16
+    if (m && parseInt(m[2], 10) >= 1 && parseInt(m[2], 10) <= 12) {
+        return build(m[3], parseInt(m[2], 10) - 1, m[1]);
+    }
+    return '';
 }
 function parseCSV(csvData) {
     const rows = csvData.split(/\r?\n/).filter(row => row.trim() !== ""); // Ignore empty rows
