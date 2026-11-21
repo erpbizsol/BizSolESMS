@@ -116,37 +116,26 @@ async function Save() {
         return;
     }
 
-    if ($("#txtCompanyName").val() === '') {
-        toastr.error('Please enter Company Name !');
-        $("#txtCompanyName").focus();
-        return;
-    }
-    if ($("#txtUnitName").val() === '') {
-        toastr.error('Please enter Unit Name !');
-        $("#txtUnitName").focus();
-        return;
-    }
-    if (isTallyAppType() && $("#txtTallyCompCode").val() === '') {
-        toastr.error('Please enter Tally Comp Code !');
-        $("#txtTallyCompCode").focus();
-        return;
-    }
-    if ($("#txtAppName").val() === '') {
-        toastr.error('Please enter App Name !');
-        $("#txtAppName").focus();
-        return;
-    }
-    if ($("#txtAppType").val() === '') {
-        toastr.error('Please select App Type !');
-        $("#txtAppType").focus();
-        return;
-    }
-    if (isTallyAppType() && $("#txtAppSoftwareSerialNo").val() === '') {
-        toastr.error('Please enter App Software Serial No !');
-        $("#txtAppSoftwareSerialNo").focus();
-        return;
-    }
-
+    // if ($("#txtCompanyName").val() === '') {
+    //     toastr.error('Please enter Company Name !');
+    //     $("#txtCompanyName").focus();
+    //     return;
+    // }
+    // if ($("#txtUnitName").val() === '') {
+    //     toastr.error('Please enter Unit Name !');
+    //     $("#txtUnitName").focus();
+    //     return;
+    // }
+    // if ($("#txtAppName").val() === '') {
+    //     toastr.error('Please enter App Name !');
+    //     $("#txtAppName").focus();
+    //     return;
+    // }
+    // if ($("#txtAppType").val() === '') {
+    //     toastr.error('Please select App Type !');
+    //     $("#txtAppType").focus();
+    //     return;
+    // }
     const payload = {
         appconfigId: parseInt($("#txtAppConfigId").val(), 10) || 0,
         CompanyName: $("#txtCompanyName").val(),
