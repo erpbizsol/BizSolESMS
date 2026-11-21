@@ -165,8 +165,9 @@
 
 .esms-dash-webiz .wd-view-switch {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 30%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    max-width: 100%;
     gap: 0.35rem;
     padding: 0.35rem;
     border-radius: 11px;
@@ -175,13 +176,22 @@
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
+@media (min-width: 992px) {
+    .esms-dash-webiz .wd-view-switch {
+        width: min(100%, 440px);
+        max-width: 440px;
+    }
+}
+
 .esms-dash-webiz .wd-view-switch__btn {
     width: 100%;
     min-width: 0;
+    max-width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.55rem;
+    overflow: hidden;
     border: 1px solid transparent;
     background: transparent;
     color: #64748b;
@@ -298,6 +308,8 @@
     align-items: flex-start;
     gap: 0.05rem;
     min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
 }
 
 .esms-dash-webiz .wd-view-switch__name {
@@ -1756,6 +1768,94 @@
         margin-left: 0;
         width: 100%;
         justify-content: center;
+    }
+}
+
+@media (max-width: 767px) {
+    .esms-dash-webiz {
+        padding: 0 0.5rem 1.5rem;
+    }
+
+    .esms-dash-webiz .wd-dash-filterpanel__head,
+    .esms-dash-webiz .wd-dash-filterpanel__body {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .esms-dash-webiz .wd-filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.65rem;
+    }
+
+    .esms-dash-webiz .wd-filter-field {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .esms-dash-webiz .wd-filter-field .form-control {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .esms-dash-webiz .wd-filter-toolbar__btns {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .esms-dash-webiz .wd-filter-toolbar__btns .btn {
+        flex: 1 1 calc(50% - 0.25rem);
+        min-width: 120px;
+    }
+
+    .esms-dash-webiz .wd-filter-meta {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.35;
+    }
+
+    .esms-dash-webiz .wd-view-switch-panel {
+        padding: 0.65rem 0.5rem;
+    }
+
+    .esms-dash-webiz .wd-view-switch {
+        width: 100%;
+        max-width: none;
+        grid-template-columns: 1fr;
+        gap: 0.45rem;
+        padding: 0.4rem;
+    }
+
+    .esms-dash-webiz .wd-view-switch__btn {
+        justify-content: flex-start;
+        min-height: 50px;
+        padding: 0.5rem 0.65rem;
+    }
+
+    .esms-dash-webiz .wd-view-switch__name {
+        font-size: 0.78rem;
+    }
+
+    .esms-dash-webiz .wd-view-switch__sub {
+        font-size: 0.6rem;
+        white-space: normal;
+        line-height: 1.25;
+    }
+
+    .esms-dash-webiz .wd-panel {
+        padding: 0.85rem 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .esms-dash-webiz .wd-filter-toolbar__btns .btn {
+        flex: 1 1 100%;
     }
 }
 
