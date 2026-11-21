@@ -296,12 +296,10 @@ $(document).ready(function () {
         BizsolCustomFilterGrid.CreateDataTable("table-header", "table-body", updatedResponse, Button, showButtons, StringFilterColumn, NumericFilterColumn, DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment
         );
     });
-    $("#txtManualProductMRP").prop("disabled", !G_IsManualMRPInOrderPacking);
+    $("#txtManualProductMRP").prop("disabled", false);
     $('#txtManualProductQuantity').on('keydown', function (e) {
         if (e.key === "Enter") {
-            if (G_IsManualMRPInOrderPacking) {
-                $("#txtManualProductMRP").focus();
-            }
+            $("#txtManualProductMRP").focus();
         }
     });
     $('#txtManualProductMRP').on('keydown', function (e) {
@@ -2610,7 +2608,7 @@ async function ManualUpdateQtyAndMRP(ItemCode, BalanceQty, MRP) {
     $("#hfManualProductCode").val(ItemCode);
     $("#hfManualProductQuantity").val(BalanceQty);
     $("#txtManualBalanceQuantity").text("EXPECTED QUANTITY : " + BalanceQty)
-    $("#txtManualProductMRP").val(MRP).prop("disabled", !G_IsManualMRPInOrderPacking);
+    $("#txtManualProductMRP").val(MRP).prop("disabled", false);
     openSavePopup();
 }
 function openSavePopup() {
