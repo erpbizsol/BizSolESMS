@@ -318,6 +318,11 @@ function loadInvoiceClientDropDown(callback) {
         }
     });
 }
+/** API sends "Yes"/"No" (or Y/N); dropdown uses 'Y'/'N'. */
+function normalizeIsInvoicedInDms(v) {
+    var s = String(v == null ? '' : v).trim().toUpperCase();
+    return (s === 'YES' || s === 'Y') ? 'Y' : 'N';
+}
 function mapApiRowsToInvoiceModels(filteredApiRows) {
     return filteredApiRows.map(function (item, i) {
         var orderCode = item.Code != null ? String(item.Code) : '';
@@ -337,11 +342,77 @@ function mapApiRowsToInvoiceModels(filteredApiRows) {
             packedBy: item['Packed By'] || item.PackedBy || '—',
             invoiceNo: hasInv ? invStr : '',
             invoiceSaved: hasInv,
+            clientType: String(item.ClientType || '').trim(),
+            isInvoicedInDms: normalizeIsInvoicedInDms(item['Is Invoiced In DMS'] || item.IsInvoicedInDMS),
             vehicleNoList: item['Vehicle No'] || item.VehicleNo || '',
             rawApiRow: item
         };
     });
 }
+/** Y/N dropdown only for ClientType 'O'; other client types show a dash. Disabled until the invoice is generated. */
+function buildIsInvoicedInDmsCell(o) {
+    if (o.clientType === 'O') {
+        var value = o.isInvoicedInDms;
+        var code = escInvoiceOptAttr(o.OrderMaster_Code);
+        var disabledAttr = o.invoiceSaved ? '' : ' disabled title="Generate the invoice first"';
+        return '<select class="form-control form-control-sm IsInvoicedInDMS"' + disabledAttr + ' data-code="' + code + '" data-prev="' + (value === 'Y' ? 'Y' : 'N') + '" data-dispatch="' + escInvoiceOptAttr(o.DispatchMaster_Code) + '">' +
+            '<option value="Y"' + (value === 'Y' ? ' selected' : '') + '>Yes</option>' +
+            '<option value="N"' + (value !== 'Y' ? ' selected' : '') + '>No</option>' +
+            '</select>';
+    }
+    return '—';
+}
+var API_UPDATE_IS_INVOICED_IN_DMS = '/api/OrderMaster/UpdateIsInvoicedInDMS';
+/** Server calls USP_Invoicegenerate with p_Mode = 'INVOICEDINDMS', p_DispatchMaster_Code, p_IsInvoicedInDMS. */
+$(document).on('change', '.IsInvoicedInDMS', function () {
+    var $sel = $(this);
+    var dispatch = String($sel.data('dispatch') || '');
+    var dispatchCode = parseInt(dispatch, 10) || 0;
+    var val = $sel.val();
+    var prev = $sel.data('prev') || (val === 'Y' ? 'N' : 'Y');
+
+    var revert = function () {
+        $sel.val(prev);
+    };
+    if (dispatchCode <= 0) {
+        toastr.error('Dispatch code not found.');
+        revert();
+        return;
+    }
+    if (typeof blockUI === 'function') blockUI();
+    $.ajax({
+        url: appBaseURL + API_UPDATE_IS_INVOICED_IN_DMS +
+            '?p_DispatchMaster_Code=' + encodeURIComponent(dispatchCode) +
+            '&IsInvoicedInDMS=' + encodeURIComponent(val),
+        type: 'POST',
+        dataType: 'json',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (response) {
+            var row = Array.isArray(response) ? response[0] : response;
+            if (row && (row.Status === 'Y' || row.status === 'Y')) {
+                $sel.data('prev', val);
+                (G_PackedOrdersRaw || []).forEach(function (r) {
+                    if (String(r.D_Code) === dispatch) r['Is Invoiced In DMS'] = val;
+                });
+                toastr.success((row.Msg || row.msg || 'Data Updated Successfully') + '');
+            } else {
+                toastr.error((row && (row.Msg || row.msg)) || 'Update failed.');
+                revert();
+            }
+        },
+        error: function (xhr) {
+            var msg = 'Update failed.';
+            if (xhr.status === 404) msg = 'API not found. Implement ' + API_UPDATE_IS_INVOICED_IN_DMS + ' on server.';
+            toastr.error(msg);
+            revert();
+        },
+        complete: function () {
+            if (typeof unblockUI === 'function') unblockUI();
+        }
+    });
+});
 function buildGridTableRows(models) {
     return models.map(function (o, i) {
         var d = o.DispatchMaster_Code;
@@ -362,6 +433,7 @@ function buildGridTableRows(models) {
             TDQ: o.tdq,
             'Packed By': o.packedBy,
             'Invoice No': o.invoiceNo || '—',
+            'Is Invoiced In DMS': buildIsInvoicedInDmsCell(o),
             Action: actionHtml
         };
     });
