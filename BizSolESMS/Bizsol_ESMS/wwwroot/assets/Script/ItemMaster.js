@@ -23,6 +23,7 @@ function getObjValue(obj, keys) {
     return "";
 }
 
+
 function getWarehouseItemCode(item) {
     return getObjValue(item, ["Code", "code"]);
 }
