@@ -692,6 +692,7 @@ namespace Bizsol_ESMS.Controllers
                         adapter.Fill(ds);
                     }
                 }
+
             }
             ApplyCreditNoteAmountInWords(ds);
             string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PrintCreditNote.rdlc");
