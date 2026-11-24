@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <ConsumeContainerWhitespace>false</ConsumeContainerWhitespace>
+  <DataSources>
+    <DataSource Name="PrintCreditNote">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>c1d2e3f4-a5b6-7890-cdef-1234567890ab</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="PrintCreditNote">
+      <Query>
+        <DataSourceName>PrintCreditNote</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="CompanyName"><DataField>CompanyName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyAddressLine1"><DataField>CompanyAddressLine1</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyAddressLine2"><DataField>CompanyAddressLine2</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyCityNationPin"><DataField>CompanyCityNationPin</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyEmail"><DataField>CompanyEmail</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyMobile"><DataField>CompanyMobile</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyGSTNo"><DataField>CompanyGSTNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="CompanyPANNo"><DataField>CompanyPANNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="PartyName"><DataField>PartyName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="PartyAddressDisplay"><DataField>PartyAddressDisplay</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="PartyCityNationPin"><DataField>PartyCityNationPin</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="PartyGSTNo"><DataField>PartyGSTNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="PartyStateCode"><DataField>PartyStateCode</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="TotalAmount"><DataField>TotalAmount</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="Narration"><DataField>Narration</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="AmountInWords"><DataField>AmountInWords</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="SerialNo"><DataField>SerialNo</DataField><rd:TypeName>System.Int32</rd:TypeName></Field>
+        <Field Name="Particulars"><DataField>Particulars</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="InvoiceNo"><DataField>InvoiceNo</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="InvoiceDate"><DataField>InvoiceDate</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="LineAmount"><DataField>LineAmount</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="PrintBy"><DataType>String</DataType><AllowBlank>true</AllowBlank><Prompt>PrintBy</Prompt></ReportParameter>
+    <ReportParameter Name="PrintDate"><DataType>String</DataType><AllowBlank>true</AllowBlank><Prompt>PrintDate</Prompt></ReportParameter>
+  </ReportParameters>
+  <Body>
+    <ReportItems>
+      <Rectangle Name="rectPageFrame">
+        <ReportItems>
+          <Textbox Name="tbCompanyBlock">
+            <CanGrow>false</CanGrow>
+            <Paragraphs>
+              <Paragraph><TextRuns><TextRun><Value>=UCase(First(Fields!CompanyName.Value, "PrintCreditNote"))</Value><Style><FontWeight>Bold</FontWeight><FontSize>12pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>12pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=First(Fields!CompanyAddressLine1.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=First(Fields!CompanyAddressLine2.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=First(Fields!CompanyCityNationPin.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=IIF(Trim(First(Fields!CompanyMobile.Value, "PrintCreditNote"))&lt;&gt;"", "Ph. : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!CompanyMobile.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!CompanyMobile.Value, "PrintCreditNote"))&lt;&gt;"", IIF(Trim(First(Fields!CompanyEmail.Value, "PrintCreditNote"))&lt;&gt;"", " , ", ""), "")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!CompanyEmail.Value, "PrintCreditNote"))&lt;&gt;"", "E-mail : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!CompanyEmail.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=IIF(Trim(First(Fields!CompanyGSTNo.Value, "PrintCreditNote"))&lt;&gt;"", "GSTIN : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!CompanyGSTNo.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!CompanyGSTNo.Value, "PrintCreditNote"))&lt;&gt;"", IIF(Trim(First(Fields!CompanyPANNo.Value, "PrintCreditNote"))&lt;&gt;"", " , PAN No. : ", ""), "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!CompanyPANNo.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph>
+            </Paragraphs>
+            <Top>0.04in</Top><Left>0in</Left><Height>1.08in</Height><Width>7.57in</Width>
+            <Style>
+              <TopBorder><Style>None</Style></TopBorder>
+              <LeftBorder><Style>None</Style></LeftBorder>
+              <RightBorder><Style>None</Style></RightBorder>
+              <BottomBorder><Style>Solid</Style></BottomBorder>
+              <VerticalAlign>Top</VerticalAlign>
+              <PaddingLeft>4pt</PaddingLeft><PaddingRight>4pt</PaddingRight><PaddingTop>6pt</PaddingTop><PaddingBottom>4pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="tbTitleCenter">
+            <CanGrow>false</CanGrow>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>Credit Note</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+            <Top>1.12in</Top><Left>0in</Left><Height>0.24in</Height><Width>7.57in</Width>
+            <Style>
+              <TopBorder><Style>None</Style></TopBorder>
+              <LeftBorder><Style>None</Style></LeftBorder>
+              <RightBorder><Style>None</Style></RightBorder>
+              <BottomBorder><Style>Solid</Style></BottomBorder>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="tbPartyLeft">
+            <CanGrow>false</CanGrow>
+            <Paragraphs>
+              <Paragraph><TextRuns><TextRun><Value>Details of Receiver | Billed to :</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=UCase(First(Fields!PartyName.Value, "PrintCreditNote"))</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>12pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=First(Fields!PartyAddressDisplay.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=First(Fields!PartyCityNationPin.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>=IIF(Trim(First(Fields!PartyGSTNo.Value, "PrintCreditNote"))&lt;&gt;"" AND Trim(First(Fields!PartyGSTNo.Value, "PrintCreditNote"))&lt;&gt;"0", "GST No. : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!PartyGSTNo.Value, "PrintCreditNote"))&lt;&gt;"" AND Trim(First(Fields!PartyGSTNo.Value, "PrintCreditNote"))&lt;&gt;"0", First(Fields!PartyGSTNo.Value, "PrintCreditNote"), "")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!PartyGSTNo.Value, "PrintCreditNote"))&lt;&gt;"" AND Trim(First(Fields!PartyGSTNo.Value, "PrintCreditNote"))&lt;&gt;"0", IIF(Trim(First(Fields!PartyStateCode.Value, "PrintCreditNote"))&lt;&gt;"" AND Trim(First(Fields!PartyStateCode.Value, "PrintCreditNote"))&lt;&gt;"0", "     ", ""), "")</Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!PartyStateCode.Value, "PrintCreditNote"))&lt;&gt;"" AND Trim(First(Fields!PartyStateCode.Value, "PrintCreditNote"))&lt;&gt;"0", "State Code : ", "")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=IIF(Trim(First(Fields!PartyStateCode.Value, "PrintCreditNote"))&lt;&gt;"" AND Trim(First(Fields!PartyStateCode.Value, "PrintCreditNote"))&lt;&gt;"0", First(Fields!PartyStateCode.Value, "PrintCreditNote"), "")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+            </Paragraphs>
+            <Top>1.36in</Top><Left>0in</Left><Height>0.78in</Height><Width>7.57in</Width>
+            <Style>
+              <TopBorder><Style>None</Style></TopBorder>
+              <LeftBorder><Style>None</Style></LeftBorder>
+              <RightBorder><Style>None</Style></RightBorder>
+              <BottomBorder><Style>Solid</Style></BottomBorder>
+              <PaddingLeft>4pt</PaddingLeft><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="tbLetter">
+            <CanGrow>false</CanGrow>
+            <Paragraphs>
+              <Paragraph><TextRuns><TextRun><Value>Dear Sir(s),</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph>
+              <Paragraph><TextRuns><TextRun><Value>This is to inform you that your account in our books of accounts has been credited with Rs. </Value><Style><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=Format(First(Fields!TotalAmount.Value, "PrintCreditNote"), "#,##0.00")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value> as per particulars given below. Kindly pass the necessary entries in your books accordingly.</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>12pt</LineHeight></Style></Paragraph>
+            </Paragraphs>
+            <Top>2.14in</Top><Left>0in</Left><Height>0.62in</Height><Width>7.57in</Width>
+            <Style><PaddingLeft>4pt</PaddingLeft><PaddingRight>4pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>4pt</PaddingBottom><VerticalAlign>Top</VerticalAlign></Style>
+          </Textbox>
+          <Textbox Name="tbFooterWords">
+            <CanGrow>false</CanGrow>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>Rupees In Words : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!AmountInWords.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+            <Top>9.16in</Top><Left>0in</Left><Height>0.34in</Height><Width>4.35in</Width>
+            <Style>
+              <TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder>
+              <LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder>
+              <RightBorder><Style>None</Style></RightBorder>
+              <BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder>
+              <PaddingLeft>4pt</PaddingLeft><PaddingRight>4pt</PaddingRight><PaddingTop>3pt</PaddingTop><PaddingBottom>3pt</PaddingBottom>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="tbFooterTotalLbl">
+            <CanGrow>false</CanGrow>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>Total</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+            <Top>9.16in</Top><Left>4.35in</Left><Height>0.34in</Height><Width>1.05in</Width>
+            <Style>
+              <TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder>
+              <LeftBorder><Style>None</Style></LeftBorder>
+              <RightBorder><Style>None</Style></RightBorder>
+              <BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder>
+              <PaddingRight>4pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="tbFooterTotalAmt">
+            <CanGrow>false</CanGrow>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>=Format(First(Fields!TotalAmount.Value, "PrintCreditNote"), "#,##0.00")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+            <Top>9.16in</Top><Left>5.4in</Left><Height>0.34in</Height><Width>2.17in</Width>
+            <Style>
+              <TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder>
+              <LeftBorder><Style>None</Style></LeftBorder>
+              <RightBorder><Style>None</Style></RightBorder>
+              <BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder>
+              <PaddingRight>4pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="tbFooterNarration">
+            <CanGrow>false</CanGrow>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>Narration : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun><TextRun><Value>=First(Fields!Narration.Value, "PrintCreditNote")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Left</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+            <Top>9.50in</Top><Left>0in</Left><Height>0.34in</Height><Width>4.35in</Width>
+            <Style>
+              <TopBorder><Style>None</Style></TopBorder>
+              <LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder>
+              <RightBorder><Style>None</Style></RightBorder>
+              <BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder>
+              <PaddingLeft>4pt</PaddingLeft><PaddingRight>4pt</PaddingRight><PaddingTop>3pt</PaddingTop><PaddingBottom>3pt</PaddingBottom>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="tbFooterForCompany">
+            <CanGrow>false</CanGrow>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>="For "+First(Fields!CompanyName.Value, "PrintCreditNote")</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+            <Top>9.50in</Top><Left>4.35in</Left><Height>0.34in</Height><Width>3.22in</Width>
+            <Style>
+              <TopBorder><Style>None</Style></TopBorder>
+              <LeftBorder><Style>None</Style></LeftBorder>
+              <RightBorder><Style>Solid</Style><Width>1.25pt</Width></RightBorder>
+              <BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder>
+              <PaddingLeft>4pt</PaddingLeft><PaddingRight>6pt</PaddingRight><PaddingTop>3pt</PaddingTop><PaddingBottom>3pt</PaddingBottom>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="tbFooterAuthorized">
+            <CanGrow>false</CanGrow>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>Authorized Signatory</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+            <Top>9.84in</Top><Left>0in</Left><Height>0.90in</Height><Width>7.57in</Width>
+            <Style>
+              <TopBorder><Style>None</Style></TopBorder>
+              <LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder>
+              <RightBorder><Style>Solid</Style><Width>1.25pt</Width></RightBorder>
+              <BottomBorder><Style>None</Style></BottomBorder>
+              <PaddingLeft>4pt</PaddingLeft><PaddingRight>6pt</PaddingRight><PaddingTop>3pt</PaddingTop><PaddingBottom>4pt</PaddingBottom>
+              <VerticalAlign>Bottom</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Rectangle Name="rectTableSides">
+            <Top>2.78in</Top><Left>0in</Left><Height>6.38in</Height><Width>7.57in</Width>
+            <Style>
+              <TopBorder><Style>None</Style></TopBorder>
+              <LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder>
+              <RightBorder><Style>Solid</Style><Width>1.25pt</Width></RightBorder>
+              <BottomBorder><Style>None</Style></BottomBorder>
+            </Style>
+          </Rectangle>
+          <Tablix Name="DetailTablix">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn><Width>0.45in</Width></TablixColumn>
+                <TablixColumn><Width>2.55in</Width></TablixColumn>
+                <TablixColumn><Width>1.35in</Width></TablixColumn>
+                <TablixColumn><Width>1.05in</Width></TablixColumn>
+                <TablixColumn><Width>2.17in</Width></TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow><Height>0.22in</Height><TablixCells>
+                  <TablixCell><CellContents><Textbox Name="hSNo"><Paragraphs><Paragraph><TextRuns><TextRun><Value>S.NO.</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder><LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="hPart"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Particulars</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Left</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder><PaddingLeft>3pt</PaddingLeft><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="hInvNo"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Invoice No.</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Left</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder><PaddingLeft>3pt</PaddingLeft><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="hInvDt"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Invoice Date</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="hAmt"><Paragraphs><Paragraph><TextRuns><TextRun><Value>Amount</Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder><PaddingRight>4pt</PaddingRight><VerticalAlign>Middle</VerticalAlign></Style></Textbox></CellContents></TablixCell>
+                </TablixCells></TablixRow>
+                <TablixRow><Height>0.22in</Height><TablixCells>
+                  <TablixCell><CellContents><Textbox Name="dSNo"><CanGrow>false</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!SerialNo.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>None</Style></BottomBorder><VerticalAlign>Top</VerticalAlign><PaddingTop>2pt</PaddingTop></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="dPart"><CanGrow>false</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!Particulars.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Left</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>None</Style></BottomBorder><PaddingLeft>3pt</PaddingLeft><VerticalAlign>Top</VerticalAlign><PaddingTop>2pt</PaddingTop></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="dInvNo"><CanGrow>false</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!InvoiceNo.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Left</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>None</Style></BottomBorder><PaddingLeft>3pt</PaddingLeft><VerticalAlign>Top</VerticalAlign><PaddingTop>2pt</PaddingTop></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="dInvDt"><CanGrow>false</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!InvoiceDate.Value</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>None</Style></BottomBorder><VerticalAlign>Top</VerticalAlign><PaddingTop>2pt</PaddingTop></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="dAmt"><CanGrow>false</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Format(Fields!LineAmount.Value, "#,##0.00")</Value><Style><FontSize>10pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs><Style><TopBorder><Style>None</Style></TopBorder><LeftBorder><Style>None</Style></LeftBorder><RightBorder><Style>None</Style></RightBorder><BottomBorder><Style>None</Style></BottomBorder><PaddingRight>4pt</PaddingRight><VerticalAlign>Top</VerticalAlign><PaddingTop>2pt</PaddingTop></Style></Textbox></CellContents></TablixCell>
+                </TablixCells></TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy><TablixMembers><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /></TablixMembers></TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember><KeepWithGroup>After</KeepWithGroup></TablixMember>
+                <TablixMember><Group Name="Details"><PageBreak><BreakLocation>None</BreakLocation></PageBreak><DataElementName>Detail</DataElementName></Group><TablixMembers><TablixMember /></TablixMembers></TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>PrintCreditNote</DataSetName>
+            <Top>2.78in</Top><Left>0in</Left><Height>0.44in</Height><Width>7.57in</Width>
+          </Tablix>
+        </ReportItems>
+        <Top>0in</Top><Left>0.1in</Left><Height>10.74in</Height><Width>7.57in</Width>
+        <Style>
+          <TopBorder><Style>Solid</Style><Width>1.25pt</Width></TopBorder>
+          <LeftBorder><Style>Solid</Style><Width>1.25pt</Width></LeftBorder>
+          <RightBorder><Style>Solid</Style><Width>1.25pt</Width></RightBorder>
+          <BottomBorder><Style>Solid</Style><Width>1.25pt</Width></BottomBorder>
+        </Style>
+      </Rectangle>
+    </ReportItems>
+    <Height>10.74in</Height>
+    <Style />
+  </Body>
+  <Width>7.77in</Width>
+  <Page>
+    <PageFooter>
+      <Height>0.30in</Height>
+      <PrintOnFirstPage>true</PrintOnFirstPage>
+      <PrintOnLastPage>true</PrintOnLastPage>
+      <ReportItems>
+        <Textbox Name="tbPrintFooterLeft">
+          <CanGrow>false</CanGrow>
+          <Paragraphs><Paragraph><TextRuns><TextRun><Value>Print By : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun><TextRun><Value>=Parameters!PrintBy.Value</Value><Style><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun><TextRun><Value>      </Value><Style><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun><TextRun><Value>Print Date : </Value><Style><FontWeight>Bold</FontWeight><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun><TextRun><Value>=Parameters!PrintDate.Value</Value><Style><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun></TextRuns><Style><TextAlign>Left</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+          <Top>0.04in</Top><Left>0.1in</Left><Height>0.24in</Height><Width>5.9in</Width>
+          <Style><Border><Style>None</Style></Border><VerticalAlign>Middle</VerticalAlign></Style>
+        </Textbox>
+        <Textbox Name="tbPrintFooterPageNo">
+          <CanGrow>false</CanGrow>
+          <Paragraphs><Paragraph><TextRuns><TextRun><Value>=Globals!PageNumber &amp; " / " &amp; Globals!TotalPages</Value><Style><FontSize>10pt</FontSize><Color>#000000</Color></Style></TextRun></TextRuns><Style><TextAlign>Right</TextAlign><LineHeight>11pt</LineHeight></Style></Paragraph></Paragraphs>
+          <Top>0.04in</Top><Left>0.1in</Left><Height>0.24in</Height><Width>7.57in</Width>
+          <Style><Border><Style>None</Style></Border><VerticalAlign>Middle</VerticalAlign></Style>
+        </Textbox>
+      </ReportItems>
+      <Style />
+    </PageFooter>
+    <PageHeight>11.69in</PageHeight>
+    <PageWidth>8.27in</PageWidth>
+    <LeftMargin>0.25in</LeftMargin>
+    <RightMargin>0.25in</RightMargin>
+    <TopMargin>0.25in</TopMargin>
+    <BottomMargin>0.25in</BottomMargin>
+    <Style />
+  </Page>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>d4e5f6a7-b8c9-0123-def0-234567890cde</rd:ReportID>
+</Report>

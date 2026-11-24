@@ -174,7 +174,7 @@
                         <a class="btn-icon me-1" onclick="PEASavePaymentEntry()" id="btnPEASave" title="Save">
                             <i class='bx bx-save'></i>
                         </a>
-                        <a class="btn-icon me-1" onclick="PEAResetForm()" title="Reset">
+                        <a class="btn-icon me-1" onclick="PEAResetForm()" id="btnPEAReset" title="Reset">
                             <i class='bx bx-revision'></i>
                         </a>
                         <a class="btn-icon btn-danger" onclick="PEAShowListPage()" title="Back to List">
@@ -318,7 +318,7 @@
                 <span class="fw-semibold" style="font-size:.85rem;color:#033764;">
                     <i class="fa fa-file-invoice me-1"></i>Bill Allocation
                 </span>
-                <button type="button" class="btn btn-sm btn-success px-3" onclick="PEAAutoAllocatePayment()" title="Allocate Amount to bills from top">
+                <button type="button" class="btn btn-sm btn-success px-3" id="btnPEAAutoAllocate" onclick="PEAAutoAllocatePayment()" title="Allocate Amount to bills from top">
                     <i class="fa fa-calculator me-1"></i>Amount Adjusted
                 </button>
             </div>
