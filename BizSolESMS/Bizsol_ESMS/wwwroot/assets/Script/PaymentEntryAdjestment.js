@@ -4,8 +4,12 @@ var FixParameter;
 try { FixParameter = JSON.parse(sessionStorage.getItem('Fixparameter')); } catch (e) { FixParameter = null; }
 var G_CompanyCode         = (FixParameter && FixParameter[0] && FixParameter[0].CompanyCode != null) ? FixParameter[0].CompanyCode : '';
 var UserMaster_Code       = authKeyData ? authKeyData.UserMaster_Code : 0;
+var UserType              = authKeyData && authKeyData.UserType != null ? authKeyData.UserType : '';
 var UserModuleMaster_Code = 0;
 const appBaseURL          = sessionStorage.getItem('AppBaseURL') || '';
+const AppBaseURLMenu      = sessionStorage.getItem('AppBaseURLMenu') || '';
+const G_UserName          = sessionStorage.getItem('UserName') || '';
+const authKeyRaw          = sessionStorage.getItem('authKey') || '';
 var API_GET_PAYMENT_LIST = '/api/PaymentEntry/GetPaymentAdjustmentMasterlist';
 var API_SAVE_PAYMENT = '/api/PaymentEntry/SavePaymentEntryAdjustment';
 var API_DELETE_PAYMENT = '/api/PaymentEntry/DeletePaymentEntryAdjustment';
@@ -14,6 +18,7 @@ var API_GET_PARTY_LIST      = '/api/Master/GetAccountIsClientDropDown';
 var API_GET_INVOICE_BY_ACC  = '/api/PaymentEntry/GetInvoiceDetailsByAccountMaster';
 var API_GET_PAYMENT_MODE_LIST = '/api/PaymentEntry/GetPaymentModeList';
 var G_PEAEditCode     = 0;
+var G_PEAViewMode     = false;
 var G_PEADeleteCode   = 0;
 var G_PEAInvoiceRows  = [];
 var G_PEAListRows     = [];
@@ -145,7 +150,13 @@ function PEAGetModuleCode() {
     try {
         var data = JSON.parse(sessionStorage.getItem('UserModuleMaster') || '[]');
         var result = data.find(function (item) {
-            return (item.ModuleDesp || '').toLowerCase().indexOf('adjestment') >= 0 || (item.ModuleDesp || '').toLowerCase().indexOf('adjustment') >= 0;
+            var d = (item.ModuleDesp || '').toLowerCase();
+            return d === 'credit note'
+                || d.indexOf('credit note') >= 0
+                || d.indexOf('payment entry adjustment') >= 0
+                || d.indexOf('payment entry adjestment') >= 0
+                || d.indexOf('adjestment') >= 0
+                || d.indexOf('adjustment') >= 0;
         });
         if (result) UserModuleMaster_Code = result.Code;
     } catch (e) { UserModuleMaster_Code = 0; }
@@ -234,8 +245,23 @@ function PEALoadPartyDropdown() {
 function PEAMapPaymentModeDesp(item) {
     if (!item) return '';
     if (typeof item === 'string') return item;
-    return item.Desp || item['Payment Mode'] || item.PaymentMode || item.paymentMode
+    return item.Desp || item['Credit Note Type'] || item['Payment Mode'] || item.PaymentMode || item.paymentMode
         || item.Mode || item.Name || item.CreditNote || '';
+}
+function PEARenamePaymentModeColumn(item, extras) {
+    var creditNoteType = PEAMapPaymentModeDesp(item);
+    var row = {};
+    Object.keys(item || {}).forEach(function (k) {
+        if (k === 'Payment Mode' || k === 'PaymentMode') {
+            row['Credit Note Type'] = creditNoteType;
+            return;
+        }
+        row[k] = item[k];
+    });
+    if (row['Credit Note Type'] === undefined) {
+        row['Credit Note Type'] = creditNoteType;
+    }
+    return Object.assign(row, extras || {});
 }
 function PEAPositionPayModeSuggestion($input, $list) {
     if (!$input || !$input.length) return;
@@ -393,9 +419,11 @@ function PEARefreshInvoiceTable() {
             + '<td class="text-end">' + formatAmt(r.AmountAdjusted || r.Deduction) + '</td>'
             + '<td class="text-end">' + formatAmt(r.PayableAmount) + '</td>'
             + '<td class="text-end">'
-            +   '<input type="text" maxlength="15" class="pea-input text-end pea-payamt-inp" style="font-size:.83rem;max-width:115px;display:inline-block;"'
-            +   ' data-idx="' + i + '" value="' + (r.PaymentAmount > 0 ? formatAmt(r.PaymentAmount) : '') + '"'
-            +   ' placeholder="0.00" oninput="PEARowPayAmtInput(this,' + i + ')" onblur="PEARowAmtBlur(this,' + i + ')">'
+            + (G_PEAViewMode
+                ? (r.PaymentAmount > 0 ? formatAmt(r.PaymentAmount) : '—')
+                : ('<input type="text" maxlength="15" class="pea-input text-end pea-payamt-inp" style="font-size:.83rem;max-width:115px;display:inline-block;"'
+                    + ' data-idx="' + i + '" value="' + (r.PaymentAmount > 0 ? formatAmt(r.PaymentAmount) : '') + '"'
+                    + ' placeholder="0.00" oninput="PEARowPayAmtInput(this,' + i + ')" onblur="PEARowAmtBlur(this,' + i + ')">'))
             + '</td>'
             + '</tr>';
     });
@@ -543,7 +571,7 @@ function PEARenderList(type) {
 
     $('#peaListTable').show();
 
-    var StringFilterColumn      = ['Party Name', 'Account Name', 'Payment Mode', 'Ref No', 'Narration'];
+    var StringFilterColumn      = ['Party Name', 'Account Name', 'Credit Note Type', 'Ref No', 'Narration'];
     var NumericFilterColumn     = [];
     var DateFilterColumn        = ['Entry Date', 'Date'];
     var StringdoubleFilterColumn = ['Ref No'];
@@ -561,11 +589,13 @@ function PEARenderList(type) {
                 : (item.advanceAmount != null ? item.advanceAmount : item['Advance Amount'])
         );
 
-        return Object.assign({}, item, {
+        return PEARenamePaymentModeColumn(item, {
             Amount: formatRupee(amount),
             'Advance Amount': formatRupee(advance),
             Action: '<button class="btn btn-primary icon-height mb-1" title="Edit" onclick="PEAEditEntry(' + peCode + ')"><i class="fa-solid fa-pencil"></i></button>&nbsp;'
-                + '<button class="btn btn-danger icon-height mb-1" title="Delete" onclick="PEAShowDeleteModal(' + peCode + ',\'' + entryNo + '\')"><i class="fa-regular fa-circle-xmark"></i></button>'
+                + '<button class="btn btn-danger icon-height mb-1" title="Delete" onclick="PEAShowDeleteModal(' + peCode + ',\'' + entryNo + '\')"><i class="fa-regular fa-circle-xmark"></i></button>&nbsp;'
+                + '<button class="btn btn-primary icon-height mb-1" title="View" onclick="PEAViewEntry(' + peCode + ')"><i class="fa-solid fa fa-eye"></i></button>&nbsp;'
+                + '<button class="btn btn-info icon-height mb-1" title="Download PDF" onclick="DownloadCreditNotePdf(' + peCode + ')"><i class="fa-solid fa-download"></i></button>'
         });
     });
 
@@ -575,8 +605,27 @@ function PEARenderList(type) {
         DateFilterColumn, StringdoubleFilterColumn, hiddenColumns, ColumnAlignment,true
     );
 }
+function PEASetFormViewMode(isView) {
+    G_PEAViewMode = !!isView;
+    $('#btnPEASave').toggle(!isView);
+    $('#btnPEAReset').toggle(!isView);
+    $('#btnPEAAutoAllocate').toggle(!isView);
+    $('#peaCreatePage .pea-note').toggle(!isView);
+    if (isView) {
+        $('#txtPEADate').prop('disabled', true).addClass('pea-readonly');
+        $('#txtPEARefNo, #txtPEAAmount, #txtPEANarration').prop('readonly', true).addClass('pea-readonly');
+        $('#ddlPEAPayMode').prop('disabled', true).trigger('change.select2');
+        PEASetPartyFieldDisabled(true);
+    } else {
+        $('#txtPEADate').prop('disabled', false).removeClass('pea-readonly');
+        $('#txtPEARefNo, #txtPEAAmount, #txtPEANarration').prop('readonly', false).removeClass('pea-readonly');
+        $('#ddlPEAPayMode').prop('disabled', false).trigger('change.select2');
+    }
+}
 function PEAShowCreatePage() {
     G_PEAEditCode = 0;
+    G_PEAViewMode = false;
+    PEASetFormViewMode(false);
     PEAResetForm();
     $('#peaListPage').hide();
     $('#peaCreatePage').show();
@@ -588,9 +637,13 @@ function PEAShowListPage() {
     $('#peaCreatePage').hide();
     $('#peaToolbar').hide();
     $('#peaListPage').show();
+    G_PEAViewMode = false;
+    PEASetFormViewMode(false);
     PEALoadList();
 }
 function PEAResetForm() {
+    G_PEAViewMode = false;
+    PEASetFormViewMode(false);
     G_PEAIsBindingEdit = false;
     G_PEAEntryNoSave = 0;
     G_PEAAdvanceManual = false;
@@ -610,6 +663,65 @@ function PEAResetForm() {
         '<tr><td colspan="7" class="text-center text-muted py-3">Select a party to load bills.</td></tr>'
     );
 }
+function PEABindEntryFromApi(res, code, formMode) {
+    if (!res) {
+        PEAToastError('Record not found.');
+        return false;
+    }
+    var masterRows = [];
+    if (res.BillMaster && res.BillMaster.length)               masterRows = res.BillMaster;
+    else if (res.PaymentMaster && res.PaymentMaster.length)    masterRows = res.PaymentMaster;
+    else if (Array.isArray(res) && res.length)                 masterRows = res;
+    if (!masterRows.length) {
+        PEAToastError('Record not found.');
+        return false;
+    }
+    var pm = masterRows[0];
+    var details = [];
+    if (res.BillAdjustmentDetails && res.BillAdjustmentDetails.length) details = res.BillAdjustmentDetails;
+    else if (res.PaymentDetails && res.PaymentDetails.length)          details = res.PaymentDetails;
+    var listRow = PEAGetListRowByCode(code);
+    var isView = formMode === 'VIEW';
+
+    G_PEAEditCode = pm.Code || code;
+    G_PEAIsBindingEdit = true;
+    PEASetFormViewMode(isView);
+
+    G_PEAEntryNoSave = pm.EntryNo != null ? pm.EntryNo : (pm.entryNo != null ? pm.entryNo : 0);
+    var entryNoDisplay = (listRow && (listRow['Entry No'] || listRow.EntryNo || listRow.entryNo))
+        || (pm.EntryNo && pm.EntryNo !== 0 ? pm.EntryNo : '')
+        || (pm.EntryNoStr || pm.entryNoStr || pm['Entry No'] || '');
+    $('#txtPEAEntryNo').val(entryNoDisplay);
+
+    var payMode = pm.PaymentMode || pm.paymentMode || pm.Payment_Mode || pm.PayMode || '';
+    if (!payMode && listRow) {
+        payMode = listRow['Credit Note Type'] || listRow['Payment Mode'] || listRow.PaymentMode || listRow.PayMode || '';
+    }
+    $('#txtPEADate').datepicker('update', PEAFormatApiDate(pm.EntryDate || pm.entryDate || ''));
+    $('#ddlPEAPartyName').val(pm.AccountMaster_Code || pm.accountMaster_Code || '').trigger('change.select2');
+    PEASetPartyFieldDisabled(true);
+    PEASetPayModeValue(payMode);
+    $('#txtPEARefNo').val(pm.RefNo || pm.refno || pm.Refno || '');
+    $('#txtPEAAmount').val(formatAmt(pm.Amount || pm.amount || 0));
+    $('#txtPEANarration').val(pm.Narration || pm.narration || '');
+
+    $('#peaListPage').hide();
+    $('#peaCreatePage').show();
+    $('#peaToolbar').show();
+    $('#lblPEAFormBadge').text(isView ? 'VIEW' : 'EDIT').attr('class', 'tabSec tab active');
+    window.scrollTo(0, 0);
+
+    PEARenderEditBillGrid(details, pm.AccountMaster_Code || pm.accountMaster_Code);
+    if (!G_PEAInvoiceRows.length) {
+        PEASetAdvanceDisplay(PEAGetAdvanceFromMaster(pm));
+    }
+    PEALockAdvanceField();
+    if (isView) {
+        PEASetFormViewMode(true);
+        PEARefreshInvoiceTable();
+    }
+    return true;
+}
 function PEAEditEntry(code) {
     blockUI();
     $.ajax({
@@ -619,67 +731,72 @@ function PEAEditEntry(code) {
             xhr.setRequestHeader('Auth-Key', authKeyData);
         },
         success: function (res) {
-            if (!res) {
-                unblockUI();
-                PEAToastError('Record not found.');
-                return;
-            }
-
-            var masterRows = [];
-            if (res.BillMaster && res.BillMaster.length)               masterRows = res.BillMaster;
-            else if (res.PaymentMaster && res.PaymentMaster.length)    masterRows = res.PaymentMaster;
-            else if (Array.isArray(res) && res.length)                 masterRows = res;
-
-            if (!masterRows.length) {
-                unblockUI();
-                PEAToastError('Record not found.');
-                return;
-            }
-
-            var pm = masterRows[0];
-            var details = [];
-            if (res.BillAdjustmentDetails && res.BillAdjustmentDetails.length) details = res.BillAdjustmentDetails;
-            else if (res.PaymentDetails && res.PaymentDetails.length)          details = res.PaymentDetails;
-
-            var listRow = PEAGetListRowByCode(code);
-
-            G_PEAEditCode = pm.Code || code;
-            G_PEAIsBindingEdit = true;
-
-            G_PEAEntryNoSave = pm.EntryNo != null ? pm.EntryNo : (pm.entryNo != null ? pm.entryNo : 0);
-            var entryNoDisplay = (listRow && (listRow['Entry No'] || listRow.EntryNo || listRow.entryNo))
-                || (pm.EntryNo && pm.EntryNo !== 0 ? pm.EntryNo : '')
-                || (pm.EntryNoStr || pm.entryNoStr || pm['Entry No'] || '');
-            $('#txtPEAEntryNo').val(entryNoDisplay);
-
-            var payMode = pm.PaymentMode || pm.paymentMode || pm.Payment_Mode || pm.PayMode || '';
-            if (!payMode && listRow) {
-                payMode = listRow['Payment Mode'] || listRow.PaymentMode || listRow.PayMode || '';
-            }
-            $('#txtPEADate').datepicker('update', PEAFormatApiDate(pm.EntryDate || pm.entryDate || ''));
-            $('#ddlPEAPartyName').val(pm.AccountMaster_Code || pm.accountMaster_Code || '').trigger('change.select2');
-            PEASetPartyFieldDisabled(true);
-            PEASetPayModeValue(payMode);
-            $('#txtPEARefNo').val(pm.RefNo || pm.refno || pm.Refno || '');
-            $('#txtPEAAmount').val(formatAmt(pm.Amount || pm.amount || 0));
-            $('#txtPEANarration').val(pm.Narration || pm.narration || '');
-
-            $('#peaListPage').hide();
-            $('#peaCreatePage').show();
-            $('#peaToolbar').show();
-            $('#lblPEAFormBadge').text('EDIT').attr('class', 'tabSec tab active');
-            window.scrollTo(0, 0);
-
-            PEARenderEditBillGrid(details, pm.AccountMaster_Code || pm.accountMaster_Code);
-            if (!G_PEAInvoiceRows.length) {
-                PEASetAdvanceDisplay(PEAGetAdvanceFromMaster(pm));
-            }
-            PEALockAdvanceField();
             unblockUI();
+            PEABindEntryFromApi(res, code, 'EDIT');
         },
         error: function () {
             unblockUI();
             PEAToastError('Failed to load payment entry.');
+        }
+    });
+}
+function DownloadCreditNotePdf(code) {
+    $.ajax({
+        url: AppBaseURLMenu + '/RDLC/PrintCreditNote?Code=' + encodeURIComponent(code)
+            + '&UserName=' + encodeURIComponent(G_UserName || '')
+            + '&AuthKey=' + encodeURIComponent(authKeyRaw || ''),
+        type: 'GET',
+        xhrFields: { responseType: 'blob' },
+        success: function (data) {
+            var blob = new Blob([data], { type: 'application/pdf' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'CreditNote.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr) {
+            PEAToastError('PDF download failed.');
+            console.error('PrintCreditNote', xhr.responseText || xhr.status);
+        }
+    });
+}
+async function PEAViewEntry(code) {
+    try {
+        if (typeof CheckOptionPermission === 'function') {
+            if (!UserModuleMaster_Code) PEAGetModuleCode();
+            if (UserModuleMaster_Code > 0) {
+                var perm = await CheckOptionPermission('View', UserMaster_Code, UserModuleMaster_Code);
+                if (!perm.hasPermission) {
+                    PEAToastError(perm.msg || 'You do not have permission to view this entry.');
+                    return;
+                }
+            }
+        }
+    } catch (e) {
+        console.error('PEAViewEntry permission check failed', e);
+        PEAToastError('Unable to verify view permission. Please try again.');
+        return;
+    }
+    blockUI();
+    $.ajax({
+        url:  appBaseURL + API_GET_PAYMENT_BY_CODE + '?Code=' + encodeURIComponent(code),
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Auth-Key', authKeyData);
+        },
+        success: function (res) {
+            unblockUI();
+            if (!PEABindEntryFromApi(res, code, 'VIEW')) {
+                return;
+            }
+        },
+        error: function () {
+            unblockUI();
+            PEAToastError('Failed to load credit note.');
         }
     });
 }

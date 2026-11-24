@@ -547,6 +547,94 @@ namespace Bizsol_ESMS.Controllers
             return File(pdf, "application/pdf", "PrintGatePass.pdf");
         }
 
+        private static void ApplyCreditNoteAmountInWords(DataSet ds)
+        {
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                return;
+
+            DataTable table = ds.Tables[0];
+            if (!table.Columns.Contains("AmountInWords") || !table.Columns.Contains("TotalAmount"))
+                return;
+
+            decimal total = 0;
+            object totalObj = table.Rows[0]["TotalAmount"];
+            if (totalObj != null && totalObj != DBNull.Value)
+                decimal.TryParse(totalObj.ToString(), out total);
+
+            string words = FormatIndianAmountInWords(total);
+            foreach (DataRow row in table.Rows)
+                row["AmountInWords"] = words;
+        }
+
+        private static string FormatIndianAmountInWords(decimal amount)
+        {
+            if (amount < 0)
+                amount = 0;
+
+            int rupees = (int)Math.Floor(amount);
+            int paise = (int)Math.Round((amount - rupees) * 100, 0, MidpointRounding.AwayFromZero);
+            if (paise == 100)
+            {
+                rupees += 1;
+                paise = 0;
+            }
+
+            string text = NumberToIndianWords(rupees);
+            if (paise > 0)
+                text += " and " + NumberToIndianWords(paise) + " Paise";
+
+            return text + " Only";
+        }
+
+        private static string NumberToIndianWords(int n)
+        {
+            if (n == 0)
+                return "Zero";
+
+            var parts = new List<string>();
+            if (n >= 10000000)
+            {
+                parts.Add(WordsBelow100(n / 10000000) + " Crore");
+                n %= 10000000;
+            }
+            if (n >= 100000)
+            {
+                parts.Add(WordsBelow100(n / 100000) + " Lakh");
+                n %= 100000;
+            }
+            if (n >= 1000)
+            {
+                parts.Add(WordsBelow100(n / 1000) + " Thousand");
+                n %= 1000;
+            }
+            if (n >= 100)
+            {
+                parts.Add(WordsBelow100(n / 100) + " Hundred");
+                n %= 100;
+            }
+            if (n > 0)
+                parts.Add(WordsBelow100(n));
+
+            return string.Join(" ", parts).Trim();
+        }
+
+        private static string WordsBelow100(int n)
+        {
+            string[] ones =
+            {
+                "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+                "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+            };
+            string[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
+            n = Math.Abs(n);
+            if (n < 20)
+                return ones[n];
+            if (n < 100)
+                return tens[n / 10] + (n % 10 > 0 ? " " + ones[n % 10] : "");
+            return "";
+        }
+
         private static void SetGatePassPrintParameters(LocalReport report, string userName)
         {
             report.SetParameters(new[]
@@ -583,6 +671,36 @@ namespace Bizsol_ESMS.Controllers
             SetGatePassPrintParameters(report, UserName);
             byte[] pdf = report.Render("PDF");
             return File(pdf, "application/pdf", "VendorReplacementOut.pdf");
+        }
+
+        [HttpGet]
+        public IActionResult PrintCreditNote(string Code, string UserName, string AuthKey)
+        {
+            JObject data = JObject.Parse(AuthKey);
+            string connectionString = data["DefultMysqlTemp"]?.ToString();
+
+            DataSet ds = new DataSet();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = new MySqlCommand("USP_PrintCreditNote", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_Code", Code);
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            ApplyCreditNoteAmountInWords(ds);
+            string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "PrintCreditNote.rdlc");
+            LocalReport report = new LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PrintCreditNote", ds.Tables[0]));
+            SetGatePassPrintParameters(report, UserName);
+            byte[] pdf = report.Render("PDF");
+            return File(pdf, "application/pdf", "CreditNote.pdf");
         }
 
         [HttpGet]
