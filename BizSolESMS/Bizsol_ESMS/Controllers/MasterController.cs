@@ -336,5 +336,11 @@ namespace Bizsol_ESMS.Controllers
         }
         #endregion AppConfig
 
+        #region  WarehouseStockTransFer
+        public IActionResult WarehouseStockTransFer()
+        {
+            return View();
+        }
+        #endregion WarehouseStockTransFer
     }
 }
