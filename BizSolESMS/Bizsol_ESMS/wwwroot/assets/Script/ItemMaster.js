@@ -23,6 +23,7 @@ function getObjValue(obj, keys) {
     return "";
 }
 
+
 function getWarehouseItemCode(item) {
     return getObjValue(item, ["Code", "code"]);
 }
@@ -1304,7 +1305,7 @@ function Save() {
         var ReorderQtys = ReorderQty === "" ? 0 : parseInt(ReorderQty);
         const warehouseGridData = getItemWarehouseGridData();
         const payload = {
-            Code: $("#hfCode").val(),
+            Code: parseInt($("#hfCode").val(), 10) || 0,
             ItemCode: $("#txtItemCode").val(),
             ItemName: $("#txtItemName").val(),
             DisplayName: $("#txtDisplayName").val(),
@@ -1324,6 +1325,7 @@ function Save() {
             maintainExpiry: $("#txtMaintainExpiry").is(":checked") ? "Y" : "N",
             QtyInBox: $("#txtQtyinBox").val(),
             IsActive: $("#txtIsActive").is(":checked") ? "Y" : "N",
+            IsNonStockItem: $("#txtIsNonStockItem").is(":checked") ? "Y" : "N",
             MRPNo: MRP
         };
         
@@ -1390,6 +1392,7 @@ async function CreateItemMaster() {
     //$("#txtQtyinBox").prop("disabled", false);
     $("#txtMaintainExpiry").prop("disabled", false);
     $("#txtIsActive").prop("disabled", false);
+    $("#txtIsNonStockItem").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     disableFields(false);
     $("#txtMRP").prop("disabled", false);
@@ -1425,6 +1428,7 @@ function BackMaster() {
     $("#txtMaintainExpiry").prop("disabled", false);
     $("#txtsave").prop("disabled", false);
     $("#txtIsActive").prop("disabled", false);
+    $("#txtIsNonStockItem").prop("disabled", false);
     $("#txtMRP").prop("disabled", false);
     $("#txtheaderdiv").hide();
     disableFields(false);
@@ -1534,6 +1538,11 @@ async function Edit(code) {
                 }
                 if (item.IsActive == 'N') {
                     $("#txtIsActive").prop("checked", false);
+                }
+                if (item.IsNonStockItem == 'Y') {
+                    $("#txtIsNonStockItem").prop("checked", true);
+                } else {
+                    $("#txtIsNonStockItem").prop("checked", false);
                 }
                 $("#txtsave").prop("disabled", false);
                 disableFields(false);
@@ -1747,6 +1756,10 @@ function ClearData() {
     }
     $("#txtBoxPacking").val("N");
     $("#txtQtyinBox").val("0");
+    $("#txtBatchApplicable").prop("checked", true);
+    $("#txtMaintainExpiry").prop("checked", true);
+    $("#txtIsActive").prop("checked", true);
+    $("#txtIsNonStockItem").prop("checked", false);
 
 }
 function updateQtyBox(boxPackingValue) {
@@ -1826,6 +1839,7 @@ async function View(code) {
                 $("#txtMaintainExpiry").val(item.MaintainExpiry).prop("disabled", true);
                 $("#txtMRP").val(item.MRP).prop("disabled", true);
                 $("#txtIsActive").val(item.IsActive).prop("disabled", true);
+                $("#txtIsNonStockItem").prop("disabled", true);
                 $("#txtsave").prop("disabled", true);
                 disableFields(true);
                 //$("#txtBoxPacking").val(item.BoxPacking);
@@ -1846,6 +1860,11 @@ async function View(code) {
                 }
                 if (item.IsActive == 'N') {
                     $("#txtIsActive").prop("checked", false);
+                }
+                if (item.IsNonStockItem == 'Y') {
+                    $("#txtIsNonStockItem").prop("checked", true);
+                } else {
+                    $("#txtIsNonStockItem").prop("checked", false);
                 }
             } else {
                 toastr.error("Record not found...!");
