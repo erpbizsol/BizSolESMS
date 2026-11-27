@@ -113,9 +113,9 @@ $(document).ready(function () {
 
         GetDespatchTransitOrderList('DespatchTransit');
         $("#txtshowhide").hide();
-        $("#txtDownload").hide();
-        $("#txtToDate1").hide();
-        $("#txtDownloadDate1").hide();
+        $("#txtDownload").show();
+        $("#txtToDate1").show();
+        $("#txtDownloadDate1").show();
     });
     $("#orderPacking").click(function () {
         GetOrderPackingList('OrderPacking');
@@ -2880,11 +2880,19 @@ function DownloadQRPdf(response) {
     });
 }
 
+// Tab 1 (Pending Order) -> Pending, Tab 2 (Partial Packed) -> Partial, Tab 3 (Order Packed) -> Packed
+function GetDownloadOrderStatus() {
+    if (G_Tab === 1) return 'Pending';
+    if (G_Tab === 2) return 'Partial';
+    if (G_Tab === 3) return 'Packed';
+    return $("#ddlOrderStatus").val();
+}
+
 async function DownloadInExcel() {
     try {
         const DownloadDate = convertDateFormat1($("#txtToDate").val());
         const OldDate = convertDateFormat1($("#txtDownloadDate").val());
-        const OrderStatus = $("#ddlOrderStatus").val();
+        const OrderStatus = GetDownloadOrderStatus();
         if (OldDate === '' || OldDate === undefined || OldDate === null) {
             toastr.error("Please enter a valid date !");
             $("#txtDownloadDate").focus()
@@ -2926,7 +2934,7 @@ function getDataWithAjax(FromDate, ToDate, OrderStatus) {
 
 async function DownloadExport(Data) {
     const Picklist = $("#txtDownloadDate").val();
-    const OrderStatus = $("#ddlOrderStatus").val();
+    const OrderStatus = GetDownloadOrderStatus();
     const renameMap = {
         "Item Name": G_ItemConfig[0].ItemNameHeader || 'Item Name',
         "Item Code": G_ItemConfig[0].ItemCodeHeader || 'Item Code',

@@ -395,33 +395,21 @@ function GetClientTypeList() {
                     }
                     return '';
                 };
-                // fixed options always come first: Single, Multiple, Other
-                const fixedTypes = [
-                    { code: 'S', text: 'Single Client' },
-                    { code: 'M', text: 'Multiple Client' },
-                    { code: 'O', text: 'Customised' }
-                ];
+                // bind options only from the API (no static values)
                 let option = '';
-                fixedTypes.forEach(t => {
-                    option += '<option value="' + t.code + '">' + t.text + '</option>';
-                });
-                // then the remaining types from the API (e.g. Customised)
                 list.forEach(item => {
                     const code = getVal(item, ['shortdesp', 'short desp', 'code']);
                     const text = getVal(item, ['value', 'name']);
-                    if (fixedTypes.some(t => t.code === String(code))) return;
                     option += '<option value="' + code + '">' + text + '</option>';
                 });
                 $select.html(option);
-                $select.val('S').trigger('change');
-                // 'O' = Tally invoice excel format (add only if not already coming from the API)
-                // if ($select.find('option[value="O"]').length === 0) {
-                //     $select.append('<option value="O">Tally Invoice</option>');
-                // }
-                // $select.val('S');
-                // if (!$select.val()) {
-                //     $select.prop('selectedIndex', 0);
-                // }
+                // default to 'S' if the API returned it, otherwise the first option
+                if ($select.find('option[value="S"]').length > 0) {
+                    $select.val('S');
+                } else {
+                    $select.prop('selectedIndex', 0);
+                }
+                $select.trigger('change');
             } else {
                 $select.empty();
                 toastr.error("Client type list is empty.");
